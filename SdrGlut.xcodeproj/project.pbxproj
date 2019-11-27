@@ -1,0 +1,730 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		460C7DD6223960D300F9E64A /* PlayIQ.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 460C7DD4223960D300F9E64A /* PlayIQ.cpp */; };
+		4616E5B82208B6A700240B9F /* smeter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4616E5B62208B6A600240B9F /* smeter.cpp */; };
+		461B756E220379E400D8CBE6 /* RaceFastsdr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 461B756D220379E400D8CBE6 /* RaceFastsdr.cpp */; };
+		461E83582228916B00220E94 /* DialogFileOpen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 461E83572228916B00220E94 /* DialogFileOpen.cpp */; };
+		4623928F1C2C5A5A007F6B08 /* arcball.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4623928E1C2C5A5A007F6B08 /* arcball.cpp */; };
+		4626888B223360BE0074B5DF /* audiolib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46268889223360BD0074B5DF /* audiolib.cpp */; };
+		46371C8A1D12F31B002D3788 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46371C891D12F31B002D3788 /* OpenAL.framework */; };
+		46371C8C1D12F32A002D3788 /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46371C8B1D12F32A002D3788 /* OpenCL.framework */; };
+		46371C8E1D12F337002D3788 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46371C8D1D12F337002D3788 /* OpenGL.framework */; };
+		46371C901D12F384002D3788 /* libdf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46371C8F1D12F384002D3788 /* libdf.a */; };
+		46371C921D12F3A8002D3788 /* libjpeg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46371C911D12F3A8002D3788 /* libjpeg.a */; };
+		46371C941D12F3B3002D3788 /* libGLEW.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46371C931D12F3B3002D3788 /* libGLEW.a */; };
+		46371C961D12F3C2002D3788 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46371C951D12F3C2002D3788 /* libz.a */; };
+		46371C981D12F3CC002D3788 /* libsndfile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46371C971D12F3CC002D3788 /* libsndfile.a */; };
+		463F2C632228E0A000B6BB7D /* agc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 463F2C612228E0A000B6BB7D /* agc.cpp */; };
+		4643CAC6222845F80059451C /* SdrFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4643CAC3222845F70059451C /* SdrFile.cpp */; };
+		4643CAC7222845F80059451C /* DialogSdrFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4643CAC4222845F70059451C /* DialogSdrFile.cpp */; };
+		464918A220E53121008BDC72 /* libliquid.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 464918A120E53121008BDC72 /* libliquid.a */; };
+		464FED0B1C2F61AB0045C705 /* libglut.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 464FED0A1C2F61AB0045C705 /* libglut.3.dylib */; };
+		4664F28D1DA95E6E00BBF9EB /* libSoapySDR.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4664F28C1DA95E6E00BBF9EB /* libSoapySDR.dylib */; };
+		467FE3FC1C2C4F9B007D260F /* algebra3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 467FE3D91C2C4F9B007D260F /* algebra3.cpp */; };
+		467FE3FD1C2C4F9B007D260F /* glui_add_controls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 467FE3DC1C2C4F9B007D260F /* glui_add_controls.cpp */; };
+		467FE3FE1C2C4F9B007D260F /* glui_bitmap_img_data.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 467FE3DD1C2C4F9B007D260F /* glui_bitmap_img_data.cpp */; };
+		467FE3FF1C2C4F9B007D260F /* glui_bitmaps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 467FE3DE1C2C4F9B007D260F /* glui_bitmaps.cpp */; };
+		467FE4001C2C4F9B007D260F /* glui_button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 467FE3DF1C2C4F9B007D260F /* glui_button.cpp */; };
+		467FE4011C2C4F9B007D260F /* glui_checkbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 467FE3E01C2C4F9B007D260F /* glui_checkbox.cpp */; };
+		467FE4021C2C4F9B007D260F /* glui_column.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 467FE3E11C2C4F9B007D260F /* glui_column.cpp */; };
+		467FE4031C2C4F9B007D260F /* glui_commandline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 467FE3E21C2C4F9B007D260F /* glui_commandline.cpp */; };
+		467FE4041C2C4F9B007D260F /* glui_control.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 467FE3E31C2C4F9B007D260F /* glui_control.cpp */; };
+		467FE4051C2C4F9B007D260F /* glui_edittext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 467FE3E41C2C4F9B007D260F /* glui_edittext.cpp */; };
+		467FE4061C2C4F9B007D260F /* glui_filebrowser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 467FE3E51C2C4F9B007D260F /* glui_filebrowser.cpp */; };
+		467FE4071C2C4F9B007D260F /* glui_list.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 467FE3E81C2C4F9B007D260F /* glui_list.cpp */; };
+		467FE4081C2C4F9B007D260F /* glui_listbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 467FE3E91C2C4F9B007D260F /* glui_listbox.cpp */; };
+		467FE4091C2C4F9B007D260F /* glui_mouse_iaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 467FE3EA1C2C4F9B007D260F /* glui_mouse_iaction.cpp */; };
+		467FE40A1C2C4F9B007D260F /* glui_node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 467FE3EB1C2C4F9B007D260F /* glui_node.cpp */; };
+		467FE40B1C2C4F9B007D260F /* glui_panel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 467FE3EC1C2C4F9B007D260F /* glui_panel.cpp */; };
+		467FE40C1C2C4F9B007D260F /* glui_radio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 467FE3ED1C2C4F9B007D260F /* glui_radio.cpp */; };
+		467FE40D1C2C4F9B007D260F /* glui_rollout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 467FE3EE1C2C4F9B007D260F /* glui_rollout.cpp */; };
+		467FE40E1C2C4F9B007D260F /* glui_rotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 467FE3EF1C2C4F9B007D260F /* glui_rotation.cpp */; };
+		467FE40F1C2C4F9B007D260F /* glui_scrollbar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 467FE3F01C2C4F9B007D260F /* glui_scrollbar.cpp */; };
+		467FE4101C2C4F9B007D260F /* glui_separator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 467FE3F11C2C4F9B007D260F /* glui_separator.cpp */; };
+		467FE4111C2C4F9B007D260F /* glui_spinner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 467FE3F21C2C4F9B007D260F /* glui_spinner.cpp */; };
+		467FE4121C2C4F9B007D260F /* glui_statictext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 467FE3F31C2C4F9B007D260F /* glui_statictext.cpp */; };
+		467FE4131C2C4F9B007D260F /* glui_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 467FE3F41C2C4F9B007D260F /* glui_string.cpp */; };
+		467FE4141C2C4F9B007D260F /* glui_textbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 467FE3F51C2C4F9B007D260F /* glui_textbox.cpp */; };
+		467FE4151C2C4F9B007D260F /* glui_translation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 467FE3F61C2C4F9B007D260F /* glui_translation.cpp */; };
+		467FE4161C2C4F9B007D260F /* glui_tree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 467FE3F71C2C4F9B007D260F /* glui_tree.cpp */; };
+		467FE4171C2C4F9B007D260F /* glui_treepanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 467FE3F81C2C4F9B007D260F /* glui_treepanel.cpp */; };
+		467FE4181C2C4F9B007D260F /* glui_window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 467FE3F91C2C4F9B007D260F /* glui_window.cpp */; };
+		467FE4191C2C4F9B007D260F /* glui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 467FE3FA1C2C4F9B007D260F /* glui.cpp */; };
+		467FE41A1C2C4F9B007D260F /* quaternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 467FE3FB1C2C4F9B007D260F /* quaternion.cpp */; };
+		468120D2222597CE00926B96 /* DialogFolder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 468120D0222597CD00926B96 /* DialogFolder.cpp */; };
+		4686063922028C1F0078D9F2 /* DialogRadio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4686063522028C1F0078D9F2 /* DialogRadio.cpp */; };
+		4686063A22028C1F0078D9F2 /* Radio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4686063822028C1F0078D9F2 /* Radio.cpp */; };
+		468D261C2238A04D005BE154 /* RecordIQ.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 468D261A2238A04D005BE154 /* RecordIQ.cpp */; };
+		46B4EB1B2212570900041F98 /* cMalloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 46B4EB192212570900041F98 /* cMalloc.c */; };
+		46B4EB1C2212570900041F98 /* Utilities.c in Sources */ = {isa = PBXBuildFile; fileRef = 46B4EB1A2212570900041F98 /* Utilities.c */; };
+		46C36C52222596D90045691F /* DialogSave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46C36C51222596D90045691F /* DialogSave.cpp */; };
+		46CE01A52212597700140F6C /* SceneList.c in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01A42212597700140F6C /* SceneList.c */; };
+		46CE01A8221259BF00140F6C /* CWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01A6221259BF00140F6C /* CWindow.cpp */; };
+		46CE01AC22125C8400140F6C /* FFT2.c in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01A922125C8400140F6C /* FFT2.c */; };
+		46CE01AD22125C8400140F6C /* Utilities2.c in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01AA22125C8400140F6C /* Utilities2.c */; };
+		46CE01B222125CF000140F6C /* fastfir.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01AE22125CF000140F6C /* fastfir.cpp */; };
+		46CE01B322125CF000140F6C /* fft.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01B122125CF000140F6C /* fft.cpp */; };
+		46CE01B622125D8400140F6C /* Scene.c in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01B422125D8400140F6C /* Scene.c */; };
+		46CE01BB22125E0500140F6C /* fir.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01B722125E0400140F6C /* fir.cpp */; };
+		46CE01BF22125E9100140F6C /* mThread.c in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01BD22125E9100140F6C /* mThread.c */; };
+		46CE01C122125F3000140F6C /* Getpalette.c in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01C022125F3000140F6C /* Getpalette.c */; };
+		46CE01C4221260BB00140F6C /* QuitDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01C2221260BB00140F6C /* QuitDialog.cpp */; };
+		46CE01C72212632700140F6C /* sceneDisplay.c in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01C52212632700140F6C /* sceneDisplay.c */; };
+		46CE01CA221265AC00140F6C /* CLines.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01C8221265AC00140F6C /* CLines.cpp */; };
+		46CE01D3221265FB00140F6C /* ClinesPlotAttributes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01CC221265FA00140F6C /* ClinesPlotAttributes.cpp */; };
+		46CE01D4221265FB00140F6C /* ClinesAttributes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01CE221265FA00140F6C /* ClinesAttributes.cpp */; };
+		46CE01D5221265FB00140F6C /* CLinesPlotBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01CF221265FA00140F6C /* CLinesPlotBox.cpp */; };
+		46CE01D6221265FB00140F6C /* CLInesPlotLabels.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01D1221265FB00140F6C /* CLInesPlotLabels.cpp */; };
+		46CE01D92212669200140F6C /* GridPlot.c in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01D72212669200140F6C /* GridPlot.c */; };
+		46CE01DF22126AD100140F6C /* BackgroundQ.c in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01DD22126AD100140F6C /* BackgroundQ.c */; };
+		46E13AD11C2C48AF007FF424 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46E13AD01C2C48AF007FF424 /* main.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		4675AE961C2C43DE00FE0144 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		460C7DD4223960D300F9E64A /* PlayIQ.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PlayIQ.cpp; path = MainSource/PlayIQ.cpp; sourceTree = "<group>"; };
+		460C7DD5223960D300F9E64A /* PlayIQ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlayIQ.h; path = MainSource/PlayIQ.h; sourceTree = "<group>"; };
+		4616E5B62208B6A600240B9F /* smeter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = smeter.cpp; sourceTree = "<group>"; };
+		4616E5B72208B6A700240B9F /* smeter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = smeter.h; sourceTree = "<group>"; };
+		461AB5C922126C8E001522BD /* FileList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileList.h; path = CExpress/FileList.h; sourceTree = "<group>"; };
+		461B756D220379E400D8CBE6 /* RaceFastsdr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RaceFastsdr.cpp; sourceTree = "<group>"; };
+		461E83562228916B00220E94 /* DialogFileOpen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DialogFileOpen.h; path = MainSource/DialogFileOpen.h; sourceTree = "<group>"; };
+		461E83572228916B00220E94 /* DialogFileOpen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DialogFileOpen.cpp; path = MainSource/DialogFileOpen.cpp; sourceTree = "<group>"; };
+		4623928E1C2C5A5A007F6B08 /* arcball.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = arcball.cpp; path = "glui-routines/arcball.cpp"; sourceTree = "<group>"; };
+		46268889223360BD0074B5DF /* audiolib.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = audiolib.cpp; path = MainSource/audiolib.cpp; sourceTree = "<group>"; };
+		4626888A223360BE0074B5DF /* audiolib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = audiolib.h; path = MainSource/audiolib.h; sourceTree = "<group>"; };
+		462FB7F3220389830028D417 /* RaceFastsdr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RaceFastsdr.h; sourceTree = "<group>"; };
+		46371C891D12F31B002D3788 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = ../../../../../../System/Library/Frameworks/OpenAL.framework; sourceTree = "<group>"; };
+		46371C8B1D12F32A002D3788 /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = ../../../../../../System/Library/Frameworks/OpenCL.framework; sourceTree = "<group>"; };
+		46371C8D1D12F337002D3788 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = ../../../../../../System/Library/Frameworks/OpenGL.framework; sourceTree = "<group>"; };
+		46371C8F1D12F384002D3788 /* libdf.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdf.a; path = ../../../../../../usr/local/lib/libdf.a; sourceTree = "<group>"; };
+		46371C911D12F3A8002D3788 /* libjpeg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjpeg.a; path = ../../../../../../usr/local/lib/libjpeg.a; sourceTree = "<group>"; };
+		46371C931D12F3B3002D3788 /* libGLEW.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libGLEW.a; path = ../../../../../../usr/local/lib/libGLEW.a; sourceTree = "<group>"; };
+		46371C951D12F3C2002D3788 /* libz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libz.a; path = ../../../../../../usr/local/lib/libz.a; sourceTree = "<group>"; };
+		46371C971D12F3CC002D3788 /* libsndfile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsndfile.a; path = ../../../../../../usr/local/lib/libsndfile.a; sourceTree = "<group>"; };
+		463F2C612228E0A000B6BB7D /* agc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = agc.cpp; path = MainSource/agc.cpp; sourceTree = "<group>"; };
+		463F2C622228E0A000B6BB7D /* agc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = agc.h; path = MainSource/agc.h; sourceTree = "<group>"; };
+		4643CAC2222845F70059451C /* SdrFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SdrFile.h; sourceTree = "<group>"; };
+		4643CAC3222845F70059451C /* SdrFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SdrFile.cpp; sourceTree = "<group>"; };
+		4643CAC4222845F70059451C /* DialogSdrFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DialogSdrFile.cpp; sourceTree = "<group>"; };
+		4643CAC5222845F70059451C /* DialogSdrFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DialogSdrFile.h; sourceTree = "<group>"; };
+		4644187822126CC800F625B7 /* SetFrameData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SetFrameData.h; path = CExpress/SetFrameData.h; sourceTree = "<group>"; };
+		4644187922126CC800F625B7 /* Xappl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Xappl.h; path = CExpress/Xappl.h; sourceTree = "<group>"; };
+		464918A120E53121008BDC72 /* libliquid.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libliquid.a; sourceTree = "<group>"; };
+		464FED0A1C2F61AB0045C705 /* libglut.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglut.3.dylib; path = /opt/X11/lib/libglut.3.dylib; sourceTree = "<absolute>"; };
+		4664F28C1DA95E6E00BBF9EB /* libSoapySDR.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libSoapySDR.dylib; path = ../../../../usr/local/lib/libSoapySDR.dylib; sourceTree = "<group>"; };
+		4672B31E22126D0D00668D72 /* Limits2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Limits2.h; path = CExpress/Limits2.h; sourceTree = "<group>"; };
+		4675AE981C2C43DE00FE0144 /* SdrGlut */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SdrGlut; sourceTree = BUILT_PRODUCTS_DIR; };
+		4679A2802212722C00420A94 /* Defs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Defs.h; path = "KdTree-routines/Defs.h"; sourceTree = "<group>"; };
+		4679A2812212722C00420A94 /* Tools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Tools.h; path = "KdTree-routines/Tools.h"; sourceTree = "<group>"; };
+		467FE3D91C2C4F9B007D260F /* algebra3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = algebra3.cpp; path = "glui-routines/algebra3.cpp"; sourceTree = "<group>"; };
+		467FE3DA1C2C4F9B007D260F /* algebra3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = algebra3.h; path = "glui-routines/algebra3.h"; sourceTree = "<group>"; };
+		467FE3DB1C2C4F9B007D260F /* arcball.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = arcball.h; path = "glui-routines/arcball.h"; sourceTree = "<group>"; };
+		467FE3DC1C2C4F9B007D260F /* glui_add_controls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glui_add_controls.cpp; path = "glui-routines/glui_add_controls.cpp"; sourceTree = "<group>"; };
+		467FE3DD1C2C4F9B007D260F /* glui_bitmap_img_data.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glui_bitmap_img_data.cpp; path = "glui-routines/glui_bitmap_img_data.cpp"; sourceTree = "<group>"; };
+		467FE3DE1C2C4F9B007D260F /* glui_bitmaps.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glui_bitmaps.cpp; path = "glui-routines/glui_bitmaps.cpp"; sourceTree = "<group>"; };
+		467FE3DF1C2C4F9B007D260F /* glui_button.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glui_button.cpp; path = "glui-routines/glui_button.cpp"; sourceTree = "<group>"; };
+		467FE3E01C2C4F9B007D260F /* glui_checkbox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glui_checkbox.cpp; path = "glui-routines/glui_checkbox.cpp"; sourceTree = "<group>"; };
+		467FE3E11C2C4F9B007D260F /* glui_column.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glui_column.cpp; path = "glui-routines/glui_column.cpp"; sourceTree = "<group>"; };
+		467FE3E21C2C4F9B007D260F /* glui_commandline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glui_commandline.cpp; path = "glui-routines/glui_commandline.cpp"; sourceTree = "<group>"; };
+		467FE3E31C2C4F9B007D260F /* glui_control.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glui_control.cpp; path = "glui-routines/glui_control.cpp"; sourceTree = "<group>"; };
+		467FE3E41C2C4F9B007D260F /* glui_edittext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glui_edittext.cpp; path = "glui-routines/glui_edittext.cpp"; sourceTree = "<group>"; };
+		467FE3E51C2C4F9B007D260F /* glui_filebrowser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glui_filebrowser.cpp; path = "glui-routines/glui_filebrowser.cpp"; sourceTree = "<group>"; };
+		467FE3E61C2C4F9B007D260F /* glui_internal_control.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glui_internal_control.h; path = "glui-routines/glui_internal_control.h"; sourceTree = "<group>"; };
+		467FE3E71C2C4F9B007D260F /* glui_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glui_internal.h; path = "glui-routines/glui_internal.h"; sourceTree = "<group>"; };
+		467FE3E81C2C4F9B007D260F /* glui_list.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glui_list.cpp; path = "glui-routines/glui_list.cpp"; sourceTree = "<group>"; };
+		467FE3E91C2C4F9B007D260F /* glui_listbox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glui_listbox.cpp; path = "glui-routines/glui_listbox.cpp"; sourceTree = "<group>"; };
+		467FE3EA1C2C4F9B007D260F /* glui_mouse_iaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glui_mouse_iaction.cpp; path = "glui-routines/glui_mouse_iaction.cpp"; sourceTree = "<group>"; };
+		467FE3EB1C2C4F9B007D260F /* glui_node.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glui_node.cpp; path = "glui-routines/glui_node.cpp"; sourceTree = "<group>"; };
+		467FE3EC1C2C4F9B007D260F /* glui_panel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glui_panel.cpp; path = "glui-routines/glui_panel.cpp"; sourceTree = "<group>"; };
+		467FE3ED1C2C4F9B007D260F /* glui_radio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glui_radio.cpp; path = "glui-routines/glui_radio.cpp"; sourceTree = "<group>"; };
+		467FE3EE1C2C4F9B007D260F /* glui_rollout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glui_rollout.cpp; path = "glui-routines/glui_rollout.cpp"; sourceTree = "<group>"; };
+		467FE3EF1C2C4F9B007D260F /* glui_rotation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glui_rotation.cpp; path = "glui-routines/glui_rotation.cpp"; sourceTree = "<group>"; };
+		467FE3F01C2C4F9B007D260F /* glui_scrollbar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glui_scrollbar.cpp; path = "glui-routines/glui_scrollbar.cpp"; sourceTree = "<group>"; };
+		467FE3F11C2C4F9B007D260F /* glui_separator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glui_separator.cpp; path = "glui-routines/glui_separator.cpp"; sourceTree = "<group>"; };
+		467FE3F21C2C4F9B007D260F /* glui_spinner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glui_spinner.cpp; path = "glui-routines/glui_spinner.cpp"; sourceTree = "<group>"; };
+		467FE3F31C2C4F9B007D260F /* glui_statictext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glui_statictext.cpp; path = "glui-routines/glui_statictext.cpp"; sourceTree = "<group>"; };
+		467FE3F41C2C4F9B007D260F /* glui_string.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glui_string.cpp; path = "glui-routines/glui_string.cpp"; sourceTree = "<group>"; };
+		467FE3F51C2C4F9B007D260F /* glui_textbox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glui_textbox.cpp; path = "glui-routines/glui_textbox.cpp"; sourceTree = "<group>"; };
+		467FE3F61C2C4F9B007D260F /* glui_translation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glui_translation.cpp; path = "glui-routines/glui_translation.cpp"; sourceTree = "<group>"; };
+		467FE3F71C2C4F9B007D260F /* glui_tree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glui_tree.cpp; path = "glui-routines/glui_tree.cpp"; sourceTree = "<group>"; };
+		467FE3F81C2C4F9B007D260F /* glui_treepanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glui_treepanel.cpp; path = "glui-routines/glui_treepanel.cpp"; sourceTree = "<group>"; };
+		467FE3F91C2C4F9B007D260F /* glui_window.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glui_window.cpp; path = "glui-routines/glui_window.cpp"; sourceTree = "<group>"; };
+		467FE3FA1C2C4F9B007D260F /* glui.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glui.cpp; path = "glui-routines/glui.cpp"; sourceTree = "<group>"; };
+		467FE3FB1C2C4F9B007D260F /* quaternion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = quaternion.cpp; path = "glui-routines/quaternion.cpp"; sourceTree = "<group>"; };
+		468120D0222597CD00926B96 /* DialogFolder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DialogFolder.cpp; path = MainSource/DialogFolder.cpp; sourceTree = "<group>"; };
+		468120D1222597CE00926B96 /* DialogFolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DialogFolder.h; path = MainSource/DialogFolder.h; sourceTree = "<group>"; };
+		4686063522028C1F0078D9F2 /* DialogRadio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DialogRadio.cpp; sourceTree = "<group>"; };
+		4686063622028C1F0078D9F2 /* DialogRadio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DialogRadio.h; sourceTree = "<group>"; };
+		4686063722028C1F0078D9F2 /* Radio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Radio.h; sourceTree = "<group>"; };
+		4686063822028C1F0078D9F2 /* Radio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Radio.cpp; sourceTree = "<group>"; };
+		468D261A2238A04D005BE154 /* RecordIQ.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RecordIQ.cpp; path = MainSource/RecordIQ.cpp; sourceTree = "<group>"; };
+		468D261B2238A04D005BE154 /* RecordIQ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RecordIQ.h; path = MainSource/RecordIQ.h; sourceTree = "<group>"; };
+		46B4EB182212570900041F98 /* Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Utilities.h; path = MainSource/Utilities.h; sourceTree = "<group>"; };
+		46B4EB192212570900041F98 /* cMalloc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cMalloc.c; path = MainSource/cMalloc.c; sourceTree = "<group>"; };
+		46B4EB1A2212570900041F98 /* Utilities.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Utilities.c; path = MainSource/Utilities.c; sourceTree = "<group>"; };
+		46B645EF22126D5500D31890 /* Matrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Matrix.h; path = CExpress/Matrix.h; sourceTree = "<group>"; };
+		46C36C51222596D90045691F /* DialogSave.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DialogSave.cpp; path = MainSource/DialogSave.cpp; sourceTree = "<group>"; };
+		46CE01A32212597700140F6C /* SceneList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SceneList.h; path = MainSource/SceneList.h; sourceTree = "<group>"; };
+		46CE01A42212597700140F6C /* SceneList.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SceneList.c; path = MainSource/SceneList.c; sourceTree = "<group>"; };
+		46CE01A6221259BF00140F6C /* CWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CWindow.cpp; path = Classes/CWindow.cpp; sourceTree = "<group>"; };
+		46CE01A7221259BF00140F6C /* CWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CWindow.h; path = Classes/CWindow.h; sourceTree = "<group>"; };
+		46CE01A922125C8400140F6C /* FFT2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = FFT2.c; path = CExpress/FFT2.c; sourceTree = "<group>"; };
+		46CE01AA22125C8400140F6C /* Utilities2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Utilities2.c; path = CExpress/Utilities2.c; sourceTree = "<group>"; };
+		46CE01AB22125C8400140F6C /* Utilities2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Utilities2.h; path = CExpress/Utilities2.h; sourceTree = "<group>"; };
+		46CE01AE22125CF000140F6C /* fastfir.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fastfir.cpp; path = Classes/fastfir.cpp; sourceTree = "<group>"; };
+		46CE01AF22125CF000140F6C /* fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fft.h; path = Classes/fft.h; sourceTree = "<group>"; };
+		46CE01B022125CF000140F6C /* fastfir.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fastfir.h; path = Classes/fastfir.h; sourceTree = "<group>"; };
+		46CE01B122125CF000140F6C /* fft.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fft.cpp; path = Classes/fft.cpp; sourceTree = "<group>"; };
+		46CE01B422125D8400140F6C /* Scene.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Scene.c; path = MainSource/Scene.c; sourceTree = "<group>"; };
+		46CE01B522125D8400140F6C /* Scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Scene.h; path = MainSource/Scene.h; sourceTree = "<group>"; };
+		46CE01B722125E0400140F6C /* fir.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fir.cpp; path = MainSource/fir.cpp; sourceTree = "<group>"; };
+		46CE01B822125E0400140F6C /* fir.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fir.h; path = MainSource/fir.h; sourceTree = "<group>"; };
+		46CE01BD22125E9100140F6C /* mThread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mThread.c; path = MainSource/mThread.c; sourceTree = "<group>"; };
+		46CE01BE22125E9100140F6C /* mThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mThread.h; path = MainSource/mThread.h; sourceTree = "<group>"; };
+		46CE01C022125F3000140F6C /* Getpalette.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Getpalette.c; path = MainSource/Getpalette.c; sourceTree = "<group>"; };
+		46CE01C2221260BB00140F6C /* QuitDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = QuitDialog.cpp; path = MainSource/QuitDialog.cpp; sourceTree = "<group>"; };
+		46CE01C3221260BB00140F6C /* QuitDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QuitDialog.h; path = MainSource/QuitDialog.h; sourceTree = "<group>"; };
+		46CE01C52212632700140F6C /* sceneDisplay.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sceneDisplay.c; path = MainSource/sceneDisplay.c; sourceTree = "<group>"; };
+		46CE01C62212632700140F6C /* sceneDisplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sceneDisplay.h; path = MainSource/sceneDisplay.h; sourceTree = "<group>"; };
+		46CE01C8221265AC00140F6C /* CLines.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CLines.cpp; path = Classes/CLines.cpp; sourceTree = "<group>"; };
+		46CE01C9221265AC00140F6C /* CLines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CLines.h; path = Classes/CLines.h; sourceTree = "<group>"; };
+		46CE01CB221265FA00140F6C /* ClinesPlotAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClinesPlotAttributes.h; path = Classes/ClinesPlotAttributes.h; sourceTree = "<group>"; };
+		46CE01CC221265FA00140F6C /* ClinesPlotAttributes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ClinesPlotAttributes.cpp; path = Classes/ClinesPlotAttributes.cpp; sourceTree = "<group>"; };
+		46CE01CD221265FA00140F6C /* ClinesAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClinesAttributes.h; path = Classes/ClinesAttributes.h; sourceTree = "<group>"; };
+		46CE01CE221265FA00140F6C /* ClinesAttributes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ClinesAttributes.cpp; path = Classes/ClinesAttributes.cpp; sourceTree = "<group>"; };
+		46CE01CF221265FA00140F6C /* CLinesPlotBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CLinesPlotBox.cpp; path = Classes/CLinesPlotBox.cpp; sourceTree = "<group>"; };
+		46CE01D0221265FA00140F6C /* CLinesPlotBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CLinesPlotBox.h; path = Classes/CLinesPlotBox.h; sourceTree = "<group>"; };
+		46CE01D1221265FB00140F6C /* CLInesPlotLabels.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CLInesPlotLabels.cpp; path = Classes/CLInesPlotLabels.cpp; sourceTree = "<group>"; };
+		46CE01D2221265FB00140F6C /* CLInesPlotLabels.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CLInesPlotLabels.h; path = Classes/CLInesPlotLabels.h; sourceTree = "<group>"; };
+		46CE01D72212669200140F6C /* GridPlot.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GridPlot.c; path = DrawFindPointHistory/GridPlot.c; sourceTree = "<group>"; };
+		46CE01D82212669200140F6C /* GridPlot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GridPlot.h; path = DrawFindPointHistory/GridPlot.h; sourceTree = "<group>"; };
+		46CE01DD22126AD100140F6C /* BackgroundQ.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = BackgroundQ.c; path = MainSource/BackgroundQ.c; sourceTree = "<group>"; };
+		46CE01DE22126AD100140F6C /* BackgroundQ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BackgroundQ.h; path = MainSource/BackgroundQ.h; sourceTree = "<group>"; };
+		46E13AD01C2C48AF007FF424 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = MainSource/main.cpp; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4675AE951C2C43DE00FE0144 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				46371C981D12F3CC002D3788 /* libsndfile.a in Frameworks */,
+				46371C8E1D12F337002D3788 /* OpenGL.framework in Frameworks */,
+				46371C8A1D12F31B002D3788 /* OpenAL.framework in Frameworks */,
+				46371C8C1D12F32A002D3788 /* OpenCL.framework in Frameworks */,
+				46371C901D12F384002D3788 /* libdf.a in Frameworks */,
+				46371C941D12F3B3002D3788 /* libGLEW.a in Frameworks */,
+				464918A220E53121008BDC72 /* libliquid.a in Frameworks */,
+				464FED0B1C2F61AB0045C705 /* libglut.3.dylib in Frameworks */,
+				46371C961D12F3C2002D3788 /* libz.a in Frameworks */,
+				46371C921D12F3A8002D3788 /* libjpeg.a in Frameworks */,
+				4664F28D1DA95E6E00BBF9EB /* libSoapySDR.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		462392851C2C5986007F6B08 /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				4664F28C1DA95E6E00BBF9EB /* libSoapySDR.dylib */,
+				464918A120E53121008BDC72 /* libliquid.a */,
+				464FED0A1C2F61AB0045C705 /* libglut.3.dylib */,
+				46371C8F1D12F384002D3788 /* libdf.a */,
+				46371C951D12F3C2002D3788 /* libz.a */,
+				46371C971D12F3CC002D3788 /* libsndfile.a */,
+				46371C931D12F3B3002D3788 /* libGLEW.a */,
+				46371C911D12F3A8002D3788 /* libjpeg.a */,
+				46371C8D1D12F337002D3788 /* OpenGL.framework */,
+				46371C8B1D12F32A002D3788 /* OpenCL.framework */,
+				46371C891D12F31B002D3788 /* OpenAL.framework */,
+			);
+			name = Library;
+			sourceTree = "<group>";
+		};
+		462A2643222845730042A6BE /* SdrFile */ = {
+			isa = PBXGroup;
+			children = (
+				4643CAC4222845F70059451C /* DialogSdrFile.cpp */,
+				4643CAC5222845F70059451C /* DialogSdrFile.h */,
+				4643CAC3222845F70059451C /* SdrFile.cpp */,
+				4643CAC2222845F70059451C /* SdrFile.h */,
+			);
+			path = SdrFile;
+			sourceTree = "<group>";
+		};
+		4634DFA71C2F92B3007E91A6 /* DrawFindPointHistory */ = {
+			isa = PBXGroup;
+			children = (
+				46CE01D72212669200140F6C /* GridPlot.c */,
+				4679A2802212722C00420A94 /* Defs.h */,
+				4679A2812212722C00420A94 /* Tools.h */,
+				46CE01D82212669200140F6C /* GridPlot.h */,
+			);
+			name = DrawFindPointHistory;
+			sourceTree = "<group>";
+		};
+		466C645822028B8300D4EAE0 /* Radio */ = {
+			isa = PBXGroup;
+			children = (
+				4616E5B62208B6A600240B9F /* smeter.cpp */,
+				4616E5B72208B6A700240B9F /* smeter.h */,
+				4686063522028C1F0078D9F2 /* DialogRadio.cpp */,
+				4686063622028C1F0078D9F2 /* DialogRadio.h */,
+				461B756D220379E400D8CBE6 /* RaceFastsdr.cpp */,
+				462FB7F3220389830028D417 /* RaceFastsdr.h */,
+				4686063822028C1F0078D9F2 /* Radio.cpp */,
+				4686063722028C1F0078D9F2 /* Radio.h */,
+			);
+			path = Radio;
+			sourceTree = "<group>";
+		};
+		4675AE8F1C2C43DD00FE0144 = {
+			isa = PBXGroup;
+			children = (
+				462A2643222845730042A6BE /* SdrFile */,
+				466C645822028B8300D4EAE0 /* Radio */,
+				4634DFA71C2F92B3007E91A6 /* DrawFindPointHistory */,
+				467FE41B1C2C5114007D260F /* Classes */,
+				46E13ACF1C2C47BC007FF424 /* MainSource */,
+				4675AE991C2C43DE00FE0144 /* Products */,
+				462392851C2C5986007F6B08 /* Library */,
+				46D57A411C2CDC9C00AE3994 /* CExpress */,
+				467FE3D81C2C4F08007D260F /* glui-routines */,
+			);
+			sourceTree = "<group>";
+		};
+		4675AE991C2C43DE00FE0144 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4675AE981C2C43DE00FE0144 /* SdrGlut */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		467FE3D81C2C4F08007D260F /* glui-routines */ = {
+			isa = PBXGroup;
+			children = (
+				467FE3D91C2C4F9B007D260F /* algebra3.cpp */,
+				467FE3DA1C2C4F9B007D260F /* algebra3.h */,
+				467FE3DB1C2C4F9B007D260F /* arcball.h */,
+				4623928E1C2C5A5A007F6B08 /* arcball.cpp */,
+				467FE3DC1C2C4F9B007D260F /* glui_add_controls.cpp */,
+				467FE3DD1C2C4F9B007D260F /* glui_bitmap_img_data.cpp */,
+				467FE3DE1C2C4F9B007D260F /* glui_bitmaps.cpp */,
+				467FE3DF1C2C4F9B007D260F /* glui_button.cpp */,
+				467FE3E01C2C4F9B007D260F /* glui_checkbox.cpp */,
+				467FE3E11C2C4F9B007D260F /* glui_column.cpp */,
+				467FE3E21C2C4F9B007D260F /* glui_commandline.cpp */,
+				467FE3E31C2C4F9B007D260F /* glui_control.cpp */,
+				467FE3E41C2C4F9B007D260F /* glui_edittext.cpp */,
+				467FE3E51C2C4F9B007D260F /* glui_filebrowser.cpp */,
+				467FE3E61C2C4F9B007D260F /* glui_internal_control.h */,
+				467FE3E71C2C4F9B007D260F /* glui_internal.h */,
+				467FE3E81C2C4F9B007D260F /* glui_list.cpp */,
+				467FE3E91C2C4F9B007D260F /* glui_listbox.cpp */,
+				467FE3EA1C2C4F9B007D260F /* glui_mouse_iaction.cpp */,
+				467FE3EB1C2C4F9B007D260F /* glui_node.cpp */,
+				467FE3EC1C2C4F9B007D260F /* glui_panel.cpp */,
+				467FE3ED1C2C4F9B007D260F /* glui_radio.cpp */,
+				467FE3EE1C2C4F9B007D260F /* glui_rollout.cpp */,
+				467FE3EF1C2C4F9B007D260F /* glui_rotation.cpp */,
+				467FE3F01C2C4F9B007D260F /* glui_scrollbar.cpp */,
+				467FE3F11C2C4F9B007D260F /* glui_separator.cpp */,
+				467FE3F21C2C4F9B007D260F /* glui_spinner.cpp */,
+				467FE3F31C2C4F9B007D260F /* glui_statictext.cpp */,
+				467FE3F41C2C4F9B007D260F /* glui_string.cpp */,
+				467FE3F51C2C4F9B007D260F /* glui_textbox.cpp */,
+				467FE3F61C2C4F9B007D260F /* glui_translation.cpp */,
+				467FE3F71C2C4F9B007D260F /* glui_tree.cpp */,
+				467FE3F81C2C4F9B007D260F /* glui_treepanel.cpp */,
+				467FE3F91C2C4F9B007D260F /* glui_window.cpp */,
+				467FE3FA1C2C4F9B007D260F /* glui.cpp */,
+				467FE3FB1C2C4F9B007D260F /* quaternion.cpp */,
+			);
+			name = "glui-routines";
+			sourceTree = "<group>";
+		};
+		467FE41B1C2C5114007D260F /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				46CE01CE221265FA00140F6C /* ClinesAttributes.cpp */,
+				46CE01CD221265FA00140F6C /* ClinesAttributes.h */,
+				46CE01CC221265FA00140F6C /* ClinesPlotAttributes.cpp */,
+				46CE01CB221265FA00140F6C /* ClinesPlotAttributes.h */,
+				46CE01CF221265FA00140F6C /* CLinesPlotBox.cpp */,
+				46CE01D0221265FA00140F6C /* CLinesPlotBox.h */,
+				46CE01D1221265FB00140F6C /* CLInesPlotLabels.cpp */,
+				46CE01D2221265FB00140F6C /* CLInesPlotLabels.h */,
+				46CE01C8221265AC00140F6C /* CLines.cpp */,
+				46CE01C9221265AC00140F6C /* CLines.h */,
+				46CE01AE22125CF000140F6C /* fastfir.cpp */,
+				46CE01B022125CF000140F6C /* fastfir.h */,
+				46CE01B122125CF000140F6C /* fft.cpp */,
+				46CE01AF22125CF000140F6C /* fft.h */,
+				46CE01A6221259BF00140F6C /* CWindow.cpp */,
+				46CE01A7221259BF00140F6C /* CWindow.h */,
+			);
+			name = Classes;
+			sourceTree = "<group>";
+		};
+		46D57A411C2CDC9C00AE3994 /* CExpress */ = {
+			isa = PBXGroup;
+			children = (
+				46CE01A922125C8400140F6C /* FFT2.c */,
+				461AB5C922126C8E001522BD /* FileList.h */,
+				46B645EF22126D5500D31890 /* Matrix.h */,
+				4672B31E22126D0D00668D72 /* Limits2.h */,
+				4644187822126CC800F625B7 /* SetFrameData.h */,
+				4644187922126CC800F625B7 /* Xappl.h */,
+				46CE01AA22125C8400140F6C /* Utilities2.c */,
+				46CE01AB22125C8400140F6C /* Utilities2.h */,
+			);
+			name = CExpress;
+			sourceTree = "<group>";
+		};
+		46E13ACF1C2C47BC007FF424 /* MainSource */ = {
+			isa = PBXGroup;
+			children = (
+				460C7DD4223960D300F9E64A /* PlayIQ.cpp */,
+				460C7DD5223960D300F9E64A /* PlayIQ.h */,
+				468D261A2238A04D005BE154 /* RecordIQ.cpp */,
+				468D261B2238A04D005BE154 /* RecordIQ.h */,
+				46268889223360BD0074B5DF /* audiolib.cpp */,
+				4626888A223360BE0074B5DF /* audiolib.h */,
+				463F2C612228E0A000B6BB7D /* agc.cpp */,
+				463F2C622228E0A000B6BB7D /* agc.h */,
+				461E83572228916B00220E94 /* DialogFileOpen.cpp */,
+				461E83562228916B00220E94 /* DialogFileOpen.h */,
+				46E13AD01C2C48AF007FF424 /* main.cpp */,
+				46CE01DD22126AD100140F6C /* BackgroundQ.c */,
+				46CE01DE22126AD100140F6C /* BackgroundQ.h */,
+				468120D0222597CD00926B96 /* DialogFolder.cpp */,
+				468120D1222597CE00926B96 /* DialogFolder.h */,
+				46C36C51222596D90045691F /* DialogSave.cpp */,
+				46CE01C2221260BB00140F6C /* QuitDialog.cpp */,
+				46CE01C52212632700140F6C /* sceneDisplay.c */,
+				46CE01C62212632700140F6C /* sceneDisplay.h */,
+				46CE01C3221260BB00140F6C /* QuitDialog.h */,
+				46CE01C022125F3000140F6C /* Getpalette.c */,
+				46CE01BD22125E9100140F6C /* mThread.c */,
+				46CE01BE22125E9100140F6C /* mThread.h */,
+				46CE01B722125E0400140F6C /* fir.cpp */,
+				46CE01B822125E0400140F6C /* fir.h */,
+				46CE01B422125D8400140F6C /* Scene.c */,
+				46CE01B522125D8400140F6C /* Scene.h */,
+				46B4EB192212570900041F98 /* cMalloc.c */,
+				46CE01A42212597700140F6C /* SceneList.c */,
+				46CE01A32212597700140F6C /* SceneList.h */,
+				46B4EB1A2212570900041F98 /* Utilities.c */,
+				46B4EB182212570900041F98 /* Utilities.h */,
+			);
+			name = MainSource;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4675AE971C2C43DE00FE0144 /* SdrGlut */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4675AE9F1C2C43DE00FE0144 /* Build configuration list for PBXNativeTarget "SdrGlut" */;
+			buildPhases = (
+				4675AE941C2C43DE00FE0144 /* Sources */,
+				4675AE951C2C43DE00FE0144 /* Frameworks */,
+				4675AE961C2C43DE00FE0144 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SdrGlut;
+			productName = SdrGlut;
+			productReference = 4675AE981C2C43DE00FE0144 /* SdrGlut */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4675AE901C2C43DD00FE0144 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0730;
+				ORGANIZATIONNAME = "Dale Ranta";
+				TargetAttributes = {
+					4675AE971C2C43DE00FE0144 = {
+						CreatedOnToolsVersion = 6.4;
+					};
+				};
+			};
+			buildConfigurationList = 4675AE931C2C43DD00FE0144 /* Build configuration list for PBXProject "SdrGlut" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 4675AE8F1C2C43DD00FE0144;
+			productRefGroup = 4675AE991C2C43DE00FE0144 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4675AE971C2C43DE00FE0144 /* SdrGlut */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4675AE941C2C43DE00FE0144 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				468D261C2238A04D005BE154 /* RecordIQ.cpp in Sources */,
+				467FE4041C2C4F9B007D260F /* glui_control.cpp in Sources */,
+				468120D2222597CE00926B96 /* DialogFolder.cpp in Sources */,
+				46CE01AD22125C8400140F6C /* Utilities2.c in Sources */,
+				461B756E220379E400D8CBE6 /* RaceFastsdr.cpp in Sources */,
+				46CE01BB22125E0500140F6C /* fir.cpp in Sources */,
+				467FE4061C2C4F9B007D260F /* glui_filebrowser.cpp in Sources */,
+				467FE4151C2C4F9B007D260F /* glui_translation.cpp in Sources */,
+				4686063922028C1F0078D9F2 /* DialogRadio.cpp in Sources */,
+				46CE01C4221260BB00140F6C /* QuitDialog.cpp in Sources */,
+				46CE01D6221265FB00140F6C /* CLInesPlotLabels.cpp in Sources */,
+				467FE4071C2C4F9B007D260F /* glui_list.cpp in Sources */,
+				467FE4181C2C4F9B007D260F /* glui_window.cpp in Sources */,
+				467FE41A1C2C4F9B007D260F /* quaternion.cpp in Sources */,
+				467FE4051C2C4F9B007D260F /* glui_edittext.cpp in Sources */,
+				467FE4171C2C4F9B007D260F /* glui_treepanel.cpp in Sources */,
+				4616E5B82208B6A700240B9F /* smeter.cpp in Sources */,
+				46CE01B322125CF000140F6C /* fft.cpp in Sources */,
+				4623928F1C2C5A5A007F6B08 /* arcball.cpp in Sources */,
+				46CE01D3221265FB00140F6C /* ClinesPlotAttributes.cpp in Sources */,
+				46CE01CA221265AC00140F6C /* CLines.cpp in Sources */,
+				467FE40C1C2C4F9B007D260F /* glui_radio.cpp in Sources */,
+				467FE4161C2C4F9B007D260F /* glui_tree.cpp in Sources */,
+				46CE01B222125CF000140F6C /* fastfir.cpp in Sources */,
+				46CE01A52212597700140F6C /* SceneList.c in Sources */,
+				467FE40A1C2C4F9B007D260F /* glui_node.cpp in Sources */,
+				467FE4101C2C4F9B007D260F /* glui_separator.cpp in Sources */,
+				46CE01AC22125C8400140F6C /* FFT2.c in Sources */,
+				467FE40B1C2C4F9B007D260F /* glui_panel.cpp in Sources */,
+				467FE3FC1C2C4F9B007D260F /* algebra3.cpp in Sources */,
+				46E13AD11C2C48AF007FF424 /* main.cpp in Sources */,
+				467FE3FD1C2C4F9B007D260F /* glui_add_controls.cpp in Sources */,
+				467FE40E1C2C4F9B007D260F /* glui_rotation.cpp in Sources */,
+				467FE4031C2C4F9B007D260F /* glui_commandline.cpp in Sources */,
+				46CE01D5221265FB00140F6C /* CLinesPlotBox.cpp in Sources */,
+				46CE01A8221259BF00140F6C /* CWindow.cpp in Sources */,
+				463F2C632228E0A000B6BB7D /* agc.cpp in Sources */,
+				4643CAC7222845F80059451C /* DialogSdrFile.cpp in Sources */,
+				467FE40F1C2C4F9B007D260F /* glui_scrollbar.cpp in Sources */,
+				46CE01D92212669200140F6C /* GridPlot.c in Sources */,
+				467FE4081C2C4F9B007D260F /* glui_listbox.cpp in Sources */,
+				467FE4011C2C4F9B007D260F /* glui_checkbox.cpp in Sources */,
+				467FE40D1C2C4F9B007D260F /* glui_rollout.cpp in Sources */,
+				467FE4191C2C4F9B007D260F /* glui.cpp in Sources */,
+				4686063A22028C1F0078D9F2 /* Radio.cpp in Sources */,
+				46CE01C122125F3000140F6C /* Getpalette.c in Sources */,
+				46C36C52222596D90045691F /* DialogSave.cpp in Sources */,
+				46CE01B622125D8400140F6C /* Scene.c in Sources */,
+				467FE4121C2C4F9B007D260F /* glui_statictext.cpp in Sources */,
+				467FE3FF1C2C4F9B007D260F /* glui_bitmaps.cpp in Sources */,
+				46B4EB1C2212570900041F98 /* Utilities.c in Sources */,
+				467FE4001C2C4F9B007D260F /* glui_button.cpp in Sources */,
+				467FE4111C2C4F9B007D260F /* glui_spinner.cpp in Sources */,
+				461E83582228916B00220E94 /* DialogFileOpen.cpp in Sources */,
+				46CE01D4221265FB00140F6C /* ClinesAttributes.cpp in Sources */,
+				467FE4141C2C4F9B007D260F /* glui_textbox.cpp in Sources */,
+				4643CAC6222845F80059451C /* SdrFile.cpp in Sources */,
+				467FE4021C2C4F9B007D260F /* glui_column.cpp in Sources */,
+				46CE01BF22125E9100140F6C /* mThread.c in Sources */,
+				467FE4131C2C4F9B007D260F /* glui_string.cpp in Sources */,
+				460C7DD6223960D300F9E64A /* PlayIQ.cpp in Sources */,
+				467FE3FE1C2C4F9B007D260F /* glui_bitmap_img_data.cpp in Sources */,
+				467FE4091C2C4F9B007D260F /* glui_mouse_iaction.cpp in Sources */,
+				4626888B223360BE0074B5DF /* audiolib.cpp in Sources */,
+				46B4EB1B2212570900041F98 /* cMalloc.c in Sources */,
+				46CE01DF22126AD100140F6C /* BackgroundQ.c in Sources */,
+				46CE01C72212632700140F6C /* sceneDisplay.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		4675AE9D1C2C43DE00FE0144 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					/usr/local/include,
+					"$(SRCROOT)/CExpress",
+					"$(SRCROOT)/glui-routines/include",
+					"$(SRCROOT)/KdTree-routines",
+					"$(SRCROOT)/MainSource",
+					"$(SRCROOT)/Classes",
+					"$(SRCROOT)/DrawFindPointHistory",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		4675AE9E1C2C43DE00FE0144 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					/usr/local/include,
+					"$(SRCROOT)/CExpress",
+					"$(SRCROOT)/glui-routines/include",
+					"$(SRCROOT)/KdTree-routines",
+					"$(SRCROOT)/MainSource",
+					"$(SRCROOT)/Classes",
+					"$(SRCROOT)/DrawFindPointHistory",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		4675AEA01C2C43DE00FE0144 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				LIBRARY_SEARCH_PATHS = (
+					/usr/local/lib,
+					/opt/X11/lib,
+					"$(PROJECT_DIR)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		4675AEA11C2C43DE00FE0144 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				LIBRARY_SEARCH_PATHS = (
+					/usr/local/lib,
+					/opt/X11/lib,
+					"$(PROJECT_DIR)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4675AE931C2C43DD00FE0144 /* Build configuration list for PBXProject "SdrGlut" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4675AE9D1C2C43DE00FE0144 /* Debug */,
+				4675AE9E1C2C43DE00FE0144 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		4675AE9F1C2C43DE00FE0144 /* Build configuration list for PBXNativeTarget "SdrGlut" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4675AEA01C2C43DE00FE0144 /* Debug */,
+				4675AEA11C2C43DE00FE0144 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 4675AE901C2C43DD00FE0144 /* Project object */;
+}

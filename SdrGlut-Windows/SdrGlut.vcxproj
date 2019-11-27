@@ -1,0 +1,444 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release64|Win32">
+      <Configuration>Release64</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release64|x64">
+      <Configuration>Release64</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{CCC8CAA4-268B-4758-81BC-D5296BFDF8EA}</ProjectGuid>
+    <RootNamespace>SdrGlut</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <ProjectName>SdrGlut</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release64|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release64|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Platform)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'">$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release64|x64'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release64|x64'">$(Platform)\$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>../Classes;../include;../CExpress;../glui-routines/include;../glui-routines;../DrawFindPointHistory;../KdTree-routines;../mShowOpenGL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;GLEW_STATIC;GLUT_NO_LIB_PRAGMA;GLUT_BUILDING_LIB;FREEGLUT_STATIC;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>winmm.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>../sdrFile;../Radio;../SdrGlut;"C:/Program Files (x86)/OpenAL 1.1 SDK/include";"C:/Program Files/PothosSDR/include";../MainSource;../Classes;../include;../CExpress;../glui-routines/include;../glui-routines;../DrawFindPointHistory;../KdTree-routines;../mShowOpenGL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;GLEW_STATIC;GLUT_NO_LIB_PRAGMA;GLUT_BUILDING_LIB;FREEGLUT_STATIC;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>pthreadVC2.lib;libliquid.lib;SoapySDR.lib;OpenAL32.lib;winmm.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>"C:/Program Files/PothosSDR/lib"; "C:/Program Files (x86)/OpenAL 1.1 SDK/libs/Win64";</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>../include;../CExpress;../glui-routines/include;../glui-routines;../DrawFindPointHistory;../KdTree-routines;../Classes;D:\GeographicLib-1.32\include;../mShowOpenGL;C:\Documents and Settings\rantad\My Documents\GeographicLib\GeographicLib-1.32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;GLEW_STATIC;GLUT_NO_LIB_PRAGMA;GLUT_BUILDING_LIB;FREEGLUT_STATIC;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalOptions>/verbose:lib %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>winmm.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>../SdrFile;../Radio;../SdrGlut;"C:Program Files (x86)/OpenAL 1.1 SDK/include";"C:/Program Files/PothosSDR/include";../MainSource;../Classes;../include;../CExpress;../glui-routines/include;../glui-routines;../DrawFindPointHistory;../KdTree-routines;../mShowOpenGL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;GLEW_STATIC;GLUT_NO_LIB_PRAGMA;GLUT_BUILDING_LIB;FREEGLUT_STATIC;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>libliquid.lib; pthreadVC2.lib;OpenAL32.lib;SoapySDR.lib;winmm.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>LIBCMT.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <TargetMachine>MachineX64</TargetMachine>
+      <AdditionalLibraryDirectories>"C:/Program Files/PothosSDR/lib";"C:Program Files (x86)/OpenAL 1.1 SDK/libs/Win64";</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>..\..\..\Library\include;../CExpress;../glui-routines/include;../glui-routines;../DrawFindPointHistory;../KdTree-routines;../mShowOpenGL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>..\..\..\Library\lib\jpeg32.lib;..\..\..\Library\lib\glew32.lib;..\..\..\Library\lib\hdf32.lib;..\..\..\Library\lib\zlib32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>LIBCMT.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release64|x64'">
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>../Glut;../include;../CExpress;../glui-routines/include;../glui-routines;../DrawFindPointHistory;../KdTree-routines;../mShowOpenGL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;GLEW_STATIC;GLUT_NO_LIB_PRAGMA;GLUT_BUILDING_LIB;FREEGLUT_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalOptions>/verbose:lib %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>..\..\..\Library\lib\jpeg64.lib;..\..\..\Library\lib\glew64.lib;..\..\..\Library\lib\hdf64.lib;..\..\..\Library\lib\zlib64.lib;winmm.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <TargetMachine>MachineX64</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\CExpress\BatchFile.h" />
+    <ClInclude Include="..\CExpress\uFiles.h" />
+    <ClInclude Include="..\Classes\CLines.h" />
+    <ClInclude Include="..\Classes\ClinesAttributes.h" />
+    <ClInclude Include="..\Classes\CLinesPlotBox.h" />
+    <ClInclude Include="..\Classes\CLInesPlotLabels.h" />
+    <ClInclude Include="..\Classes\Contours.h" />
+    <ClInclude Include="..\KdTree-routines\Defs.h" />
+    <ClInclude Include="..\KdTree-routines\Tools.h" />
+    <ClInclude Include="..\MainSource\audiolib.h" />
+    <ClInclude Include="..\MainSource\BackgroundQ.h" />
+    <ClInclude Include="..\MainSource\CreateBackDrop.h" />
+    <ClInclude Include="..\MainSource\datatypes.h" />
+    <ClInclude Include="..\MainSource\DialogFileOpen.h" />
+    <ClInclude Include="..\MainSource\DialogFireBall.h" />
+    <ClInclude Include="..\MainSource\DialogFolder.h" />
+    <ClInclude Include="..\MainSource\DialogOpacity.h" />
+    <ClInclude Include="..\MainSource\DialogOverWrite.h" />
+    <ClInclude Include="..\MainSource\DialogPreferences.h" />
+    <ClInclude Include="..\MainSource\DialogRangeData.h" />
+    <ClInclude Include="..\MainSource\DialogRecipe.h" />
+    <ClInclude Include="..\MainSource\DialogSave.h" />
+    <ClInclude Include="..\MainSource\DialogView.h" />
+    <ClInclude Include="..\MainSource\DialogViewFactorTests.h" />
+    <ClInclude Include="..\MainSource\DrawPalette.h" />
+    <ClInclude Include="..\MainSource\FireBall.h" />
+    <ClInclude Include="..\MainSource\firstFile.h" />
+    <ClInclude Include="..\MainSource\LoadFiles.h" />
+    <ClInclude Include="..\MainSource\mThread.h" />
+    <ClInclude Include="..\MainSource\paletteDraw.h" />
+    <ClInclude Include="..\MainSource\PlayIQ.h" />
+    <ClInclude Include="..\MainSource\QuitDialog.h" />
+    <ClInclude Include="..\MainSource\ReadFiles.h" />
+    <ClInclude Include="..\MainSource\ReadGeom.h" />
+    <ClInclude Include="..\MainSource\ReadSTLFiles.h" />
+    <ClInclude Include="..\MainSource\RecordIQ.h" />
+    <ClInclude Include="..\MainSource\ReDrawVolumetric.h" />
+    <ClInclude Include="..\MainSource\Scene.h" />
+    <ClInclude Include="..\MainSource\SceneBatch.h" />
+    <ClInclude Include="..\MainSource\sceneDisplay.h" />
+    <ClInclude Include="..\MainSource\SceneList.h" />
+    <ClInclude Include="..\MainSource\ShowGLSL.h" />
+    <ClInclude Include="..\MainSource\uAttributes.h" />
+    <ClInclude Include="..\MainSource\ulibTypes.h" />
+    <ClInclude Include="..\MainSource\Utilities.h" />
+    <ClInclude Include="..\MainSource\ViewFactorTests.h" />
+    <ClInclude Include="..\MainSource\WriteJpeg.h" />
+    <ClInclude Include="..\glui-routines\algebra3.h" />
+    <ClInclude Include="..\glui-routines\arcball.h" />
+    <ClInclude Include="..\glui-routines\glui_internal.h" />
+    <ClInclude Include="..\glui-routines\glui_internal_control.h" />
+    <ClInclude Include="..\glui-routines\quaternion.h" />
+    <ClInclude Include="..\glui-routines\viewmodel.h" />
+    <ClInclude Include="..\CExpress\File8.h" />
+    <ClInclude Include="..\CExpress\FileList.h" />
+    <ClInclude Include="..\CExpress\Limits2.h" />
+    <ClInclude Include="..\CExpress\Message.h" />
+    <ClInclude Include="..\CExpress\SetFrameData.h" />
+    <ClInclude Include="..\CExpress\Utilities2.h" />
+    <ClInclude Include="..\CExpress\Xappl.h" />
+    <ClInclude Include="..\DrawFindPointHistory\DrawFindPointHistory.h" />
+    <ClInclude Include="..\DrawFindPointHistory\GridPlot.h" />
+    <ClInclude Include="..\DrawFindPointHistory\lineAttributes.h" />
+    <ClInclude Include="..\DrawFindPointHistory\Linedata.h" />
+    <ClInclude Include="..\DrawFindPointHistory\paletteDraw.h" />
+    <ClInclude Include="..\DrawFindPointHistory\PlotAttributes.h" />
+    <ClInclude Include="..\DrawFindPointHistory\pointTimeHistory.h" />
+    <ClInclude Include="..\..\Library\include\jpeglib.h" />
+    <ClInclude Include="..\Radio\DialogRadio.h" />
+    <ClInclude Include="..\Radio\RaceFastsdr.h" />
+    <ClInclude Include="..\Radio\Radio.h" />
+    <ClInclude Include="..\Radio\smeter.h" />
+    <ClInclude Include="..\Glut\glutbitmap.h" />
+    <ClInclude Include="..\Glut\glutint.h" />
+    <ClInclude Include="..\Glut\glutstroke.h" />
+    <ClInclude Include="..\Glut\glutwin32.h" />
+    <ClInclude Include="..\Glut\layerutil.h" />
+    <ClInclude Include="..\Glut\stroke.h" />
+    <ClInclude Include="..\Glut\win32_glx.h" />
+    <ClInclude Include="..\Glut\win32_x11.h" />
+    <ClInclude Include="..\Classes\CWindow.h" />
+    <ClInclude Include="..\SdrFile\DialogSdrFile.h" />
+    <ClInclude Include="..\SdrFile\SdrFile.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Classes\CLines.cpp" />
+    <ClCompile Include="..\Classes\ClinesAttributes.cpp" />
+    <ClCompile Include="..\Classes\ClinesPlotAttributes.cpp" />
+    <ClCompile Include="..\Classes\CLinesPlotBox.cpp" />
+    <ClCompile Include="..\Classes\CLInesPlotLabels.cpp" />
+    <ClCompile Include="..\MainSource\audiolib.cpp" />
+    <ClCompile Include="..\MainSource\BackgroundQ.c" />
+    <ClCompile Include="..\MainSource\cMalloc.c" />
+    <ClCompile Include="..\MainSource\DialogFileOpen.cpp" />
+    <ClCompile Include="..\MainSource\DialogFolder.cpp" />
+    <ClCompile Include="..\MainSource\DialogSave.cpp" />
+    <ClCompile Include="..\MainSource\Getpalette.c" />
+    <ClCompile Include="..\MainSource\main.cpp" />
+    <ClCompile Include="..\MainSource\mThread.c" />
+    <ClCompile Include="..\MainSource\PlayIQ.cpp" />
+    <ClCompile Include="..\MainSource\QuitDialog.cpp" />
+    <ClCompile Include="..\MainSource\RecordIQ.cpp" />
+    <ClCompile Include="..\MainSource\Scene.c" />
+    <ClCompile Include="..\MainSource\sceneDisplay.c" />
+    <ClCompile Include="..\MainSource\SceneList.c" />
+    <ClCompile Include="..\MainSource\Utilities.c" />
+    <ClCompile Include="..\glui-routines\algebra3.cpp" />
+    <ClCompile Include="..\glui-routines\arcball.cpp" />
+    <ClCompile Include="..\glui-routines\glui.cpp" />
+    <ClCompile Include="..\glui-routines\glui_add_controls.cpp" />
+    <ClCompile Include="..\glui-routines\glui_bitmap_img_data.cpp" />
+    <ClCompile Include="..\glui-routines\glui_bitmaps.cpp" />
+    <ClCompile Include="..\glui-routines\glui_button.cpp" />
+    <ClCompile Include="..\glui-routines\glui_checkbox.cpp" />
+    <ClCompile Include="..\glui-routines\glui_column.cpp" />
+    <ClCompile Include="..\glui-routines\glui_commandline.cpp" />
+    <ClCompile Include="..\glui-routines\glui_control.cpp" />
+    <ClCompile Include="..\glui-routines\glui_edittext.cpp" />
+    <ClCompile Include="..\glui-routines\glui_filebrowser.cpp" />
+    <ClCompile Include="..\glui-routines\glui_list.cpp" />
+    <ClCompile Include="..\glui-routines\glui_listbox.cpp" />
+    <ClCompile Include="..\glui-routines\glui_mouse_iaction.cpp" />
+    <ClCompile Include="..\glui-routines\glui_node.cpp" />
+    <ClCompile Include="..\glui-routines\glui_panel.cpp" />
+    <ClCompile Include="..\glui-routines\glui_radio.cpp" />
+    <ClCompile Include="..\glui-routines\glui_rollout.cpp" />
+    <ClCompile Include="..\glui-routines\glui_rotation.cpp" />
+    <ClCompile Include="..\glui-routines\glui_scrollbar.cpp" />
+    <ClCompile Include="..\glui-routines\glui_separator.cpp" />
+    <ClCompile Include="..\glui-routines\glui_spinner.cpp" />
+    <ClCompile Include="..\glui-routines\glui_statictext.cpp" />
+    <ClCompile Include="..\glui-routines\glui_string.cpp" />
+    <ClCompile Include="..\glui-routines\glui_textbox.cpp" />
+    <ClCompile Include="..\glui-routines\glui_translation.cpp" />
+    <ClCompile Include="..\glui-routines\glui_tree.cpp" />
+    <ClCompile Include="..\glui-routines\glui_treepanel.cpp" />
+    <ClCompile Include="..\glui-routines\glui_window.cpp" />
+    <ClCompile Include="..\glui-routines\quaternion.cpp" />
+    <ClCompile Include="..\glui-routines\viewmodel.cpp" />
+    <ClCompile Include="..\CExpress\FFT2.c" />
+    <ClCompile Include="..\CExpress\Utilities2.c" />
+    <ClCompile Include="..\DrawFindPointHistory\GridPlot.c" />
+    <ClCompile Include="..\Radio\DialogRadio.cpp" />
+    <ClCompile Include="..\Radio\RaceFastsdr.cpp" />
+    <ClCompile Include="..\Radio\Radio.cpp" />
+    <ClCompile Include="..\Radio\smeter.cpp" />
+    <ClCompile Include="..\Glew\glew.c" />
+    <ClCompile Include="..\Glut\glut_8x13.c" />
+    <ClCompile Include="..\Glut\glut_9x15.c" />
+    <ClCompile Include="..\Glut\glut_bitmap.c" />
+    <ClCompile Include="..\Glut\glut_bwidth.c" />
+    <ClCompile Include="..\Glut\glut_cindex.c" />
+    <ClCompile Include="..\Glut\glut_cmap.c" />
+    <ClCompile Include="..\Glut\glut_cursor.c" />
+    <ClCompile Include="..\Glut\glut_dials.c" />
+    <ClCompile Include="..\Glut\glut_dstr.c" />
+    <ClCompile Include="..\Glut\glut_event.c" />
+    <ClCompile Include="..\Glut\glut_ext.c" />
+    <ClCompile Include="..\Glut\glut_fcb.c" />
+    <ClCompile Include="..\Glut\glut_fullscrn.c" />
+    <ClCompile Include="..\Glut\glut_gamemode.c" />
+    <ClCompile Include="..\Glut\glut_get.c" />
+    <ClCompile Include="..\Glut\glut_glxext.c" />
+    <ClCompile Include="..\Glut\glut_hel10.c" />
+    <ClCompile Include="..\Glut\glut_hel12.c" />
+    <ClCompile Include="..\Glut\glut_hel18.c" />
+    <ClCompile Include="..\Glut\glut_init.c" />
+    <ClCompile Include="..\Glut\glut_input.c" />
+    <ClCompile Include="..\Glut\glut_joy.c" />
+    <ClCompile Include="..\Glut\glut_key.c" />
+    <ClCompile Include="..\Glut\glut_keyctrl.c" />
+    <ClCompile Include="..\Glut\glut_keyup.c" />
+    <ClCompile Include="..\Glut\glut_mesa.c" />
+    <ClCompile Include="..\Glut\glut_modifier.c" />
+    <ClCompile Include="..\Glut\glut_mroman.c" />
+    <ClCompile Include="..\Glut\glut_overlay.c" />
+    <ClCompile Include="..\Glut\glut_roman.c" />
+    <ClCompile Include="..\Glut\glut_shapes.c" />
+    <ClCompile Include="..\Glut\glut_space.c" />
+    <ClCompile Include="..\Glut\glut_stroke.c" />
+    <ClCompile Include="..\Glut\glut_swap.c" />
+    <ClCompile Include="..\Glut\glut_swidth.c" />
+    <ClCompile Include="..\Glut\glut_tablet.c" />
+    <ClCompile Include="..\Glut\glut_teapot.c" />
+    <ClCompile Include="..\Glut\glut_tr10.c" />
+    <ClCompile Include="..\Glut\glut_tr24.c" />
+    <ClCompile Include="..\Glut\glut_util.c" />
+    <ClCompile Include="..\Glut\glut_vidresize.c" />
+    <ClCompile Include="..\Glut\glut_warp.c" />
+    <ClCompile Include="..\Glut\glut_win.c" />
+    <ClCompile Include="..\Glut\glut_winmisc.c" />
+    <ClCompile Include="..\Glut\win32_glx.c" />
+    <ClCompile Include="..\Glut\win32_menu.c" />
+    <ClCompile Include="..\Glut\win32_util.c" />
+    <ClCompile Include="..\Glut\win32_winproc.c" />
+    <ClCompile Include="..\Glut\win32_x11.c" />
+    <ClCompile Include="..\Classes\CWindow.cpp" />
+    <ClCompile Include="..\SdrFile\DialogSdrFile.cpp" />
+    <ClCompile Include="..\SdrFile\SdrFile.cpp" />
+    <ClCompile Include="File8-Windows.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="SdrGlut.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="SdrGlut3.ico" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

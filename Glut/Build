@@ -1,0 +1,87 @@
+rm *.o adina78GD
+i686-w64-mingw32-gfortran -O3 -std=legacy -fno-automatic -fdefault-real-8 -fdefault-integer-8  -fdefault-double-8 -c adina78a.f
+i686-w64-mingw32-gfortran -O3 -std=legacy  -fno-automatic -fdefault-real-8 -fdefault-integer-8  -fdefault-double-8 -c adina78b.f
+i686-w64-mingw32-gcc -c openms.c
+i686-w64-mingw32-gfortran   -fno-automatic -fdefault-real-8 -fdefault-integer-8  -fdefault-double-8 -o adina78GD adina78a.o adina78b.o openms.o
+mv adina78GD ~/utlib/
+rm *.o
+
+
+i686-w64-mingw32-gfortran -O3 -c sub1.f
+GLUT_NO_LIB_PRAGMA
+
+i686-w64-mingw32-g++ -O3 -c -DGLEW_STATIC -DGLUT_NO_LIB_PRAGMA -DGLUT_BUILDING_LIB -I../../Library/include *.cpp
+
+i686-w64-mingw32-g++ -O3 -c -DGLEW_STATIC -DGLUT_NO_LIB_PRAGMA -DGLUT_BUILDING_LIB -I../../Library/include *.c
+
+i686-w64-mingw32-g++ -o test.exe *.o -L../../Library/lib -lglew32 -lglut
+
+i686-w64-mingw32-g++ -I../../include -O3 -c glew.c
+
+i686-w64-mingw32-g++ -D_LIB -DGLEW_STATIC -I../../include -O3 -c glew.c
+
+i686-w64-mingw32-g++ -D_LIB -DGLEW_STATIC -I../../include -O3 -o glewinfo glewinfo.c  glew.o -lopengl32 -lGdi32 -static
+
+i686-w64-mingw32-gcc -I../Library/include -O3 -c glutbox.c
+
+i686-w64-mingw32-gcc -o glutbox.exe *.o -L"C:\Program Files\Microsoft Visual Studio 9.0\VC\lib" -lglut32 -Wl,--subsystem,windows
+
+i686-w64-mingw32-gcc -o glutbox.exe *.o -L../Library/lib -lglut32
+
+i686-w64-mingw32-gcc -D_WIN32 -DGLUT_NO_LIB_PRAGMA -DGLUT_BUILDING_LIB -I../Library/include -O3 -c glutbox.c 
+
+i686-w64-mingw32-gcc -o glutbox.exe *.o -L../Library/lib -lglut32 -Wl,--enable-stdcall-fixup
+
+i686-w64-mingw32-gcc -D_WIN32 -DGLUT_NO_LIB_PRAGMA -DGLUT_BUILDING_LIB -D_WIN32 -DAPIENTRY=__stdcall -I../Library/include -O3 -c glutbox.c 
+
+i686-w64-mingw32-gcc -o glutbox.exe *.o -L../Library/lib -lglut32
+
+i686-w64-mingw32-gcc -o glutbox.exe *.o -L../Library/lib -lglut32 -lopengl32
+
+i686-w64-mingw32-gcc -o glutbox.exe *.o -L../Library/lib -lglut32 -lopengl32 -lwinmm -lglu32
+
+i686-w64-mingw32-gcc -o glutbox.exe *.o -L../Library/lib -lglut32 -lopengl32 -lwinmm -lglu32 -lGdi32
+
+i686-w64-mingw32-gcc -o glutbox.exe *.o -L../Library/lib -lglut32 -lopengl32 -lwinmm -lglu32 -lGdi32 -lsecchk
+i686-w64-mingw32-gcc -o glutbox.exe glutbox.o -L"C:\Documents and Settings\rantad\My Documents\Glut32-mingw\GLUT\lib" -lglut32 -lopengl32 -Wl,--subsystem,windows
+
+i686-w64-mingw32-gcc -c -o glutbox.o glutbox.c -I"C:\Documents and Settings\rantad\My Documents\Glut32-mingw\GLUT\include"
+i686-w64-mingw32-gcc -o glutbox.exe glutbox.o -L"C:\Documents and Settings\rantad\My Documents\Glut32-mingw\GLUT\lib" -lglut32 -lopengl32
+
+
+i686-w64-mingw32-gcc -DWIN32 -D_WINDOWS -D_USRDLL -c *.c -I../../Library/include
+rm glutbox.o
+i686-w64-mingw32-gcc -D_WIN32 -DGLUT_NO_LIB_PRAGMA -DGLUT_BUILDING_LIB -I../include -O3 -o glutbox.exe *.o glutbox.c -lopengl32 -lwinmm -lglu32 -lGdi32
+
+i686-w64-mingw32-ar rcv libglut32.a *.o
+
+i686-w64-mingw32-gcc -D_WIN32 -DGLUT_NO_LIB_PRAGMA -DGLUT_BUILDING_LIB -I../include -O3 -o glutbox.exe  glutbox.c -lglut32 -lopengl32 -lwinmm -lglu32 -lGdi32
+
+
+i686-w64-mingw32-gcc -D_WIN32 -DGLUT_NO_LIB_PRAGMA -DGLUT_BUILDING_LIB -I../../Library/include -O3 -c  *.c
+
+i686-w64-mingw32-g++ -D_WIN32 -DGLUT_NO_LIB_PRAGMA -DGLUT_BUILDING_LIB -I../../Library/include -O3 -o split.exe  *.cpp *.o -lglut32 -lopengl32 -lwinmm -lglu32 -lGdi32
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

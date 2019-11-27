@@ -1,0 +1,5982 @@
+<PDB 3.0>
+lang c++
+
+so#1 glui-routines/glui_bitmap_img_data.cpp
+
+ro#1 operator new
+rsig ty#51
+rlink C++
+rkind ext
+rskind op
+rvirt no
+rcgen T
+
+ro#2 operator delete
+rsig ty#52
+rlink C++
+rkind ext
+rskind op
+rvirt no
+rcgen T
+
+ro#3 operator new[]
+rsig ty#53
+rlink C++
+rkind ext
+rskind op
+rvirt no
+rcgen T
+
+ro#4 operator delete[]
+rsig ty#54
+rlink C++
+rkind ext
+rskind op
+rvirt no
+rcgen T
+
+ro#5 __builtin_abort
+rsig ty#55
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#6 __builtin_abs
+rsig ty#59
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#7 __builtin_acos
+rsig ty#63
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#8 __builtin_acosf
+rsig ty#66
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#9 __builtin_acosl
+rsig ty#69
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#10 __builtin_acosh
+rsig ty#70
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#11 __builtin_acoshf
+rsig ty#71
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#12 __builtin_acoshl
+rsig ty#72
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#13 __builtin_aggregate_incoming_address
+rsig ty#73
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#14 __builtin_alloca
+rsig ty#74
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#15 __builtin_apply
+rsig ty#76
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#16 __builtin_apply_args
+rsig ty#77
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#17 __builtin_args_info
+rsig ty#78
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#18 __builtin_asin
+rsig ty#79
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#19 __builtin_asinf
+rsig ty#80
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#20 __builtin_asinl
+rsig ty#81
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#21 __builtin_asinh
+rsig ty#82
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#22 __builtin_asinhf
+rsig ty#83
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#23 __builtin_asinhl
+rsig ty#84
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#24 __builtin_atan
+rsig ty#85
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#25 __builtin_atanf
+rsig ty#86
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#26 __builtin_atanl
+rsig ty#87
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#27 __builtin_atan2
+rsig ty#88
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#28 __builtin_atan2f
+rsig ty#89
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#29 __builtin_atan2l
+rsig ty#90
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#30 __builtin_atanh
+rsig ty#91
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#31 __builtin_atanhf
+rsig ty#92
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#32 __builtin_atanhl
+rsig ty#93
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#33 __builtin_bcmp
+rsig ty#94
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#34 __builtin_bzero
+rsig ty#95
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#35 __builtin_cabs
+rsig ty#98
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#36 __builtin_cabsf
+rsig ty#99
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#37 __builtin_cabsl
+rsig ty#101
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#38 __builtin_cacos
+rsig ty#102
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#39 __builtin_cacosf
+rsig ty#103
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#40 __builtin_cacosl
+rsig ty#104
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#41 __builtin_cacosh
+rsig ty#105
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#42 __builtin_cacoshf
+rsig ty#106
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#43 __builtin_cacoshl
+rsig ty#107
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#44 __builtin_calloc
+rsig ty#108
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#45 __builtin_carg
+rsig ty#109
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#46 __builtin_cargf
+rsig ty#110
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#47 __builtin_cargl
+rsig ty#111
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#48 __builtin_casin
+rsig ty#112
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#49 __builtin_casinf
+rsig ty#113
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#50 __builtin_casinl
+rsig ty#114
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#51 __builtin_casinh
+rsig ty#115
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#52 __builtin_casinhf
+rsig ty#116
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#53 __builtin_casinhl
+rsig ty#117
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#54 __builtin_catan
+rsig ty#118
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#55 __builtin_catanf
+rsig ty#119
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#56 __builtin_catanl
+rsig ty#120
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#57 __builtin_catanh
+rsig ty#121
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#58 __builtin_catanhf
+rsig ty#122
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#59 __builtin_catanhl
+rsig ty#123
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#60 __builtin_cbrt
+rsig ty#124
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#61 __builtin_cbrtf
+rsig ty#125
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#62 __builtin_cbrtl
+rsig ty#126
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#63 __builtin_ccos
+rsig ty#127
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#64 __builtin_ccosf
+rsig ty#128
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#65 __builtin_ccosl
+rsig ty#129
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#66 __builtin_ccosh
+rsig ty#130
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#67 __builtin_ccoshf
+rsig ty#131
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#68 __builtin_ccoshl
+rsig ty#132
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#69 __builtin_ceil
+rsig ty#133
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#70 __builtin_ceilf
+rsig ty#134
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#71 __builtin_ceill
+rsig ty#135
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#72 __builtin_cexp
+rsig ty#136
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#73 __builtin_cexpf
+rsig ty#137
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#74 __builtin_cexpl
+rsig ty#138
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#75 __builtin_cimag
+rsig ty#139
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#76 __builtin_cimagf
+rsig ty#140
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#77 __builtin_cimagl
+rsig ty#141
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#78 __builtin_classify_type
+rsig ty#142
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#79 __builtin_clz
+rsig ty#143
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#80 __builtin_clzl
+rsig ty#144
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#81 __builtin_clzll
+rsig ty#146
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#82 __builtin_conj
+rsig ty#147
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#83 __builtin_conjf
+rsig ty#148
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#84 __builtin_conjl
+rsig ty#149
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#85 __builtin_constant_p
+rsig ty#150
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#86 __builtin_copysign
+rsig ty#151
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#87 __builtin_copysignf
+rsig ty#152
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#88 __builtin_copysignl
+rsig ty#153
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#89 __builtin_cos
+rsig ty#154
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#90 __builtin_cosf
+rsig ty#155
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#91 __builtin_cosl
+rsig ty#156
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#92 __builtin_cosh
+rsig ty#157
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#93 __builtin_coshf
+rsig ty#158
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#94 __builtin_coshl
+rsig ty#159
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#95 __builtin_cpow
+rsig ty#160
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#96 __builtin_cpowf
+rsig ty#161
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#97 __builtin_cpowl
+rsig ty#162
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#98 __builtin_cproj
+rsig ty#163
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#99 __builtin_cprojf
+rsig ty#164
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#100 __builtin_cprojl
+rsig ty#165
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#101 __builtin_creal
+rsig ty#166
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#102 __builtin_crealf
+rsig ty#167
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#103 __builtin_creall
+rsig ty#168
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#104 __builtin_csin
+rsig ty#169
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#105 __builtin_csinf
+rsig ty#170
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#106 __builtin_csinl
+rsig ty#171
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#107 __builtin_csinh
+rsig ty#172
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#108 __builtin_csinhf
+rsig ty#173
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#109 __builtin_csinhl
+rsig ty#174
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#110 __builtin_csqrt
+rsig ty#175
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#111 __builtin_csqrtf
+rsig ty#176
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#112 __builtin_csqrtl
+rsig ty#177
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#113 __builtin_ctan
+rsig ty#178
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#114 __builtin_ctanf
+rsig ty#179
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#115 __builtin_ctanl
+rsig ty#180
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#116 __builtin_ctanh
+rsig ty#181
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#117 __builtin_ctanhf
+rsig ty#182
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#118 __builtin_ctanhl
+rsig ty#183
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#119 __builtin_ctz
+rsig ty#184
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#120 __builtin_ctzl
+rsig ty#185
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#121 __builtin_ctzll
+rsig ty#186
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#122 __builtin_dcgettext
+rsig ty#190
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#123 __builtin_dgettext
+rsig ty#191
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#124 __builtin_drem
+rsig ty#192
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#125 __builtin_dremf
+rsig ty#193
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#126 __builtin_dreml
+rsig ty#194
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#127 __builtin_dwarf_cfa
+rsig ty#195
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#128 __builtin_dwarf_fp_regnum
+rsig ty#196
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#129 __builtin_eh_return
+rsig ty#197
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#130 __builtin_eh_return_data_regno
+rsig ty#198
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#131 __builtin_erf
+rsig ty#199
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#132 __builtin_erff
+rsig ty#200
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#133 __builtin_erfl
+rsig ty#201
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#134 __builtin_erfc
+rsig ty#202
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#135 __builtin_erfcf
+rsig ty#203
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#136 __builtin_erfcl
+rsig ty#204
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#137 __builtin_exit
+rsig ty#205
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#138 __builtin__exit
+rsig ty#206
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#139 __builtin__Exit
+rsig ty#207
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#140 __builtin_exp
+rsig ty#208
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#141 __builtin_expf
+rsig ty#209
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#142 __builtin_expl
+rsig ty#210
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#143 __builtin_exp10
+rsig ty#211
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#144 __builtin_exp10f
+rsig ty#212
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#145 __builtin_exp10l
+rsig ty#213
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#146 __builtin_exp2
+rsig ty#214
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#147 __builtin_exp2f
+rsig ty#215
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#148 __builtin_exp2l
+rsig ty#216
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#149 __builtin_expect
+rsig ty#218
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#150 __builtin_expm1
+rsig ty#219
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#151 __builtin_expm1f
+rsig ty#220
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#152 __builtin_expm1l
+rsig ty#221
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#153 __builtin_extract_return_addr
+rsig ty#222
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#154 __builtin_fabs
+rsig ty#223
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#155 __builtin_fabsf
+rsig ty#224
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#156 __builtin_fabsl
+rsig ty#225
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#157 __builtin_fdim
+rsig ty#226
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#158 __builtin_fdimf
+rsig ty#227
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#159 __builtin_fdiml
+rsig ty#228
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#160 __builtin_ffs
+rsig ty#229
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#161 __builtin_ffsl
+rsig ty#230
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#162 __builtin_ffsll
+rsig ty#231
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#163 __builtin_floor
+rsig ty#232
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#164 __builtin_floorf
+rsig ty#233
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#165 __builtin_floorl
+rsig ty#234
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#166 __builtin_fma
+rsig ty#235
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#167 __builtin_fmaf
+rsig ty#236
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#168 __builtin_fmal
+rsig ty#237
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#169 __builtin_fmax
+rsig ty#238
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#170 __builtin_fmaxf
+rsig ty#239
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#171 __builtin_fmaxl
+rsig ty#240
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#172 __builtin_fmin
+rsig ty#241
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#173 __builtin_fminf
+rsig ty#242
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#174 __builtin_fminl
+rsig ty#243
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#175 __builtin_fmod
+rsig ty#244
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#176 __builtin_fmodf
+rsig ty#245
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#177 __builtin_fmodl
+rsig ty#246
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#178 __builtin_fprintf
+rsig ty#247
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#179 __builtin_fprintf_unlocked
+rsig ty#248
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#180 __builtin_fputc
+rsig ty#249
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#181 __builtin_fputc_unlocked
+rsig ty#250
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#182 __builtin_fputs
+rsig ty#251
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#183 __builtin_fputs_unlocked
+rsig ty#252
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#184 __builtin_frame_address
+rsig ty#253
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#185 __builtin_frexp
+rsig ty#254
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#186 __builtin_frexpf
+rsig ty#255
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#187 __builtin_frexpl
+rsig ty#256
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#188 __builtin_frob_return_addr
+rsig ty#257
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#189 __builtin_fscanf
+rsig ty#258
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#190 __builtin_fwrite
+rsig ty#259
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#191 __builtin_fwrite_unlocked
+rsig ty#260
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#192 __builtin_gamma
+rsig ty#261
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#193 __builtin_gammaf
+rsig ty#262
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#194 __builtin_gammal
+rsig ty#263
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#195 __builtin_gettext
+rsig ty#264
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#196 __builtin_huge_val
+rsig ty#265
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#197 __builtin_huge_valf
+rsig ty#266
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#198 __builtin_huge_vall
+rsig ty#267
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#199 __builtin_hypot
+rsig ty#268
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#200 __builtin_hypotf
+rsig ty#269
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#201 __builtin_hypotl
+rsig ty#270
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#202 __builtin_ilogb
+rsig ty#271
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#203 __builtin_ilogbf
+rsig ty#272
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#204 __builtin_ilogbl
+rsig ty#273
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#205 __builtin_imaxabs
+rsig ty#274
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#206 __builtin_index
+rsig ty#275
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#207 __builtin_inf
+rsig ty#276
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#208 __builtin_inff
+rsig ty#277
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#209 __builtin_infl
+rsig ty#278
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#210 __builtin_init_dwarf_reg_size_table
+rsig ty#279
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#211 __builtin_isalnum
+rsig ty#280
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#212 __builtin_isalpha
+rsig ty#281
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#213 __builtin_isascii
+rsig ty#282
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#214 __builtin_isblank
+rsig ty#283
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#215 __builtin_iscntrl
+rsig ty#284
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#216 __builtin_isdigit
+rsig ty#285
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#217 __builtin_isgraph
+rsig ty#286
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#218 __builtin_isgreater
+rsig ty#287
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#219 __builtin_isgreaterequal
+rsig ty#288
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#220 __builtin_isless
+rsig ty#289
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#221 __builtin_islessequal
+rsig ty#290
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#222 __builtin_islessgreater
+rsig ty#291
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#223 __builtin_islower
+rsig ty#292
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#224 __builtin_isprint
+rsig ty#293
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#225 __builtin_ispunct
+rsig ty#294
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#226 __builtin_isspace
+rsig ty#295
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#227 __builtin_isunordered
+rsig ty#296
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#228 __builtin_isupper
+rsig ty#297
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#229 __builtin_iswalnum
+rsig ty#298
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#230 __builtin_iswalpha
+rsig ty#299
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#231 __builtin_iswblank
+rsig ty#300
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#232 __builtin_iswcntrl
+rsig ty#301
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#233 __builtin_iswdigit
+rsig ty#302
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#234 __builtin_iswgraph
+rsig ty#303
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#235 __builtin_iswlower
+rsig ty#304
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#236 __builtin_iswprint
+rsig ty#305
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#237 __builtin_iswpunct
+rsig ty#306
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#238 __builtin_iswspace
+rsig ty#307
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#239 __builtin_iswupper
+rsig ty#308
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#240 __builtin_iswxdigit
+rsig ty#309
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#241 __builtin_isxdigit
+rsig ty#310
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#242 __builtin_j0
+rsig ty#311
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#243 __builtin_j0f
+rsig ty#312
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#244 __builtin_j0l
+rsig ty#313
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#245 __builtin_j1
+rsig ty#314
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#246 __builtin_j1f
+rsig ty#315
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#247 __builtin_j1l
+rsig ty#316
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#248 __builtin_jn
+rsig ty#317
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#249 __builtin_jnf
+rsig ty#318
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#250 __builtin_jnl
+rsig ty#319
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#251 __builtin_labs
+rsig ty#320
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#252 __builtin_ldexp
+rsig ty#321
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#253 __builtin_ldexpf
+rsig ty#322
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#254 __builtin_ldexpl
+rsig ty#323
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#255 __builtin_lgamma
+rsig ty#324
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#256 __builtin_lgammaf
+rsig ty#325
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#257 __builtin_lgammal
+rsig ty#326
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#258 __builtin_llabs
+rsig ty#327
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#259 __builtin_llrint
+rsig ty#328
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#260 __builtin_llrintf
+rsig ty#329
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#261 __builtin_llrintl
+rsig ty#330
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#262 __builtin_llround
+rsig ty#331
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#263 __builtin_llroundf
+rsig ty#332
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#264 __builtin_llroundl
+rsig ty#333
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#265 __builtin_log
+rsig ty#334
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#266 __builtin_logf
+rsig ty#335
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#267 __builtin_logl
+rsig ty#336
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#268 __builtin_log10
+rsig ty#337
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#269 __builtin_log10f
+rsig ty#338
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#270 __builtin_log10l
+rsig ty#339
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#271 __builtin_log1p
+rsig ty#340
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#272 __builtin_log1pf
+rsig ty#341
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#273 __builtin_log1pl
+rsig ty#342
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#274 __builtin_log2
+rsig ty#343
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#275 __builtin_log2f
+rsig ty#344
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#276 __builtin_log2l
+rsig ty#345
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#277 __builtin_logb
+rsig ty#346
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#278 __builtin_logbf
+rsig ty#347
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#279 __builtin_logbl
+rsig ty#348
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#280 __builtin_longjmp
+rsig ty#349
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#281 __builtin_lrint
+rsig ty#350
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#282 __builtin_lrintf
+rsig ty#351
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#283 __builtin_lrintl
+rsig ty#352
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#284 __builtin_lround
+rsig ty#353
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#285 __builtin_lroundf
+rsig ty#354
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#286 __builtin_lroundl
+rsig ty#355
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#287 __builtin_malloc
+rsig ty#356
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#288 __builtin_memcmp
+rsig ty#357
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#289 __builtin_memcpy
+rsig ty#358
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#290 __builtin_mempcpy
+rsig ty#359
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#291 __builtin_memset
+rsig ty#360
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#292 __builtin_modf
+rsig ty#361
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#293 __builtin_modff
+rsig ty#362
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#294 __builtin_modfl
+rsig ty#363
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#295 __builtin_nan
+rsig ty#364
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#296 __builtin_nanf
+rsig ty#365
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#297 __builtin_nanl
+rsig ty#366
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#298 __builtin_nans
+rsig ty#367
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#299 __builtin_nansf
+rsig ty#368
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#300 __builtin_nansl
+rsig ty#369
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#301 __builtin_nearbyint
+rsig ty#370
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#302 __builtin_nearbyintf
+rsig ty#371
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#303 __builtin_nearbyintl
+rsig ty#372
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#304 __builtin_nextafter
+rsig ty#373
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#305 __builtin_nextafterf
+rsig ty#374
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#306 __builtin_nextafterl
+rsig ty#375
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#307 __builtin_next_arg
+rsig ty#376
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#308 __builtin_nexttoward
+rsig ty#377
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#309 __builtin_nexttowardf
+rsig ty#378
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#310 __builtin_nexttowardl
+rsig ty#379
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#311 __builtin_parity
+rsig ty#380
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#312 __builtin_parityl
+rsig ty#381
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#313 __builtin_parityll
+rsig ty#382
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#314 __builtin_popcount
+rsig ty#383
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#315 __builtin_popcountl
+rsig ty#384
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#316 __builtin_popcountll
+rsig ty#385
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#317 __builtin_pow
+rsig ty#386
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#318 __builtin_powf
+rsig ty#387
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#319 __builtin_powl
+rsig ty#388
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#320 __builtin_pow10
+rsig ty#389
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#321 __builtin_pow10f
+rsig ty#390
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#322 __builtin_pow10l
+rsig ty#391
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#323 __builtin_powi
+rsig ty#392
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#324 __builtin_powif
+rsig ty#393
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#325 __builtin_powil
+rsig ty#394
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#326 __builtin_prefetch
+rsig ty#395
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#327 __builtin_printf
+rsig ty#396
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#328 __builtin_printf_unlocked
+rsig ty#397
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#329 __builtin_putchar
+rsig ty#398
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#330 __builtin_putchar_unlocked
+rsig ty#399
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#331 __builtin_puts
+rsig ty#400
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#332 __builtin_puts_unlocked
+rsig ty#401
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#333 __builtin_remainder
+rsig ty#402
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#334 __builtin_remainderf
+rsig ty#403
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#335 __builtin_remainderl
+rsig ty#404
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#336 __builtin_remquo
+rsig ty#405
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#337 __builtin_remquof
+rsig ty#406
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#338 __builtin_remquol
+rsig ty#407
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#339 __builtin_return
+rsig ty#408
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#340 __builtin_return_address
+rsig ty#409
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#341 __builtin_rindex
+rsig ty#410
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#342 __builtin_rint
+rsig ty#411
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#343 __builtin_rintf
+rsig ty#412
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#344 __builtin_rintl
+rsig ty#413
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#345 __builtin_round
+rsig ty#414
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#346 __builtin_roundf
+rsig ty#415
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#347 __builtin_roundl
+rsig ty#416
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#348 __builtin_saveregs
+rsig ty#417
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#349 __builtin_scalb
+rsig ty#418
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#350 __builtin_scalbf
+rsig ty#419
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#351 __builtin_scalbl
+rsig ty#420
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#352 __builtin_scalbln
+rsig ty#421
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#353 __builtin_scalblnf
+rsig ty#422
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#354 __builtin_scalblnl
+rsig ty#423
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#355 __builtin_scalbn
+rsig ty#424
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#356 __builtin_scalbnf
+rsig ty#425
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#357 __builtin_scalbnl
+rsig ty#426
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#358 __builtin_scanf
+rsig ty#427
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#359 __builtin_setjmp
+rsig ty#428
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#360 __builtin_signbit
+rsig ty#429
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#361 __builtin_signbitf
+rsig ty#430
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#362 __builtin_signbitl
+rsig ty#431
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#363 __builtin_significand
+rsig ty#432
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#364 __builtin_significandf
+rsig ty#433
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#365 __builtin_significandl
+rsig ty#434
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#366 __builtin_sin
+rsig ty#435
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#367 __builtin_sinf
+rsig ty#436
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#368 __builtin_sinl
+rsig ty#437
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#369 __builtin_sincos
+rsig ty#438
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#370 __builtin_sincosf
+rsig ty#439
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#371 __builtin_sincosl
+rsig ty#440
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#372 __builtin_sinh
+rsig ty#441
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#373 __builtin_sinhf
+rsig ty#442
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#374 __builtin_sinhl
+rsig ty#443
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#375 __builtin_snprintf
+rsig ty#444
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#376 __builtin_sprintf
+rsig ty#445
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#377 __builtin_sqrt
+rsig ty#446
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#378 __builtin_sqrtf
+rsig ty#447
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#379 __builtin_sqrtl
+rsig ty#448
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#380 __builtin_sscanf
+rsig ty#449
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#381 __builtin_stpcpy
+rsig ty#450
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#382 __builtin_strcat
+rsig ty#451
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#383 __builtin_strchr
+rsig ty#452
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#384 __builtin_strcmp
+rsig ty#453
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#385 __builtin_strcpy
+rsig ty#454
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#386 __builtin_strcspn
+rsig ty#455
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#387 __builtin_strdup
+rsig ty#456
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#388 __builtin_strfmon
+rsig ty#457
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#389 __builtin_strlen
+rsig ty#458
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#390 __builtin_strncat
+rsig ty#459
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#391 __builtin_strncmp
+rsig ty#460
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#392 __builtin_strncpy
+rsig ty#461
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#393 __builtin_strpbrk
+rsig ty#462
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#394 __builtin_strrchr
+rsig ty#463
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#395 __builtin_strspn
+rsig ty#464
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#396 __builtin_strstr
+rsig ty#465
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#397 __builtin_tan
+rsig ty#466
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#398 __builtin_tanf
+rsig ty#467
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#399 __builtin_tanl
+rsig ty#468
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#400 __builtin_tanh
+rsig ty#469
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#401 __builtin_tanhf
+rsig ty#470
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#402 __builtin_tanhl
+rsig ty#471
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#403 __builtin_tgamma
+rsig ty#472
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#404 __builtin_tgammaf
+rsig ty#473
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#405 __builtin_tgammal
+rsig ty#474
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#406 __builtin_toascii
+rsig ty#475
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#407 __builtin_tolower
+rsig ty#476
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#408 __builtin_toupper
+rsig ty#477
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#409 __builtin_towlower
+rsig ty#478
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#410 __builtin_towupper
+rsig ty#479
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#411 __builtin_trap
+rsig ty#480
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#412 __builtin_trunc
+rsig ty#481
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#413 __builtin_truncf
+rsig ty#482
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#414 __builtin_truncl
+rsig ty#483
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#415 __builtin_unwind_init
+rsig ty#484
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#416 __builtin_vfprintf
+rsig ty#485
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#417 __builtin_vfscanf
+rsig ty#486
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#418 __builtin_vprintf
+rsig ty#487
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#419 __builtin_vscanf
+rsig ty#488
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#420 __builtin_vsnprintf
+rsig ty#489
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#421 __builtin_vsprintf
+rsig ty#490
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#422 __builtin_vsscanf
+rsig ty#491
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#423 __builtin_y0
+rsig ty#492
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#424 __builtin_y0f
+rsig ty#493
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#425 __builtin_y0l
+rsig ty#494
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#426 __builtin_y1
+rsig ty#495
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#427 __builtin_y1f
+rsig ty#496
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#428 __builtin_y1l
+rsig ty#497
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#429 __builtin_yn
+rsig ty#498
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#430 __builtin_ynf
+rsig ty#499
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ro#431 __builtin_ynl
+rsig ty#500
+rlink C
+rkind ext
+rvirt no
+rcgen T
+
+ty#2 const void *
+ykind ptr
+yptr ty#3
+
+ty#3 const void
+ykind tref
+ytref ty#4
+yqual const
+
+ty#4 void
+ykind void
+
+ty#1 void *
+ykind ptr
+yptr ty#4
+
+ty#6 __builtin_va_list
+ykind tref
+ytref ty#1
+
+ty#7 unsigned char
+ykind int
+yikind uchar
+
+ty#8 unsigned char [171]
+ykind array
+yelem ty#7
+ynelem 171
+
+ty#9 unsigned char []
+ykind array
+yelem ty#7
+ynelem 0
+
+ty#10 unsigned char [171]
+ykind array
+yelem ty#7
+ynelem 171
+
+ty#11 unsigned char []
+ykind array
+yelem ty#7
+ynelem 0
+
+ty#12 unsigned char [171]
+ykind array
+yelem ty#7
+ynelem 171
+
+ty#13 unsigned char []
+ykind array
+yelem ty#7
+ynelem 0
+
+ty#14 unsigned char [171]
+ykind array
+yelem ty#7
+ynelem 171
+
+ty#15 unsigned char []
+ykind array
+yelem ty#7
+ynelem 0
+
+ty#16 unsigned char [258]
+ykind array
+yelem ty#7
+ynelem 258
+
+ty#17 unsigned char []
+ykind array
+yelem ty#7
+ynelem 0
+
+ty#18 unsigned char [258]
+ykind array
+yelem ty#7
+ynelem 258
+
+ty#19 unsigned char []
+ykind array
+yelem ty#7
+ynelem 0
+
+ty#20 unsigned char [258]
+ykind array
+yelem ty#7
+ynelem 258
+
+ty#21 unsigned char []
+ykind array
+yelem ty#7
+ynelem 0
+
+ty#22 unsigned char [258]
+ykind array
+yelem ty#7
+ynelem 258
+
+ty#23 unsigned char []
+ykind array
+yelem ty#7
+ynelem 0
+
+ty#24 unsigned char [189]
+ykind array
+yelem ty#7
+ynelem 189
+
+ty#25 unsigned char []
+ykind array
+yelem ty#7
+ynelem 0
+
+ty#26 unsigned char [189]
+ykind array
+yelem ty#7
+ynelem 189
+
+ty#27 unsigned char []
+ykind array
+yelem ty#7
+ynelem 0
+
+ty#28 unsigned char [189]
+ykind array
+yelem ty#7
+ynelem 189
+
+ty#29 unsigned char []
+ykind array
+yelem ty#7
+ynelem 0
+
+ty#30 unsigned char [198]
+ykind array
+yelem ty#7
+ynelem 198
+
+ty#31 unsigned char []
+ykind array
+yelem ty#7
+ynelem 0
+
+ty#32 unsigned char [198]
+ykind array
+yelem ty#7
+ynelem 198
+
+ty#33 unsigned char []
+ykind array
+yelem ty#7
+ynelem 0
+
+ty#34 unsigned char [198]
+ykind array
+yelem ty#7
+ynelem 198
+
+ty#35 unsigned char []
+ykind array
+yelem ty#7
+ynelem 0
+
+ty#36 unsigned char [198]
+ykind array
+yelem ty#7
+ynelem 198
+
+ty#37 unsigned char []
+ykind array
+yelem ty#7
+ynelem 0
+
+ty#38 unsigned char [98]
+ykind array
+yelem ty#7
+ynelem 98
+
+ty#39 unsigned char []
+ykind array
+yelem ty#7
+ynelem 0
+
+ty#40 unsigned char [98]
+ykind array
+yelem ty#7
+ynelem 98
+
+ty#41 unsigned char []
+ykind array
+yelem ty#7
+ynelem 0
+
+ty#42 unsigned char [98]
+ykind array
+yelem ty#7
+ynelem 98
+
+ty#43 unsigned char []
+ykind array
+yelem ty#7
+ynelem 0
+
+ty#44 unsigned char [98]
+ykind array
+yelem ty#7
+ynelem 98
+
+ty#45 unsigned char []
+ykind array
+yelem ty#7
+ynelem 0
+
+ty#46 unsigned char [98]
+ykind array
+yelem ty#7
+ynelem 98
+
+ty#47 unsigned char []
+ykind array
+yelem ty#7
+ynelem 0
+
+ty#48 unsigned char [98]
+ykind array
+yelem ty#7
+ynelem 98
+
+ty#49 unsigned char []
+ykind array
+yelem ty#7
+ynelem 0
+
+ty#5 unsigned long
+ykind int
+yikind ulong
+
+ty#51 void *(unsigned long)
+ykind func
+yrett ty#1
+yargt ty#5 - NULL 0 0
+
+ty#52 void (void *)
+ykind func
+yrett ty#4
+yargt ty#1 - NULL 0 0
+yexcep NULL
+
+ty#53 void *(unsigned long)
+ykind func
+yrett ty#1
+yargt ty#5 - NULL 0 0
+
+ty#54 void (void *)
+ykind func
+yrett ty#4
+yargt ty#1 - NULL 0 0
+yexcep NULL
+
+ty#55 void () C
+ykind func
+yrett ty#4
+
+ty#56 int *
+ykind ptr
+yptr ty#57
+
+ty#57 int
+ykind int
+yikind int
+
+ty#59 int (int) C
+ykind func
+yrett ty#57
+yargt ty#57 - NULL 0 0
+
+ty#60 double *
+ykind ptr
+yptr ty#61
+
+ty#61 double
+ykind float
+yfkind dbl
+
+ty#63 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#64 float *
+ykind ptr
+yptr ty#65
+
+ty#65 float
+ykind float
+yfkind float
+
+ty#66 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#67 long double *
+ykind ptr
+yptr ty#62
+
+ty#62 long double
+ykind float
+yfkind longdbl
+
+ty#69 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#70 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#71 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#72 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#73 void *() C
+ykind func
+yrett ty#1
+
+ty#74 void *(unsigned long) C
+ykind func
+yrett ty#1
+yargt ty#5 - NULL 0 0
+
+ty#58 unsigned int
+ykind int
+yikind uint
+
+ty#76 void *(void *, void *, unsigned int) C
+ykind func
+yrett ty#1
+yargt ty#1 - NULL 0 0
+yargt ty#1 - NULL 0 0
+yargt ty#58 - NULL 0 0
+
+ty#77 void *() C
+ykind func
+yrett ty#1
+
+ty#78 int (int) C
+ykind func
+yrett ty#57
+yargt ty#57 - NULL 0 0
+
+ty#79 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#80 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#81 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#82 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#83 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#84 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#85 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#86 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#87 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#88 double (double, double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+yargt ty#61 - NULL 0 0
+
+ty#89 float (float, float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+yargt ty#65 - NULL 0 0
+
+ty#90 long double (long double, long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+yargt ty#62 - NULL 0 0
+
+ty#91 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#92 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#93 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#94 int (const void *, const void *, unsigned long) C
+ykind func
+yrett ty#57
+yargt ty#2 - NULL 0 0
+yargt ty#2 - NULL 0 0
+yargt ty#5 - NULL 0 0
+
+ty#95 void (void *, unsigned long) C
+ykind func
+yrett ty#4
+yargt ty#1 - NULL 0 0
+yargt ty#5 - NULL 0 0
+
+ty#96 double _Complex
+ykind NA
+
+ty#98 double (double _Complex) C
+ykind func
+yrett ty#61
+yargt ty#96 - NULL 0 0
+
+ty#68 float _Complex
+ykind NA
+
+ty#99 float (float _Complex) C
+ykind func
+yrett ty#65
+yargt ty#68 - NULL 0 0
+
+ty#97 long double _Complex
+ykind NA
+
+ty#101 long double (long double _Complex) C
+ykind func
+yrett ty#62
+yargt ty#97 - NULL 0 0
+
+ty#102 double _Complex (double _Complex) C
+ykind func
+yrett ty#96
+yargt ty#96 - NULL 0 0
+
+ty#103 float _Complex (float _Complex) C
+ykind func
+yrett ty#68
+yargt ty#68 - NULL 0 0
+
+ty#104 long double _Complex (long double _Complex) C
+ykind func
+yrett ty#97
+yargt ty#97 - NULL 0 0
+
+ty#105 double _Complex (double _Complex) C
+ykind func
+yrett ty#96
+yargt ty#96 - NULL 0 0
+
+ty#106 float _Complex (float _Complex) C
+ykind func
+yrett ty#68
+yargt ty#68 - NULL 0 0
+
+ty#107 long double _Complex (long double _Complex) C
+ykind func
+yrett ty#97
+yargt ty#97 - NULL 0 0
+
+ty#108 void *(unsigned long, unsigned long) C
+ykind func
+yrett ty#1
+yargt ty#5 - NULL 0 0
+yargt ty#5 - NULL 0 0
+
+ty#109 double (double _Complex) C
+ykind func
+yrett ty#61
+yargt ty#96 - NULL 0 0
+
+ty#110 float (float _Complex) C
+ykind func
+yrett ty#65
+yargt ty#68 - NULL 0 0
+
+ty#111 long double (long double _Complex) C
+ykind func
+yrett ty#62
+yargt ty#97 - NULL 0 0
+
+ty#112 double _Complex (double _Complex) C
+ykind func
+yrett ty#96
+yargt ty#96 - NULL 0 0
+
+ty#113 float _Complex (float _Complex) C
+ykind func
+yrett ty#68
+yargt ty#68 - NULL 0 0
+
+ty#114 long double _Complex (long double _Complex) C
+ykind func
+yrett ty#97
+yargt ty#97 - NULL 0 0
+
+ty#115 double _Complex (double _Complex) C
+ykind func
+yrett ty#96
+yargt ty#96 - NULL 0 0
+
+ty#116 float _Complex (float _Complex) C
+ykind func
+yrett ty#68
+yargt ty#68 - NULL 0 0
+
+ty#117 long double _Complex (long double _Complex) C
+ykind func
+yrett ty#97
+yargt ty#97 - NULL 0 0
+
+ty#118 double _Complex (double _Complex) C
+ykind func
+yrett ty#96
+yargt ty#96 - NULL 0 0
+
+ty#119 float _Complex (float _Complex) C
+ykind func
+yrett ty#68
+yargt ty#68 - NULL 0 0
+
+ty#120 long double _Complex (long double _Complex) C
+ykind func
+yrett ty#97
+yargt ty#97 - NULL 0 0
+
+ty#121 double _Complex (double _Complex) C
+ykind func
+yrett ty#96
+yargt ty#96 - NULL 0 0
+
+ty#122 float _Complex (float _Complex) C
+ykind func
+yrett ty#68
+yargt ty#68 - NULL 0 0
+
+ty#123 long double _Complex (long double _Complex) C
+ykind func
+yrett ty#97
+yargt ty#97 - NULL 0 0
+
+ty#124 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#125 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#126 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#127 double _Complex (double _Complex) C
+ykind func
+yrett ty#96
+yargt ty#96 - NULL 0 0
+
+ty#128 float _Complex (float _Complex) C
+ykind func
+yrett ty#68
+yargt ty#68 - NULL 0 0
+
+ty#129 long double _Complex (long double _Complex) C
+ykind func
+yrett ty#97
+yargt ty#97 - NULL 0 0
+
+ty#130 double _Complex (double _Complex) C
+ykind func
+yrett ty#96
+yargt ty#96 - NULL 0 0
+
+ty#131 float _Complex (float _Complex) C
+ykind func
+yrett ty#68
+yargt ty#68 - NULL 0 0
+
+ty#132 long double _Complex (long double _Complex) C
+ykind func
+yrett ty#97
+yargt ty#97 - NULL 0 0
+
+ty#133 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#134 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#135 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#136 double _Complex (double _Complex) C
+ykind func
+yrett ty#96
+yargt ty#96 - NULL 0 0
+
+ty#137 float _Complex (float _Complex) C
+ykind func
+yrett ty#68
+yargt ty#68 - NULL 0 0
+
+ty#138 long double _Complex (long double _Complex) C
+ykind func
+yrett ty#97
+yargt ty#97 - NULL 0 0
+
+ty#139 double (double _Complex) C
+ykind func
+yrett ty#61
+yargt ty#96 - NULL 0 0
+
+ty#140 float (float _Complex) C
+ykind func
+yrett ty#65
+yargt ty#68 - NULL 0 0
+
+ty#141 long double (long double _Complex) C
+ykind func
+yrett ty#62
+yargt ty#97 - NULL 0 0
+
+ty#142 int (...) C
+ykind func
+yrett ty#57
+yellip T
+
+ty#143 int (unsigned int) C
+ykind func
+yrett ty#57
+yargt ty#58 - NULL 0 0
+
+ty#144 int (unsigned long) C
+ykind func
+yrett ty#57
+yargt ty#5 - NULL 0 0
+
+ty#145 unsigned long long
+ykind int
+yikind ulonglong
+
+ty#146 int (unsigned long long) C
+ykind func
+yrett ty#57
+yargt ty#145 - NULL 0 0
+
+ty#147 double _Complex (double _Complex) C
+ykind func
+yrett ty#96
+yargt ty#96 - NULL 0 0
+
+ty#148 float _Complex (float _Complex) C
+ykind func
+yrett ty#68
+yargt ty#68 - NULL 0 0
+
+ty#149 long double _Complex (long double _Complex) C
+ykind func
+yrett ty#97
+yargt ty#97 - NULL 0 0
+
+ty#150 int (...) C
+ykind func
+yrett ty#57
+yellip T
+
+ty#151 double _Complex (double _Complex, double _Complex) C
+ykind func
+yrett ty#96
+yargt ty#96 - NULL 0 0
+yargt ty#96 - NULL 0 0
+
+ty#152 float _Complex (float _Complex, float _Complex) C
+ykind func
+yrett ty#68
+yargt ty#68 - NULL 0 0
+yargt ty#68 - NULL 0 0
+
+ty#153 long double _Complex (long double _Complex, long double _Complex) C
+ykind func
+yrett ty#97
+yargt ty#97 - NULL 0 0
+yargt ty#97 - NULL 0 0
+
+ty#154 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#155 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#156 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#157 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#158 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#159 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#160 double _Complex (double _Complex, double _Complex) C
+ykind func
+yrett ty#96
+yargt ty#96 - NULL 0 0
+yargt ty#96 - NULL 0 0
+
+ty#161 float _Complex (float _Complex, float _Complex) C
+ykind func
+yrett ty#68
+yargt ty#68 - NULL 0 0
+yargt ty#68 - NULL 0 0
+
+ty#162 long double _Complex (long double _Complex, long double _Complex) C
+ykind func
+yrett ty#97
+yargt ty#97 - NULL 0 0
+yargt ty#97 - NULL 0 0
+
+ty#163 double _Complex (double _Complex) C
+ykind func
+yrett ty#96
+yargt ty#96 - NULL 0 0
+
+ty#164 float _Complex (float _Complex) C
+ykind func
+yrett ty#68
+yargt ty#68 - NULL 0 0
+
+ty#165 long double _Complex (long double _Complex) C
+ykind func
+yrett ty#97
+yargt ty#97 - NULL 0 0
+
+ty#166 double (double _Complex) C
+ykind func
+yrett ty#61
+yargt ty#96 - NULL 0 0
+
+ty#167 float (float _Complex) C
+ykind func
+yrett ty#65
+yargt ty#68 - NULL 0 0
+
+ty#168 long double (long double _Complex) C
+ykind func
+yrett ty#62
+yargt ty#97 - NULL 0 0
+
+ty#169 double _Complex (double _Complex) C
+ykind func
+yrett ty#96
+yargt ty#96 - NULL 0 0
+
+ty#170 float _Complex (float _Complex) C
+ykind func
+yrett ty#68
+yargt ty#68 - NULL 0 0
+
+ty#171 long double _Complex (long double _Complex) C
+ykind func
+yrett ty#97
+yargt ty#97 - NULL 0 0
+
+ty#172 double _Complex (double _Complex) C
+ykind func
+yrett ty#96
+yargt ty#96 - NULL 0 0
+
+ty#173 float _Complex (float _Complex) C
+ykind func
+yrett ty#68
+yargt ty#68 - NULL 0 0
+
+ty#174 long double _Complex (long double _Complex) C
+ykind func
+yrett ty#97
+yargt ty#97 - NULL 0 0
+
+ty#175 double _Complex (double _Complex) C
+ykind func
+yrett ty#96
+yargt ty#96 - NULL 0 0
+
+ty#176 float _Complex (float _Complex) C
+ykind func
+yrett ty#68
+yargt ty#68 - NULL 0 0
+
+ty#177 long double _Complex (long double _Complex) C
+ykind func
+yrett ty#97
+yargt ty#97 - NULL 0 0
+
+ty#178 double _Complex (double _Complex) C
+ykind func
+yrett ty#96
+yargt ty#96 - NULL 0 0
+
+ty#179 float _Complex (float _Complex) C
+ykind func
+yrett ty#68
+yargt ty#68 - NULL 0 0
+
+ty#180 long double _Complex (long double _Complex) C
+ykind func
+yrett ty#97
+yargt ty#97 - NULL 0 0
+
+ty#181 double _Complex (double _Complex) C
+ykind func
+yrett ty#96
+yargt ty#96 - NULL 0 0
+
+ty#182 float _Complex (float _Complex) C
+ykind func
+yrett ty#68
+yargt ty#68 - NULL 0 0
+
+ty#183 long double _Complex (long double _Complex) C
+ykind func
+yrett ty#97
+yargt ty#97 - NULL 0 0
+
+ty#184 int (unsigned int) C
+ykind func
+yrett ty#57
+yargt ty#58 - NULL 0 0
+
+ty#185 int (unsigned long) C
+ykind func
+yrett ty#57
+yargt ty#5 - NULL 0 0
+
+ty#186 int (unsigned long long) C
+ykind func
+yrett ty#57
+yargt ty#145 - NULL 0 0
+
+ty#187 const char *
+ykind ptr
+yptr ty#188
+
+ty#188 const char
+ykind tref
+ytref ty#50
+yqual const
+
+ty#50 char
+ykind int
+yikind char
+
+ty#189 char *
+ykind ptr
+yptr ty#50
+
+ty#190 char *(const char *, const char *, int) C
+ykind func
+yrett ty#189
+yargt ty#187 - NULL 0 0
+yargt ty#187 - NULL 0 0
+yargt ty#57 - NULL 0 0
+
+ty#191 char *(const char *, const char *) C
+ykind func
+yrett ty#189
+yargt ty#187 - NULL 0 0
+yargt ty#187 - NULL 0 0
+
+ty#192 double (double, double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+yargt ty#61 - NULL 0 0
+
+ty#193 float (float, float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+yargt ty#65 - NULL 0 0
+
+ty#194 long double (long double, long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+yargt ty#62 - NULL 0 0
+
+ty#195 void *() C
+ykind func
+yrett ty#1
+
+ty#196 unsigned int () C
+ykind func
+yrett ty#58
+
+ty#197 void (int, void *) C
+ykind func
+yrett ty#4
+yargt ty#57 - NULL 0 0
+yargt ty#1 - NULL 0 0
+
+ty#198 int (int) C
+ykind func
+yrett ty#57
+yargt ty#57 - NULL 0 0
+
+ty#199 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#200 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#201 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#202 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#203 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#204 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#205 void (int) C
+ykind func
+yrett ty#4
+yargt ty#57 - NULL 0 0
+
+ty#206 void (int) C
+ykind func
+yrett ty#4
+yargt ty#57 - NULL 0 0
+
+ty#207 void (int) C
+ykind func
+yrett ty#4
+yargt ty#57 - NULL 0 0
+
+ty#208 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#209 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#210 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#211 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#212 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#213 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#214 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#215 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#216 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#75 long
+ykind int
+yikind long
+
+ty#218 long (long, long) C
+ykind func
+yrett ty#75
+yargt ty#75 - NULL 0 0
+yargt ty#75 - NULL 0 0
+
+ty#219 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#220 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#221 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#222 void *(void *) C
+ykind func
+yrett ty#1
+yargt ty#1 - NULL 0 0
+
+ty#223 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#224 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#225 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#226 double (double, double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+yargt ty#61 - NULL 0 0
+
+ty#227 float (float, float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+yargt ty#65 - NULL 0 0
+
+ty#228 long double (long double, long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+yargt ty#62 - NULL 0 0
+
+ty#229 int (unsigned int) C
+ykind func
+yrett ty#57
+yargt ty#58 - NULL 0 0
+
+ty#230 int (unsigned long) C
+ykind func
+yrett ty#57
+yargt ty#5 - NULL 0 0
+
+ty#231 int (unsigned long long) C
+ykind func
+yrett ty#57
+yargt ty#145 - NULL 0 0
+
+ty#232 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#233 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#234 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#235 double (double, double, double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+yargt ty#61 - NULL 0 0
+yargt ty#61 - NULL 0 0
+
+ty#236 float (float, float, float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+yargt ty#65 - NULL 0 0
+yargt ty#65 - NULL 0 0
+
+ty#237 long double (long double, long double, long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+yargt ty#62 - NULL 0 0
+yargt ty#62 - NULL 0 0
+
+ty#238 double (double, double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+yargt ty#61 - NULL 0 0
+
+ty#239 float (float, float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+yargt ty#65 - NULL 0 0
+
+ty#240 long double (long double, long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+yargt ty#62 - NULL 0 0
+
+ty#241 double (double, double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+yargt ty#61 - NULL 0 0
+
+ty#242 float (float, float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+yargt ty#65 - NULL 0 0
+
+ty#243 long double (long double, long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+yargt ty#62 - NULL 0 0
+
+ty#244 double (double, double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+yargt ty#61 - NULL 0 0
+
+ty#245 float (float, float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+yargt ty#65 - NULL 0 0
+
+ty#246 long double (long double, long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+yargt ty#62 - NULL 0 0
+
+ty#247 int (void *, const char *, ...) C
+ykind func
+yrett ty#57
+yargt ty#1 - NULL 0 0
+yargt ty#187 - NULL 0 0
+yellip T
+
+ty#248 int (void *, const char *, ...) C
+ykind func
+yrett ty#57
+yargt ty#1 - NULL 0 0
+yargt ty#187 - NULL 0 0
+yellip T
+
+ty#249 int (int, void *) C
+ykind func
+yrett ty#57
+yargt ty#57 - NULL 0 0
+yargt ty#1 - NULL 0 0
+
+ty#250 int (int, void *) C
+ykind func
+yrett ty#57
+yargt ty#57 - NULL 0 0
+yargt ty#1 - NULL 0 0
+
+ty#251 int (const char *, void *) C
+ykind func
+yrett ty#57
+yargt ty#187 - NULL 0 0
+yargt ty#1 - NULL 0 0
+
+ty#252 int (const char *, void *) C
+ykind func
+yrett ty#57
+yargt ty#187 - NULL 0 0
+yargt ty#1 - NULL 0 0
+
+ty#253 void *(unsigned int) C
+ykind func
+yrett ty#1
+yargt ty#58 - NULL 0 0
+
+ty#254 double (double, int *) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+yargt ty#56 - NULL 0 0
+
+ty#255 float (float, int *) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+yargt ty#56 - NULL 0 0
+
+ty#256 long double (long double, int *) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+yargt ty#56 - NULL 0 0
+
+ty#257 void *(void *) C
+ykind func
+yrett ty#1
+yargt ty#1 - NULL 0 0
+
+ty#258 int (void *, const char *, ...) C
+ykind func
+yrett ty#57
+yargt ty#1 - NULL 0 0
+yargt ty#187 - NULL 0 0
+yellip T
+
+ty#259 unsigned long (const void *, unsigned long, unsigned long, void *) C
+ykind func
+yrett ty#5
+yargt ty#2 - NULL 0 0
+yargt ty#5 - NULL 0 0
+yargt ty#5 - NULL 0 0
+yargt ty#1 - NULL 0 0
+
+ty#260 unsigned long (const void *, unsigned long, unsigned long, void *) C
+ykind func
+yrett ty#5
+yargt ty#2 - NULL 0 0
+yargt ty#5 - NULL 0 0
+yargt ty#5 - NULL 0 0
+yargt ty#1 - NULL 0 0
+
+ty#261 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#262 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#263 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#264 char *(const char *) C
+ykind func
+yrett ty#189
+yargt ty#187 - NULL 0 0
+
+ty#265 double () C
+ykind func
+yrett ty#61
+
+ty#266 float () C
+ykind func
+yrett ty#65
+
+ty#267 long double () C
+ykind func
+yrett ty#62
+
+ty#268 double (double, double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+yargt ty#61 - NULL 0 0
+
+ty#269 float (float, float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+yargt ty#65 - NULL 0 0
+
+ty#270 long double (long double, long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+yargt ty#62 - NULL 0 0
+
+ty#271 int (double) C
+ykind func
+yrett ty#57
+yargt ty#61 - NULL 0 0
+
+ty#272 int (float) C
+ykind func
+yrett ty#57
+yargt ty#65 - NULL 0 0
+
+ty#273 int (long double) C
+ykind func
+yrett ty#57
+yargt ty#62 - NULL 0 0
+
+ty#217 long long
+ykind int
+yikind longlong
+
+ty#274 long long (long long) C
+ykind func
+yrett ty#217
+yargt ty#217 - NULL 0 0
+
+ty#275 char *(const char *, int) C
+ykind func
+yrett ty#189
+yargt ty#187 - NULL 0 0
+yargt ty#57 - NULL 0 0
+
+ty#276 double () C
+ykind func
+yrett ty#61
+
+ty#277 float () C
+ykind func
+yrett ty#65
+
+ty#278 long double () C
+ykind func
+yrett ty#62
+
+ty#279 void (void *) C
+ykind func
+yrett ty#4
+yargt ty#1 - NULL 0 0
+
+ty#280 int (int) C
+ykind func
+yrett ty#57
+yargt ty#57 - NULL 0 0
+
+ty#281 int (int) C
+ykind func
+yrett ty#57
+yargt ty#57 - NULL 0 0
+
+ty#282 int (int) C
+ykind func
+yrett ty#57
+yargt ty#57 - NULL 0 0
+
+ty#283 int (int) C
+ykind func
+yrett ty#57
+yargt ty#57 - NULL 0 0
+
+ty#284 int (int) C
+ykind func
+yrett ty#57
+yargt ty#57 - NULL 0 0
+
+ty#285 int (int) C
+ykind func
+yrett ty#57
+yargt ty#57 - NULL 0 0
+
+ty#286 int (int) C
+ykind func
+yrett ty#57
+yargt ty#57 - NULL 0 0
+
+ty#287 int (...) C
+ykind func
+yrett ty#57
+yellip T
+
+ty#288 int (...) C
+ykind func
+yrett ty#57
+yellip T
+
+ty#289 int (...) C
+ykind func
+yrett ty#57
+yellip T
+
+ty#290 int (...) C
+ykind func
+yrett ty#57
+yellip T
+
+ty#291 int (...) C
+ykind func
+yrett ty#57
+yellip T
+
+ty#292 int (int) C
+ykind func
+yrett ty#57
+yargt ty#57 - NULL 0 0
+
+ty#293 int (int) C
+ykind func
+yrett ty#57
+yargt ty#57 - NULL 0 0
+
+ty#294 int (int) C
+ykind func
+yrett ty#57
+yargt ty#57 - NULL 0 0
+
+ty#295 int (int) C
+ykind func
+yrett ty#57
+yargt ty#57 - NULL 0 0
+
+ty#296 int (...) C
+ykind func
+yrett ty#57
+yellip T
+
+ty#297 int (int) C
+ykind func
+yrett ty#57
+yargt ty#57 - NULL 0 0
+
+ty#298 int (unsigned int) C
+ykind func
+yrett ty#57
+yargt ty#58 - NULL 0 0
+
+ty#299 int (unsigned int) C
+ykind func
+yrett ty#57
+yargt ty#58 - NULL 0 0
+
+ty#300 int (unsigned int) C
+ykind func
+yrett ty#57
+yargt ty#58 - NULL 0 0
+
+ty#301 int (unsigned int) C
+ykind func
+yrett ty#57
+yargt ty#58 - NULL 0 0
+
+ty#302 int (unsigned int) C
+ykind func
+yrett ty#57
+yargt ty#58 - NULL 0 0
+
+ty#303 int (unsigned int) C
+ykind func
+yrett ty#57
+yargt ty#58 - NULL 0 0
+
+ty#304 int (unsigned int) C
+ykind func
+yrett ty#57
+yargt ty#58 - NULL 0 0
+
+ty#305 int (unsigned int) C
+ykind func
+yrett ty#57
+yargt ty#58 - NULL 0 0
+
+ty#306 int (unsigned int) C
+ykind func
+yrett ty#57
+yargt ty#58 - NULL 0 0
+
+ty#307 int (unsigned int) C
+ykind func
+yrett ty#57
+yargt ty#58 - NULL 0 0
+
+ty#308 int (unsigned int) C
+ykind func
+yrett ty#57
+yargt ty#58 - NULL 0 0
+
+ty#309 int (unsigned int) C
+ykind func
+yrett ty#57
+yargt ty#58 - NULL 0 0
+
+ty#310 int (int) C
+ykind func
+yrett ty#57
+yargt ty#57 - NULL 0 0
+
+ty#311 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#312 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#313 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#314 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#315 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#316 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#317 double (int, double) C
+ykind func
+yrett ty#61
+yargt ty#57 - NULL 0 0
+yargt ty#61 - NULL 0 0
+
+ty#318 float (int, float) C
+ykind func
+yrett ty#65
+yargt ty#57 - NULL 0 0
+yargt ty#65 - NULL 0 0
+
+ty#319 long double (int, long double) C
+ykind func
+yrett ty#62
+yargt ty#57 - NULL 0 0
+yargt ty#62 - NULL 0 0
+
+ty#320 long (long) C
+ykind func
+yrett ty#75
+yargt ty#75 - NULL 0 0
+
+ty#321 double (double, int) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+yargt ty#57 - NULL 0 0
+
+ty#322 float (float, int) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+yargt ty#57 - NULL 0 0
+
+ty#323 long double (long double, int) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+yargt ty#57 - NULL 0 0
+
+ty#324 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#325 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#326 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#327 long long (long long) C
+ykind func
+yrett ty#217
+yargt ty#217 - NULL 0 0
+
+ty#328 long long (double) C
+ykind func
+yrett ty#217
+yargt ty#61 - NULL 0 0
+
+ty#329 long long (float) C
+ykind func
+yrett ty#217
+yargt ty#65 - NULL 0 0
+
+ty#330 long long (long double) C
+ykind func
+yrett ty#217
+yargt ty#62 - NULL 0 0
+
+ty#331 long long (double) C
+ykind func
+yrett ty#217
+yargt ty#61 - NULL 0 0
+
+ty#332 long long (float) C
+ykind func
+yrett ty#217
+yargt ty#65 - NULL 0 0
+
+ty#333 long long (long double) C
+ykind func
+yrett ty#217
+yargt ty#62 - NULL 0 0
+
+ty#334 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#335 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#336 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#337 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#338 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#339 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#340 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#341 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#342 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#343 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#344 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#345 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#346 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#347 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#348 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#349 void (void *, int) C
+ykind func
+yrett ty#4
+yargt ty#1 - NULL 0 0
+yargt ty#57 - NULL 0 0
+
+ty#350 long (double) C
+ykind func
+yrett ty#75
+yargt ty#61 - NULL 0 0
+
+ty#351 long (float) C
+ykind func
+yrett ty#75
+yargt ty#65 - NULL 0 0
+
+ty#352 long (long double) C
+ykind func
+yrett ty#75
+yargt ty#62 - NULL 0 0
+
+ty#353 long (double) C
+ykind func
+yrett ty#75
+yargt ty#61 - NULL 0 0
+
+ty#354 long (float) C
+ykind func
+yrett ty#75
+yargt ty#65 - NULL 0 0
+
+ty#355 long (long double) C
+ykind func
+yrett ty#75
+yargt ty#62 - NULL 0 0
+
+ty#356 void *(unsigned long) C
+ykind func
+yrett ty#1
+yargt ty#5 - NULL 0 0
+
+ty#357 int (const void *, const void *, unsigned long) C
+ykind func
+yrett ty#57
+yargt ty#2 - NULL 0 0
+yargt ty#2 - NULL 0 0
+yargt ty#5 - NULL 0 0
+
+ty#358 void *(void *, const void *, unsigned long) C
+ykind func
+yrett ty#1
+yargt ty#1 - NULL 0 0
+yargt ty#2 - NULL 0 0
+yargt ty#5 - NULL 0 0
+
+ty#359 void *(void *, const void *, unsigned long) C
+ykind func
+yrett ty#1
+yargt ty#1 - NULL 0 0
+yargt ty#2 - NULL 0 0
+yargt ty#5 - NULL 0 0
+
+ty#360 void *(void *, int, unsigned long) C
+ykind func
+yrett ty#1
+yargt ty#1 - NULL 0 0
+yargt ty#57 - NULL 0 0
+yargt ty#5 - NULL 0 0
+
+ty#361 double (double, double *) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+yargt ty#60 - NULL 0 0
+
+ty#362 float (float, float *) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+yargt ty#64 - NULL 0 0
+
+ty#363 long double (long double, long double *) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+yargt ty#67 - NULL 0 0
+
+ty#364 double (const char *) C
+ykind func
+yrett ty#61
+yargt ty#187 - NULL 0 0
+
+ty#365 float (const char *) C
+ykind func
+yrett ty#65
+yargt ty#187 - NULL 0 0
+
+ty#366 long double (const char *) C
+ykind func
+yrett ty#62
+yargt ty#187 - NULL 0 0
+
+ty#367 double (const char *) C
+ykind func
+yrett ty#61
+yargt ty#187 - NULL 0 0
+
+ty#368 float (const char *) C
+ykind func
+yrett ty#65
+yargt ty#187 - NULL 0 0
+
+ty#369 long double (const char *) C
+ykind func
+yrett ty#62
+yargt ty#187 - NULL 0 0
+
+ty#370 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#371 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#372 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#373 double (double, double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+yargt ty#61 - NULL 0 0
+
+ty#374 float (float, float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+yargt ty#65 - NULL 0 0
+
+ty#375 long double (long double, long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+yargt ty#62 - NULL 0 0
+
+ty#376 void *(...) C
+ykind func
+yrett ty#1
+yellip T
+
+ty#377 double (double, long double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+yargt ty#62 - NULL 0 0
+
+ty#378 float (float, long double) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+yargt ty#62 - NULL 0 0
+
+ty#379 long double (long double, long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+yargt ty#62 - NULL 0 0
+
+ty#380 int (unsigned int) C
+ykind func
+yrett ty#57
+yargt ty#58 - NULL 0 0
+
+ty#381 int (unsigned long) C
+ykind func
+yrett ty#57
+yargt ty#5 - NULL 0 0
+
+ty#382 int (unsigned long long) C
+ykind func
+yrett ty#57
+yargt ty#145 - NULL 0 0
+
+ty#383 int (unsigned int) C
+ykind func
+yrett ty#57
+yargt ty#58 - NULL 0 0
+
+ty#384 int (unsigned long) C
+ykind func
+yrett ty#57
+yargt ty#5 - NULL 0 0
+
+ty#385 int (unsigned long long) C
+ykind func
+yrett ty#57
+yargt ty#145 - NULL 0 0
+
+ty#386 double (double, double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+yargt ty#61 - NULL 0 0
+
+ty#387 float (float, float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+yargt ty#65 - NULL 0 0
+
+ty#388 long double (long double, long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+yargt ty#62 - NULL 0 0
+
+ty#389 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#390 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#391 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#392 double (double, int) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+yargt ty#57 - NULL 0 0
+
+ty#393 float (float, int) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+yargt ty#57 - NULL 0 0
+
+ty#394 long double (long double, int) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+yargt ty#57 - NULL 0 0
+
+ty#395 void (const void *, ...) C
+ykind func
+yrett ty#4
+yargt ty#2 - NULL 0 0
+yellip T
+
+ty#396 int (const char *, ...) C
+ykind func
+yrett ty#57
+yargt ty#187 - NULL 0 0
+yellip T
+
+ty#397 int (const char *, ...) C
+ykind func
+yrett ty#57
+yargt ty#187 - NULL 0 0
+yellip T
+
+ty#398 int (int) C
+ykind func
+yrett ty#57
+yargt ty#57 - NULL 0 0
+
+ty#399 int (int) C
+ykind func
+yrett ty#57
+yargt ty#57 - NULL 0 0
+
+ty#400 int (const char *) C
+ykind func
+yrett ty#57
+yargt ty#187 - NULL 0 0
+
+ty#401 int (const char *) C
+ykind func
+yrett ty#57
+yargt ty#187 - NULL 0 0
+
+ty#402 double (double, double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+yargt ty#61 - NULL 0 0
+
+ty#403 float (float, float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+yargt ty#65 - NULL 0 0
+
+ty#404 long double (long double, long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+yargt ty#62 - NULL 0 0
+
+ty#405 double (double, double, int *) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+yargt ty#61 - NULL 0 0
+yargt ty#56 - NULL 0 0
+
+ty#406 float (float, float, int *) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+yargt ty#65 - NULL 0 0
+yargt ty#56 - NULL 0 0
+
+ty#407 long double (long double, long double, int *) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+yargt ty#62 - NULL 0 0
+yargt ty#56 - NULL 0 0
+
+ty#408 void (void *) C
+ykind func
+yrett ty#4
+yargt ty#1 - NULL 0 0
+
+ty#409 void *(unsigned int) C
+ykind func
+yrett ty#1
+yargt ty#58 - NULL 0 0
+
+ty#410 char *(const char *, int) C
+ykind func
+yrett ty#189
+yargt ty#187 - NULL 0 0
+yargt ty#57 - NULL 0 0
+
+ty#411 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#412 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#413 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#414 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#415 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#416 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#417 void *() C
+ykind func
+yrett ty#1
+
+ty#418 double (double, double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+yargt ty#61 - NULL 0 0
+
+ty#419 float (float, float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+yargt ty#65 - NULL 0 0
+
+ty#420 long double (long double, long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+yargt ty#62 - NULL 0 0
+
+ty#421 double (double, long) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+yargt ty#75 - NULL 0 0
+
+ty#422 float (float, long) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+yargt ty#75 - NULL 0 0
+
+ty#423 long double (long double, long) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+yargt ty#75 - NULL 0 0
+
+ty#424 double (double, int) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+yargt ty#57 - NULL 0 0
+
+ty#425 float (float, int) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+yargt ty#57 - NULL 0 0
+
+ty#426 long double (long double, int) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+yargt ty#57 - NULL 0 0
+
+ty#427 int (const char *, ...) C
+ykind func
+yrett ty#57
+yargt ty#187 - NULL 0 0
+yellip T
+
+ty#428 int (void *) C
+ykind func
+yrett ty#57
+yargt ty#1 - NULL 0 0
+
+ty#429 int (double) C
+ykind func
+yrett ty#57
+yargt ty#61 - NULL 0 0
+
+ty#430 int (float) C
+ykind func
+yrett ty#57
+yargt ty#65 - NULL 0 0
+
+ty#431 int (long double) C
+ykind func
+yrett ty#57
+yargt ty#62 - NULL 0 0
+
+ty#432 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#433 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#434 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#435 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#436 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#437 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#438 void (double, double *, double *) C
+ykind func
+yrett ty#4
+yargt ty#61 - NULL 0 0
+yargt ty#60 - NULL 0 0
+yargt ty#60 - NULL 0 0
+
+ty#439 void (float, float *, float *) C
+ykind func
+yrett ty#4
+yargt ty#65 - NULL 0 0
+yargt ty#64 - NULL 0 0
+yargt ty#64 - NULL 0 0
+
+ty#440 void (long double, long double *, long double *) C
+ykind func
+yrett ty#4
+yargt ty#62 - NULL 0 0
+yargt ty#67 - NULL 0 0
+yargt ty#67 - NULL 0 0
+
+ty#441 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#442 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#443 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#444 int (char *, unsigned long, const char *, ...) C
+ykind func
+yrett ty#57
+yargt ty#189 - NULL 0 0
+yargt ty#5 - NULL 0 0
+yargt ty#187 - NULL 0 0
+yellip T
+
+ty#445 int (char *, const char *, ...) C
+ykind func
+yrett ty#57
+yargt ty#189 - NULL 0 0
+yargt ty#187 - NULL 0 0
+yellip T
+
+ty#446 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#447 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#448 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#449 int (const char *, const char *, ...) C
+ykind func
+yrett ty#57
+yargt ty#187 - NULL 0 0
+yargt ty#187 - NULL 0 0
+yellip T
+
+ty#450 char *(char *, const char *) C
+ykind func
+yrett ty#189
+yargt ty#189 - NULL 0 0
+yargt ty#187 - NULL 0 0
+
+ty#451 char *(char *, const char *) C
+ykind func
+yrett ty#189
+yargt ty#189 - NULL 0 0
+yargt ty#187 - NULL 0 0
+
+ty#452 char *(const char *, int) C
+ykind func
+yrett ty#189
+yargt ty#187 - NULL 0 0
+yargt ty#57 - NULL 0 0
+
+ty#453 int (const char *, const char *) C
+ykind func
+yrett ty#57
+yargt ty#187 - NULL 0 0
+yargt ty#187 - NULL 0 0
+
+ty#454 char *(char *, const char *) C
+ykind func
+yrett ty#189
+yargt ty#189 - NULL 0 0
+yargt ty#187 - NULL 0 0
+
+ty#455 unsigned long (const char *, const char *) C
+ykind func
+yrett ty#5
+yargt ty#187 - NULL 0 0
+yargt ty#187 - NULL 0 0
+
+ty#456 char *(const char *) C
+ykind func
+yrett ty#189
+yargt ty#187 - NULL 0 0
+
+ty#457 int (char *, unsigned int, const char *, ...) C
+ykind func
+yrett ty#57
+yargt ty#189 - NULL 0 0
+yargt ty#58 - NULL 0 0
+yargt ty#187 - NULL 0 0
+yellip T
+
+ty#458 unsigned int (const char *) C
+ykind func
+yrett ty#58
+yargt ty#187 - NULL 0 0
+
+ty#459 char *(char *, const char *, unsigned int) C
+ykind func
+yrett ty#189
+yargt ty#189 - NULL 0 0
+yargt ty#187 - NULL 0 0
+yargt ty#58 - NULL 0 0
+
+ty#460 int (const char *, const char *, unsigned int) C
+ykind func
+yrett ty#57
+yargt ty#187 - NULL 0 0
+yargt ty#187 - NULL 0 0
+yargt ty#58 - NULL 0 0
+
+ty#461 char *(char *, const char *, unsigned int) C
+ykind func
+yrett ty#189
+yargt ty#189 - NULL 0 0
+yargt ty#187 - NULL 0 0
+yargt ty#58 - NULL 0 0
+
+ty#462 char *(const char *, const char *) C
+ykind func
+yrett ty#189
+yargt ty#187 - NULL 0 0
+yargt ty#187 - NULL 0 0
+
+ty#463 char *(const char *, int) C
+ykind func
+yrett ty#189
+yargt ty#187 - NULL 0 0
+yargt ty#57 - NULL 0 0
+
+ty#464 unsigned int (const char *, const char *) C
+ykind func
+yrett ty#58
+yargt ty#187 - NULL 0 0
+yargt ty#187 - NULL 0 0
+
+ty#465 char *(const char *, const char *) C
+ykind func
+yrett ty#189
+yargt ty#187 - NULL 0 0
+yargt ty#187 - NULL 0 0
+
+ty#466 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#467 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#468 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#469 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#470 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#471 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#472 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#473 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#474 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#475 int (int) C
+ykind func
+yrett ty#57
+yargt ty#57 - NULL 0 0
+
+ty#476 int (int) C
+ykind func
+yrett ty#57
+yargt ty#57 - NULL 0 0
+
+ty#477 int (int) C
+ykind func
+yrett ty#57
+yargt ty#57 - NULL 0 0
+
+ty#478 unsigned int (unsigned int) C
+ykind func
+yrett ty#58
+yargt ty#58 - NULL 0 0
+
+ty#479 unsigned int (unsigned int) C
+ykind func
+yrett ty#58
+yargt ty#58 - NULL 0 0
+
+ty#480 void () C
+ykind func
+yrett ty#4
+
+ty#481 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#482 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#483 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#484 void () C
+ykind func
+yrett ty#4
+
+ty#485 int (void *, const char *, char *) C
+ykind func
+yrett ty#57
+yargt ty#1 - NULL 0 0
+yargt ty#187 - NULL 0 0
+yargt ty#189 - NULL 0 0
+
+ty#486 int (void *, const char *, char *) C
+ykind func
+yrett ty#57
+yargt ty#1 - NULL 0 0
+yargt ty#187 - NULL 0 0
+yargt ty#189 - NULL 0 0
+
+ty#487 int (const char *, char *) C
+ykind func
+yrett ty#57
+yargt ty#187 - NULL 0 0
+yargt ty#189 - NULL 0 0
+
+ty#488 int (const char *, char *) C
+ykind func
+yrett ty#57
+yargt ty#187 - NULL 0 0
+yargt ty#189 - NULL 0 0
+
+ty#489 int (char *, unsigned int, const char *, char *) C
+ykind func
+yrett ty#57
+yargt ty#189 - NULL 0 0
+yargt ty#58 - NULL 0 0
+yargt ty#187 - NULL 0 0
+yargt ty#189 - NULL 0 0
+
+ty#490 int (char *, const char *, char *) C
+ykind func
+yrett ty#57
+yargt ty#189 - NULL 0 0
+yargt ty#187 - NULL 0 0
+yargt ty#189 - NULL 0 0
+
+ty#491 int (const char *, const char *, char *) C
+ykind func
+yrett ty#57
+yargt ty#187 - NULL 0 0
+yargt ty#187 - NULL 0 0
+yargt ty#189 - NULL 0 0
+
+ty#492 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#493 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#494 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#495 double (double) C
+ykind func
+yrett ty#61
+yargt ty#61 - NULL 0 0
+
+ty#496 float (float) C
+ykind func
+yrett ty#65
+yargt ty#65 - NULL 0 0
+
+ty#497 long double (long double) C
+ykind func
+yrett ty#62
+yargt ty#62 - NULL 0 0
+
+ty#498 double (int, double) C
+ykind func
+yrett ty#61
+yargt ty#57 - NULL 0 0
+yargt ty#61 - NULL 0 0
+
+ty#499 float (int, float) C
+ykind func
+yrett ty#65
+yargt ty#57 - NULL 0 0
+yargt ty#65 - NULL 0 0
+
+ty#500 long double (int, long double) C
+ykind func
+yrett ty#62
+yargt ty#57 - NULL 0 0
+yargt ty#62 - NULL 0 0
+
+ty#100 const char [4]
+ykind array
+yelem ty#188
+ynelem 4
+
+ty#501 const char [2]
+ykind array
+yelem ty#188
+ynelem 2
+
+na#1 std
+
+ma#1 __SIGNED_CHARS__
+mkind def
+mtext #define __SIGNED_CHARS__ 1
+
+ma#2 __DATE__
+mkind def
+mtext #define __DATE__ \"Jun  6 2015\"
+
+ma#3 __TIME__
+mkind def
+mtext #define __TIME__ \"17:37:50\"
+
+ma#4 __STDC__
+mkind def
+mtext #define __STDC__ 1
+
+ma#5 __cplusplus
+mkind def
+mtext #define __cplusplus 1
+
+ma#6 _WCHAR_T
+mkind def
+mtext #define _WCHAR_T 1
+
+ma#7 _BOOL
+mkind def
+mtext #define _BOOL 1
+
+ma#8 __ARRAY_OPERATORS
+mkind def
+mtext #define __ARRAY_OPERATORS 1
+
+ma#9 __EXCEPTIONS
+mkind def
+mtext #define __EXCEPTIONS 1
+
+ma#10 __RTTI
+mkind def
+mtext #define __RTTI 1
+
+ma#11 __PLACEMENT_DELETE
+mkind def
+mtext #define __PLACEMENT_DELETE 1
+
+ma#12 __EDG_RUNTIME_USES_NAMESPACES
+mkind def
+mtext #define __EDG_RUNTIME_USES_NAMESPACES 1
+
+ma#13 __EDG_IMPLICIT_USING_STD
+mkind def
+mtext #define __EDG_IMPLICIT_USING_STD 1
+
+ma#14 __EDG__
+mkind def
+mtext #define __EDG__ 1
+
+ma#15 __EDG_VERSION__
+mkind def
+mtext #define __EDG_VERSION__ 308
+
+ma#16 __GNUC__
+mkind def
+mtext #define __GNUC__ 3
+
+ma#17 __GNUG__
+mkind def
+mtext #define __GNUG__ 3
+
+ma#18 __GNUC_MINOR__
+mkind def
+mtext #define __GNUC_MINOR__ 3
+
+ma#19 __GNUC_PATCHLEVEL__
+mkind def
+mtext #define __GNUC_PATCHLEVEL__ 0
+
+ma#20 __VERSION__
+mkind def
+mtext #define __VERSION__ \"EDG g++ 3.3 mode\"
+
+ma#21 __LINE__
+mkind def
+mtext 
+
+ma#22 __FILE__
+mkind def
+mtext 
+
+ma#23 defined
+mkind def
+mtext 
+
+ma#24 __BASE_FILE__
+mkind def
+mtext 
+
+ma#25 _Pragma
+mkind def
+mtext 
+
+ma#26 __APPLE__
+mkind def
+mtext #define __APPLE__ 1
+
+ma#27 _BIG_ENDIAN
+mkind def
+mtext #define _BIG_ENDIAN 1
+
+ma#28 __BIG_ENDIAN__
+mkind def
+mtext #define __BIG_ENDIAN__ 1
+
+ma#29 __MACH__
+mkind def
+mtext #define __MACH__ 1
+
+ma#30 _BSD_WCHAR_T_DEFINED
+mkind def
+mtext #define _BSD_WCHAR_T_DEFINED 1
+
+ma#31 PROFILING_ON
+mkind def
+mtext #define PROFILING_ON 1
+
+ma#32 TAU_GNU
+mkind def
+mtext #define TAU_GNU 1
+
+ma#33 TAU_DOT_H_LESS_HEADERS
+mkind def
+mtext #define TAU_DOT_H_LESS_HEADERS 1
+
+ma#34 TAU_MPI
+mkind def
+mtext #define TAU_MPI 1
+
+ma#35 TAU_UNIFY
+mkind def
+mtext #define TAU_UNIFY 1
+
+ma#36 TAU_MPI_THREADED
+mkind def
+mtext #define TAU_MPI_THREADED 1
+
+ma#37 TAU_MPIGREQUEST
+mkind def
+mtext #define TAU_MPIGREQUEST 1
+
+ma#38 TAU_MPIDATAREP
+mkind def
+mtext #define TAU_MPIDATAREP 1
+
+ma#39 TAU_MPIERRHANDLER
+mkind def
+mtext #define TAU_MPIERRHANDLER 1
+
+ma#40 TAU_MPICONSTCHAR
+mkind def
+mtext #define TAU_MPICONSTCHAR 1
+
+ma#41 TAU_MPIATTRFUNCTION
+mkind def
+mtext #define TAU_MPIATTRFUNCTION 1
+
+ma#42 TAU_MPITYPEEX
+mkind def
+mtext #define TAU_MPITYPEEX 1
+
+ma#43 TAU_MPIADDERROR
+mkind def
+mtext #define TAU_MPIADDERROR 1
+
+ma#44 TAU_BFD
+mkind def
+mtext #define TAU_BFD 1
+
+ma#45 TAU_MPIFILE
+mkind def
+mtext #define TAU_MPIFILE 1
+
+ma#46 HAVE_GNU_DEMANGLE
+mkind def
+mtext #define HAVE_GNU_DEMANGLE 1
+
+ma#47 TAU_SS_ALLOC_SUPPORT
+mkind def
+mtext #define TAU_SS_ALLOC_SUPPORT 1
+
+ma#48 TAU_STRSIGNAL_OK
+mkind def
+mtext #define TAU_STRSIGNAL_OK 1
+
+ma#49 NO_FORTRAN
+mkind def
+mtext #define NO_FORTRAN 1
+
+ma#50 __noinline
+mkind def
+mtext #define __noinline 
+
+ma#51 __restrict
+mkind def
+mtext #define __restrict 
+
+ma#52 SIZEOF_LONG
+mkind def
+mtext #define SIZEOF_LONG 4
+
+ma#53 Py_PYCONFIG_H
+mkind def
+mtext #define Py_PYCONFIG_H 1
+
+ma#54 HAVE_LIMITS_H
+mkind def
+mtext #define HAVE_LIMITS_H 1
+
+ma#55 PY_LONG_LONG
+mkind def
+mtext #define PY_LONG_LONG long
+
+ma#56 Py_USING_UNICODE
+mkind def
+mtext #define Py_USING_UNICODE 1
+
+ma#57 Py_UNICODE_SIZE
+mkind def
+mtext #define Py_UNICODE_SIZE 4
+
+ma#58 PDT_PARSER
+mkind def
+mtext #define PDT_PARSER 1
+
+ma#59 PDT_C_LANG
+mkind def
+mtext #define PDT_C_LANG 1
+
+ma#60 __builtin_va_list
+mkind def
+mtext #define __builtin_va_list int
+
+ma#61 _BSD_RUNE_T_DEFINED_
+mkind def
+mtext #define _BSD_RUNE_T_DEFINED_ 1
+
+ma#62 rune_t
+mkind def
+mtext #define rune_t _BSD_RUNE_T_
+
+ma#63 _BSD_WCHAR_T_DEFINED_
+mkind def
+mtext #define _BSD_WCHAR_T_DEFINED_ 1
+
+ma#64 __cplusplus
+mkind def
+mtext #define __cplusplus 1
+
+ma#65 __private_extern__
+mkind def
+mtext #define __private_extern__ extern
+
+ma#66 __NATURAL_ALIGNMENT__
+mkind def
+mtext #define __NATURAL_ALIGNMENT__ 1
+
+ma#67 __MACH__
+mkind def
+mtext #define __MACH__ 1
+
+ma#68 __BIG_ENDIAN__
+mkind def
+mtext #define __BIG_ENDIAN__ 1
+
+ma#69 __APPLE__
+mkind def
+mtext #define __APPLE__ 1
+
+ma#70 __i386__
+mkind def
+mtext #define __i386__ 1
+
+ma#71 __NATURAL_ALIGNMENT__
+mkind def
+mtext #define __NATURAL_ALIGNMENT__ 1
+
+ma#72 __MACH__
+mkind def
+mtext #define __MACH__ 1
+
+ma#73 __BIG_ENDIAN__
+mkind def
+mtext #define __BIG_ENDIAN__ 1
+
+ma#74 __APPLE__
+mkind def
+mtext #define __APPLE__ 1
+
+ma#75 __STDC__
+mkind def
+mtext #define __STDC__ 1
+
+ma#76 __APPLE_CC__
+mkind def
+mtext #define __APPLE_CC__ 926
+
+ma#77 __DYNAMIC__
+mkind def
+mtext #define __DYNAMIC__ 1
+
+ma#78 __i386__
+mkind def
+mtext #define __i386__ 1
+
+ma#79 __volatile__
+mkind def
+mtext #define __volatile__(a,__VA_ARGS__...) volatile(\"nop\")
+
+ma#80 volatile
+mkind def
+mtext #define volatile(a,__VA_ARGS__...) __volatile__(\"nop\")
+
+ma#81 __volatile
+mkind def
+mtext #define __volatile(a,__VA_ARGS__...) __volatile__(\"nop\")
+
