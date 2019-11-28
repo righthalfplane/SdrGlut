@@ -2,7 +2,7 @@
 SdrGlut is a simple software defined radio - using glut and glui for its interface.
 SdrGlut uses liquid-sdr and SoapySDR to preform the SDR calculations. The audio is handled by OpenAL.
 
-# Install on Ubuntu 18.04.3
+# Install on Ubuntu 18.04
 
 
 This is what I did to get SdrGlut running on a fresh install of Ubuntu 18.04.3
