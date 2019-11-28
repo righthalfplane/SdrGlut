@@ -34,6 +34,10 @@ git clone https://github.com/righthalfplane/SdrGlut.git
 
 cd SdrBlut
 
-make -f 
+make -f makefileUbunta
+
+./sdrglut.x
+
+
 
 
