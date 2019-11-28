@@ -4,6 +4,9 @@ SdrGlut uses liquid-sdr and SoapySDR to preform the SDR calculations. The audio 
 
 # Install on Ubuntu 18.04.3
 
+
+This is what I did to get SdrGlut running on a fresh install of Ubuntu 18.04.3
+
 sudo apt-get update
 
 sudo apt-get upgrade
@@ -32,7 +35,7 @@ cd ~/Desktop
 
 git clone https://github.com/righthalfplane/SdrGlut.git
 
-cd SdrBlut
+cd SdrGlut
 
 make -f makefileUbunta
 
