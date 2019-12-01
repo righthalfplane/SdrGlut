@@ -49,7 +49,7 @@ make -f makefileUbunta
 
 ./sdrglut.x
 
-# Install on Raspberry pi (Raspbian - SDRPlay edition)
+# Install on Raspberry pi
 
 To do the normal edition of Raspbian - follow the uBuntu instructions with -
 
