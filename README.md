@@ -64,7 +64,7 @@ make -f makefileUbunta
 
 This is what I did to get SdrGlut running on the SDRPlay verison Raspbian.
 
-The SDRPlay verison Raspbian have the SDRPlay libraries already installed.
+The SDRPlay verison Raspbian has the SDRPlay libraries already installed.
 
 
 sudo apt-get update
