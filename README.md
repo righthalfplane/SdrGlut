@@ -88,5 +88,43 @@ make -f makefileRaspbian
 ./sdrglut.x
 
 
+## added support for NetSDR -
+
+cd ~/Desktop
+
+git clone https://github.com/pothosware/SoapyNetSDR.git
+
+cd SoapyNetSDR
+
+mkidr build
+
+cd build
+
+cmake ../
+
+make -j 4
+
+sudo make install
+
+## added support for lime  -
+
+cd ~/Desktop
+
+git clone https://github.com/myriadrf/LimeSuite.git
+
+cd LimeSuite
+
+mkidr build
+
+cd build
+
+cmake ../
+
+make -j 4
+
+sudo make install
+
+
+
 
 
