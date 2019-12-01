@@ -59,10 +59,10 @@ instead of
 
 make -f makefileUbunta
 
-## The SDRPlay edition
+## The SDRPlay Edition
 
 
-This is what I did to get SdrGlut running on the SDRPlay verison Raspbian.
+This is what I did to get SdrGlut running on the SDRPlay verison of Raspbian.
 
 The SDRPlay verison Raspbian has the SDRPlay libraries already installed.
 
