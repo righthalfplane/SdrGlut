@@ -116,7 +116,7 @@ make -j 4
 
 sudo make install
 
-## added support for lime  -
+## added support for LimeSDR  -
 
 cd ~/Desktop
 
