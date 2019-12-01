@@ -51,17 +51,27 @@ make -f makefileUbunta
 
 # Install on Raspberry pi (Raspbian - SDRPlay edition)
 
-This is what I did to get SdrGlut running on a fresh install of Raspbian
+To do the normal edition of Raspbian - follow the uBuntu instructions with -
+
+make -f makefileRaspbian
+
+instead of
+
+make -f makefileUbunta
+
+## The SDRPlay edition
+
+
+This is what I did to get SdrGlut running on the SDRPlay verison Raspbian.
+
+The SDRPlay verison Raspbian have the SDRPlay libraries already installed.
+
 
 sudo apt-get update
 
 sudo apt-get upgrade
 
 sudo apt-get install build-essential
-
-sudo apt-get install libsoapysdr0.6
-
-sudo apt-get install libsoapysdr-dev
 
 sudo apt-get install libopenal-dev
 
