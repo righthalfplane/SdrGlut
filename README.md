@@ -210,7 +210,13 @@ make -j 4
 
 sudo make install
 
+# Install SdrGlut on Windows 7
 
+The easiest way to install SdrGlut is to install the PothosSDR package first -
+
+https://downloads.myriadrf.org/builds/PothosSDR/
+
+PothosSDR-2019.06.09-vc14-x64.exe
 
 
 
