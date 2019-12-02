@@ -259,9 +259,9 @@ There is a problem with the "Device.h" the following section needs to be comment
 
 git clone https://github.com/righthalfplane/SdrGlut.git
 
-Then use the GUI and go to the diector SdrGlut/Sdrglut-windows and start the project SdrGlut.sln.
+Then use the GUI and go to the directory SdrGlut/Sdrglut-windows and click the project SdrGlut.sln.
 
-Select Release and X64 and then find a switch the comments on th lines -
+Select "Release" and "X64" and then find and switch the comments on the lines -
 
            // SoapySDRDevice_setupStream(rx->device,&rx->rxStream,SOAPY_SDR_RX, SOAPY_SDR_CF32, NULL,0,NULL);
             
