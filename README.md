@@ -2,6 +2,8 @@
 SdrGlut is a simple software defined radio - using glut and glui for its interface.
 SdrGlut uses liquid-sdr and SoapySDR to preform the SDR calculations. The audio is handled by OpenAL.
 
+https://github.com/righthalfplane/SdrGlut/wiki/Installation-of-SdrGlut
+
 # Installation of libliquid
 
 There are several recent versions of libliquid. The call to The ampmodem_create differs. If a complier error happens,  switch the line that is commented out. It occurs in two places.
