@@ -216,7 +216,34 @@ The easiest way to install SdrGlut is to install the PothosSDR package first -
 
 https://downloads.myriadrf.org/builds/PothosSDR/
 
-PothosSDR-2019.06.09-vc14-x64.exe
+Run PothosSDR-2019.06.09-vc14-x64.exe and select
+
+add PothosSDR to system path for all users
+
+full install
+
+There is a problem with the "Device.h" the following section needs to be commented out -
+
+///@cond INTERNAL
+//! Old setupStream invoked by compatibility macro
+//static inline int SoapySDRDevice_setupStream_(SoapySDRDevice *device,
+//    SoapySDRStream **stream,
+//    const int direction,
+//    const char *format,
+//    const size_t *channels,
+//    const size_t numChans,
+//    const SoapySDRKwargs *args)
+//{////
+//    *stream = SoapySDRDevice_setupStream(device, direction, format, channels, numChans, args);
+//    return (*stream == NULL)?-1:0;
+//}
+
+//#define SoapySDR_getMacro(_1,_2,_3,_4,_5,_6,_7,NAME,...) NAME
+//#define SoapySDRDevice_setupStream(...) SoapySDR_getMacro(__VA_ARGS__, SoapySDRDevice_setupStream_, SoapySDRDevice_setupStream)(__VA_ARGS__)
+///@endcond
+
+
+
 
 
 
