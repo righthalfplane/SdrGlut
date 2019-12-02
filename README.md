@@ -136,7 +136,30 @@ make -j 4
 
 sudo make install
 
+# Install on MacOS 10.4 with brew
+
+This is a copy of some of the instruction from -
+
+https://github.com/pothosware/homebrew-pothos/wiki
 
 
+brew tap pothosware/homebrew-pothos
+brew tap dholm/homebrew-sdr #other sdr apps
+brew update
+
+brew install soapyremote
+brew install soapyaudio
+brew install soapyrtlsdr
+brew install soapyhackrf
+brew install soapybladerf
+brew install soapyairspy
+brew install soapyairspyhf
+brew install soapyosmo
+brew install soapyredpitaya
+brew install soapyiris
+brew install limesuite
+
+
+Do not do the "brew install soapyuhd" suggested by the wiki as it generates an exception error when it is used.
 
 
