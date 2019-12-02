@@ -190,6 +190,24 @@ The install of cubicsdr fails, but it installs the needed liquid-sdr.
 
 To compile with the GUI envoke - SdrGlut.xcodeproj
 
+## added support for NetSDR -
+
+cd ~/Desktop
+
+git clone https://github.com/pothosware/SoapyNetSDR.git
+
+cd SoapyNetSDR
+
+mkidr build
+
+cd build
+
+cmake ../
+
+make -j 4
+
+sudo make install
+
 
 
 
