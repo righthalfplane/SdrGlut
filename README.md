@@ -53,7 +53,7 @@ make -f makefileUbunta
 
 # Install on Raspberry pi
 
-SdrGlut runs nicely on the Raspberry pi 4 -  Donot know if slower version have enough horse power for it
+SdrGlut runs nicely on the Raspberry pi 4 -  Do not know if slower version have enough horse power for it
 
 To do the normal edition of Raspbian - follow the uBuntu instructions with -
 
