@@ -172,8 +172,32 @@ brew install soapyiris
 
 brew install limesuite
 
+brew install cubicsdr
 
+cd ~/Desktop
+
+git clone https://github.com/righthalfplane/SdrGlut.git
+
+cd SdrGlut
+
+make -f makefileMACINTOSH
+
+./sdrglut.x
 
 Do not do the "brew install soapyuhd" suggested by the wiki as it generates an exception error when it is used.
+
+The install of cubicsdr fails, but it installs the needed liquid-sdr.
+
+To compile with the GUI envoke - SdrGlut.xcodeproj
+
+
+
+
+
+
+
+
+
+
 
 
