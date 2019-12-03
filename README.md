@@ -281,7 +281,7 @@ Select "Release" and "X64" and then find and switch the comments on the lines -
            rx->rxStream=SoapySDRDevice_setupStream(rx->device,SOAPY_SDR_RX, SOAPY_SDR_CF32, NULL,0,NULL);
 
 
-Then "Start without Debugging" should compile and start the program running.
+Then select "Start without Debugging", SdrGlut should compile and start running.
 
 
 
