@@ -212,6 +212,18 @@ sudo make install
 
 # Install SdrGlut on Windows 7
 
+OpenAL must be loaded on to window. Get the two packages -
+
+OpenAL1.1.CoreSDK
+
+OpenAL 1.1 windows install
+
+from "hptps://www.openal.org/downloads"
+
+and install them.
+
+
+
 The easiest way to install SdrGlut is to install the PothosSDR package first -
 
 https://downloads.myriadrf.org/builds/PothosSDR/
