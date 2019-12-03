@@ -5,7 +5,7 @@ SdrGlut uses liquid-sdr and SoapySDR to preform the SDR calculations. The audio 
 
 # Installation of libliquid
 
-There are several recent versions of libliquid. The call to The ampmodem_create differs. If a complier error happens,  switch the line that is commented out. It occurs in two places.
+There are several recent versions of libliquid. The call to ampmodem_create differs. If a complier error happens,  switch the line that is commented out. It occurs in two places.
 
       f->demodAM = ampmodem_create(0.5, mode, iflag);
     
