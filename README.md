@@ -209,6 +209,17 @@ make -j 4
 
 sudo make install
 
+## added support for SDRPlay -
+
+Get the sdrplay driver installer and install it -
+
+https://www.sdrplay.com/macdl.php
+
+SDRplay_RSP_API-MacOSX-2.13.2.pkg
+
+
+
+
 # Install SdrGlut on Windows 7
 
 ## Install OpenAL -
