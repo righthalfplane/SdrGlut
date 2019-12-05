@@ -16,11 +16,6 @@
 		46371C8A1D12F31B002D3788 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46371C891D12F31B002D3788 /* OpenAL.framework */; };
 		46371C8C1D12F32A002D3788 /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46371C8B1D12F32A002D3788 /* OpenCL.framework */; };
 		46371C8E1D12F337002D3788 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46371C8D1D12F337002D3788 /* OpenGL.framework */; };
-		46371C901D12F384002D3788 /* libdf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46371C8F1D12F384002D3788 /* libdf.a */; };
-		46371C921D12F3A8002D3788 /* libjpeg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46371C911D12F3A8002D3788 /* libjpeg.a */; };
-		46371C941D12F3B3002D3788 /* libGLEW.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46371C931D12F3B3002D3788 /* libGLEW.a */; };
-		46371C961D12F3C2002D3788 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46371C951D12F3C2002D3788 /* libz.a */; };
-		46371C981D12F3CC002D3788 /* libsndfile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46371C971D12F3CC002D3788 /* libsndfile.a */; };
 		463F2C632228E0A000B6BB7D /* agc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 463F2C612228E0A000B6BB7D /* agc.cpp */; };
 		4643CAC6222845F80059451C /* SdrFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4643CAC3222845F70059451C /* SdrFile.cpp */; };
 		4643CAC7222845F80059451C /* DialogSdrFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4643CAC4222845F70059451C /* DialogSdrFile.cpp */; };
@@ -227,16 +222,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				46371C981D12F3CC002D3788 /* libsndfile.a in Frameworks */,
 				46371C8E1D12F337002D3788 /* OpenGL.framework in Frameworks */,
 				46371C8A1D12F31B002D3788 /* OpenAL.framework in Frameworks */,
 				46371C8C1D12F32A002D3788 /* OpenCL.framework in Frameworks */,
-				46371C901D12F384002D3788 /* libdf.a in Frameworks */,
-				46371C941D12F3B3002D3788 /* libGLEW.a in Frameworks */,
 				464918A220E53121008BDC72 /* libliquid.a in Frameworks */,
 				464FED0B1C2F61AB0045C705 /* libglut.3.dylib in Frameworks */,
-				46371C961D12F3C2002D3788 /* libz.a in Frameworks */,
-				46371C921D12F3A8002D3788 /* libjpeg.a in Frameworks */,
 				4664F28D1DA95E6E00BBF9EB /* libSoapySDR.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
