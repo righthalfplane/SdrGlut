@@ -16,9 +16,6 @@
     <Filter Include="include">
       <UniqueIdentifier>{fa2bb651-d7b1-4bad-92b9-09674b618045}</UniqueIdentifier>
     </Filter>
-    <Filter Include="glew">
-      <UniqueIdentifier>{5bd57571-2dd1-412e-8474-41db0270dcc3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="glut">
       <UniqueIdentifier>{5a4c4587-a67d-4227-9d4a-fc2c48a05bdc}</UniqueIdentifier>
     </Filter>
@@ -393,9 +390,6 @@
     <ClCompile Include="..\DrawFindPointHistory\GridPlot.c">
       <Filter>DrawFindPointHistory</Filter>
     </ClCompile>
-    <ClCompile Include="..\Glew\glew.c">
-      <Filter>glew</Filter>
-    </ClCompile>
     <ClCompile Include="..\Glut\glut_8x13.c">
       <Filter>glut</Filter>
     </ClCompile>
@@ -559,9 +553,6 @@
     <ClCompile Include="..\MainSource\main.cpp">
       <Filter>MainSource</Filter>
     </ClCompile>
-    <ClCompile Include="..\MainSource\mThread.c">
-      <Filter>MainSource</Filter>
-    </ClCompile>
     <ClCompile Include="..\MainSource\QuitDialog.cpp">
       <Filter>MainSource</Filter>
     </ClCompile>
@@ -629,6 +620,9 @@
       <Filter>MainSource</Filter>
     </ClCompile>
     <ClCompile Include="..\MainSource\RecordIQ.cpp">
+      <Filter>MainSource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MainSource\mThread.cpp">
       <Filter>MainSource</Filter>
     </ClCompile>
   </ItemGroup>

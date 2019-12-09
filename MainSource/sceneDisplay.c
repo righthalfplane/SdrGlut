@@ -9,11 +9,6 @@
 #include <math.h>
 #include <stdlib.h>
 
-#ifdef WIN32
-#include <GL/glew.h>
-#endif
-
-
 #include "sceneDisplay.h"
 #include "LoadFiles.h"
 //#include "ShowGLSL.h"

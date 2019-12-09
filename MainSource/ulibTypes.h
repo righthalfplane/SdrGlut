@@ -20,7 +20,6 @@ typedef struct uFontStruct {
 
 #ifdef WIN32
 #include <direct.h>
-#include <GL/glew.h>	/* GLUT OpenGL includes */
 #define FILE_NAME_SEPERATOR			"\\"
 #define FILE_NAME_SEPERATOR_CHAR	'\\'
 #ifdef _int64

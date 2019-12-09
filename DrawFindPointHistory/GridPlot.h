@@ -44,7 +44,7 @@ extern      "C"
 #define lForeColor    8
 #define lBackColor   16
 #define lPattern     32
-#define lWidth       64
+#define llWidth      64
 #define lSymbol     128
 #define lLine       256
 #define lAnimate    512

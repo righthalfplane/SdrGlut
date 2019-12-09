@@ -214,7 +214,7 @@ void WarningBatch(char *message)
 	}
 }
 
-#ifdef _MSC_VER
+#ifdef WIN32
 #define vsnprintf _vsnprintf
 #define chdir _chdir
 #define getcwd _getcwd
@@ -260,7 +260,7 @@ int MakeNewDirectory(char *name)
 {
 	if(!name)return 1;
 
-#ifdef _MSC_VER
+#ifdef WIN32 
 	if(_mkdir(name))return 1;
 #else
 	if(mkdir(name,0755))return 1;

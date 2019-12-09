@@ -1,14 +1,13 @@
+# set path= ( /c/msys64/mingw32/bin "/c/Program Files/PothosSDR/bin" $path)
 
 
+CFLAGS = -O3  -DWIN32 -I"C:\freeglut\include" -I"C:\Program Files (x86)\OpenAL 1.1 SDK\include" -I"C:\Program Files\PothosSDR\include" -DNO_FORTRAN -pthread -I/usr/X11R6/include  -I./DrawFindPointHistory -I./MainSource -I./KdTree-routines -I./glui-routines/include -I./CExpress -I./FMRadio -I./Radio -Wall 
 
-CFLAGS = -DNO_FORTRAN  -I/usr/X11R6/include  -I./DrawFindPointHistory -I./MainSource -I./KdTree-routines -I./glui-routines/include -I./CExpress -Wall 
-
-CXXFLAGS = -std=c++11 -DNO_FORTRAN  -I./glui-routines/include  -I/usr/X11R6/include  -I./DrawFindPointHistory  -I./MainSource -I./KdTree-routines -I./SdrFile -I./Radio -I./glui-routines/include -I./CExpress -I./Classes -I./SdrGlut -Wall 
+CXXFLAGS = -DWIN32 -std=c++11 -I"C:\freeglut\include" -I"C:\Program Files (x86)\OpenAL 1.1 SDK\include" -I"C:\Program Files\PothosSDR\include" -O3 -DNO_FORTRAN -pthread -I./glui-routines/include  -I/usr/X11R6/include  -I./DrawFindPointHistory  -I ./SdrFile -I./MainSource -I./KdTree-routines -I./glui-routines/include -I./CExpress -I./Classes -I./SdrGlut -I./FMRadio  -I./Radio -Wall 
 
 
 CFILES= ./MainSource/Geom.c \
 	./MainSource/Getpalette.c \
-	./MainSource/mThread.c  \
 	./MainSource/Scene.c  ./MainSource/Utilities.c \
 	./DrawFindPointHistory/DrawFindPointHistory.c DrawFindPointHistory/GridPlot.c  \
 	./CExpress/FFT2.c \
@@ -20,10 +19,7 @@ CFILES= ./MainSource/Geom.c \
 
 
 
-
-
 COBJS= ./MainSource/Getpalette.o \
-	./MainSource/mThread.o  \
 	./MainSource/Scene.o  ./MainSource/Utilities.o \
 	./DrawFindPointHistory/GridPlot.o  \
 	./CExpress/FFT2.o \
@@ -32,7 +28,6 @@ COBJS= ./MainSource/Getpalette.o \
 	./MainSource/cMalloc.o \
 	./MainSource/SceneList.o \
 	./MainSource/sceneDisplay.o 
-	
 	
 	
 
@@ -99,8 +94,8 @@ fireball:  ${COBJS} ${CCOBJS}
 # ${CXX} ${CFLAGS} -o fireball.x ${COBJS} ${CCOBJS} -lm -L/usr/local/hdf-64/lib -L/usr/X11R6/lib -lX11 -lpthread -ldf -ljpeg -lz -framework OpenGL -framework GLUT
 #	${CXX} ${CFLAGS} -o fireball.x ${COBJS} ${CCOBJS} -lm -L/usr/local/hdf-64/lib -L/usr/X11R6/lib -L../Rx3/recipe/lib -L/usr/local/gfortran/lib/ -lgfortran -lrx3_64 -lX11 -lpthread -ldf -ljpeg -lz -lglut -lgl -lglu -lglew -lgdal
 #	${CXX} ${CFLAGS} -o fireball.x ${COBJS} ${CCOBJS} -lm -L/usr/local -L/usr/X11R6/lib -L/usr/local/gfortran/lib/ -lX11 -lpthread -ldf -ljpeg -lz -lglut -lgl -lglu -lglew -lgdal
-#	${CXX} ${CFLAGS} -o sdrglut.x ${COBJS} ${CCOBJS} -lm -L/usr/local -L/usr/X11/lib -lX11 -lpthread -ldf -ljpeg -lz -lglut -lgl -lglu -lglew -framework OpenGL -framework GLUT -framework OpenAL -lliquid -lSoapyOsmoSDR -lSoapySDR -lsndfile
-	${CXX} ${CFLAGS} -o sdrglut.x -g ${COBJS} ${CCOBJS} -lm -L/usr/local -L/usr/X11/lib -lX11 -lglut -lgl -lglu -framework OpenGL -framework GLUT -framework OpenAL -lliquid -lSoapySDR
+	${CXX} -std=c++11 -c ./MainSource/mThread.cpp
+	${CXX} ${CFLAGS} -o sdrglut.x ${COBJS} ${CCOBJS} mThread.o -lm -L/usr/local -L"C:\Program Files\PothosSDR\lib" -L"C:freeglut\lib\x64" -lSoapySDR -llibfreeglut -lopengl32 -lglu32 -lpthread -lopenal -llibliquid 
 
 # ./MainSource/mThreadPC.cpp
 # ./MainSource/mThreadPC.o

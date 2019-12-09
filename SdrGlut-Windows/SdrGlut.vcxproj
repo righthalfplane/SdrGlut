@@ -329,7 +329,7 @@
     <ClCompile Include="..\MainSource\DialogSave.cpp" />
     <ClCompile Include="..\MainSource\Getpalette.c" />
     <ClCompile Include="..\MainSource\main.cpp" />
-    <ClCompile Include="..\MainSource\mThread.c" />
+    <ClCompile Include="..\MainSource\mThread.cpp" />
     <ClCompile Include="..\MainSource\PlayIQ.cpp" />
     <ClCompile Include="..\MainSource\QuitDialog.cpp" />
     <ClCompile Include="..\MainSource\RecordIQ.cpp" />
@@ -377,7 +377,6 @@
     <ClCompile Include="..\Radio\RaceFastsdr.cpp" />
     <ClCompile Include="..\Radio\Radio.cpp" />
     <ClCompile Include="..\Radio\smeter.cpp" />
-    <ClCompile Include="..\Glew\glew.c" />
     <ClCompile Include="..\Glut\glut_8x13.c" />
     <ClCompile Include="..\Glut\glut_9x15.c" />
     <ClCompile Include="..\Glut\glut_bitmap.c" />

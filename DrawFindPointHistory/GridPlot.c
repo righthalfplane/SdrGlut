@@ -723,7 +723,7 @@ int uSetAttributes(DOListPtr l,struct uAttributes *a,int Flag)
 	    l->s.LinePattern=a->LinePattern;
 	}
 	
-	if(Flag & lWidth){
+	if(Flag & llWidth){
 	    l->s.xLineWidth=(int)a->xLineWidth;
 	    l->s.yLineWidth=(int)a->yLineWidth;
 	}
@@ -1346,7 +1346,7 @@ static int CPlotPlotLegends(struct uGridPlot *b,DOListPtr d)
 		for(n=0;n<b->LineCount;++n){
 			Line=b->Lines[n];
 			if(!Line)continue;
-			uSetAttributes(d,&Line->Attributes,lPattern | lForeColor | lBackColor | lWidth);
+			uSetAttributes(d,&Line->Attributes,lPattern | lForeColor | lBackColor | llWidth);
 /*		    
 		    if(!Line->xData || !Line->yData || !Line->save[0])continue;
 */
@@ -1403,7 +1403,7 @@ int CPlotPlotNumbers(struct uGridPlot *b,DOListPtr d)
 	r=b->box;
 	
 	if(b->bAxisNumber){
-		uSetAttributes(d,&b->xAttributes,lPattern | lForeColor | lBackColor | tFont | lWidth);
+		uSetAttributes(d,&b->xAttributes,lPattern | lForeColor | lBackColor | tFont | llWidth);
 		if(b->xLogScale){
 		    CPlotxLog(b,&r,d);		 
 		}else{		
@@ -1411,7 +1411,7 @@ int CPlotPlotNumbers(struct uGridPlot *b,DOListPtr d)
 		}
 	}
 	if(b->lAxisNumber){
-		uSetAttributes(d,&b->yAttributes,lPattern | lForeColor | lBackColor | tFont | lWidth);
+		uSetAttributes(d,&b->yAttributes,lPattern | lForeColor | lBackColor | tFont | llWidth);
 		if(b->yLogScale){
 		    CPlotyLog(b,&r,d);		 
 		}else{	
@@ -1441,7 +1441,7 @@ static int GridPlotLineGrid(struct uGridPlot *b,DOListPtr d)
 	    
 	    if(!Line->xData || !Line->yData )continue;
 	    
-		uSetAttributes(d,&Line->Attributes,lPattern | lForeColor | lBackColor | lWidth);
+		uSetAttributes(d,&Line->Attributes,lPattern | lForeColor | lBackColor | llWidth);
 		
 		
 		Increment=Line->Attributes.LineIncrement;
@@ -1531,7 +1531,7 @@ int GridPlotPlotGrid(struct uGridPlot *b,DOListPtr d)
 	bottom=r.y+r.ysize;
  	 	
  	
-	uSetAttributes(d,&b->Attributes,lPattern | lForeColor | lBackColor | lWidth);
+	uSetAttributes(d,&b->Attributes,lPattern | lForeColor | lBackColor | llWidth);
 
 	if(b->lAxis){
 	    GridPlotxGridDraw(b,d,bottom,b->xMajorIn,b->xMajorOut,b->xMinorIn,b->xMinorOut,mult,&r);
@@ -2283,7 +2283,7 @@ int uPutAttributes(struct uAttributes *Aout,struct uAttributes *Ain,int Flag)
 	    Aout->LineDashNumber=Ain->LineDashNumber;
 	}
 	
-	if(Flag & lWidth){
+	if(Flag & llWidth){
 	    Aout->xLineWidth=Ain->xLineWidth;
 	    Aout->yLineWidth=Ain->yLineWidth;
 	}

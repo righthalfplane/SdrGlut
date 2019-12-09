@@ -1,9 +1,13 @@
 
 
 
-CFLAGS = -DNO_FORTRAN  -I/usr/X11R6/include  -I./DrawFindPointHistory -I./MainSource -I./KdTree-routines -I./glui-routines/include -I./CExpress -Wall 
+CFLAGS = -O3 -DWIN32 -I./include -I"C:\Program Files (x86)\OpenAL 1.1 SDK\include" -I"C:\Program Files\PothosSDR\include" -DNO_FORTRAN -pthread -I/usr/local/hdf-64/include -I/usr/X11R6/include  -I./DrawFindPointHistory -I./MainSource -I./KdTree-routines -I./glui-routines/include -I./CExpress -I./FMRadio -I./Radio -Wall 
 
-CXXFLAGS = -std=c++11 -DNO_FORTRAN  -I./glui-routines/include  -I/usr/X11R6/include  -I./DrawFindPointHistory  -I./MainSource -I./KdTree-routines -I./SdrFile -I./Radio -I./glui-routines/include -I./CExpress -I./Classes -I./SdrGlut -Wall 
+CXXFLAGS = -DWIN32 -std=c++11 -I./include -I"C:\Program Files (x86)\OpenAL 1.1 SDK\include" -I"C:\Program Files\PothosSDR\include" -O3 -DNO_FORTRAN -pthread -I./glui-routines/include -I/usr/local/hdf-64/include -I/usr/X11R6/include  -I./DrawFindPointHistory  -I ./SdrFile -I./MainSource -I./KdTree-routines -I./glui-routines/include -I./CExpress -I./Classes -I./SdrGlut -I./FMRadio  -I./Radio -Wall 
+
+#CFLAGS = -g -I/usr/local/hdf-64/include -I/usr/X11R6/include  -I./DrawFindPointHistory -I./MainSource -I./KdTree-routines -I./glui-routines/include -I./CExpress -Wall 
+
+#CXXFLAGS = -g -I./glui-routines/include -I/usr/local/hdf-64/include -I/usr/X11R6/include  -I./DrawFindPointHistory  -I./MainSource -I./KdTree-routines -I./glui-routines/include -I./CExpress  -I./Classes -Wall 
 
 
 CFILES= ./MainSource/Geom.c \
@@ -16,9 +20,56 @@ CFILES= ./MainSource/Geom.c \
 	./MainSource/BackgroundQ.c  \
 	./MainSource/cMalloc.c \
 	./MainSource/SceneList.c \
+	./Glut/glut_8x13.c \
+	./Glut/glut_9x15.c \
+	./Glut/glut_bitmap.c \
+	./Glut/glut_bwidth.c \
+	./Glut/glut_cindex.c \
+	./Glut/glut_cmap.c \
+	./Glut/glut_cursor.c \
+	./Glut/glut_dials.c \
+	./Glut/glut_dstr.c \
+	./Glut/glut_event.c \
+	./Glut/glut_ext.c \
+	./Glut/glut_fcb.c \
+	./Glut/glut_fullscrn.c \
+	./Glut/glut_gamemode.c \
+	./Glut/glut_get.c \
+	./Glut/glut_glxext.c \
+	./Glut/glut_hel10.c \
+	./Glut/glut_hel12.c \
+	./Glut/glut_hel18.c \
+	./Glut/glut_init.c \
+	./Glut/glut_input.c \
+	./Glut/glut_joy.c \
+	./Glut/glut_key.c \
+	./Glut/glut_keyctrl.c \
+	./Glut/glut_keyup.c \
+	./Glut/glut_mesa.c \
+	./Glut/glut_modifier.c \
+	./Glut/glut_mroman.c \
+	./Glut/glut_overlay.c \
+	./Glut/glut_roman.c \
+	./Glut/glut_shapes.c \
+	./Glut/glut_space.c \
+	./Glut/glut_stroke.c \
+	./Glut/glut_swap.c \
+	./Glut/glut_swidth.c \
+	./Glut/glut_tablet.c \
+	./Glut/glut_teapot.c \
+	./Glut/glut_tr10.c \
+	./Glut/glut_tr24.c \
+	./Glut/glut_util.c \
+	./Glut/glut_vidresize.c \
+	./Glut/glut_warp.c \
+	./Glut/glut_win.c \
+	./Glut/glut_winmisc.c \
+	./Glut/win32_glx.c \
+	./Glut/win32_menu.c \
+	./Glut/win32_util.c \
+	./Glut/win32_winproc.c \
+	./Glut/win32_x11.c \
 	./MainSource/LoadTemperature.c ./Classes/FileDB.c ./SimpleOpenGL/glutMain.c
-
-
 
 
 
@@ -28,11 +79,59 @@ COBJS= ./MainSource/Getpalette.o \
 	./DrawFindPointHistory/GridPlot.o  \
 	./CExpress/FFT2.o \
 	./CExpress/Utilities2.o \
+	./Glut/glut_8x13.o \
+	./Glut/glut_9x15.o \
+	./Glut/glut_bitmap.o \
+	./Glut/glut_bwidth.o \
+	./Glut/glut_cindex.o \
+	./Glut/glut_cmap.o \
+	./Glut/glut_cursor.o \
+	./Glut/glut_dials.o \
+	./Glut/glut_dstr.o \
+	./Glut/glut_event.o \
+	./Glut/glut_ext.o \
+	./Glut/glut_fcb.o \
+	./Glut/glut_fullscrn.o \
+	./Glut/glut_gamemode.o \
+	./Glut/glut_get.o \
+	./Glut/glut_glxext.o \
+	./Glut/glut_hel10.o \
+	./Glut/glut_hel12.o \
+	./Glut/glut_hel18.o \
+	./Glut/glut_init.o \
+	./Glut/glut_input.o \
+	./Glut/glut_joy.o \
+	./Glut/glut_key.o \
+	./Glut/glut_keyctrl.o \
+	./Glut/glut_keyup.o \
+	./Glut/glut_mesa.o \
+	./Glut/glut_modifier.o \
+	./Glut/glut_mroman.o \
+	./Glut/glut_overlay.o \
+	./Glut/glut_roman.o \
+	./Glut/glut_shapes.o \
+	./Glut/glut_space.o \
+	./Glut/glut_stroke.o \
+	./Glut/glut_swap.o \
+	./Glut/glut_swidth.o \
+	./Glut/glut_tablet.o \
+	./Glut/glut_teapot.o \
+	./Glut/glut_tr10.o \
+	./Glut/glut_tr24.o \
+	./Glut/glut_util.o \
+	./Glut/glut_vidresize.o \
+	./Glut/glut_warp.o \
+	./Glut/glut_win.o \
+	./Glut/glut_winmisc.o \
+	./Glut/win32_glx.o \
+	./Glut/win32_menu.o \
+	./Glut/win32_util.o \
+	./Glut/win32_winproc.o \
+	./Glut/win32_x11.o \
 	./MainSource/BackgroundQ.o  \
 	./MainSource/cMalloc.o \
 	./MainSource/SceneList.o \
 	./MainSource/sceneDisplay.o 
-	
 	
 	
 
@@ -99,8 +198,7 @@ fireball:  ${COBJS} ${CCOBJS}
 # ${CXX} ${CFLAGS} -o fireball.x ${COBJS} ${CCOBJS} -lm -L/usr/local/hdf-64/lib -L/usr/X11R6/lib -lX11 -lpthread -ldf -ljpeg -lz -framework OpenGL -framework GLUT
 #	${CXX} ${CFLAGS} -o fireball.x ${COBJS} ${CCOBJS} -lm -L/usr/local/hdf-64/lib -L/usr/X11R6/lib -L../Rx3/recipe/lib -L/usr/local/gfortran/lib/ -lgfortran -lrx3_64 -lX11 -lpthread -ldf -ljpeg -lz -lglut -lgl -lglu -lglew -lgdal
 #	${CXX} ${CFLAGS} -o fireball.x ${COBJS} ${CCOBJS} -lm -L/usr/local -L/usr/X11R6/lib -L/usr/local/gfortran/lib/ -lX11 -lpthread -ldf -ljpeg -lz -lglut -lgl -lglu -lglew -lgdal
-#	${CXX} ${CFLAGS} -o sdrglut.x ${COBJS} ${CCOBJS} -lm -L/usr/local -L/usr/X11/lib -lX11 -lpthread -ldf -ljpeg -lz -lglut -lgl -lglu -lglew -framework OpenGL -framework GLUT -framework OpenAL -lliquid -lSoapyOsmoSDR -lSoapySDR -lsndfile
-	${CXX} ${CFLAGS} -o sdrglut.x -g ${COBJS} ${CCOBJS} -lm -L/usr/local -L/usr/X11/lib -lX11 -lglut -lgl -lglu -framework OpenGL -framework GLUT -framework OpenAL -lliquid -lSoapySDR
+	${CXX} ${CFLAGS} -o sdrglut.x ${COBJS} ${CCOBJS} -lm -L/usr/local -L"C:\Program Files\PothosSDR\lib" -lpthread -lopenal -llibliquid -lSoapySDR
 
 # ./MainSource/mThreadPC.cpp
 # ./MainSource/mThreadPC.o

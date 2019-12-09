@@ -30,7 +30,7 @@ static void control_cb(int control);
 
 static void control_cb2(int control);
 
-char *ProgramVersion=(char *)"SdrGlut-423";
+char *ProgramVersion=(char *)"SdrGlut-430";
 
 extern "C" struct Scene *sceneRoot(void);
 
@@ -302,22 +302,6 @@ int main (int argc, char *argv[]) {
     if(!GetWorking(ApplicationDirectory,sizeof(ApplicationDirectory))){
         WarningPrint("scan_dir  Working directory error %s\n",ApplicationDirectory);
     }
-    
-    
-#ifdef WIN32
-    {
-        GLenum err;
-        int main_window = glutCreateWindow(argv[0]);
-        glutDisplayFunc(display22);
-        err=glewInit();
-        if(err != GLEW_OK)
-        {
-            WarningPrint("glewInit Error : %s\n",glewGetErrorString(err));
-            exit(1);
-        }
-        glutDestroyWindow(main_window);
-    }
-#endif
     
     
     dialogStart();
