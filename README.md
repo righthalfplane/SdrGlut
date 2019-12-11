@@ -2,6 +2,16 @@
 SdrGlut is a simple software defined radio - using glut for drawing and glui for its dialogs.
 SdrGlut uses liquid-sdr and SoapySDR to preform the SDR calculations. The audio is handled by OpenAL.
 
+# Movies
+
+SdrGlut Simultaneously Running Five SDRs
+https://www.youtube.com/watch?v=BmUNrAn1Llk
+
+Raspberry PI 4 using SdrGlut to control the NetSDR
+https://www.youtube.com/watch?v=jV-LxQS_acY
+
+SdrGlut vs CubicSDR on the Raspberry pi 4 with a Lime Mini SDR
+https://www.youtube.com/watch?v=C18bGxbXNsA
 
 # Installation of libliquid
 
