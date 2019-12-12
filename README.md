@@ -13,6 +13,16 @@ https://www.youtube.com/watch?v=jV-LxQS_acY
 SdrGlut vs CubicSDR on the Raspberry pi 4 with a Lime Mini SDR
 https://www.youtube.com/watch?v=C18bGxbXNsA
 
+SdrPlay RSP2 vs NetSDR+ using SdrGlut Part 1. 
+https://youtu.be/LdIaFVuAICw
+
+SdrPlay RSP2 vs NetSDR+ using SdrGlut Part 2. 
+https://youtu.be/1QJromJ76Lo
+
+SdrPlay RSP2 vs NetSDR+ using SdrGlut Part 3. 
+https://youtu.be/NXLYYvLQN_k
+
+
 # Installation of libliquid
 
 There are several recent versions of libliquid. The call to ampmodem_create differs. If a complier error happens,  switch the line that is commented out. It occurs in two places.
