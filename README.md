@@ -22,7 +22,8 @@ https://youtu.be/1QJromJ76Lo
 SdrPlay RSP2 vs NetSDR+ using SdrGlut Part 3. 
 https://youtu.be/NXLYYvLQN_k
 
-
+SdrPlay RSP2 vs a simple RTL stick Usin SdrGlut at FRS frequencies
+https://www.youtube.com/watch?v=eiuTO5yIR7w
 # Installation of libliquid
 
 There are several recent versions of libliquid. The call to ampmodem_create differs. If a complier error happens,  switch the line that is commented out. It occurs in two places.
