@@ -977,9 +977,9 @@ static int findRadio(struct playData *rx)
 			
         	// std::cout << "rx->samplerate " << rx->samplerate << std::endl;
 			
-           SoapySDRDevice_setupStream(rx->device,&rx->rxStream,SOAPY_SDR_RX, SOAPY_SDR_CF32, NULL,0,NULL);
+          SoapySDRDevice_setupStream(rx->device,&rx->rxStream,SOAPY_SDR_RX, SOAPY_SDR_CF32, NULL,0,NULL);
             
-           // rx->rxStream=SoapySDRDevice_setupStream(rx->device,SOAPY_SDR_RX, SOAPY_SDR_CF32, NULL,0,NULL);
+            // rx->rxStream=SoapySDRDevice_setupStream(rx->device,SOAPY_SDR_RX, SOAPY_SDR_CF32, NULL,0,NULL);
             
 			SoapySDRDevice_activateStream(rx->device,rx->rxStream, 0, 0, 0);
             
@@ -1253,8 +1253,6 @@ static int doAudio(float *aBuff,struct playData *rx)
 	pthread_mutex_unlock(&rx->mutexo);
 	
 
-	double amin=1e30;
-	double amax=-1e30;
 		
 	float *buff=aBuff;
 
@@ -1271,17 +1269,18 @@ static int doAudio(float *aBuff,struct playData *rx)
 	gain=rx->gain;
 	
 	if(gain <= 0.0)gain=1.0;
-	
-	gain = 1.0/gain;
+    
+    double amin=1e30;
+    double amax=-1e30;
     
 	for (int i=0; i<BLOCK_SIZE5; i++ ) {
 		double v;
-        v=gain*buff[i];
+        v=buff[i];
 		if(v < amin)amin=v;
 		if(v > amax)amax=v;
 	}
-	
-	// printf("doAudio amin %f amax %f \n",amin,amax);
+
+	//fprintf(stderr,"doAudio amin %f amax %f \n",amin,amax);
 
     if(rx->aminGlobal == 0.0)rx->aminGlobal=amin;
     rx->aminGlobal = 0.9*rx->aminGlobal+0.1*amin;
@@ -1291,24 +1290,30 @@ static int doAudio(float *aBuff,struct playData *rx)
     rx->amaxGlobal = 0.9*rx->amaxGlobal+0.1*amax;
     amax=rx->amaxGlobal;
 
-    //fprintf(stderr,"amax %g amaxg %g amin %g aming %g\n",amax,rx->amaxGlobal,amin,rx->aminGlobal);
+   // fprintf(stderr,"amax %g amaxg %g amin %g aming %g\n",amax,rx->amaxGlobal,amin,rx->aminGlobal);
 
     if(amax == amin){
-        dnom=64000.0;
+        dnom=65535.0;
     }else{
-        dnom=64000.0/(amax-amin);
+        dnom=65535.0/(amax-amin);
     }
 		
 	dmin=amin;
+    //amin=1e30;
+   // amax=-1e30;
 
 	for(int k=0;k<BLOCK_SIZE5;++k){
 		double v;
         v=buff[k];
-		v=(v-dmin)*dnom-32000;
+		v=gain*((v-dmin)*dnom-32768);
         if(rx->mute)v=0.0;
 		data[k]=(short int)v;
+       // if(v < amin)amin=v;
+       // if(v > amax)amax=v;
 	}
 	
+   // fprintf(stderr,"doAudio amin %f amax %f \n",amin,amax);
+
 	pushBuffa(audioOut,rx);
 
 	return 0;

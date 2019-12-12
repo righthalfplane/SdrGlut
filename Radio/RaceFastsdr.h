@@ -188,6 +188,7 @@ struct playData{
     
     double aminGlobal;
     double amaxGlobal;
+    double averageGlobal;
     
     double scaleFactor;
     

@@ -366,24 +366,20 @@ int Radio::updateLine()
     real=rx->real;
     imag=rx->imag;
     
-/*
-    iirfilt_crcf dcFilter=iirfilt_crcf_create_dc_blocker(0.005f);
-
-    float buf[4096*2];
+    double average=0;
     for(int k=0;k<count;++k){
-        buf[2*k]=real[k];
-        buf[2*k+1]=imag[k];
+        average += sqrt(real[k]*real[k]+imag[k]*imag[k]);
     }
+    average /= count;
     
-    iirfilt_crcf_execute_block(dcFilter, (liquid_float_complex *)buf, count, (liquid_float_complex *)buf);
-
-    for(int n=0;n<length;++n){
-        real[n]=buf[2*n];
-        imag[n]=buf[2*n+1];
+    if(rx->averageGlobal == 0)rx->averageGlobal=average;
+    rx->averageGlobal = 0.9*rx->averageGlobal+0.1*average;
+    if(average < 0.05*rx->averageGlobal){
+        //fprintf(stderr,"Drop out %g \n",average);
+        return 0;
     }
- 
-        if(dcFilter)iirfilt_crcf_destroy(dcFilter);
- */
+   // fprintf(stderr,"average %g averageGlobal %g\n",average,rx->averageGlobal);
+    
     
     doWindow(real,imag,length,4);
 
@@ -392,8 +388,10 @@ int Radio::updateLine()
         imag[n] *= pow(-1.0,n);
     }
     
+
     doFFT2(real,imag,length,1);
     
+
     amin=water.amin;
     amax=water.amax;
     
@@ -576,6 +574,8 @@ int Radio::setFrequency(struct playData *rx)
     rx->aminGlobal=0;
     
     rx->amaxGlobal=0;
+    
+    rx->averageGlobal=0;
         
     rx->m_SMeter.Reset();
     

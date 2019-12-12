@@ -628,6 +628,8 @@ int SdrFile::updateLine()
  
         if(dcFilter)iirfilt_crcf_destroy(dcFilter);
  */
+    
+    
     doWindow(real,imag,length,4);
 
 
