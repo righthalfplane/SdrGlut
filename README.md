@@ -22,6 +22,12 @@ https://youtu.be/1QJromJ76Lo
 SdrPlay RSP2 vs NetSDR+ using SdrGlut Part 3. 
 https://youtu.be/NXLYYvLQN_k
 
+SdrPlay RSP2 vs a simple RTL stick using SdrGlut at FRS frequencies
+https://www.youtube.com/watch?v=eiuTO5yIR7w
+
+SdrPlay RSP2 vs a LimeSDR Mini using SdrGlut at FRS frequencies
+https://www.youtube.com/watch?v=PEfrJ4ZuN9g
+
 
 # Installation of libliquid
 
