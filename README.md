@@ -28,6 +28,8 @@ https://www.youtube.com/watch?v=eiuTO5yIR7w
 SdrPlay RSP2 vs a LimeSDR Mini using SdrGlut at FRS frequencies
 https://www.youtube.com/watch?v=PEfrJ4ZuN9g
 
+Lime Mini vs a RTL stick using SdrGlut at FRS frequencies
+https://www.youtube.com/watch?v=pDqNCe6GxnA
 
 # Installation of libliquid
 
