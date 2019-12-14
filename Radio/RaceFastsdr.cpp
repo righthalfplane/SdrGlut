@@ -1292,10 +1292,10 @@ static int doAudio(float *aBuff,struct playData *rx)
 
    // fprintf(stderr,"amax %g amaxg %g amin %g aming %g\n",amax,rx->amaxGlobal,amin,rx->aminGlobal);
 
-    if(amax == amin){
-        dnom=65535.0;
-    }else{
+    if((amax-amin) > 0){
         dnom=65535.0/(amax-amin);
+    }else{
+        dnom=65535.0;
     }
 		
 	dmin=amin;

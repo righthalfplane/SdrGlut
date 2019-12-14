@@ -468,11 +468,9 @@ int SdrFile::setBuffers(struct playData4 *play)
     
     if(gain <= 0.0)gain=1.0;
     
-    gain = 1.0/gain;
-    
     for (size_t i=0; i<num2; i++ ) {
         double v;
-        v=gain*buf1[i];
+        v=buf1[i];
         if(v < amin)amin=v;
         if(v > amax)amax=v;
     }
@@ -488,9 +486,9 @@ int SdrFile::setBuffers(struct playData4 *play)
 
 
     if((amax-amin) > 0){
-        dnom=64000.0/(amax-amin);
+        dnom=65535.0/(amax-amin);
     }else{
-        dnom=64000.0;
+        dnom=65535.0;
     }
     
     dmin=amin;
@@ -498,7 +496,7 @@ int SdrFile::setBuffers(struct playData4 *play)
     for(size_t k=0;k<num2;++k){
         double v;
         v=buf1[k];
-        v=(v-dmin)*dnom-32000;
+        v=gain*((v-dmin)*dnom-32768);
         if(mute)v=0;
         data[k]=(short int)v;
     }
@@ -610,29 +608,21 @@ int SdrFile::updateLine()
     real=play.real;
     imag=play.imag;
     
-/*
-    iirfilt_crcf dcFilter=iirfilt_crcf_create_dc_blocker(0.005f);
-
-    float buf[4096*2];
+    double average=0;
     for(int k=0;k<count;++k){
-        buf[2*k]=real[k];
-        buf[2*k+1]=imag[k];
+        average += sqrt(real[k]*real[k]+imag[k]*imag[k]);
     }
+    average /= count;
     
-    iirfilt_crcf_execute_block(dcFilter, (liquid_float_complex *)buf, count, (liquid_float_complex *)buf);
+    if(play.averageGlobal == 0)play.averageGlobal=average;
+    play.averageGlobal = 0.9*play.averageGlobal+0.1*average;
+    if(average < 0.05*play.averageGlobal){
+        //fprintf(stderr,"Drop out %g \n",average);
+        return 0;
+    }
+    // fprintf(stderr,"average %g averageGlobal %g\n",average,rx->averageGlobal);
 
-    for(int n=0;n<length;++n){
-        real[n]=buf[2*n];
-        imag[n]=buf[2*n+1];
-    }
- 
-        if(dcFilter)iirfilt_crcf_destroy(dcFilter);
- */
-    
-    
     doWindow(real,imag,length,4);
-
-
 
     for(int n=0;n<length;++n){
         real[n] *= pow(-1.0,n);
@@ -1041,6 +1031,8 @@ int SdrFile::setFrequency(struct playData4 *play)
     play->aminGlobal=0;
     
     play->amaxGlobal=0;
+    
+    play->averageGlobal=0;
 
     play->m_SMeter.Reset();
     
@@ -1762,6 +1754,11 @@ static void getMousel(int button, int state, int x, int y)
                }
                 if(fl < 0)fl=-fl;
                 sdr->play.f=fl;
+                
+                if(fabs(fl-sdr->play.fc) > 0.5*sdr->play.samplerate){
+                    sdr->play.f=sdr->play.fc;
+                }
+
                 sdr->setFrequency(&sdr->play);
                 break;
             }

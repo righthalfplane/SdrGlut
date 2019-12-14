@@ -1505,7 +1505,9 @@ static void getMousel(int button, int state, int x, int y)
                 }
                 if(fl < 0)fl=-fl;
                 sdr->rx->fc=fl;
-                sdr->rx->f=fl;
+                if(fabs(fl-sdr->rx->f) > 0.5*sdr->rx->samplerate){
+                    sdr->rx->f=fl;
+                }
                 sdr->setFrequency(sdr->rx);
            }
         }

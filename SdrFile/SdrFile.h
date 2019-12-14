@@ -114,6 +114,7 @@ struct playData4{
     
     double aminGlobal;
     double amaxGlobal;
+    double averageGlobal;
 
 };
 
