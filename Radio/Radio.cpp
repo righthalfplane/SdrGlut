@@ -372,13 +372,16 @@ int Radio::updateLine()
     }
     average /= count;
     
+   //static int drops=0;
+   //if(rx->averageGlobal == 0)drops=0;
     if(rx->averageGlobal == 0)rx->averageGlobal=average;
     rx->averageGlobal = 0.9*rx->averageGlobal+0.1*average;
-    if(average < 0.05*rx->averageGlobal){
-        //fprintf(stderr,"Drop out %g \n",average);
+    if(average < 0.1*rx->averageGlobal){
+       // printf("Device '%s' Drop out average %g averageGlobal %g drops %d\n",rx->driveName,average,rx->averageGlobal,++drops);
         return 0;
     }
-   // fprintf(stderr,"average %g averageGlobal %g\n",average,rx->averageGlobal);
+    
+    //fprintf(stderr,"average %g averageGlobal %g\n",average,rx->averageGlobal);
     
     
     doWindow(real,imag,length,4);
