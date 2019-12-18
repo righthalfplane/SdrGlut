@@ -7,6 +7,9 @@ https://github.com/righthalfplane/SdrGlut/releases
 
 # Movies
 
+Corbra 38WXST vs Radio Shack TRC-236
+https://www.youtube.com/watch?v=O9MQbf1ArQk
+
 Corbra 38WXST using three different antennas
 https://www.youtube.com/watch?v=JDmxGQFwX-Y
 
