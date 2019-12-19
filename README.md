@@ -10,6 +10,9 @@ https://github.com/righthalfplane/SdrGlut/releases
 SdrGlut a Software Defined Radio player test drive #1
 https://www.youtube.com/watch?v=zxgcRjTahcA
 
+SDRPlay RSP2 vs a HackRF One using SdrGlut at FRS frequencies
+https://www.youtube.com/watch?v=42uEKTncpbQ
+
 Corbra 38WXST vs Radio Shack TRC-236
 https://www.youtube.com/watch?v=O9MQbf1ArQk
 
