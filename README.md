@@ -7,6 +7,9 @@ https://github.com/righthalfplane/SdrGlut/releases
 
 # Movies
 
+Cobra 38 WXST testing an inverted T antenna using SdrGlut
+https://www.youtube.com/watch?v=s-Rg2XC7bUY
+
 SdrGlut a Software Defined Radio player test drive #1
 https://www.youtube.com/watch?v=zxgcRjTahcA
 
