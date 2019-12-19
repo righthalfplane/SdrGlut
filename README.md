@@ -7,6 +7,9 @@ https://github.com/righthalfplane/SdrGlut/releases
 
 # Movies
 
+SdrGlut a Software Defined Radio player test drive #1
+https://www.youtube.com/watch?v=zxgcRjTahcA
+
 Corbra 38WXST vs Radio Shack TRC-236
 https://www.youtube.com/watch?v=O9MQbf1ArQk
 
