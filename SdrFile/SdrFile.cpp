@@ -452,6 +452,16 @@ int SdrFile::setBuffers(struct playData4 *play)
         freqdem_demodulate_block(filter.demod, (liquid_float_complex *)buf1, (int)num, (float *)buf2);
         msresamp_rrrf_execute(filter.iqSampler2, (float *)buf2, num, (float *)buf1, &num2);  // interpolate
         //printf("2 rx->size %d num %u num2 %u\n",rx->size,num,num2);
+    }else if(play->decodemode < MODE_LSB){
+#define DC_ALPHA 0.99    //ALPHA for DC removal filter ~20Hz Fcut with 15625Hz Sample Rate
+        
+        for(unsigned int n=0;n<num;++n){
+            double mag=sqrt(buf1[2*n]*buf1[2*n]+buf1[2*n+1]*buf1[2*n+1]);
+            double z0=mag + (filter.amHistory * DC_ALPHA);
+            buf2[n]=(float)(z0-filter.amHistory);
+            filter.amHistory=z0;
+        }
+        msresamp_rrrf_execute(filter.iqSampler2, (float *)buf2, num, (float *)buf1, &num2);  // interpolate
     }else{
         ampmodem_demodulate_block(filter.demodAM,  (liquid_float_complex *)buf1, (int)num, (float *)buf2);
         msresamp_rrrf_execute(filter.iqSampler2, (float *)buf2, num, (float *)buf1, &num2);  // interpolate

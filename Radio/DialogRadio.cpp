@@ -197,6 +197,8 @@ int Radio::dialogRadio(struct Scene *scene)
         dd.glui->add_edittext_to_panel(panel3, "", GLUI_EDITTEXT_TEXT, dd.text1z );
         dd.edittext1z[dd.iic]->w=160;
 
+        //fprintf(stderr,"el %g\n",el);
+        
         dd.line_Index[dd.iic]=el;
         
         dd.line_scroll[dd.iic] =
@@ -206,7 +208,7 @@ int Radio::dialogRadio(struct Scene *scene)
         
         dd.line_scroll[dd.iic]->set_float_limits( rx->gainsMinimum[dd.iic], rx->gainsMaximum[dd.iic] );
 
-        //printf("%s min %g max %g\n", rx->gains[i],rx->gainsMinimum[i],rx->gainsMaximum[i]);
+        //printf("%s min %g max %g\n", rx->gains[dd.iic],rx->gainsMinimum[dd.iic],rx->gainsMaximum[dd.iic]);
         
         //new GLUI_Button(panel3, "Apply", 30, control_cb);
         ++dd.iic;
@@ -223,6 +225,8 @@ int Radio::dialogRadio(struct Scene *scene)
     dd.edittext1z[dd.iic]->w=160;
     
     dd.line_Index[dd.iic]=el;
+    
+    //fprintf(stderr,"el %g\n",el);
 
     dd.line_scroll[dd.iic] =
     new GLUI_Scrollbar( panel3, "gain", GLUI_SCROLL_HORIZONTAL,
@@ -233,6 +237,7 @@ int Radio::dialogRadio(struct Scene *scene)
     
     ++dd.iic;
 
+    //printf("%s min %g max %g\n", "gain",rx->gainsMin,rx->gainsMax);
 
     dd.sub_window=glutGetWindow();
     
@@ -314,7 +319,10 @@ static void control_cb(int control)
         if(s->dd.line_Index_old[ind] != s->dd.line_Index[ind]){
             int ret=SoapySDRDevice_setGain(s->rx->device, SOAPY_SDR_RX, 0, s->dd.line_Index[ind]);
             if(ret)printf("SoapySDRDevice_setGain ret %d\n",ret);
-            s->dd.line_Index[ind]=s->dd.line_Index_old[ind];
+            s->dd.line_Index_old[ind]=s->dd.line_Index[ind];
+            //double el = SoapySDRDevice_getGain(s->rx->device, SOAPY_SDR_RX, 0);
+           // printf("value %s value %g el %g\n",value,s->dd.line_Index[ind],el);
+
         }
     }
     else if(control == 8)

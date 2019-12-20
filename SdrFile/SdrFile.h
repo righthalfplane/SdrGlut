@@ -141,6 +141,7 @@ struct Filters2{
     int thread;
     float *buf1;
     float *buf2;
+    double amHistory;
     int short *data;
 };
 
