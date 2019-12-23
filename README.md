@@ -9,12 +9,20 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.1
 
 # Movies
 
+SdrGlut a Software Defined Radio player test drive #1
+https://www.youtube.com/watch?v=zxgcRjTahcA
+
+SdrPlay RSP2 vs NetSDR+ using SdrGlut Part 1. 
+https://youtu.be/LdIaFVuAICw
+
+SdrPlay RSP2 vs NetSDR+ using SdrGlut Part 2. 
+https://youtu.be/1QJromJ76Lo
+
+SdrPlay RSP2 vs NetSDR+ using SdrGlut Part 3. 
+https://youtu.be/NXLYYvLQN_k
 
 Cobra 38 WXST testing an inverted T antenna using SdrGlut
 https://www.youtube.com/watch?v=s-Rg2XC7bUY
-
-SdrGlut a Software Defined Radio player test drive #1
-https://www.youtube.com/watch?v=zxgcRjTahcA
 
 SDRPlay RSP2 vs a HackRF One using SdrGlut at FRS frequencies
 https://www.youtube.com/watch?v=42uEKTncpbQ
@@ -33,15 +41,6 @@ https://www.youtube.com/watch?v=jV-LxQS_acY
 
 SdrGlut vs CubicSDR on the Raspberry pi 4 with a Lime Mini SDR
 https://www.youtube.com/watch?v=C18bGxbXNsA
-
-SdrPlay RSP2 vs NetSDR+ using SdrGlut Part 1. 
-https://youtu.be/LdIaFVuAICw
-
-SdrPlay RSP2 vs NetSDR+ using SdrGlut Part 2. 
-https://youtu.be/1QJromJ76Lo
-
-SdrPlay RSP2 vs NetSDR+ using SdrGlut Part 3. 
-https://youtu.be/NXLYYvLQN_k
 
 SdrPlay RSP2 vs a simple RTL stick using SdrGlut at FRS frequencies
 https://www.youtube.com/watch?v=eiuTO5yIR7w
