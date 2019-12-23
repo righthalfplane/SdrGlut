@@ -12,6 +12,9 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.1
 SdrGlut a Software Defined Radio player test drive #1
 https://www.youtube.com/watch?v=zxgcRjTahcA
 
+SdrGlut a Software Defined Radio controller test drive #2
+https://youtu.be/VRcvR2V-WFU
+
 SdrPlay RSP2 vs NetSDR+ using SdrGlut Part 1. 
 https://youtu.be/LdIaFVuAICw
 
