@@ -1465,7 +1465,7 @@ static void getMousel(int button, int state, int x, int y)
         }else{
             up=1;
         }
-    
+        
         long long fl;
         
         fl=(long long)sdr->rx->f;
@@ -1688,9 +1688,11 @@ static void moveMouse(int x, int y)
         sdr=FindSdrRadioWindow(glutGetWindow());
     }else{
         sdr=(RadioPtr)FindScene(&list->scene);
+        return;
     }
     
     if(!sdr)return;
+    
 
     struct Scene *scene;
     
@@ -1703,7 +1705,9 @@ static void moveMouse(int x, int y)
     double diff=fmove-sdr->fdown;
     
     sdr->rx->fc=sdr->fcdown-diff;
+    
 }
+ 
 int doWindow(double *x,double *y,long length,int type)
 
 {

@@ -304,10 +304,10 @@ static void control_cb(int control)
         int ind=control-23;
         msprintf(value,sizeof(value),"%0.f",s->dd.line_Index[ind]);
         s->dd.edittext1z[ind]->set_text(value);
-        if(s->dd.line_Index_old[ind] != s->dd.line_Index[ind]){
+        if(s->dd.line_Index_old[ind] != (int)s->dd.line_Index[ind]){
             int ret=SoapySDRDevice_setGainElement(s->rx->device, SOAPY_SDR_RX, 0, s->rx->gains[ind], s->dd.line_Index[ind]);
             if(ret)printf("SoapySDRDevice_setGainElement ret %d\n",ret);
-            s->dd.line_Index[ind]=s->dd.line_Index_old[ind];
+            s->dd.line_Index[ind]=(int)s->dd.line_Index_old[ind];
         }
     }
     else if(control == 50)
@@ -316,12 +316,12 @@ static void control_cb(int control)
         int ind=s->dd.gain_Index;
         msprintf(value,sizeof(value),"%0.f",s->dd.line_Index[ind]);
         s->dd.edittext1z[ind]->set_text(value);
-        if(s->dd.line_Index_old[ind] != s->dd.line_Index[ind]){
+        if(s->dd.line_Index_old[ind] != (int)s->dd.line_Index[ind]){
             int ret=SoapySDRDevice_setGain(s->rx->device, SOAPY_SDR_RX, 0, s->dd.line_Index[ind]);
             if(ret)printf("SoapySDRDevice_setGain ret %d\n",ret);
-            s->dd.line_Index_old[ind]=s->dd.line_Index[ind];
-            //double el = SoapySDRDevice_getGain(s->rx->device, SOAPY_SDR_RX, 0);
-           // printf("value %s value %g el %g\n",value,s->dd.line_Index[ind],el);
+            s->dd.line_Index_old[ind]=(int)s->dd.line_Index[ind];
+           // double el = SoapySDRDevice_getGain(s->rx->device, SOAPY_SDR_RX, 0);
+          // printf("value %s value %g el %g\n",value,s->dd.line_Index[ind],el);
 
         }
     }
