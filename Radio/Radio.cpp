@@ -98,7 +98,7 @@ Radio::Radio(struct Scene *scene): CWindow(scene)
 
     zerol((char *)&pd, sizeof(pd));
     
-    zerol((char *)&rxs, sizeof(rxs));
+    zerol((char *)&rxs,&rxs.end-&rxs.start);
 
 	getPaletteByName((char *)"ps", (unsigned char *)&pd.palette);
 

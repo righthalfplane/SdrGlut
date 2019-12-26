@@ -1,6 +1,6 @@
 #include "audiolib.h"
 
-#include <pthread.h>
+#include <mutex>
 
 static int zerol(unsigned char *s,unsigned long n);
 
@@ -8,7 +8,7 @@ static void *cMalloc(unsigned long n);
 
 static int cFree(unsigned char *data);
 
-static pthread_mutex_t buffermutex;
+static std::mutex buffermutex;
 
 int updateAudio(struct audioInfo *audio)
 {
@@ -102,8 +102,7 @@ int startAudio(struct audioInfo *audio,int numsource,int numbuff)
         return 1;
     }
     
-    pthread_mutex_init(&buffermutex,NULL);
-
+ 
 	return 0;
 }
 ALuint freebuffAudio(struct audioInfo *audio,ALuint n)
@@ -112,7 +111,7 @@ ALuint freebuffAudio(struct audioInfo *audio,ALuint n)
     
     if(!audio)return 1;
     
-    pthread_mutex_lock(&buffermutex);
+    buffermutex.lock();
     
     ret = 1;
     
@@ -126,7 +125,7 @@ ALuint freebuffAudio(struct audioInfo *audio,ALuint n)
 		}
 	}
     
-    pthread_mutex_unlock(&buffermutex);
+    buffermutex.unlock();
 
 	return ret;
 }
@@ -136,7 +135,7 @@ ALuint getbuffAudio(struct audioInfo *audio)
     
 	if(!audio)return NO_MORE_SPACE;
 	
-    pthread_mutex_lock(&buffermutex);
+    buffermutex.lock();
 
     ret = NO_MORE_SPACE;
 
@@ -150,7 +149,7 @@ ALuint getbuffAudio(struct audioInfo *audio)
 		}
 	}
     
-    pthread_mutex_unlock(&buffermutex);
+    buffermutex.unlock();
 
 	return ret;
 }
@@ -178,8 +177,6 @@ int stopAudio(struct audioInfo *audio)
     alcDestroyContext(audio->ctx);
     alcCloseDevice(audio->dev);
     
-    pthread_mutex_destroy(&buffermutex);
-	
 	return 0;	
 }
 

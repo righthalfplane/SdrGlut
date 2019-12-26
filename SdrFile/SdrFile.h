@@ -50,8 +50,6 @@
 
 #include "fir.h"
 
-#include "agc.h"
-
 
 #define    BLOCK_SIZE 4096
 

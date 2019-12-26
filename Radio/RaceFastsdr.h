@@ -4,8 +4,6 @@
 #include <SoapySDR/Device.h>
 #include <SoapySDR/Formats.h>
 
-#include <pthread.h>
-
 #include <liquid/liquid.h>
 
 #include "smeter.h"
@@ -19,6 +17,8 @@
 #include <string.h>
 #include <ctype.h>
 #include <math.h>
+
+#include <mutex>
 
 #include <sys/timeb.h>
 
@@ -71,6 +71,7 @@
 #define NUM_DATA_BUFF5 10
 
 struct playData{
+    int start;
     ALCdevice *dev;
     ALCcontext *ctx;
     double real[2*4800*2];
@@ -97,7 +98,6 @@ struct playData{
     SoapySDRStream *rxStream;
     SoapySDRDevice *device;
     
-    CSMeter m_SMeter;
 /*
     int AgcSlope;
     int AgcThresh;
@@ -133,16 +133,10 @@ struct playData{
     volatile int controlProcess;
     volatile int mute;
 
-    pthread_mutex_t mutex;
-    
-    pthread_mutex_t mutexa;
-    
-    pthread_mutex_t mutexo;
     
     
     int al_state;
     
-    agc_rrrf agc;
     
     char **antenna;
     size_t antennaCount;
@@ -193,6 +187,18 @@ struct playData{
     double scaleFactor;
     
     int audioThreads;
+    
+    int end;
+    
+    CSMeter m_SMeter;
+    
+    std::mutex mutex;
+    
+    std::mutex mutexa;
+    
+    std::mutex mutexo;
+    
+    agc_rrrf agc;
 
 };
 
@@ -211,6 +217,4 @@ struct Filters{
 
 
 extern "C" int RadioStart(int argc, char *argv [],struct playData *rx);
-extern "C" struct playData *RacePointer();
-
 #endif
