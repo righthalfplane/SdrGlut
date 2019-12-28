@@ -27,6 +27,9 @@ https://youtu.be/1QJromJ76Lo
 SdrPlay RSP2 vs NetSDR+ using SdrGlut Part 3. 
 https://youtu.be/NXLYYvLQN_k
 
+LimeSDR Mini vs a HackRF One using SdrGlut at FRS frequencies
+https://youtu.be/1EQcBYiyWAA
+
 Cobra 38 WXST testing an inverted T antenna using SdrGlut
 https://www.youtube.com/watch?v=s-Rg2XC7bUY
 
