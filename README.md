@@ -27,6 +27,9 @@ https://youtu.be/1QJromJ76Lo
 SdrPlay RSP2 vs NetSDR+ using SdrGlut Part 3. 
 https://youtu.be/NXLYYvLQN_k
 
+NetSDR+ vs a HackRF One using SdrGlut at FRS frequencies
+https://www.youtube.com/watch?v=5ubHUx9Naio
+
 LimeSDR Mini vs a HackRF One using SdrGlut at FRS frequencies
 https://youtu.be/1EQcBYiyWAA
 
