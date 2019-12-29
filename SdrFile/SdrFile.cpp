@@ -1929,6 +1929,8 @@ static void moveMouse(int x, int y)
     }else{
         scene=&list->scene;
         sdr=(SdrFilePtr)FindScene(scene);
+        //fprintf(stderr,"moveMouse %d %d \n",x,y);
+        return;
     }
     
     if(!sdr)return;
