@@ -113,7 +113,8 @@ struct playData4{
     double aminGlobal;
     double amaxGlobal;
     double averageGlobal;
-
+    
+    double scaleFactor;
 };
 
 
@@ -154,7 +155,8 @@ struct DialogSdrData{
     char text6[255];
     char text7[255];
     char text8[255];
-    
+    char text16[255];
+
     GLUI_EditText *edittext1;
     GLUI_EditText *edittext2;
     GLUI_EditText *edittext3;
@@ -164,6 +166,7 @@ struct DialogSdrData{
     GLUI_EditText *edittext6;
     GLUI_EditText *edittext7;
     GLUI_EditText *edittext8;
+    GLUI_EditText *edittext16;
     char text1z[255];
     GLUI_EditText *edittext1z[20];
     

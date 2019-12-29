@@ -114,6 +114,8 @@ SdrFile::SdrFile(struct Scene *scene): CWindow(scene)
     play.f=0.6e6;
     //play.fc=162.39e6;
     //play.f=162.4e6;
+    play.scaleFactor=0.0;
+
 
     play.fOut=48000;
     play.decodemode=MODE_AM;
@@ -380,6 +382,14 @@ int SdrFile::setBuffers(struct playData4 *play)
         ret=1;
     }
 
+    double scale=pow(10.0,play->scaleFactor/20.0);
+
+    for (k = 0 ; k < readcount ; k++){
+        float r = (float)(buf1[k * 2]*scale);
+        float i = (float)(buf1[k * 2 + 1]*scale);
+        buf1[k * 2] = r;
+        buf1[k * 2 + 1] = i;
+    }
 
     play->frame++;
     

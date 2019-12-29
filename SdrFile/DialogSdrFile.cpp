@@ -108,7 +108,8 @@ int SdrFile::dialogSdrFile(struct Scene *scene)
     msprintf(dd.text6,sizeof(dd.text6),"%.0f",power);
     msprintf(dd.text7,sizeof(dd.text7),"%g",pd.sPmin);
     msprintf(dd.text8,sizeof(dd.text8),"%g",pd.sPmax);
-	
+    msprintf(dd.text16,sizeof(dd.text16),"%g",play.scaleFactor);
+
 	dd.edittext1 =
 	dd.glui->add_edittext( "Frequency:", GLUI_EDITTEXT_TEXT, dd.text1 );
 	dd.edittext1->w=200;
@@ -158,6 +159,11 @@ int SdrFile::dialogSdrFile(struct Scene *scene)
     dd.glui->add_edittext( "Bandwidth:", GLUI_EDITTEXT_TEXT, dd.text15);
     dd.edittext15->w=200;
 
+    dd.edittext16 =
+    dd.glui->add_edittext( "Scale Factor:", GLUI_EDITTEXT_TEXT, dd.text16);
+    dd.edittext16->w=200;
+
+    
     dd.useagc=play.gainMode;
     
     dd.check_box = new GLUI_Checkbox( dd.glui, "Use Automatic Agc", &dd.useagc, 7, control_cb );
@@ -190,7 +196,7 @@ int SdrFile::dialogSdrFile(struct Scene *scene)
 static void control_cb(int control)
 {
 	std::string file_name;
-    double f,fc,gain,lineAlpha;
+    double f,fc,gain,lineAlpha,scaleFactor;
     double dmin,dmax;
     double sameleRate;
     double bandwidth;
@@ -207,11 +213,13 @@ static void control_cb(int control)
     sscanf(dd->edittext4->get_text(),"%lg", &lineAlpha);
     sscanf(dd->edittext5->get_text(),"%lg", &sameleRate);
     sscanf(dd->edittext15->get_text(),"%lg", &bandwidth);
+    sscanf(dd->edittext16->get_text(),"%lg", &scaleFactor);
     sscanf(dd->edittext7->get_text(),"%lg", &dmin);
     sscanf(dd->edittext8->get_text(),"%lg", &dmax);
     
     if(control == 4){
         s->play.gain=gain;
+        s->play.scaleFactor=scaleFactor;
         if(s->pd.UsePlotScales)
         {
             s->pd.sPmin=dmin;
@@ -255,6 +263,9 @@ static void control_cb(int control)
     {
         s->play.frame=-1;
         s->stopPlay(&s->play);
+        
+        s->play.scaleFactor=scaleFactor;
+
         s->play.gain=gain;
         s->play.fc=fc;
         s->play.f=f;
