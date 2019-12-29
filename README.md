@@ -4,8 +4,7 @@ SdrGlut is a simple software defined radio player. Using glut for drawing and gl
 The fourth release is now avaliable - It fixes a number of problems I/Q playback routines. It has a prebuild exe for the macOS. It has serveral of modules build in. If it has the module that you what - download, install and you are ready to go. It also has zip file for Windows. Unpack and go to the bin folder and click on SdrGlut.exe to run.
 
 
-https://github.com/righthalfplane/SdrGlut/releases/tag/v1.1
-
+https://github.com/righthalfplane/SdrGlut/releases/tag/v1.3
 
 # Movies
 
