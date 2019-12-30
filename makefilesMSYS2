@@ -56,7 +56,7 @@ CCFILES= ./glui-routines/algebra3.cpp ./glui-routines/arcball.cpp ./glui-routine
 	./MainSource/DialogFolder.cpp  ./Classes/CLine3D.cpp ./Classes/CPath.cpp ./Classes/CTown.cpp ./Classes/CPathDataSelection.cpp \
 	./Classes/DialogSelectionBox.cpp ./Classes/CWindowRangeDialog.cpp ./Classes/CCloud.cpp ./CExpress/doRx3Batch.cpp ./Classes/CObjectList2.cpp \
 	./Classes/ObjectListCalculate.cpp ./Classes/CImages.cpp  ./Classes/CImagesContours.cpp \
-	./CExpress/uFilesBatchSds3d.cpp ./Classes/agc.cpp ./MainSource/fir.cpp \
+	./CExpress/uFilesBatchSds3d.cpp  ./MainSource/fir.cpp \
 	./Classes/fastfir.cpp ./Classes/fft.cpp ./Classes/CLines.cpp ./Classes/CLInesPlotLabels.cpp ./Classes/ClinesAttributes.cpp \
 	./Classes/Contours.cpp ./Classes/ClinesPlotAttributes.cpp ./Radio/smeter.cpp ./Classes/CLinesPlotBox.cpp \
 	./Radio/Radio.cpp ./Radio/DialogRadio.cpp ./Radio/RaceFastsdr.cpp ./SimpleOpenGL/raceFMCsdr.cpp
@@ -86,7 +86,7 @@ CCOBJS = ./glui-routines/algebra3.o ./glui-routines/arcball.o ./glui-routines/gl
 	./Classes/CWindow.o  \
 	./Classes/fastfir.o  ./Classes/fft.o ./Classes/CLines.o ./Classes/CLInesPlotLabels.o ./Classes/ClinesAttributes.o ./Classes/ClinesPlotAttributes.o ./Radio/smeter.o ./Classes/CLinesPlotBox.o \
 	./Radio/Radio.o ./Radio/DialogRadio.o ./Radio/RaceFastsdr.o ./MainSource/DialogFileOpen.o ./SdrFile/SdrFile.o \
-    ./MainSource/DialogSave.o ./SdrFile/DialogSdrFile.o ./MainSource/fir.o ./MainSource/agc.o ./MainSource/DialogFolder.o \
+    ./MainSource/DialogSave.o ./SdrFile/DialogSdrFile.o ./MainSource/fir.o  ./MainSource/DialogFolder.o \
 	./MainSource/PlayIQ.o ./MainSource/RecordIQ.o
 
 
