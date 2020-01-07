@@ -26,6 +26,9 @@ https://youtu.be/1QJromJ76Lo
 SdrPlay RSP2 vs NetSDR+ using SdrGlut Part 3. 
 https://youtu.be/NXLYYvLQN_k
 
+Icom IC-R20 vs a NetSDR+ using SdrGlut at CB frequencies
+https://youtu.be/lAphTfKnU6M
+
 Icom IC-R30 vs a Icom IC-R20 at FRS frequencies
 https://youtu.be/_ANaNVrqPz8
 
