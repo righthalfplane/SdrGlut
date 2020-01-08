@@ -26,6 +26,9 @@ https://youtu.be/1QJromJ76Lo
 SdrPlay RSP2 vs NetSDR+ using SdrGlut Part 3. 
 https://youtu.be/NXLYYvLQN_k
 
+Alinco DX-R8 vs a NetSDR+ using SdrGlut at CB frequencies
+https://youtu.be/AxeiXFVd1x0
+
 Icom IC-R75 vs a NetSDR+ using SdrGlut at CB frequencies
 https://youtu.be/bPzqTMoz9vc
 
