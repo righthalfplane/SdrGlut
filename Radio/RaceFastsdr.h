@@ -198,7 +198,6 @@ struct playData{
     
     std::mutex mutexo;
     
-    agc_rrrf agc;
 
 };
 

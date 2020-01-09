@@ -126,7 +126,7 @@ static void control_cb(int control)
         char name[256];
         int n=control-dd->numradio;
         RadioPtr sdr=dd->rd[n].r;
-        //fprintf(stderr,"press button %d\n",n);
+        fprintf(stderr,"press button %d\n",n);
         freq=(unsigned long)(sdr->rx->fc);
         samp=(unsigned long)(sdr->rx->samplerate);
         sprintf(name,"%s_IQ_%lu_%lu_fc.raw",sdr->windowName,freq,samp);
@@ -141,13 +141,16 @@ static void control_cb(int control)
             strncatToPath(sdr->scene->FilePathIQ,(char *)(dd->rd[n].filePath->get_text()),sizeof(sdr->scene->FilePathIQ));
             dd->rd[n].out=NULL;
             if(dd->rd[n].checkState && sdr->scene->FilePathIQ[0]){
+                if(dd->rd[n].out){
+                    fclose(dd->rd[n].out);
+                }
                 dd->rd[n].out=fopen(sdr->scene->FilePathIQ,"wb");
                 if(dd->rd[n].out== NULL){
                     fprintf(stderr,"Error Opening %s to Write\n",sdr->scene->FilePathIQ);
                 }else{
                     ++ns;
+                    fprintf(stderr,"Open Record %d out %p\n",n,dd->rd[n].out);
                 }
-                fprintf(stderr,"Open Record %d out %p\n",n,dd->rd[n].out);
             }
         }
         if(ns == 0){

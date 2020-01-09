@@ -78,7 +78,7 @@ static void control_cb(int control);
 void antennaMenu(int item);
 void bandMenu(int item);
 void sampleMenu(int item);
-void setAudio(int item);
+void doAudio(int item);
 
 static void keys2(unsigned char key, int x, int y);
 
@@ -248,7 +248,7 @@ int doRadioOpenRA(void)
     
     msprintf(sfrequency,sizeof(sfrequency),"%g",100.0e6);
     
-    msprintf(ssamplerate,sizeof(ssamplerate),"%.0f",8000000.0);
+    msprintf(ssamplerate,sizeof(ssamplerate),"%.0f",2000000.0);
     
     edittext1 =
     glui->add_edittext( "Frequency:", GLUI_EDITTEXT_TEXT, sfrequency );
@@ -1037,7 +1037,7 @@ int Radio::OpenWindows(struct Scene *scene)
         
     }
 
-    int menu4=glutCreateMenu(setAudio);
+    int menu4=glutCreateMenu(doAudio);
     glutAddMenuEntry("Start Audio Recording", START_AUDiO);
     glutAddMenuEntry("Stop  Audio Recording", STOP_AUDiO);
     glutAddMenuEntry("IQ Recording", START_IQ);
@@ -1255,28 +1255,8 @@ void AudioSave(struct Scene *scene,char *name)
     
     return;
 }
-void IQSave(struct Scene *scene,char *name)
-{
-    if(!scene || !name)return;
-    
-    struct SceneList *list;
-    RadioPtr sdr;
-    
-    list=SceneFindByNumber(glutGetWindow());
-    if(!list){
-        sdr=FindSdrRadioWindow(glutGetWindow());
-    }else{
-        sdr=(RadioPtr)FindScene(&list->scene);
-    }
-    
-    if(!sdr)return;
 
-    sdr->rx->pSetAudio(sdr->rx,name,START_IQ);
-    
-    return;
-}
-
-void setAudio(int item)
+void doAudio(int item)
 {
     // unsigned long freq,samp;
     // char name[256];
@@ -1303,12 +1283,6 @@ void setAudio(int item)
             sdr->rx->pSetAudio(sdr->rx,NULL,START_AUDiO);
             break;
         case START_IQ:
-            /*
-            freq=(unsigned long)(sdr->rx->fc);
-            samp=(unsigned long)(sdr->rx->samplerate);
-            sprintf(name,"iqOutput_%lu_%lu_fc.raw",freq,samp);
-            dialogSaveC(sdr->scene, IQSave,1,name);
-             */
             
             RecordIQ();
             break;

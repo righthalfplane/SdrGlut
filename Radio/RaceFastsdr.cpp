@@ -128,6 +128,7 @@ static int SetAudio(struct playData *rx,char *name,int type)
             }
         }
     }else{
+/*
         FILE *out;
         out=(FILE *)rx->iqOutput;
         if(out){
@@ -142,7 +143,10 @@ static int SetAudio(struct playData *rx,char *name,int type)
                 fprintf(stderr,"Error Opening %s To Write\n",name);
             }
         }
+ */
     }
+
+    
     return 0;
 }
 
@@ -394,8 +398,6 @@ static int sdrDone(struct playData *rx)
     stopPlay(rx);
     
 
-    if(rx->agc)agc_rrrf_destroy(rx->agc);
-    rx->agc=NULL;
 
 
     for(int k=0;k<NUM_DATA_BUFF5;++k){
@@ -963,7 +965,7 @@ static int findRadio(struct playData *rx)
 			
           SoapySDRDevice_setupStream(rx->device,&rx->rxStream,SOAPY_SDR_RX, SOAPY_SDR_CF32, NULL,0,NULL);
             
-            // rx->rxStream=SoapySDRDevice_setupStream(rx->device,SOAPY_SDR_RX, SOAPY_SDR_CF32, NULL,0,NULL);
+			//rx->rxStream=SoapySDRDevice_setupStream(rx->device,SOAPY_SDR_RX, SOAPY_SDR_CF32, NULL,0,NULL);
             
 			SoapySDRDevice_activateStream(rx->device,rx->rxStream, 0, 0, 0);
             
@@ -1132,11 +1134,6 @@ static int startPlay(struct playData *rx)
     	// printf("fc %f f %f dt %g samplerate %.0f\n",rx->fc,rx->f,rx->dt,rx->samplerate);
     }
     
-    if(rx->agc)agc_rrrf_destroy(rx->agc);
-    
-    rx->agc = agc_rrrf_create();
-    
-    agc_rrrf_set_bandwidth(rx->agc, 0.25);
     
     if(findRadio(rx) || rx->device == NULL){
         fprintf(stderr,"Error No SDR Found\n");

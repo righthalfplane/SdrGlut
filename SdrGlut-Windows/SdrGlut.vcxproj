@@ -172,7 +172,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>../SdrFile;../Radio;../SdrGlut;"C:Program Files (x86)/OpenAL 1.1 SDK/include";"C:/Program Files/PothosSDR/include";../MainSource;../Classes;../include;../CExpress;../glui-routines/include;../glui-routines;../DrawFindPointHistory;../KdTree-routines;../mShowOpenGL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../SdrFile;../Radio;../SdrGlut;"C:/Program Files (x86)/OpenAL 1.1 SDK/include";"C:/Program Files/PothosSDR/include";../MainSource;../Classes;../include;../CExpress;../glui-routines/include;../glui-routines;../DrawFindPointHistory;../KdTree-routines;../mShowOpenGL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;GLEW_STATIC;GLUT_NO_LIB_PRAGMA;GLUT_BUILDING_LIB;FREEGLUT_STATIC;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -185,7 +185,7 @@
       <AdditionalDependencies>libliquid.lib; pthreadVC2.lib;OpenAL32.lib;SoapySDR.lib;winmm.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <TargetMachine>MachineX64</TargetMachine>
-      <AdditionalLibraryDirectories>"C:/Program Files/PothosSDR/lib";"C:Program Files (x86)/OpenAL 1.1 SDK/libs/Win64";</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>"C:/Program Files/PothosSDR/lib";"C:/Program Files (x86)/OpenAL 1.1 SDK/libs/Win64";</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'">
