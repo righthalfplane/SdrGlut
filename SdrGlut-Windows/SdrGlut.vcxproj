@@ -182,10 +182,10 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>libliquid.lib; pthreadVC2.lib;OpenAL32.lib;SoapySDR.lib;winmm.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>freeglut_staticd.lib;libliquid.lib; pthreadVC2.lib;OpenAL32.lib;SoapySDR.lib;winmm.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <TargetMachine>MachineX64</TargetMachine>
-      <AdditionalLibraryDirectories>"C:/Program Files/PothosSDR/lib";"C:/Program Files (x86)/OpenAL 1.1 SDK/libs/Win64";</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>"../freeglut-3.2.1/lib";"C:/Program Files/PothosSDR/lib";"C:/Program Files (x86)/OpenAL 1.1 SDK/libs/Win64";</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'">
@@ -302,14 +302,6 @@
     <ClInclude Include="..\Radio\RaceFastsdr.h" />
     <ClInclude Include="..\Radio\Radio.h" />
     <ClInclude Include="..\Radio\smeter.h" />
-    <ClInclude Include="..\Glut\glutbitmap.h" />
-    <ClInclude Include="..\Glut\glutint.h" />
-    <ClInclude Include="..\Glut\glutstroke.h" />
-    <ClInclude Include="..\Glut\glutwin32.h" />
-    <ClInclude Include="..\Glut\layerutil.h" />
-    <ClInclude Include="..\Glut\stroke.h" />
-    <ClInclude Include="..\Glut\win32_glx.h" />
-    <ClInclude Include="..\Glut\win32_x11.h" />
     <ClInclude Include="..\Classes\CWindow.h" />
     <ClInclude Include="..\SdrFile\DialogSdrFile.h" />
     <ClInclude Include="..\SdrFile\SdrFile.h" />
@@ -377,55 +369,6 @@
     <ClCompile Include="..\Radio\RaceFastsdr.cpp" />
     <ClCompile Include="..\Radio\Radio.cpp" />
     <ClCompile Include="..\Radio\smeter.cpp" />
-    <ClCompile Include="..\Glut\glut_8x13.c" />
-    <ClCompile Include="..\Glut\glut_9x15.c" />
-    <ClCompile Include="..\Glut\glut_bitmap.c" />
-    <ClCompile Include="..\Glut\glut_bwidth.c" />
-    <ClCompile Include="..\Glut\glut_cindex.c" />
-    <ClCompile Include="..\Glut\glut_cmap.c" />
-    <ClCompile Include="..\Glut\glut_cursor.c" />
-    <ClCompile Include="..\Glut\glut_dials.c" />
-    <ClCompile Include="..\Glut\glut_dstr.c" />
-    <ClCompile Include="..\Glut\glut_event.c" />
-    <ClCompile Include="..\Glut\glut_ext.c" />
-    <ClCompile Include="..\Glut\glut_fcb.c" />
-    <ClCompile Include="..\Glut\glut_fullscrn.c" />
-    <ClCompile Include="..\Glut\glut_gamemode.c" />
-    <ClCompile Include="..\Glut\glut_get.c" />
-    <ClCompile Include="..\Glut\glut_glxext.c" />
-    <ClCompile Include="..\Glut\glut_hel10.c" />
-    <ClCompile Include="..\Glut\glut_hel12.c" />
-    <ClCompile Include="..\Glut\glut_hel18.c" />
-    <ClCompile Include="..\Glut\glut_init.c" />
-    <ClCompile Include="..\Glut\glut_input.c" />
-    <ClCompile Include="..\Glut\glut_joy.c" />
-    <ClCompile Include="..\Glut\glut_key.c" />
-    <ClCompile Include="..\Glut\glut_keyctrl.c" />
-    <ClCompile Include="..\Glut\glut_keyup.c" />
-    <ClCompile Include="..\Glut\glut_mesa.c" />
-    <ClCompile Include="..\Glut\glut_modifier.c" />
-    <ClCompile Include="..\Glut\glut_mroman.c" />
-    <ClCompile Include="..\Glut\glut_overlay.c" />
-    <ClCompile Include="..\Glut\glut_roman.c" />
-    <ClCompile Include="..\Glut\glut_shapes.c" />
-    <ClCompile Include="..\Glut\glut_space.c" />
-    <ClCompile Include="..\Glut\glut_stroke.c" />
-    <ClCompile Include="..\Glut\glut_swap.c" />
-    <ClCompile Include="..\Glut\glut_swidth.c" />
-    <ClCompile Include="..\Glut\glut_tablet.c" />
-    <ClCompile Include="..\Glut\glut_teapot.c" />
-    <ClCompile Include="..\Glut\glut_tr10.c" />
-    <ClCompile Include="..\Glut\glut_tr24.c" />
-    <ClCompile Include="..\Glut\glut_util.c" />
-    <ClCompile Include="..\Glut\glut_vidresize.c" />
-    <ClCompile Include="..\Glut\glut_warp.c" />
-    <ClCompile Include="..\Glut\glut_win.c" />
-    <ClCompile Include="..\Glut\glut_winmisc.c" />
-    <ClCompile Include="..\Glut\win32_glx.c" />
-    <ClCompile Include="..\Glut\win32_menu.c" />
-    <ClCompile Include="..\Glut\win32_util.c" />
-    <ClCompile Include="..\Glut\win32_winproc.c" />
-    <ClCompile Include="..\Glut\win32_x11.c" />
     <ClCompile Include="..\Classes\CWindow.cpp" />
     <ClCompile Include="..\SdrFile\DialogSdrFile.cpp" />
     <ClCompile Include="..\SdrFile\SdrFile.cpp" />

@@ -16,9 +16,6 @@
     <Filter Include="include">
       <UniqueIdentifier>{fa2bb651-d7b1-4bad-92b9-09674b618045}</UniqueIdentifier>
     </Filter>
-    <Filter Include="glut">
-      <UniqueIdentifier>{5a4c4587-a67d-4227-9d4a-fc2c48a05bdc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Classes">
       <UniqueIdentifier>{ba7cb210-15da-4976-b34a-c5a7f531a65c}</UniqueIdentifier>
     </Filter>
@@ -101,30 +98,6 @@
     </ClInclude>
     <ClInclude Include="..\..\Library\include\jpeglib.h">
       <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Glut\glutbitmap.h">
-      <Filter>glut</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Glut\glutint.h">
-      <Filter>glut</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Glut\glutstroke.h">
-      <Filter>glut</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Glut\glutwin32.h">
-      <Filter>glut</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Glut\layerutil.h">
-      <Filter>glut</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Glut\stroke.h">
-      <Filter>glut</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Glut\win32_glx.h">
-      <Filter>glut</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Glut\win32_x11.h">
-      <Filter>glut</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\CWindow.h">
       <Filter>Classes</Filter>
@@ -389,153 +362,6 @@
     </ClCompile>
     <ClCompile Include="..\DrawFindPointHistory\GridPlot.c">
       <Filter>DrawFindPointHistory</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_8x13.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_9x15.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_bitmap.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_bwidth.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_cindex.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_cmap.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_cursor.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_dials.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_dstr.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_event.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_ext.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_fcb.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_fullscrn.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_gamemode.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_get.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_glxext.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_hel10.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_hel12.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_hel18.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_init.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_input.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_joy.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_key.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_keyctrl.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_keyup.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_mesa.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_modifier.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_mroman.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_overlay.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_roman.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_shapes.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_space.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_stroke.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_swap.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_swidth.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_tablet.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_teapot.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_tr10.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_tr24.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_util.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_vidresize.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_warp.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_win.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\glut_winmisc.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\win32_glx.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\win32_menu.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\win32_util.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\win32_winproc.c">
-      <Filter>glut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Glut\win32_x11.c">
-      <Filter>glut</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\CWindow.cpp">
       <Filter>Classes</Filter>
