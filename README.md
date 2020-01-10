@@ -26,6 +26,9 @@ https://youtu.be/1QJromJ76Lo
 SdrPlay RSP2 vs NetSDR+ using SdrGlut Part 3. 
 https://youtu.be/NXLYYvLQN_k
 
+Gqrx vs SdrGlut at CB frequencies
+https://youtu.be/P7zBRdvK6Jg
+
 Gqrx vs SdrGlut at FRS frequencies
 https://youtu.be/g_v3TBrCw4o
 
