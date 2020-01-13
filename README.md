@@ -26,6 +26,9 @@ https://youtu.be/1QJromJ76Lo
 SdrPlay RSP2 vs NetSDR+ using SdrGlut Part 3. 
 https://youtu.be/NXLYYvLQN_k
 
+A Power Meter for CubicSDR 0.2.5
+https://youtu.be/07vbIeXHukI
+
 SDRPlay RSP2 vs NetSDR+ at CB frequencies
 https://youtu.be/BpmVxCTGsQQ
 
