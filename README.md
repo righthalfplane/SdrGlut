@@ -26,6 +26,13 @@ https://youtu.be/1QJromJ76Lo
 SdrPlay RSP2 vs NetSDR+ using SdrGlut Part 3. 
 https://youtu.be/NXLYYvLQN_k
 
+LimeSDR Mini using SdrGlut on Several Systems
+https://youtu.be/yhxqu5VcO3w
+
+LimeSDR Mini using CubicSDR 0.2.5 on Several Systems
+https://youtu.be/zCTIK82YW9w
+
+
 A Power Meter for CubicSDR 0.2.5
 https://youtu.be/07vbIeXHukI
 
