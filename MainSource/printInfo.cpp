@@ -16,6 +16,7 @@
 #include <cerrno>
 #include <vector>
 #include <iostream>
+#include <iterator>
 
 int printInfo(void)
 {
@@ -24,28 +25,24 @@ int printInfo(void)
     std::cout << "ABI Version: v" << SoapySDR::getABIVersion() << std::endl;
     std::cout << "Install root: " << SoapySDR::getRootPath() << std::endl;
     
-    for (const auto &path : SoapySDR::listSearchPaths())
-        std::cout << "Search path: " << path << std::endl;
+    std::vector<std::string> path=SoapySDR::listSearchPaths();
+    for(size_t i=0;i<path.size();++i){
+        std::cout << "Search path: " << path[i] << std::endl;
+    }
     
-    //get a list of module and calculate the max path length
-    const auto modules = SoapySDR::listModules();
-    size_t maxModulePathLen(0);
-    for (const auto &mod : modules) maxModulePathLen = std::max(maxModulePathLen, mod.size());
+    std::vector<std::string> mod=SoapySDR::listModules();
     
-    //load each module and print information
-    for (const auto &mod : modules)
+    for (size_t k=0;k<mod.size();++k)
     {
-        std::cout << "Module found: " << mod;
-        const auto &errMsg = SoapySDR::loadModule(mod);
+        std::cout << "Module found: " << mod[k];
+        const auto &errMsg = SoapySDR::loadModule(mod[k]);
         if (not errMsg.empty()) std::cout << "\n  " << errMsg;
-        const auto version = SoapySDR::getModuleVersion(mod);
-        if (not version.empty()) std::cout << std::string(maxModulePathLen-mod.size(), ' ') << " (" << version << ")";
         std::cout << std::endl;
     }
-    if (modules.empty()) std::cout << "No modules found!" << std::endl;
+    if (mod.empty()) std::cout << "No modules found!" << std::endl;
     
     
-    return EXIT_SUCCESS;
+    return 0;
 }
 
 
