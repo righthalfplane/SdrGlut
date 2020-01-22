@@ -2,7 +2,9 @@
 #include <cstdio>
 #include <cstdlib>
 #include <stdarg.h>
-#define EXTERN 
+#define EXTERN
+#include <SoapySDR/Version.h>
+#include <SoapySDR/Modules.h>
 #include "Utilities.h"
 #include "Scene.h"
 #include "QuitDialog.h"
@@ -17,6 +19,8 @@
 
 #include <liquid/liquid.h>
 
+int printInfo(void);
+
 char ApplicationDirectory[2048];
 
 char WarningBuff[256];
@@ -30,7 +34,7 @@ static void control_cb(int control);
 
 static void control_cb2(int control);
 
-char *ProgramVersion=(char *)"SdrGlut-450";
+char *ProgramVersion=(char *)"SdrGlut-454";
 
 extern "C" struct Scene *sceneRoot(void);
 
@@ -275,7 +279,38 @@ static void control_cb2(int control)
 	}
 }
 int main (int argc, char *argv[]) {
-        
+    
+    
+    printInfo();
+/*
+    std::cout << "Lib Version: v" << SoapySDR_getLibVersion() << std::endl;
+    std::cout << "API Version: v" << SoapySDR_getAPIVersion() << std::endl;
+    std::cout << "ABI Version: v" << SoapySDR_getABIVersion() << std::endl;
+    std::cout << "Install root: " << SoapySDR_getRootPath() << std::endl;
+    
+    size_t length2;
+    
+    char **names=SoapySDR_listSearchPaths(&length2);
+    
+    for (size_t k=0;k<length2;++k){
+        std::cout << "Search path: " << names[k] << std::endl;
+    }
+    
+    names=SoapySDR_listModules(&length2);
+    for (size_t k=0;k<length2;++k){
+        std::cout << "modules: " << names[k] << std::endl;
+        char *name=SoapySDR_loadModule(names[k]);
+        if(name)std::cout << "name: " << name << std::endl;
+        name=SoapySDR_getModuleVersion(names[k]);
+        if(name)std::cout << "name: " << name << std::endl;
+    }
+
+*/
+    
+    
+    
+    
+    
     if(startAudio(&audioStruct,6,18)){
         fprintf(stderr,"startAudio Failed\n");
         exit(1);

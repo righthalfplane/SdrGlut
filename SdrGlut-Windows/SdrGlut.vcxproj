@@ -323,6 +323,7 @@
     <ClCompile Include="..\MainSource\main.cpp" />
     <ClCompile Include="..\MainSource\mThread.cpp" />
     <ClCompile Include="..\MainSource\PlayIQ.cpp" />
+    <ClCompile Include="..\MainSource\printInfo.cpp" />
     <ClCompile Include="..\MainSource\QuitDialog.cpp" />
     <ClCompile Include="..\MainSource\RecordIQ.cpp" />
     <ClCompile Include="..\MainSource\Scene.c" />

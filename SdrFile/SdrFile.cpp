@@ -5,6 +5,7 @@
 //  Created by Dale on 10/8/16.
 //  Copyright © 2016 Dale Ranta. All rights reserved.
 //
+#include <SoapySDR/Version.h>
 
 #include "SdrFile.h"
 
@@ -839,9 +840,11 @@ static int setFilters(struct playData4 *rx,struct Filters2 *f)
     
     f->demod=freqdem_create(0.5);
     
+#if SOAPY_SDR_API_VERSION < 0x00070000
+    f->demodAM = ampmodem_create(0.5, 0.0, mode, iflag);
+#else
     f->demodAM = ampmodem_create(0.5, mode, iflag);
-    
-//    f->demodAM = ampmodem_create(0.5, 0.0, mode, iflag);
+#endif
 
     f->iqSampler  = msresamp_crcf_create(rx->Ratio, As);
     

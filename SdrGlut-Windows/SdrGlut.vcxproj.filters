@@ -451,6 +451,9 @@
     <ClCompile Include="..\MainSource\mThread.cpp">
       <Filter>MainSource</Filter>
     </ClCompile>
+    <ClCompile Include="..\MainSource\printInfo.cpp">
+      <Filter>MainSource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SdrGlut.rc" />

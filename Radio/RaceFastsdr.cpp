@@ -1,3 +1,4 @@
+#include <SoapySDR/Version.h>
 #include "RaceFastsdr.h"
 #include "Utilities.h"
 /*
@@ -626,9 +627,11 @@ static int setFilters(struct playData *rx,struct Filters *f)
     
     f->demod=freqdem_create(0.5);
     
+#if SOAPY_SDR_API_VERSION < 0x00070000
+    f->demodAM = ampmodem_create(0.5, 0.0, mode, iflag);
+ #else
     f->demodAM = ampmodem_create(0.5, mode, iflag);
-    
-  //  f->demodAM = ampmodem_create(0.5, 0.0, mode, iflag);
+#endif
 
     f->iqSampler  = msresamp_crcf_create(rx->Ratio, As);
     
@@ -963,9 +966,13 @@ static int findRadio(struct playData *rx)
 			
         	// std::cout << "rx->samplerate " << rx->samplerate << std::endl;
 			
-          SoapySDRDevice_setupStream(rx->device,&rx->rxStream,SOAPY_SDR_RX, SOAPY_SDR_CF32, NULL,0,NULL);
             
-			//rx->rxStream=SoapySDRDevice_setupStream(rx->device,SOAPY_SDR_RX, SOAPY_SDR_CF32, NULL,0,NULL);
+
+#if SOAPY_SDR_API_VERSION < 0x00080000
+			SoapySDRDevice_setupStream(rx->device, &rx->rxStream, SOAPY_SDR_RX, SOAPY_SDR_CF32, NULL, 0, NULL);
+#else
+			rx->rxStream=SoapySDRDevice_setupStream(rx->device,SOAPY_SDR_RX, SOAPY_SDR_CF32, NULL,0,NULL);
+#endif
             
 			SoapySDRDevice_activateStream(rx->device,rx->rxStream, 0, 0, 0);
             
@@ -1286,6 +1293,11 @@ static int doAudio(float *aBuff,struct playData *rx)
         v=buff[k];
 		v=gain*((v-dmin)*dnom-32768);
         if(rx->mute)v=0.0;
+        if(v < -32765){
+            v = -32765;
+        }else if(v > 32765){
+            v=32765;
+        }
 		data[k]=(short int)v;
        // if(v < amin)amin=v;
        // if(v > amax)amax=v;
