@@ -161,6 +161,43 @@ make -f makefileUbunta
 
 ./sdrglut.x
 
+## Add SDRPlay
+
+go to
+
+https://www.sdrplay.com/downloads/
+
+select to download
+
+API/HW DRIVER – V2.13 (20TH JUN 2018)
+
+This downloads  
+
+SDRplay_RSP_API-Linux-2.13.1.run
+
+in the bash Shell do the install of the drivers by running -
+
+./SDRplay_RSP_API-Linux-2.13.1.run
+
+then add to the blacklist (/etc/modprobe.d/blacklist.conf) the follown lines
+
+blacklist sdr_msi3101
+
+blacklist msi001
+
+blacklist msi2500
+
+reboot
+
+you should be ready to go
+
+
+
+
+
+
+
+
 # Install on Raspberry pi
 
 SdrGlut runs nicely on the Raspberry pi 4 -  Do not know if slower version have enough horsepower for it
