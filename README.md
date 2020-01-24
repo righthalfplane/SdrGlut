@@ -161,7 +161,7 @@ make -f makefileUbunta
 
 ./sdrglut.x
 
-## Add SDRPlay
+## Add SDRPlay to Ubuntu 18.04
 
 go to
 
