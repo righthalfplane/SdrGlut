@@ -179,7 +179,7 @@ in the bash Shell do the install of the drivers by running -
 
 ./SDRplay_RSP_API-Linux-2.13.1.run
 
-then add to the blacklist (/etc/modprobe.d/blacklist.conf) the follown lines
+then add to the blacklist file (/etc/modprobe.d/blacklist.conf) the follown lines
 
 blacklist sdr_msi3101
 
