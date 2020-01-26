@@ -723,11 +723,11 @@ int Radio::Display(struct Scene *scene)
     
     glRasterPos2i(0,0);		// Position at base of window
     
-    int nf=(int)((scene->xResolution)*((rx->f-rx->fc)+0.5*rx->samplerate)/(double)rx->samplerate);
+    int nf=(int)(0.5+(scene->xResolution)*((rx->f-rx->fc)+0.5*rx->samplerate)/(double)rx->samplerate);
     
-    int nf1=(int)((scene->xResolution)*((rx->f-rx->fc)+0.5*rx->samplerate+0.5*rx->bw)/(double)rx->samplerate);
+    int nf1=(int)(0.5+(scene->xResolution)*((rx->f-rx->fc)+0.5*rx->samplerate+0.5*rx->bw)/(double)rx->samplerate);
 
-    int nf2=(int)((scene->xResolution)*((rx->f-rx->fc)+0.5*rx->samplerate-0.5*rx->bw)/(double)rx->samplerate);
+    int nf2=(int)(0.5+(scene->xResolution)*((rx->f-rx->fc)+0.5*rx->samplerate-0.5*rx->bw)/(double)rx->samplerate);
     
     if((nf1-nf2) < 6){
         nf1=nf+3;
@@ -1413,6 +1413,7 @@ static void getMousel(int button, int state, int x, int y)
     struct SceneList *list;
     RadioPtr sdr;
     
+    
     list=SceneFindByNumber(glutGetWindow());
     if(!list){
         sdr=FindSdrRadioWindow(glutGetWindow());
@@ -1426,6 +1427,7 @@ static void getMousel(int button, int state, int x, int y)
     
     if(!sdr)return;
     
+
     if(state == GLUT_DOWN)
     {
 
@@ -1496,6 +1498,28 @@ static void getMousel(int button, int state, int x, int y)
 
 void Radio::getMouse(int button, int state, int x, int y)
 {
+    if(button == 3){
+        float fl;
+        fl=rx->f-rx->bw*0.5;
+        if(fl < 0)fl=-fl;
+        rx->f=fl;
+        if(fabs(fl-rx->fc) > 0.5*rx->samplerate){
+            rx->fc=fl;
+        }
+        setFrequency(rx);
+        return;
+    }else if(button == 4){
+        float fl;
+        fl=rx->f+rx->bw*0.5;
+        if(fl < 0)fl=-fl;
+        rx->f=fl;
+        if(fabs(fl-rx->fc) > 0.5*rx->samplerate){
+            rx->fc=fl;
+        }
+        setFrequency(rx);
+        return;
+    }
+    
    	if(state == GLUT_DOWN)
     {
         double fclick;

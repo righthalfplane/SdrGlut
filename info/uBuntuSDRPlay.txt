@@ -1,0 +1,6 @@
+https://www.sdrplay.com/downloads/
+API/HW DRIVER – V2.13 (20TH JUN 2018)
+SDRplay_RSP_API-Linux-2.13.1.run
+blacklist sdr_msi3101
+blacklist msi001
+blacklist msi2500

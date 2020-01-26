@@ -14,6 +14,7 @@
 		4623928F1C2C5A5A007F6B08 /* arcball.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4623928E1C2C5A5A007F6B08 /* arcball.cpp */; };
 		46266832239D9E8D002CCCF4 /* mThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46266831239D9E8D002CCCF4 /* mThread.cpp */; };
 		4626888B223360BE0074B5DF /* audiolib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46268889223360BD0074B5DF /* audiolib.cpp */; };
+		4629CAAA23DD4E040059898D /* libglut.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4629CAA923DD4E040059898D /* libglut.3.dylib */; };
 		46371C8A1D12F31B002D3788 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46371C891D12F31B002D3788 /* OpenAL.framework */; };
 		46371C8C1D12F32A002D3788 /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46371C8B1D12F32A002D3788 /* OpenCL.framework */; };
 		46371C8E1D12F337002D3788 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46371C8D1D12F337002D3788 /* OpenGL.framework */; };
@@ -78,7 +79,6 @@
 		46CE01D6221265FB00140F6C /* CLInesPlotLabels.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01D1221265FB00140F6C /* CLInesPlotLabels.cpp */; };
 		46CE01D92212669200140F6C /* GridPlot.c in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01D72212669200140F6C /* GridPlot.c */; };
 		46CE01DF22126AD100140F6C /* BackgroundQ.c in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01DD22126AD100140F6C /* BackgroundQ.c */; };
-		46CFD08723D742B900C3CF97 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46CFD08623D742B900C3CF97 /* GLUT.framework */; };
 		46E13AD11C2C48AF007FF424 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46E13AD01C2C48AF007FF424 /* main.cpp */; };
 /* End PBXBuildFile section */
 
@@ -107,6 +107,7 @@
 		46266831239D9E8D002CCCF4 /* mThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mThread.cpp; path = MainSource/mThread.cpp; sourceTree = "<group>"; };
 		46268889223360BD0074B5DF /* audiolib.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = audiolib.cpp; path = MainSource/audiolib.cpp; sourceTree = "<group>"; };
 		4626888A223360BE0074B5DF /* audiolib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = audiolib.h; path = MainSource/audiolib.h; sourceTree = "<group>"; };
+		4629CAA923DD4E040059898D /* libglut.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libglut.3.dylib; sourceTree = "<group>"; };
 		462FB7F3220389830028D417 /* RaceFastsdr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RaceFastsdr.h; sourceTree = "<group>"; };
 		46371C891D12F31B002D3788 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = ../../../../../../System/Library/Frameworks/OpenAL.framework; sourceTree = "<group>"; };
 		46371C8B1D12F32A002D3788 /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = ../../../../../../System/Library/Frameworks/OpenCL.framework; sourceTree = "<group>"; };
@@ -207,7 +208,6 @@
 		46CE01D82212669200140F6C /* GridPlot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GridPlot.h; path = DrawFindPointHistory/GridPlot.h; sourceTree = "<group>"; };
 		46CE01DD22126AD100140F6C /* BackgroundQ.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = BackgroundQ.c; path = MainSource/BackgroundQ.c; sourceTree = "<group>"; };
 		46CE01DE22126AD100140F6C /* BackgroundQ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BackgroundQ.h; path = MainSource/BackgroundQ.h; sourceTree = "<group>"; };
-		46CFD08623D742B900C3CF97 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GLUT.framework; sourceTree = "<group>"; };
 		46E13AD01C2C48AF007FF424 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = MainSource/main.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -220,8 +220,8 @@
 				46371C8A1D12F31B002D3788 /* OpenAL.framework in Frameworks */,
 				46371C8C1D12F32A002D3788 /* OpenCL.framework in Frameworks */,
 				464918A220E53121008BDC72 /* libliquid.a in Frameworks */,
-				46CFD08723D742B900C3CF97 /* GLUT.framework in Frameworks */,
 				4664F28D1DA95E6E00BBF9EB /* libSoapySDR.dylib in Frameworks */,
+				4629CAAA23DD4E040059898D /* libglut.3.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -233,10 +233,10 @@
 			children = (
 				4664F28C1DA95E6E00BBF9EB /* libSoapySDR.dylib */,
 				464918A120E53121008BDC72 /* libliquid.a */,
+				4629CAA923DD4E040059898D /* libglut.3.dylib */,
 				46371C891D12F31B002D3788 /* OpenAL.framework */,
 				46371C8D1D12F337002D3788 /* OpenGL.framework */,
 				46371C8B1D12F32A002D3788 /* OpenCL.framework */,
-				46CFD08623D742B900C3CF97 /* GLUT.framework */,
 			);
 			name = Library;
 			sourceTree = "<group>";
@@ -662,6 +662,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
 				LIBRARY_SEARCH_PATHS = (
+					/opt/x11/lib,
 					/usr/local/lib,
 					"$(PROJECT_DIR)",
 				);
@@ -680,6 +681,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
 				LIBRARY_SEARCH_PATHS = (
+					/opt/x11/lib,
 					/usr/local/lib,
 					"$(PROJECT_DIR)",
 				);

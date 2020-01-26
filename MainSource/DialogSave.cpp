@@ -89,7 +89,7 @@ int dialogSave(struct Scene *scene)
 	fb->set_h(380);
 	fb->set_w(580);
 	fb->fillbox=fillbox;
-	
+ 	
 	if(datatype == 0){
 	   tpointer=text1b;
 	}else if(datatype == 2){
@@ -118,6 +118,7 @@ int dialogSave(struct Scene *scene)
 	
 	return 0;
 }
+
 extern "C" char *strsave(char *s,int tag);
 static void fillbox()
 {

@@ -212,12 +212,28 @@ static void getMousel(int button, int state, int x, int y)
 
 void CLines::getMouse(int button, int state, int x, int y)
 {
+    
+    if(button == 3){
+        if(sceneSource){
+            Frequency -= BandWidth*0.5;
+            SetFrequencyGlobal(sceneSource,Frequency,BandWidth,M_FREQUENCY);
+        }
+        if(state == GLUT_DOWN)return;
+    }else if(button == 4){
+        if(sceneSource){
+            Frequency += BandWidth*0.5;
+            SetFrequencyGlobal(sceneSource,Frequency,BandWidth,M_FREQUENCY);
+        }
+        if(state == GLUT_DOWN)return;
+    }
+
+    
    	if(state == GLUT_DOWN)
     {
         double dpi=lines->l.dpi;
         Frequency=lines->Plot->xViewMin+(x-dpi*lines->Plot->box.x)*(lines->Plot->xViewMax-lines->Plot->xViewMin)/(dpi*lines->Plot->box.xsize);
         if(sceneSource){
-            SetFrequencyGlobal(sceneSource,Frequency,BandWidth,M_FREQUENCY);
+             SetFrequencyGlobal(sceneSource,Frequency,BandWidth,M_FREQUENCY);
         }
         lines->Plot->xAutoMaximum=FALSE;
         lines->Plot->xSetMaximum=lines->Plot->xMaximum;
@@ -580,18 +596,18 @@ void CLines::display(struct Scene *scene)
             double dpi=lines->l.dpi;
             int x;
             
-            x=dpi*lines->Plot->box.x+(Frequency-lines->Plot->xViewMin)*(dpi*lines->Plot->box.xsize)/(lines->Plot->xViewMax-lines->Plot->xViewMin);
+            x=0.5+dpi*lines->Plot->box.x+(Frequency-lines->Plot->xViewMin)*(dpi*lines->Plot->box.xsize)/(lines->Plot->xViewMax-lines->Plot->xViewMin);
             
             box.xsize=6;
             if(BandWidth > 0){
                 int x2;
                 
-                x2=dpi*lines->Plot->box.x+(Frequency-BandWidth-lines->Plot->xViewMin)*(dpi*lines->Plot->box.xsize)/(lines->Plot->xViewMax-lines->Plot->xViewMin);
+                x2=0.5+dpi*lines->Plot->box.x+(Frequency-BandWidth-lines->Plot->xViewMin)*(dpi*lines->Plot->box.xsize)/(lines->Plot->xViewMax-lines->Plot->xViewMin);
                 box.xsize=(x-x2);
 
             }
             
-            if(box.xsize < 6)box.xsize=6;
+            if(box.xsize < 7)box.xsize=7;
             
             box.x=x-box.xsize/2;
             box.y=dpi*lines->Plot->box.ysize;
