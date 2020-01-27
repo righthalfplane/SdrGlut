@@ -380,20 +380,16 @@ int Radio::updateLine()
         return 0;
     }
     
-    //fprintf(stderr,"average %g averageGlobal %g\n",average,rx->averageGlobal);
-    
-    
-    doWindow(real,imag,length,4);
+    doWindow(real,imag,length,7);
 
     for(int n=0;n<length;++n){
         real[n] *= pow(-1.0,n);
         imag[n] *= pow(-1.0,n);
     }
     
-
     doFFT2(real,imag,length,1);
     
-
+    fprintf(stderr,"\n");
     amin=water.amin;
     amax=water.amax;
     
@@ -1789,6 +1785,15 @@ int doWindow(double *x,double *y,long length,int type)
                                               + 0.043097 * cos( (4.0*pi2*i)/(length-1) )
                                               );
             break;
+        case 7:
+            liquid_window_type  wtype = LIQUID_WINDOW_KAISER;
+            float               arg   = 10.0f;  // generic argument
+            for(i=0; i<length; i++)  {
+                 m_pWindowTbl[i]=(float)liquid_windowf(wtype, i, (int)length, arg);
+            }
+
+            break;
+
     }
     
     for(i=0; i<length; i++){
