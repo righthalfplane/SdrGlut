@@ -279,14 +279,14 @@ static void control_cb(int control)
             s->pd.sPmax=dmax;
         }
         
-        for(int n=0;n<s->length;++n){
+        for(int n=0;n<s->FFTlength;++n){
             s->lreal[n]=0;
             s->limag[n]=0;
         }
         
         for(int y=0;y<s->water.ysize*2;++y){
             int ns=3*s->water.xsize*y;
-            for(int n=0;n<s->length;++n){
+            for(int n=0;n<s->water.xsize;++n){
                 s->water.data[ns+3*n]=255;
                 s->water.data[ns+3*n+1]=255;
                 s->water.data[ns+3*n+2]=255;

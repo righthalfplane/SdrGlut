@@ -71,7 +71,7 @@ struct playData4{
 
 struct WaterFall4{
     unsigned char *data;
-    unsigned char ic[2*4800];
+    unsigned char ic[2*32768];
     double amin,amax;
     uRect SRect;
     uRect DRect;
@@ -160,9 +160,10 @@ public:
     
     struct DialogRadioData dd;
 
-    double real[2*4800*sizeof(double)];
-    double imag[2*4800*sizeof(double)];
-    int count;
+    double real[2*32768*sizeof(double)];
+    double imag[2*32768*sizeof(double)];
+    long FFTlength;
+
 
     
     CLines *lines;
@@ -173,9 +174,6 @@ public:
     double *dose;
     double *lreal;
     double *limag;
-    double *lreal2;
-    double *limag2;
-    long length;
     double lineTime;
     double lineDumpInterval;
     double lineAlpha;

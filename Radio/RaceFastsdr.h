@@ -55,6 +55,13 @@
 #define START_IQ  8
 #define STOP_IQ   9
 
+#define FFT_1024 1024
+#define FFT_2048 2048
+#define FFT_4096 4096
+#define FFT_8192 8192
+#define FFT_16384 16384
+#define FFT_32768 32768
+
 #define INPUT1 NULL
 //#define INPUT1 "Built-in Audio Digital Stereo (IEC958)"
 //#define INPUT1 "GF108 High Definition Audio Controller Digital Stereo (HDMI)"
@@ -74,9 +81,11 @@ struct playData{
     int start;
     ALCdevice *dev;
     ALCcontext *ctx;
-    double real[2*4800*2];
-    double imag[2*4800*2];
-    int count;
+    double real[2*32768*2];
+    double imag[2*32768*2];
+    int FFTcount;
+    int size;
+
     ALuint source;
     int channels;
     double samplerate;
@@ -121,8 +130,7 @@ struct playData{
     int buffStacka[NUM_ABUFF5];
     int bufftopa;
     
-    int size;
-        
+    
     unsigned int deviceNumber;
     
     volatile int witchRFBuffer;

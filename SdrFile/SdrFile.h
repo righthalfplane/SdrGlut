@@ -51,7 +51,7 @@
 #include "fir.h"
 
 
-#define    BLOCK_SIZE 4096
+#define BLOCK_SIZE 32768
 
 #define NUM_SOURCES 1
 #define NUM_BUFFERS 5
@@ -62,6 +62,13 @@
 #define MODE_NAM  3
 #define MODE_USB  4
 #define MODE_LSB  5
+
+#define FFT_1024 1024
+#define FFT_2048 2048
+#define FFT_4096 4096
+#define FFT_8192 8192
+#define FFT_16384 16384
+#define FFT_32768 32768
 
 
 struct playData4{
@@ -80,7 +87,7 @@ struct playData4{
     //volatile int inDialog;
     double real[2*BLOCK_SIZE];
     double imag[2*BLOCK_SIZE];
-    int count;
+    int FFTcount;
     int Debug;
     float gain;
     double fc;
@@ -120,7 +127,7 @@ struct playData4{
 
 struct WaterFall4{
     unsigned char *data;
-    unsigned char ic[2*4800];
+    unsigned char ic[2*32768];
     double amin,amax;
     uRect SRect;
     uRect DRect;
@@ -215,11 +222,8 @@ public:
     
     struct playData4 play;
     
-    double real[2*4800*sizeof(double)];
-    double imag[2*4800*sizeof(double)];
-    int count;
-
-    
+    double real[2*32768*sizeof(double)];
+    double imag[2*32768*sizeof(double)];
     CLines *lines;
     struct Scene *scenel;
     CLines *lines2;
@@ -228,9 +232,7 @@ public:
     double *dose;
     double *lreal;
     double *limag;
-    double *lreal2;
-    double *limag2;
-    long length;
+    long FFTlength;
     double lineTime;
     double lineDumpInterval;
     double lineAlpha;

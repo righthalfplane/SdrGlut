@@ -82,6 +82,8 @@ int RadioStart(int argc, char * argv [],struct playData *rx)
 	rx->f=0.6e6;
     rx->scaleFactor=0.0;
     rx->audioThreads=0;
+    rx->FFTcount=4096;
+
 
 	for(int n=1;n<argc;++n){
 	    if(!strcmp(argv[n],"-debug")){
@@ -1089,8 +1091,7 @@ static int rxBuffer(void *rxv)
 */
                 //printf("amin %g amax %g witch %d count %d\n",amin,amax,rx->witchRFBuffer,count);
                 
-                rx->count=4096;
-                for(int k=0;k<4096;++k){
+                for(int k=0;k<rx->FFTcount;++k){
                     if(k < rx->size){
                         rx->real[k]=buff[2*k]*scale;
                         rx->imag[k]=buff[2*k+1]*scale;

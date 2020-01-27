@@ -87,6 +87,8 @@ static GLUI_EditText *edittext5;
 static char sfrequency[255]="1";
 static char ssamplerate[255]="2";
 
+void doFFTMenu(int item);
+
 Radio::Radio(struct Scene *scene): CWindow(scene)
 {
     OpenError=TRUE;
@@ -131,7 +133,7 @@ Radio::Radio(struct Scene *scene): CWindow(scene)
     
     lineAlpha=0.1;
     
-    length=4800;
+    FFTlength=32768;
     
     range=NULL;
     dose=NULL;
@@ -139,31 +141,19 @@ Radio::Radio(struct Scene *scene): CWindow(scene)
     lreal=NULL;
     limag=NULL;
     
-    lreal2=NULL;
-    limag2=NULL;
 
-    range=(double *)cMalloc(length*sizeof(double),9851);
-    dose=(double *)cMalloc(length*sizeof(double),9851);
+    range=(double *)cMalloc(FFTlength*sizeof(double),9851);
+    dose=(double *)cMalloc(FFTlength*sizeof(double),9851);
     
-    lreal=(double *)cMalloc(length*sizeof(double),9851);
-    limag=(double *)cMalloc(length*sizeof(double),9851);
+    lreal=(double *)cMalloc(FFTlength*sizeof(double),9851);
+    limag=(double *)cMalloc(FFTlength*sizeof(double),9851);
     
-    lreal2=(double *)cMalloc(length*sizeof(double),9851);
-    limag2=(double *)cMalloc(length*sizeof(double),9851);
     
 
-    if(!range || !dose || !lreal || !lreal || !lreal2 || !limag2)return;
+    if(!range || !dose || !lreal || !lreal)return;
     
-    zerol((char *)lreal,length*sizeof(double));
-    zerol((char *)limag,length*sizeof(double));
-    
-    zerol((char *)lreal2,length*sizeof(double));
-    zerol((char *)limag2,length*sizeof(double));
-
-    length=4096;
-    
-    count=4096;
-    
+    zerol((char *)lreal,FFTlength*sizeof(double));
+    zerol((char *)limag,FFTlength*sizeof(double));
     
     OpenError=FALSE;
 }
@@ -323,13 +313,7 @@ Radio::~Radio()
     
     if(limag)cFree((char *)limag);
     limag=NULL;
-    
-    if(lreal2)cFree((char *)lreal2);
-    lreal2=NULL;
-    
-    if(limag2)cFree((char *)limag2);
-    limag2=NULL;
-    
+        
     if(water.data)cFree((char *)water.data);
     water.data=NULL;
 
@@ -355,10 +339,12 @@ int Radio::updateLine()
 
     lineTime=rtime()+lineDumpInterval;
     
-    if(count != 4096){
-        printf(" count %d\n",count);
+    if(rx->FFTcount > FFTlength){
+        printf(" FFTlength %ld\n",FFTlength);
         return 1;
     }
+    
+    int length=rx->FFTcount;
     
     setDialogPower(rx->m_SMeter.GetAve());
     
@@ -366,10 +352,10 @@ int Radio::updateLine()
     imag=rx->imag;
     
     double average=0;
-    for(int k=0;k<count;++k){
+    for(int k=0;k<length;++k){
         average += sqrt(real[k]*real[k]+imag[k]*imag[k]);
     }
-    average /= count;
+    average /= length;
     
    //static int drops=0;
    //if(rx->averageGlobal == 0)drops=0;
@@ -434,18 +420,15 @@ int Radio::updateLine()
         Plot->xSetMaximum=rmax;
         Plot->xSetMinimum=rmin;
     }
-    
-    real=lreal2;
-    imag=limag2;
-    
-    long ns,ne;
-    ns=nf-100;
+    long ns,ne,nsub;
+    nsub=length/20;
+    ns=nf-nsub;
     if(ns < 0)ns=0;
-    ne=nf+100;
+    ne=nf+nsub;
     if(ne >= length){
-        ne=length-1-nf+100;
+        ne=length-1-nf+nsub;
     }else{
-        ne=201;
+        ne=2*nsub+1;
     }
     
     if(FindScene(scenel2))lines2->plotPutData(scenel2,&range[ns],&lreal[ns],ne,0L);
@@ -606,8 +589,7 @@ int Radio::SetWindow(struct Scene *scene)
     water.DRect.xsize=xsize;
     water.DRect.ysize=ysize;
     
-    
-    xsize=(int)length;
+    xsize=(int)rx->FFTcount;
     
     if(ysize == water.ysize && xsize == water.xsize && water.data)return 0;
     
@@ -1037,6 +1019,16 @@ int Radio::OpenWindows(struct Scene *scene)
     glutAddMenuEntry("Stop  Audio Recording", STOP_AUDiO);
     glutAddMenuEntry("IQ Recording", START_IQ);
     
+    int menu5=glutCreateMenu(doFFTMenu);
+    glutAddMenuEntry("1024", FFT_1024);
+    glutAddMenuEntry("2048", FFT_2048);
+    glutAddMenuEntry("4096", FFT_4096);
+    glutAddMenuEntry("8192", FFT_8192);
+    glutAddMenuEntry("16384", FFT_16384);
+    glutAddMenuEntry("32768", FFT_32768);
+
+
+    
     glutCreateMenu(menu_selectl);
     glutAddMenuEntry("Sdr Dialog...", SdrDialog);
     glutAddSubMenu("Palette", palette_menu);
@@ -1045,6 +1037,7 @@ int Radio::OpenWindows(struct Scene *scene)
     if(rx->bandwidthsCount > 0)glutAddSubMenu("Bandwidth", bandwidth);
     if(rx->sampleRatesCount > 0)glutAddSubMenu("SampleRate", samplerate);
     glutAddSubMenu("Recording", menu4);
+    glutAddSubMenu("FFT Size", menu5);
 
     glutAddMenuEntry("--------------------", -1);
     glutAddMenuEntry("Close", ControlClose);
@@ -1066,7 +1059,7 @@ int Radio::OpenWindows(struct Scene *scene)
     
     lines = CLines::CLinesOpen(scenel,window);
     
-    lines->plotPutData(scenel,range,dose,length,-1L);
+    lines->plotPutData(scenel,range,dose,rx->FFTcount,-1L);
     
     lines->sceneSource=sceneOpen;
 //    lines->sdr=NULL;
@@ -1097,7 +1090,7 @@ int Radio::OpenWindows(struct Scene *scene)
     
     lines2 = CLines::CLinesOpen(scenel2,-1000);
     
-    lines2->plotPutData(scenel2,range,dose,length,-1L);
+    lines2->plotPutData(scenel2,range,dose,rx->FFTcount,-1L);
     
     
     
@@ -1250,7 +1243,37 @@ void AudioSave(struct Scene *scene,char *name)
     
     return;
 }
-
+void doFFTMenu(int item)
+{
+    int ifft=0;
+    
+    switch(item){
+        case FFT_1024:
+        case FFT_2048:
+        case FFT_4096:
+        case FFT_8192:
+        case FFT_16384:
+        case FFT_32768:
+            ifft=item;
+           break;
+    }
+    
+    if(ifft == 0)return;
+    
+    struct SceneList *list;
+    RadioPtr sdr;
+    
+    list=SceneFindByNumber(glutGetWindow());
+    if(!list){
+        sdr=FindSdrRadioWindow(glutGetWindow());
+    }else{
+        sdr=(RadioPtr)FindScene(&list->scene);
+    }
+    
+    if(!sdr)return;
+    
+    sdr->rx->FFTcount=ifft;
+}
 void doAudio(int item)
 {
     // unsigned long freq,samp;
@@ -1311,18 +1334,14 @@ int Radio::resetDemod()
     
     RadioPtr myAppl=this;
     
-    
-    for(int n=0;n<myAppl->length;++n){
+    for(int n=0;n<myAppl->FFTlength;++n){
         myAppl->lreal[n]=0;
         myAppl->limag[n]=0;
     }
     
-    
     for(int y=0;y<myAppl->water.ysize*2;++y){
-        
         int ns=3*myAppl->water.xsize*y;
-        
-        for(int n=0;n<myAppl->length;++n){
+        for(int n=0;n<myAppl->water.xsize;++n){
             myAppl->water.data[ns+3*n]=255;
             myAppl->water.data[ns+3*n+1]=255;
             myAppl->water.data[ns+3*n+2]=255;
@@ -1705,12 +1724,13 @@ int doWindow(double *x,double *y,long length,int type)
 
 {
     //double m_pWindowTbl[length];
-    double m_pWindowTbl[4800];
+    double m_pWindowTbl[32768];
     double WindowGain;
     double pi2=8*atan(1.0);
     int i;
     
     if(!x || !y)return 1;
+    
     switch(type){
             
         case 0:
