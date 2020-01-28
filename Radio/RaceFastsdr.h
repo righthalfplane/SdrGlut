@@ -50,10 +50,11 @@
 #define MODE_NAM  3
 #define MODE_USB  4
 #define MODE_LSB  5
-#define START_AUDiO  6
-#define STOP_AUDiO   7
-#define START_IQ  8
-#define STOP_IQ   9
+#define MODE_CW   6
+#define START_AUDiO  7
+#define STOP_AUDiO   8
+#define START_IQ  9
+#define STOP_IQ   10
 
 #define FFT_1024 1024
 #define FFT_2048 2048

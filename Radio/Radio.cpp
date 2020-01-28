@@ -366,7 +366,7 @@ int Radio::updateLine()
         return 0;
     }
     
-    doWindow(real,imag,length,7);
+    doWindow(real,imag,length,8);
 
     for(int n=0;n<length;++n){
         real[n] *= pow(-1.0,n);
@@ -983,7 +983,8 @@ int Radio::OpenWindows(struct Scene *scene)
     glutAddMenuEntry("NBFM", MODE_NBFM);
     glutAddMenuEntry("USB", MODE_USB);
     glutAddMenuEntry("LSB", MODE_LSB);
- 
+    glutAddMenuEntry("CW", MODE_CW);
+
     int antenna=0;
     if(rx->antennaCount > 0){
         antenna=glutCreateMenu(antennaMenu);
@@ -1212,6 +1213,9 @@ void setMode(int item)
             break;
         case MODE_LSB:
             sdr->rx->decodemode = MODE_LSB;
+            break;
+        case MODE_CW:
+            sdr->rx->decodemode = MODE_CW;
             break;
         case MODE_FM:
             sdr->rx->decodemode = MODE_FM;
@@ -1721,104 +1725,92 @@ static void moveMouse(int x, int y)
 }
  
 int doWindow(double *x,double *y,long length,int type)
-
 {
-    //double m_pWindowTbl[length];
-    double m_pWindowTbl[32768];
-    double WindowGain;
-    double pi2=8*atan(1.0);
-    int i;
+    double w[length];
+    //double w[32768];
+    long i;
     
     if(!x || !y)return 1;
     
     switch(type){
             
         case 0:
-            
-            WindowGain = 1.0;
-            
-            for(i=0; i<length; i++)    //Rectangle(no window)
-                m_pWindowTbl[i] = 1.0*WindowGain;
+
+            for(i=0; i<length; i++)
+                w[i] = 1.0;
             
             break;
+            
+#if LIQUID_VERSION_NUMBER >= 1003002
+#define WINDOWS_LONG_NAMES 1
+#endif
+
             
         case 1:
             
-            WindowGain = 2.0;
-            
-            for(i=0; i<length; i++)    //Hann
-                m_pWindowTbl[i] = WindowGain*(.5  - .5 *cos( (pi2*i)/(length-1) ));
-            
+            for(i=0; i<length; i++)  {
+#ifdef WINDOWS_LONG_NAMES
+                w[i]=liquid_hann(i, (int)length);
+#else
+                w[i]=hann((i, (int)length);
+#endif
+            }
             break;
+
+            
             
         case 2:
             
-            WindowGain = 1.852;
-            
-            for(i=0; i<length; i++)    //Hamming
-                m_pWindowTbl[i] = WindowGain*(.54  - .46 *cos( (pi2*i)/(length-1) ));
-            
+            for(i=0; i<length; i++)  {
+#ifdef WINDOWS_LONG_NAMES
+                w[i]=liquid_hamming(i, (int)length);
+#else
+                w[i]=hamming((i, (int)length);
+#endif
+            }
             break;
             
-        case 3:
-            
-            WindowGain = 2.8;
-            
-            for(i=0; i<length; i++)    //Blackman-Nuttall
-                
-                m_pWindowTbl[i] = WindowGain*(0.3635819
-                                              - 0.4891775*cos( (pi2*i)/(length-1) )
-                                              + 0.1365995*cos( (2.0*pi2*i)/(length-1) )
-                                              - 0.0106411*cos( (3.0*pi2*i)/(length-1) ) );
-            break;
-            
-        case 4:
-            
-            WindowGain = 2.82;
-            
-            for(i=0; i<length; i++)    //Blackman-Harris
-                
-                m_pWindowTbl[i] = WindowGain*(0.35875
-                                              - 0.48829*cos( (pi2*i)/(length-1) )
-                                              + 0.14128*cos( (2.0*pi2*i)/(length-1) )
-                                              - 0.01168*cos( (3.0*pi2*i)/(length-1) ) );
-            break;
-            
-        case 5:
-            
-            WindowGain = 2.8;
-            
-            for(i=0; i<length; i++)    //Nuttall
-                m_pWindowTbl[i] = WindowGain*(0.355768
-                                              - 0.487396*cos( (pi2*i)/(length-1) )
-                                              + 0.144232*cos( (2.0*pi2*i)/(length-1) )
-                                              - 0.012604*cos( (3.0*pi2*i)/(length-1) ) );
-            break;
         case 6:
             
-            WindowGain = 1.0;
-            for(i=0; i<length; i++)    //Flat Top 4 term
-                m_pWindowTbl[i] = WindowGain*(1.0
-                                              - 1.942604 * cos( (pi2*i)/(length-1) )
-                                              + 1.340318 * cos( (2.0*pi2*i)/(length-1) )
-                                              - 0.440811 * cos( (3.0*pi2*i)/(length-1) )
-                                              + 0.043097 * cos( (4.0*pi2*i)/(length-1) )
-                                              );
-            break;
-        case 7:
-            liquid_window_type  wtype = LIQUID_WINDOW_KAISER;
-            float               arg   = 10.0f;  // generic argument
             for(i=0; i<length; i++)  {
-                 m_pWindowTbl[i]=(float)liquid_windowf(wtype, i, (int)length, arg);
+#ifdef WINDOWS_LONG_NAMES
+                w[i]=liquid_flattop(i, (int)length);
+#else
+                w[i]=flattop(i, (int)length);
+#endif
             }
-
             break;
+            
+            
+        case 7:
+            
+            for(i=0; i<length; i++)  {
+#ifdef WINDOWS_LONG_NAMES
+                w[i]=liquid_blackmanharris(i, (int)length);
+#else
+                w[i]=blackmanharris(i, (int)length);
+#endif
+            }
+            break;
+            
+        case 8:
+            
+            for(i=0; i<length; i++)  {
+#ifdef WINDOWS_LONG_NAMES
+                w[i]=liquid_blackmanharris7(i, (int)length);
+#else
+                w[i]=blackmanharris7(i, (int)length);
+#endif
+            }
+            break;
+
+            
 
     }
     
     for(i=0; i<length; i++){
         double amp;
-        amp=m_pWindowTbl[i];
+        amp=w[i];
         x[i]=amp*x[i];
         y[i]=amp*y[i];
     }

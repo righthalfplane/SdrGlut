@@ -622,6 +622,10 @@ static int setFilters(struct playData *rx,struct Filters *f)
         rx->bw=6000.0;
         mode=LIQUID_AMPMODEM_LSB;
         iflag=1;
+    }else if(rx->decodemode == MODE_CW){  // Below 10 MHZ
+        rx->bw=3000.0;
+        mode=LIQUID_AMPMODEM_LSB;
+        iflag=1;
     }
     
     rx->Ratio = (float)(rx->bw/ rx->samplerate);
@@ -629,7 +633,7 @@ static int setFilters(struct playData *rx,struct Filters *f)
     
     f->demod=freqdem_create(0.5);
     
-#if LIQUID_VERSION_NUMBER < 1003001
+#if LIQUID_VERSION_NUMBER <= 1003001
     f->demodAM = ampmodem_create(0.5, 0.0, mode, iflag);
  #else
     f->demodAM = ampmodem_create(0.5, mode, iflag);
@@ -688,7 +692,7 @@ static int doFilter(struct playData *rx,float *wBuff,float *aBuff,struct Filters
 		freqdem_demodulate_block(f->demod, (liquid_float_complex *)buf, (int)num, (float *)buf2);
         msresamp_rrrf_execute(f->iqSampler2, (float *)buf2, num, (float *)buf, &num2);  // interpolate
         //printf("2 rx->size %d num %u num2 %u\n",rx->size,num,num2);
-    }else if(rx->decodemode < MODE_LSB){
+    }else if(rx->decodemode < MODE_USB){
         #define DC_ALPHA 0.99    //ALPHA for DC removal filter ~20Hz Fcut with 15625Hz Sample Rate
 
         for(unsigned int n=0;n<num;++n){
