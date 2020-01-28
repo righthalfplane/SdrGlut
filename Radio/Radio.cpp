@@ -1728,7 +1728,7 @@ int doWindow(double *x,double *y,long length,int type)
 {
     double w[length];
     //double w[32768];
-    long i;
+    int i;
     
     if(!x || !y)return 1;
     

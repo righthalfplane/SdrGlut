@@ -456,7 +456,7 @@ int SdrFile::setBuffers(struct playData4 *play)
         freqdem_demodulate_block(filter.demod, (liquid_float_complex *)buf1, (int)num, (float *)buf2);
         msresamp_rrrf_execute(filter.iqSampler2, (float *)buf2, num, (float *)buf1, &num2);  // interpolate
         //printf("2 rx->size %d num %u num2 %u\n",rx->size,num,num2);
-    }else if(play->decodemode < MODE_LSB){
+    }else if(play->decodemode < MODE_USB){
 #define DC_ALPHA 0.99    //ALPHA for DC removal filter ~20Hz Fcut with 15625Hz Sample Rate
         
         for(unsigned int n=0;n<num;++n){
@@ -632,7 +632,7 @@ int SdrFile::updateLine()
     
     int length=play.FFTcount;
 
-    doWindow(real,imag,length,4);
+    doWindow(real,imag,length,8);
 
     for(int n=0;n<length;++n){
         real[n] *= pow(-1.0,n);
@@ -817,6 +817,10 @@ static int setFilters(struct playData4 *rx,struct Filters2 *f)
         iflag=1;
     }else if(rx->decodemode == MODE_LSB){  // Below 10 MHZ
         rx->bw=6000.0;
+        mode=LIQUID_AMPMODEM_LSB;
+        iflag=1;
+    }else if(rx->decodemode == MODE_CW){  // Below 10 MHZ
+        rx->bw=3000.0;
         mode=LIQUID_AMPMODEM_LSB;
         iflag=1;
     }
@@ -1500,7 +1504,8 @@ int SdrFile::OpenWindows(struct Scene *scene)
     glutAddMenuEntry("NBFM", MODE_NBFM);
     glutAddMenuEntry("USB", MODE_USB);
     glutAddMenuEntry("LSB", MODE_LSB);
-    
+    glutAddMenuEntry("CW", MODE_CW);
+
     int menu4=glutCreateMenu(setAudio);
     glutAddMenuEntry("IQ Playback", MODE_AM);
 
@@ -1653,6 +1658,9 @@ static void setMode(int item)
             break;
         case MODE_USB:
             sdr->play.decodemode = MODE_USB;
+            break;
+        case MODE_CW:
+            sdr->play.decodemode = MODE_CW;
             break;
         case MODE_LSB:
             sdr->play.decodemode = MODE_LSB;

@@ -62,6 +62,7 @@
 #define MODE_NAM  3
 #define MODE_USB  4
 #define MODE_LSB  5
+#define MODE_CW   6
 
 #define FFT_1024 1024
 #define FFT_2048 2048
