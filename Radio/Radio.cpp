@@ -88,6 +88,7 @@ static char sfrequency[255]="1";
 static char ssamplerate[255]="2";
 
 void doFFTMenu(int item);
+void doFilterMenu(int item);
 
 Radio::Radio(struct Scene *scene): CWindow(scene)
 {
@@ -106,7 +107,7 @@ Radio::Radio(struct Scene *scene): CWindow(scene)
 	pd.sType = 2;
     
     backGroundEvents=0;
-
+    
     char sdevice[10];
     
     sprintf(sdevice,"%d",device);
@@ -366,7 +367,7 @@ int Radio::updateLine()
         return 0;
     }
     
-    doWindow(real,imag,length,8);
+    doWindow(real,imag,length,rx->FFTfilter);
 
     for(int n=0;n<length;++n){
         real[n] *= pow(-1.0,n);
@@ -1027,9 +1028,18 @@ int Radio::OpenWindows(struct Scene *scene)
     glutAddMenuEntry("8192", FFT_8192);
     glutAddMenuEntry("16384", FFT_16384);
     glutAddMenuEntry("32768", FFT_32768);
-
-
     
+    
+    int menu6=glutCreateMenu(doFilterMenu);
+    glutAddMenuEntry("RECTANGULAR", FILTER_RECTANGULAR);
+    glutAddMenuEntry("HANN", FILTER_HANN);
+    glutAddMenuEntry("HAMMING", FILTER_HAMMING);
+    glutAddMenuEntry("FLATTOP", FILTER_FLATTOP);
+    glutAddMenuEntry("BLACKMANHARRIS", FILTER_BLACKMANHARRIS);
+    glutAddMenuEntry("BLACKMANHARRIS7", FILTER_BLACKMANHARRIS7);
+    
+    
+
     glutCreateMenu(menu_selectl);
     glutAddMenuEntry("Sdr Dialog...", SdrDialog);
     glutAddSubMenu("Palette", palette_menu);
@@ -1039,6 +1049,7 @@ int Radio::OpenWindows(struct Scene *scene)
     if(rx->sampleRatesCount > 0)glutAddSubMenu("SampleRate", samplerate);
     glutAddSubMenu("Recording", menu4);
     glutAddSubMenu("FFT Size", menu5);
+    glutAddSubMenu("Window Filter", menu6);
 
     glutAddMenuEntry("--------------------", -1);
     glutAddMenuEntry("Close", ControlClose);
@@ -1246,6 +1257,38 @@ void AudioSave(struct Scene *scene,char *name)
     sdr->rx->pSetAudio(sdr->rx,name,START_AUDiO);
     
     return;
+}
+void doFilterMenu(int item)
+{
+    int ifft = -1;
+    
+    switch(item){
+        case FILTER_RECTANGULAR:
+        case FILTER_HANN:
+        case FILTER_HAMMING:
+        case FILTER_FLATTOP:
+        case FILTER_BLACKMANHARRIS:
+        case FILTER_BLACKMANHARRIS7:
+            ifft=item;
+            break;
+    }
+    
+    if(ifft == -1)return;
+    
+    struct SceneList *list;
+    RadioPtr sdr;
+
+    list=SceneFindByNumber(glutGetWindow());
+    if(!list){
+        sdr=FindSdrRadioWindow(glutGetWindow());
+    }else{
+        sdr=(RadioPtr)FindScene(&list->scene);
+    }
+    
+    if(!sdr)return;
+    
+    sdr->rx->FFTfilter=ifft;
+
 }
 void doFFTMenu(int item)
 {
@@ -1734,7 +1777,7 @@ int doWindow(double *x,double *y,long length,int type)
     
     switch(type){
             
-        case 0:
+        case FILTER_RECTANGULAR:
 
             for(i=0; i<length; i++)
                 w[i] = 1.0;
@@ -1746,7 +1789,7 @@ int doWindow(double *x,double *y,long length,int type)
 #endif
 
             
-        case 1:
+        case FILTER_HANN:
             
             for(i=0; i<length; i++)  {
 #ifdef WINDOWS_LONG_NAMES
@@ -1759,7 +1802,7 @@ int doWindow(double *x,double *y,long length,int type)
 
             
             
-        case 2:
+        case FILTER_HAMMING:
             
             for(i=0; i<length; i++)  {
 #ifdef WINDOWS_LONG_NAMES
@@ -1770,7 +1813,7 @@ int doWindow(double *x,double *y,long length,int type)
             }
             break;
             
-        case 6:
+        case FILTER_FLATTOP:
             
             for(i=0; i<length; i++)  {
 #ifdef WINDOWS_LONG_NAMES
@@ -1782,7 +1825,7 @@ int doWindow(double *x,double *y,long length,int type)
             break;
             
             
-        case 7:
+        case FILTER_BLACKMANHARRIS:
             
             for(i=0; i<length; i++)  {
 #ifdef WINDOWS_LONG_NAMES
@@ -1793,7 +1836,7 @@ int doWindow(double *x,double *y,long length,int type)
             }
             break;
             
-        case 8:
+        case FILTER_BLACKMANHARRIS7:
             
             for(i=0; i<length; i++)  {
 #ifdef WINDOWS_LONG_NAMES
@@ -1803,11 +1846,8 @@ int doWindow(double *x,double *y,long length,int type)
 #endif
             }
             break;
-
-            
-
     }
-    
+                                 
     for(i=0; i<length; i++){
         double amp;
         amp=w[i];

@@ -86,6 +86,7 @@ static void setAudio(int item);
 
 static void doFFTMenu(int item);
 
+static void doFilterMenu(int item);
 
 SdrFile::SdrFile(struct Scene *scene): CWindow(scene)
 {
@@ -120,6 +121,7 @@ SdrFile::SdrFile(struct Scene *scene): CWindow(scene)
     //play.f=162.4e6;
     play.scaleFactor=0.0;
     play.FFTcount=4096;
+    play.FFTfilter=FILTER_BLACKMANHARRIS7;
 
 
     play.fOut=48000;
@@ -632,7 +634,7 @@ int SdrFile::updateLine()
     
     int length=play.FFTcount;
 
-    doWindow(real,imag,length,8);
+    doWindow(real,imag,length,play.FFTfilter);
 
     for(int n=0;n<length;++n){
         real[n] *= pow(-1.0,n);
@@ -1505,6 +1507,16 @@ int SdrFile::OpenWindows(struct Scene *scene)
     glutAddMenuEntry("USB", MODE_USB);
     glutAddMenuEntry("LSB", MODE_LSB);
     glutAddMenuEntry("CW", MODE_CW);
+    
+    int menu6=glutCreateMenu(doFilterMenu);
+    glutAddMenuEntry("RECTANGULAR", FILTER_RECTANGULAR);
+    glutAddMenuEntry("HANN", FILTER_HANN);
+    glutAddMenuEntry("HAMMING", FILTER_HAMMING);
+    glutAddMenuEntry("FLATTOP", FILTER_FLATTOP);
+    glutAddMenuEntry("BLACKMANHARRIS", FILTER_BLACKMANHARRIS);
+    glutAddMenuEntry("BLACKMANHARRIS7", FILTER_BLACKMANHARRIS7);
+    
+
 
     int menu4=glutCreateMenu(setAudio);
     glutAddMenuEntry("IQ Playback", MODE_AM);
@@ -1523,6 +1535,7 @@ int SdrFile::OpenWindows(struct Scene *scene)
     glutAddSubMenu("Mode", menu3);
     glutAddSubMenu("IQ Playback", menu4);
     glutAddSubMenu("FFT Size", menu5);
+    glutAddSubMenu("Window Filter", menu6);
 
 
     glutAddMenuEntry("--------------------", -1);
@@ -1602,6 +1615,39 @@ static void setAudio(int item)
 {
     PlayIQ();
 }
+
+void doFilterMenu(int item)
+{
+    int ifft = -1;
+    
+    switch(item){
+        case FILTER_RECTANGULAR:
+        case FILTER_HANN:
+        case FILTER_HAMMING:
+        case FILTER_FLATTOP:
+        case FILTER_BLACKMANHARRIS:
+        case FILTER_BLACKMANHARRIS7:
+            ifft=item;
+            break;
+    }
+    
+    if(ifft == -1)return;
+    
+    struct SceneList *list;
+    SdrFilePtr sdr;
+    
+    list=SceneFindByNumber(glutGetWindow());
+    if(!list){
+        sdr=FindSdrFileWindow(glutGetWindow());
+    }else{
+        sdr=(SdrFilePtr)FindScene(&list->scene);
+    }
+    
+    if(!sdr)return;
+    
+    sdr->play.FFTfilter=ifft;
+}
+
 
 void doFFTMenu(int item)
 {

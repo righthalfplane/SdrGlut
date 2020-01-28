@@ -64,6 +64,13 @@
 #define MODE_LSB  5
 #define MODE_CW   6
 
+#define FILTER_RECTANGULAR     0
+#define FILTER_HANN            1
+#define FILTER_HAMMING         2
+#define FILTER_FLATTOP         3
+#define FILTER_BLACKMANHARRIS  4
+#define FILTER_BLACKMANHARRIS7 5
+
 #define FFT_1024 1024
 #define FFT_2048 2048
 #define FFT_4096 4096
@@ -89,6 +96,7 @@ struct playData4{
     double real[2*BLOCK_SIZE];
     double imag[2*BLOCK_SIZE];
     int FFTcount;
+    int FFTfilter;
     int Debug;
     float gain;
     double fc;

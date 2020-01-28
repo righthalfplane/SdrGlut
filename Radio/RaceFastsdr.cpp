@@ -83,6 +83,7 @@ int RadioStart(int argc, char * argv [],struct playData *rx)
     rx->scaleFactor=0.0;
     rx->audioThreads=0;
     rx->FFTcount=4096;
+    rx->FFTfilter=FILTER_BLACKMANHARRIS7;
 
 
 	for(int n=1;n<argc;++n){

@@ -51,10 +51,19 @@
 #define MODE_USB  4
 #define MODE_LSB  5
 #define MODE_CW   6
-#define START_AUDiO  7
-#define STOP_AUDiO   8
-#define START_IQ  9
-#define STOP_IQ   10
+
+#define FILTER_RECTANGULAR     0
+#define FILTER_HANN            1
+#define FILTER_HAMMING         2
+#define FILTER_FLATTOP         3
+#define FILTER_BLACKMANHARRIS  4
+#define FILTER_BLACKMANHARRIS7 5
+
+
+#define START_AUDiO  107
+#define STOP_AUDiO   108
+#define START_IQ     109
+#define STOP_IQ      110
 
 #define FFT_1024 1024
 #define FFT_2048 2048
@@ -85,6 +94,7 @@ struct playData{
     double real[2*32768*2];
     double imag[2*32768*2];
     int FFTcount;
+    int FFTfilter;
     int size;
 
     ALuint source;
