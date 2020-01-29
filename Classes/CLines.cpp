@@ -215,13 +215,21 @@ void CLines::getMouse(int button, int state, int x, int y)
     
     if(button == 3){
         if(sceneSource){
-            Frequency -= BandWidth*0.5;
+            if(wShift == 0){
+                Frequency -= BandWidth*0.5;
+            }else{
+                Frequency -= BandWidth*0.25;
+            }
             SetFrequencyGlobal(sceneSource,Frequency,BandWidth,M_FREQUENCY);
         }
         if(state == GLUT_DOWN)return;
     }else if(button == 4){
         if(sceneSource){
-            Frequency += BandWidth*0.5;
+            if(wShift == 0){
+                Frequency += BandWidth*0.5;
+            }else{
+                Frequency += BandWidth*0.25;
+            }
             SetFrequencyGlobal(sceneSource,Frequency,BandWidth,M_FREQUENCY);
         }
         if(state == GLUT_DOWN)return;

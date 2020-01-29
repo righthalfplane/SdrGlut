@@ -1895,6 +1895,33 @@ static void getMousel(int button, int state, int x, int y)
 
 void SdrFile::getMouse(int button, int state, int x, int y)
 {
+    
+    if(button == 3){
+        float fl,bw;
+        bw=play.bw*0.5;
+        if(play.wShift != 0)bw /= 2;
+        fl=play.f-bw;
+        if(fl < 0)fl=-fl;
+        play.f=fl;
+        if(fabs(fl-play.fc) > 0.5*play.samplerate){
+            play.fc=fl;
+        }
+        setFrequency(&play);
+        return;
+    }else if(button == 4){
+        float fl,bw;
+        bw=play.bw*0.5;
+        if(play.wShift != 0)bw /= 2;
+        fl=play.f+bw;
+        if(fl < 0)fl=-fl;
+        play.f=fl;
+        if(fabs(fl-play.fc) > 0.5*play.samplerate){
+            play.fc=fl;
+        }
+        setFrequency(&play);
+        return;
+    }
+    
    	if(state == GLUT_DOWN)
     {
         double fclick;

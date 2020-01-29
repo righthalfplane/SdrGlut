@@ -1586,8 +1586,10 @@ static void getMousel(int button, int state, int x, int y)
 void Radio::getMouse(int button, int state, int x, int y)
 {
     if(button == 3){
-        float fl;
-        fl=rx->f-rx->bw*0.5;
+        float fl,bw;
+        bw=rx->bw*0.5;
+        if(rx->wShift != 0)bw /= 2;
+        fl=rx->f-bw;
         if(fl < 0)fl=-fl;
         rx->f=fl;
         if(fabs(fl-rx->fc) > 0.5*rx->samplerate){
@@ -1596,8 +1598,10 @@ void Radio::getMouse(int button, int state, int x, int y)
         setFrequency(rx);
         return;
     }else if(button == 4){
-        float fl;
-        fl=rx->f+rx->bw*0.5;
+        float fl,bw;
+        bw=rx->bw*0.5;
+        if(rx->wShift != 0)bw /= 2;
+        fl=rx->f+bw;
         if(fl < 0)fl=-fl;
         rx->f=fl;
         if(fabs(fl-rx->fc) > 0.5*rx->samplerate){
