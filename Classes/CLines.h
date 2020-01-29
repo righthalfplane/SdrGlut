@@ -101,6 +101,8 @@ public:
     double Frequency;
     
     double BandWidth;
+    
+    int wShift;
 
 };
 

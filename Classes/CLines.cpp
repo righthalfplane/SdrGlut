@@ -612,7 +612,12 @@ void CLines::display(struct Scene *scene)
             box.x=x-box.xsize/2;
             box.y=dpi*lines->Plot->box.ysize;
             box.ysize=box.y;
-            
+            if(wShift > 0){
+                box.x=x;
+                box.xsize /= 2;
+            }else if(wShift < 0){
+                box.xsize /= 2;
+            }
             DrawBox(&box,0);
         }
         

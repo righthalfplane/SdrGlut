@@ -713,7 +713,12 @@ int Radio::Display(struct Scene *scene)
         nf2=nf-3;
     }
     
-
+    if(rx->wShift > 0){
+        nf2=nf;
+    }else if(rx->wShift < 0){
+        nf1=nf;
+    }
+    
     {
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
@@ -1074,6 +1079,9 @@ int Radio::OpenWindows(struct Scene *scene)
     lines->plotPutData(scenel,range,dose,rx->FFTcount,-1L);
     
     lines->sceneSource=sceneOpen;
+    
+    lines->wShift=0;
+    
 //    lines->sdr=NULL;
 
     window2=list->window;
@@ -1104,9 +1112,10 @@ int Radio::OpenWindows(struct Scene *scene)
     
     lines2->plotPutData(scenel2,range,dose,rx->FFTcount,-1L);
     
-    
-    
     lines2->sceneSource=sceneOpen;
+    
+    lines2->wShift=0;
+
 //    lines2->sdr=NULL;
 
     lines2->lines->Plot->yLogScale=0;
@@ -1212,6 +1221,10 @@ void setMode(int item)
     
     if(!sdr)return;
     
+    sdr->lines->wShift = 0;
+    sdr->lines2->wShift = 0;
+    sdr->rx->wShift = 0;
+    
     switch(item){
         case MODE_AM:
             sdr->rx->decodemode = MODE_AM;
@@ -1220,12 +1233,21 @@ void setMode(int item)
             sdr->rx->decodemode = MODE_NAM;
             break;
         case MODE_USB:
+            sdr->lines->wShift = 1;
+            sdr->lines2->wShift = 1;
+            sdr->rx->wShift = 1;
             sdr->rx->decodemode = MODE_USB;
             break;
         case MODE_LSB:
+            sdr->lines->wShift  = -1;
+            sdr->lines2->wShift = -1;
+            sdr->rx->wShift = -1;
             sdr->rx->decodemode = MODE_LSB;
             break;
         case MODE_CW:
+            sdr->lines->wShift  = -1;
+            sdr->lines2->wShift = -1;
+            sdr->rx->wShift = -1;
             sdr->rx->decodemode = MODE_CW;
             break;
         case MODE_FM:

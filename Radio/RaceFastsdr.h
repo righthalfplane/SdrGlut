@@ -95,7 +95,8 @@ struct playData{
     double imag[2*32768*2];
     int FFTcount;
     int FFTfilter;
-    int size;
+    int wShift;
+   int size;
 
     ALuint source;
     int channels;
@@ -113,8 +114,9 @@ struct playData{
     double w;
     double bw;
     
-    int decodemode;
     
+    int decodemode;
+
     SoapySDRStream *rxStream;
     SoapySDRDevice *device;
     

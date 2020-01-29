@@ -97,6 +97,7 @@ struct playData4{
     double imag[2*BLOCK_SIZE];
     int FFTcount;
     int FFTfilter;
+    int wShift;
     int Debug;
     float gain;
     double fc;
