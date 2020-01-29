@@ -1,10 +1,10 @@
 # SdrGult
 SdrGlut is a simple software defined radio player. Using glut for drawing and glui for its dialogs makes it tiny compared to programs that use QT5 or wxWidgets. SdrGlut uses liquid-sdr and SoapySDR to preform the SDR calculations. The audio is handled by OpenAL.
 
-The seventh release is now avaliable - It fixes a number of problems with the install packages. It has a prebuild exe for macOS. It also has a install package for Windows.
+The Eighth release is now avaliable. It adds selection options for FFT window filters and FFT filter length. It also can use the scroll wheel to change frequencies.  It has a prebuild exe for macOS. It also has a install package for Windows.
 
 
-https://github.com/righthalfplane/SdrGlut/releases/tag/v1.7
+https://github.com/righthalfplane/SdrGlut/releases/tag/v1.8
 
 # Movies
 
