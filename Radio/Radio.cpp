@@ -1824,7 +1824,7 @@ int doWindow(double *x,double *y,long length,int type)
 #ifdef WINDOWS_LONG_NAMES
                 w[i]=liquid_hann(i, (int)length);
 #else
-                w[i]=hann((i, (int)length);
+                w[i]=hann(i, (int)length);
 #endif
             }
             break;
@@ -1837,7 +1837,7 @@ int doWindow(double *x,double *y,long length,int type)
 #ifdef WINDOWS_LONG_NAMES
                 w[i]=liquid_hamming(i, (int)length);
 #else
-                w[i]=hamming((i, (int)length);
+                w[i]=hamming(i, (int)length);
 #endif
             }
             break;
