@@ -24,14 +24,37 @@
 static GLUI_Checkbox *check_box;
 static void control_cb(int control);
 
-
-
 int ReDrawScene(struct Scene *scene);
 
 extern "C" int doFFT2(double *x,double *y,long length,int direction);
 
 // static int doWindow(double *x,double *y,long length,int type);
 
+int Radio::setDialogBandWidth(double bandwidth)
+{
+    char value[256];
+
+    if(!dd.edittext15 || !inDialog)return 0;
+
+    msprintf(value,sizeof(value),"%g",bandwidth);
+
+    dd.edittext15->set_text(value);
+    
+    return 0;
+}
+
+int Radio::setDialogSampleRate(double samplerate)
+{
+    char value[256];
+
+    if(!dd.edittext5 || !inDialog)return 0;
+
+    msprintf(value,sizeof(value),"%g",samplerate);
+    
+    dd.edittext5->set_text(value);
+
+    return 0;
+}
 
 int Radio::setDialogRange(double pmin,double pmax)
 {
@@ -47,7 +70,6 @@ int Radio::setDialogRange(double pmin,double pmax)
     
     
     if(!dd.edittext7 || !dd.edittext8 || !inDialog)return 0;
-    
     
     msprintf(value,sizeof(value),"%g",pmin);
     

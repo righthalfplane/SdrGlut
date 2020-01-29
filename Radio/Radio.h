@@ -188,7 +188,11 @@ public:
     int setDialogRange(double pmin,double pmax);
     
     int setDialogPower(double power);
-            
+    
+    int setDialogBandWidth(double power);
+    
+    int setDialogSampleRate(double power);
+
     
     double fcdown;
     

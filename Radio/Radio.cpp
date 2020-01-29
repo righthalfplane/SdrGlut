@@ -376,7 +376,6 @@ int Radio::updateLine()
     
     doFFT2(real,imag,length,1);
     
-    fprintf(stderr,"\n");
     amin=water.amin;
     amax=water.amax;
     
@@ -1173,6 +1172,8 @@ void bandMenu(int item){
     
     sdr->rx->bandwidth=sdr->rx->bandwidths[item];
     
+    sdr->setDialogBandWidth(sdr->rx->bandwidth);
+    
     sdr->rx->pstartPlay(sdr->rx);
     
     sdr->rx->pplayRadio(sdr->rx);
@@ -1201,6 +1202,8 @@ void sampleMenu(int item){
     
     sdr->rx->samplerate=sameleRate;
     
+    sdr->setDialogSampleRate(sameleRate);
+
     sdr->rx->pstartPlay(sdr->rx);
     
     sdr->rx->pplayRadio(sdr->rx);
