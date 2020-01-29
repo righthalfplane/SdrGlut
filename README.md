@@ -8,6 +8,9 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.7
 
 # Movies
 
+SdrGlut views CW signals on 80 meters
+https://youtu.be/-WTC74p6WtY
+
 SdrGlut a Software Defined Radio player - Test drive #1
 https://www.youtube.com/watch?v=zxgcRjTahcA
 
