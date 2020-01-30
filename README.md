@@ -8,6 +8,9 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.8
 
 # Movies
 
+SdrPlay RSP2 vs Grundig G6 Aviator at CB frequencies
+https://youtu.be/bUyQk_1ANHo
+
 SdrGlut views CW signals on 80 meters
 https://youtu.be/-WTC74p6WtY
 
