@@ -8,6 +8,9 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.8
 
 # Movies
 
+SRPlay RSP2 vs Realistic DX-440 at CB Frequencies
+https://youtu.be/36ug6qZUKBI
+
 SdrGlut - The New Capabilities of Version 8
 https://youtu.be/Vet6VFHjQ2E
 
