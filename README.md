@@ -8,6 +8,10 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.8
 
 # Movies
 
+SdrGlut - The New Capabilities of Version 8
+https://youtu.be/Vet6VFHjQ2E
+
+
 SdrPlay RSP2 vs Grundig G6 Aviator at CB frequencies
 https://youtu.be/bUyQk_1ANHo
 
