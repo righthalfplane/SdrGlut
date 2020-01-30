@@ -8,6 +8,9 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.8
 
 # Movies
 
+SDRPlay RSP2 vs Grundig Satellit-750 at CB Frequencies
+https://youtu.be/s3AlTwK_APg
+
 SRPlay RSP2 vs Realistic DX-440 at CB Frequencies
 https://youtu.be/36ug6qZUKBI
 
