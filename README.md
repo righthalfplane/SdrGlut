@@ -8,6 +8,9 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.8
 
 # Movies
 
+Cobra 148 GTL ST AM vs USB at CB frequencies
+https://youtu.be/40ih6kHTxSA
+
 SDRPlay RSP2 vs Grundig Satellit-750 at CB Frequencies
 https://youtu.be/s3AlTwK_APg
 
