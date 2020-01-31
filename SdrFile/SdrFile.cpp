@@ -825,8 +825,11 @@ static int setFilters(struct playData4 *rx,struct Filters2 *f)
         rx->bw=3000.0;
         mode=LIQUID_AMPMODEM_LSB;
         iflag=1;
+    } else if(rx->decodemode == MODE_NAM2){
+        rx->bw=5000.0;
+        mode=LIQUID_AMPMODEM_DSB;
+        iflag=0;
     }
-    
     rx->Ratio = (float)(rx->bw/ rx->samplerate);
     ratio= (float)(48000.0/rx->bw);
 
@@ -957,9 +960,10 @@ StartUp:
         goto StartUp;
     }else if(play->controlProcess == -3){
         play->controlProcess=0;
-        long location=(long)(play->setFrameNumber*2*sizeof(float)*play->samplerate/10);
+        off_t location=(off_t)(play->setFrameNumber*2*sizeof(float)*play->samplerate/10);
         play->frame = (int)play->setFrameNumber;
         fseek(play->infile, location, SEEK_SET);
+       // fprintf(stderr,"location %lld ret = %d sizeof(long) %ld sizeof(long long) %ld\n",location,ret,sizeof(long),sizeof(long long));
         goto StartUp;
     }
     return 0;
@@ -1513,7 +1517,8 @@ int SdrFile::OpenWindows(struct Scene *scene)
     glutAddMenuEntry("USB", MODE_USB);
     glutAddMenuEntry("LSB", MODE_LSB);
     glutAddMenuEntry("CW", MODE_CW);
-    
+    glutAddMenuEntry("NAM2", MODE_NAM2);
+
     int menu6=glutCreateMenu(doFilterMenu);
     glutAddMenuEntry("RECTANGULAR", FILTER_RECTANGULAR);
     glutAddMenuEntry("HANN", FILTER_HANN);
@@ -1711,6 +1716,9 @@ static void setMode(int item)
     switch(item){
         case MODE_AM:
             sdr->play.decodemode = MODE_AM;
+            break;
+        case MODE_NAM2:
+            sdr->play.decodemode = MODE_NAM2;
             break;
         case MODE_NAM:
             sdr->play.decodemode = MODE_NAM;

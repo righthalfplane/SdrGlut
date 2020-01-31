@@ -509,7 +509,13 @@ int Radio::SetFrequency(struct Scene *scene,double f,double bw, int message)
         rx->mute = !rx->mute;
         return 0;
     } else if(message == M_FREQUENCY){
+        
         rx->f=f;
+        if(fabs(f-rx->fc) > 0.5*rx->samplerate){
+            rx->fc=f;
+            setFrequency(rx);
+            return 0;
+       }
         setFrequencyCoefficients(rx);
         return 0;
     }
@@ -1585,6 +1591,7 @@ static void getMousel(int button, int state, int x, int y)
 
 void Radio::getMouse(int button, int state, int x, int y)
 {
+    
     if(button == 3){
         float fl,bw;
         bw=rx->bw*0.5;
