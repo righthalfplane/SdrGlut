@@ -7,6 +7,8 @@ The Eighth release is now avaliable. It adds selection options for FFT window fi
 https://github.com/righthalfplane/SdrGlut/releases/tag/v1.8
 
 # Movies
+SdrGlut exploring Single Side Band on 80 meters
+https://youtu.be/Up48SK5BGSw
 
 Cobra 148 GTL ST AM vs USB at CB frequencies
 https://youtu.be/40ih6kHTxSA
