@@ -1494,7 +1494,9 @@ static void keys2(unsigned char key, int x, int y)
     }
     
     if(sdr){
-        sdr->rx->mute = !sdr->rx->mute;
+        if(key == 'm'){
+           sdr->rx->mute = !sdr->rx->mute;
+        }
     }
     
    // fprintf(stderr,"Radio keys - key %d key %c \n",key,key);

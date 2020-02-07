@@ -1379,9 +1379,13 @@ int testRadio(struct playData *rx)
             rx->gainsMaximum[j]=range3.maximum;
         }
 
+        //SoapySDRRange range=SoapySDRDevice_getGainRange(rx->device, SOAPY_SDR_TX, 0);
+        
+        //printf("range TX max %g min %g\n",range.maximum,range.minimum);
+        
         SoapySDRRange range=SoapySDRDevice_getGainRange(rx->device, SOAPY_SDR_RX, 0);
         
-       // printf("range max %g min %g\n",range.maximum,range.minimum);
+        //printf("range RX max %g min %g\n",range.maximum,range.minimum);
         
         rx->gainsMin=range.minimum;
         rx->gainsMax=range.maximum;
