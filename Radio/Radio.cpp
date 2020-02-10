@@ -49,6 +49,7 @@ extern "C" int DrawLine(int x1, int y1, int x2, int y2);
 
 #define ControlGetSelectionBox	102
 #define SdrDialog               103
+#define SdrTransmit             104
 
 ALvoid DisplayALError(unsigned char *szText, ALint errorCode);
 
@@ -327,6 +328,15 @@ Radio::~Radio()
             dd.glui->close();
         }
         dd.glui=NULL;
+    }
+    
+    if(inTransmit){
+        inTransmit=0;
+        if(tt.glui){
+            glutSetWindow(tt.sub_window);
+            tt.glui->close();
+        }
+        tt.glui=NULL;
     }
 
 }
@@ -1052,6 +1062,7 @@ int Radio::OpenWindows(struct Scene *scene)
 
     glutCreateMenu(menu_selectl);
     glutAddMenuEntry("Sdr Dialog...", SdrDialog);
+    glutAddMenuEntry("Transmit...", SdrTransmit);
     glutAddSubMenu("Palette", palette_menu);
     glutAddSubMenu("Mode", menu3);
     if(rx->antennaCount > 0)glutAddSubMenu("Antenna", antenna);
@@ -1448,10 +1459,14 @@ int Radio::mMenuSelectl(struct Scene *scene,int item)
 	switch (item)
 	{
 
-	case SdrDialog:
-		dialogRadio(scene);
-		return 0;
-
+        case SdrDialog:
+            dialogRadio(scene);
+            return 0;
+            
+        case SdrTransmit:
+            Transmit(scene);
+            return 0;
+            
 	case ControlGetSelectionBox:
 		return 0;
 
@@ -1807,8 +1822,8 @@ static void moveMouse(int x, int y)
  
 int doWindow(double *x,double *y,long length,int type)
 {
-    double w[length];
-    //double w[32768];
+    //double w[length];
+    double w[32768];
     int i;
     
     if(!x || !y)return 1;

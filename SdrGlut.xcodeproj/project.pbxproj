@@ -57,6 +57,7 @@
 		4686063922028C1F0078D9F2 /* DialogRadio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4686063522028C1F0078D9F2 /* DialogRadio.cpp */; };
 		4686063A22028C1F0078D9F2 /* Radio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4686063822028C1F0078D9F2 /* Radio.cpp */; };
 		468D261C2238A04D005BE154 /* RecordIQ.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 468D261A2238A04D005BE154 /* RecordIQ.cpp */; };
+		469215B023EE7ADD009B2C34 /* librtaudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 469215AF23EE7ADD009B2C34 /* librtaudio.a */; };
 		46963ED323D789A30059B4AA /* printInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46963ED223D789A30059B4AA /* printInfo.cpp */; };
 		46B4EB1B2212570900041F98 /* cMalloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 46B4EB192212570900041F98 /* cMalloc.c */; };
 		46B4EB1C2212570900041F98 /* Utilities.c in Sources */ = {isa = PBXBuildFile; fileRef = 46B4EB1A2212570900041F98 /* Utilities.c */; };
@@ -80,6 +81,7 @@
 		46CE01D92212669200140F6C /* GridPlot.c in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01D72212669200140F6C /* GridPlot.c */; };
 		46CE01DF22126AD100140F6C /* BackgroundQ.c in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01DD22126AD100140F6C /* BackgroundQ.c */; };
 		46E13AD11C2C48AF007FF424 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46E13AD01C2C48AF007FF424 /* main.cpp */; };
+		46E216E923EE4300002C059A /* Transmit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46E216E723EE4300002C059A /* Transmit.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -167,6 +169,7 @@
 		4686063822028C1F0078D9F2 /* Radio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Radio.cpp; sourceTree = "<group>"; };
 		468D261A2238A04D005BE154 /* RecordIQ.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RecordIQ.cpp; path = MainSource/RecordIQ.cpp; sourceTree = "<group>"; };
 		468D261B2238A04D005BE154 /* RecordIQ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RecordIQ.h; path = MainSource/RecordIQ.h; sourceTree = "<group>"; };
+		469215AF23EE7ADD009B2C34 /* librtaudio.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = librtaudio.a; sourceTree = "<group>"; };
 		46963ED223D789A30059B4AA /* printInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = printInfo.cpp; path = MainSource/printInfo.cpp; sourceTree = "<group>"; };
 		46B4EB182212570900041F98 /* Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Utilities.h; path = MainSource/Utilities.h; sourceTree = "<group>"; };
 		46B4EB192212570900041F98 /* cMalloc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cMalloc.c; path = MainSource/cMalloc.c; sourceTree = "<group>"; };
@@ -209,6 +212,8 @@
 		46CE01DD22126AD100140F6C /* BackgroundQ.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = BackgroundQ.c; path = MainSource/BackgroundQ.c; sourceTree = "<group>"; };
 		46CE01DE22126AD100140F6C /* BackgroundQ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BackgroundQ.h; path = MainSource/BackgroundQ.h; sourceTree = "<group>"; };
 		46E13AD01C2C48AF007FF424 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = MainSource/main.cpp; sourceTree = "<group>"; };
+		46E216E723EE4300002C059A /* Transmit.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Transmit.cpp; path = Classes/Transmit.cpp; sourceTree = SOURCE_ROOT; };
+		46E216E823EE4300002C059A /* Transmit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Transmit.h; path = Classes/Transmit.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -217,6 +222,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				46371C8E1D12F337002D3788 /* OpenGL.framework in Frameworks */,
+				469215B023EE7ADD009B2C34 /* librtaudio.a in Frameworks */,
 				46371C8A1D12F31B002D3788 /* OpenAL.framework in Frameworks */,
 				46371C8C1D12F32A002D3788 /* OpenCL.framework in Frameworks */,
 				464918A220E53121008BDC72 /* libliquid.a in Frameworks */,
@@ -233,6 +239,7 @@
 			children = (
 				4664F28C1DA95E6E00BBF9EB /* libSoapySDR.dylib */,
 				464918A120E53121008BDC72 /* libliquid.a */,
+				469215AF23EE7ADD009B2C34 /* librtaudio.a */,
 				4629CAA923DD4E040059898D /* libglut.3.dylib */,
 				46371C891D12F31B002D3788 /* OpenAL.framework */,
 				46371C8D1D12F337002D3788 /* OpenGL.framework */,
@@ -270,6 +277,8 @@
 				4616E5B72208B6A700240B9F /* smeter.h */,
 				4686063522028C1F0078D9F2 /* DialogRadio.cpp */,
 				4686063622028C1F0078D9F2 /* DialogRadio.h */,
+				46E216E723EE4300002C059A /* Transmit.cpp */,
+				46E216E823EE4300002C059A /* Transmit.h */,
 				461B756D220379E400D8CBE6 /* RaceFastsdr.cpp */,
 				462FB7F3220389830028D417 /* RaceFastsdr.h */,
 				4686063822028C1F0078D9F2 /* Radio.cpp */,
@@ -479,6 +488,7 @@
 				468D261C2238A04D005BE154 /* RecordIQ.cpp in Sources */,
 				467FE4041C2C4F9B007D260F /* glui_control.cpp in Sources */,
 				468120D2222597CE00926B96 /* DialogFolder.cpp in Sources */,
+				46E216E923EE4300002C059A /* Transmit.cpp in Sources */,
 				46CE01AD22125C8400140F6C /* Utilities2.c in Sources */,
 				461B756E220379E400D8CBE6 /* RaceFastsdr.cpp in Sources */,
 				46CE01BB22125E0500140F6C /* fir.cpp in Sources */,

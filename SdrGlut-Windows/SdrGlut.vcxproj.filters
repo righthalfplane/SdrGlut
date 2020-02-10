@@ -256,6 +256,7 @@
       <Filter>MainSource</Filter>
     </ClInclude>
     <ClInclude Include="resource.h" />
+    <ClInclude Include="..\Classes\Transmit.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\glui-routines\algebra3.cpp">
@@ -454,6 +455,7 @@
     <ClCompile Include="..\MainSource\printInfo.cpp">
       <Filter>MainSource</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\Transmit.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SdrGlut.rc" />

@@ -9,6 +9,10 @@
 #ifndef RadioRA_h
 #define RadioRA_h
 #include "RaceFastsdr.h"
+#include <SoapySDR/Device.hpp>
+#include <SoapySDR/Formats.hpp>
+#include <SoapySDR/Errors.hpp>
+#include <SoapySDR/Time.hpp>
 #include <SoapySDR/Device.h>
 #include <SoapySDR/Formats.h>
 #include "ulibTypes.h"
@@ -36,6 +40,8 @@
 #include <AL/alut.h>
 #include <AL/al.h>
 #endif
+
+#include <rtaudio/RtAudio.h>
 
 #include <time.h>
 
@@ -118,6 +124,97 @@ struct DialogRadioData{
     int sub_window;
 };
 
+struct Info{
+    volatile int loop;
+    int modetype;
+    msresamp_rrrf iqSampler;
+    class AMmod *am;
+    msresamp_crcf iqSampler2;
+    SoapySDR::Device *device;
+    SoapySDR::Stream *txStream;
+    ampmodem demodAM;
+    freqmod mod;
+};
+
+struct TransmitData{
+    GLUI *glui;
+    char text1[255];
+    char text2[255];
+    char text3[255];
+    char text4[255];
+    char text5[255];
+    char text15[255];
+    char text16[255];
+    char text17[255];
+    char text6[255];
+    char text7[255];
+    char text8[255];
+    
+    GLUI_EditText *edittext1;
+    GLUI_EditText *edittext2;
+    GLUI_EditText *edittext3;
+    GLUI_EditText *edittext4;
+    GLUI_EditText *edittext5;
+    GLUI_EditText *edittext15;
+    GLUI_EditText *edittext16;
+    GLUI_EditText *edittext17;
+    GLUI_EditText *edittext6;
+    GLUI_EditText *edittext7;
+    GLUI_EditText *edittext8;
+
+    struct Info info;
+
+    char **antenna;
+    size_t antennaCount;
+    char **gains;
+    size_t gainsCount;
+    double *gainsMinimum;
+    double *gainsMaximum;
+    double gainsMin;
+    double gainsMax;
+    
+    bool hasGainMode;
+    int gainMode;
+    
+    double *frequencyMinimum;
+    double *frequencyMaximum;
+    size_t frequencyCount;
+    
+    bool hasDCOffset;
+    int DCOffset;
+    
+    double *bandwidths;
+    size_t bandwidthsCount;
+    
+    char **streamFormat;
+    size_t streamFormatCount;
+    
+    double *sampleRates;
+    size_t sampleRatesCount;
+
+    GLUI_RadioGroup *group2;
+    int modetype;
+    
+    RtAudio::StreamParameters Params;
+    RtAudio *audio;
+    
+    volatile int doTransmit;
+    
+    volatile double fc;
+    double foffset;
+    
+    char text1z[255];
+    GLUI_EditText *edittext1z[20];
+    GLUI_Scrollbar *line_scroll[20];
+    float line_Index[20];
+    float line_Index_old[20];
+    int gain_Index;
+    int iic;
+    int useagc;
+    struct Scene *sceneLocal;
+    int sub_window;
+};
+
 class CLines;
 
 class Radio;
@@ -147,9 +244,25 @@ public:
     char ApplicationDirectory[2048];
     char filename[2048];
     int resetDemod();
-
-    volatile int inDialog;
     
+    int setBandWidth(double bandwidth);
+    
+    int setSampleRate(double samplerate);
+    
+    int setRange(double pmin,double pmax);
+    
+    int setPower(double power);
+    
+    int setFrequency(double frequency);
+    
+    int setFc(double frequency);
+    
+    int Transmit(struct Scene *scene);
+
+    volatile int inTransmit;
+    
+    volatile int inDialog;
+
     volatile int backGroundEvents;
 
     struct WaterFall4 water;
@@ -159,6 +272,8 @@ public:
     struct playData rxs;
     
     struct DialogRadioData dd;
+    
+    struct TransmitData tt;
 
     double real[2*32768*sizeof(double)];
     double imag[2*32768*sizeof(double)];

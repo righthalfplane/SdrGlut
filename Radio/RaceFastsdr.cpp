@@ -634,7 +634,7 @@ static int setFilters(struct playData *rx,struct Filters *f)
     
     f->demod=freqdem_create(0.5);
     
-#if LIQUID_VERSION_NUMBER <= 1003001
+#if LIQUID_VERSION_NUMBER < 1003001
     f->demodAM = ampmodem_create(0.5, 0.0, mode, iflag);
  #else
     f->demodAM = ampmodem_create(0.5, mode, iflag);
@@ -1437,7 +1437,7 @@ int testRadio(struct playData *rx)
         rx->streamFormat=(char **)cMalloc((unsigned long)(rx->streamFormatCount*sizeof(double)),8898);
         for (size_t j = 0; j < rx->streamFormatCount; j++)
         {
-          //  printf("StreamFormats %lu %s\n",j, list[j]);
+            printf("StreamFormats %lu %s\n",j, list[j]);
             rx->streamFormat[j]=list[j];
         }
 /*

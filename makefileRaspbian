@@ -93,7 +93,7 @@ CCOBJS = ./glui-routines/algebra3.o ./glui-routines/arcball.o ./glui-routines/gl
 	./Classes/fastfir.o  ./Classes/fft.o ./Classes/CLines.o ./Classes/CLInesPlotLabels.o ./Classes/ClinesAttributes.o ./Classes/ClinesPlotAttributes.o ./Radio/smeter.o ./Classes/CLinesPlotBox.o \
 	./Radio/Radio.o ./Radio/DialogRadio.o ./Radio/RaceFastsdr.o ./MainSource/DialogFileOpen.o ./SdrFile/SdrFile.o \
     ./MainSource/DialogSave.o ./SdrFile/DialogSdrFile.o ./MainSource/fir.o ./MainSource/DialogFolder.o \
-	./MainSource/PlayIQ.o ./MainSource/RecordIQ.o ./MainSource/printInfo.o
+	./MainSource/PlayIQ.o ./MainSource/RecordIQ.o ./MainSource/printInfo.o ./Classes/Transmit.o
 
 
 fireball:  ${COBJS} ${CCOBJS}
@@ -101,7 +101,7 @@ fireball:  ${COBJS} ${CCOBJS}
 #	${CXX} ${CFLAGS} -o fireball.x ${COBJS} ${CCOBJS} -lm -L/usr/local/hdf-64/lib -L/usr/X11R6/lib -L../Rx3/recipe/lib -L/usr/local/gfortran/lib/ -lgfortran -lrx3_64 -lX11 -lpthread -ldf -ljpeg -lz -lglut -lgl -lglu -lglew -lgdal
 #	${CXX} ${CFLAGS} -o fireball.x ${COBJS} ${CCOBJS} -lm -L/usr/local -L/usr/X11R6/lib -L/usr/local/gfortran/lib/ -lX11 -lpthread -ldf -ljpeg -lz -lglut -lgl -lglu -lglew -lgdal
 #	${CXX} ${CFLAGS} -o sdrglut.x ${COBJS} ${CCOBJS} -lm -L/usr/local -L/usr/X11/lib -lX11 -lpthread -ldf -ljpeg -lz -lglut -lGL -lGLU -lGLEW    -lopenal -lliquid -lSoapyOsmoSDR -lSoapySDR -lsndfile
-	${CXX} ${CFLAGS} -o sdrglut.x -g ${COBJS} ${CCOBJS} -lm -L/usr/local -L/usr/X11/lib -lX11 -lpthread -lglut -lGL -lGLU -lopenal -lliquid -lSoapySDR
+	${CXX} ${CFLAGS} -o sdrglut.x -g ${COBJS} ${CCOBJS} -lm -L/usr/local -L/usr/X11/lib -lX11 -lpthread -lglut -lGL -lrtaudio -lGLU -lopenal -lliquid -lSoapySDR
 
 # ./MainSource/mThreadPC.cpp
 # ./MainSource/mThreadPC.o

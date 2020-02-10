@@ -835,7 +835,7 @@ static int setFilters(struct playData4 *rx,struct Filters2 *f)
 
     
     f->demod=freqdem_create(0.5);
-#if LIQUID_VERSION_NUMBER <= 1003001
+#if LIQUID_VERSION_NUMBER < 1003001
     f->demodAM = ampmodem_create(0.5, 0.0, mode, iflag);
 #else
     f->demodAM = ampmodem_create(0.5, mode, iflag);
@@ -1542,6 +1542,7 @@ int SdrFile::OpenWindows(struct Scene *scene)
 
     glutCreateMenu(menu_selectl);
     glutAddMenuEntry("Sdr Dialog...", SdrDialog);
+   // glutAddMenuEntry("Transmit...", SdrTransmit);
     glutAddSubMenu("Palette", palette_menu);
     glutAddSubMenu("Mode", menu3);
     glutAddSubMenu("IQ Playback", menu4);
