@@ -405,13 +405,14 @@ int Radio::Transmit(struct Scene *scene)
     tt.Params.firstChannel = 0;
 
 
-/*
+
     tt.iic=0;
     
     tt.gain_Index=tt.iic;
     
     GLUI_Panel *panel3 = new GLUI_Panel(tt.glui, "gain");
-    double el = SoapySDRDevice_getGain(rx->device, SOAPY_SDR_TX, 0);
+    tt.gain=0.5*(tt.gainsMax+tt.gainsMin);
+    double el = tt.gain;
     msprintf(tt.text1z,sizeof(tt.text1z),"%.0f",el);
     tt.edittext1z[tt.iic] =
     tt.glui->add_edittext_to_panel(panel3, "", GLUI_EDITTEXT_TEXT, tt.text1z );
@@ -425,14 +426,14 @@ int Radio::Transmit(struct Scene *scene)
     new GLUI_Scrollbar( panel3, "gain", GLUI_SCROLL_HORIZONTAL,
                        &tt.line_Index[tt.iic], 50,
                        control_cb );
-    
-    tt.line_scroll[tt.iic]->set_float_limits( rx->gainsMin, rx->gainsMax );
+
+    tt.line_scroll[tt.iic]->set_float_limits( tt.gainsMin, tt.gainsMax );
     
     ++tt.iic;
     
     //printf("%s min %g max %g\n", "gain",rx->gainsMin,rx->gainsMax);
     
-*/
+
     
     
     
@@ -509,6 +510,21 @@ static void control_cb(int control)
     {
         fprintf(stderr,"Key_Button %d\n",control);
     }
+    else if(control == 50)
+    {
+        char value[256];
+        double gain;
+        int ind=s->tt.gain_Index;
+        msprintf(value,sizeof(value),"%0.f",s->tt.line_Index[ind]);
+        gain=atof(value);
+        s->tt.gain=gain;
+        //fprintf(stderr,"value %s gain %g\n",value,gain);
+        s->tt.edittext1z[ind]->set_text(value);
+        if(s->tt.line_Index_old[ind] != (int)s->tt.line_Index[ind]){
+            s->tt.line_Index_old[ind]=(int)s->tt.line_Index[ind];
+        }
+    }
+
     else if(control >= 200 && control < 220)
     {
         fprintf(stderr,"Audio Source %d\n",control-200);
@@ -667,8 +683,7 @@ static int TransmitThread(void *rxv)
     
     device->setFrequency(SOAPY_SDR_TX, 0, frequency);
     
-    device->setGain(SOAPY_SDR_TX, 0, 32.0);
-    device->setGain(SOAPY_SDR_TX, 0, 63.0);
+    device->setGain(SOAPY_SDR_TX, 0, s->tt.gain);
     
     //  device->setAntenna(SOAPY_SDR_TX, 0, BAND1);
     
@@ -690,7 +705,7 @@ static int TransmitThread(void *rxv)
     int ret4=device->activateStream(txStream);
     if(ret4)fprintf(stderr,"ret4 %d\n",ret4);
     
-    unsigned int samples=44100;
+    unsigned int samples=48000;
     
     float Ratio1 = (float)(10000/ (float)samples);
     
@@ -757,6 +772,8 @@ static int TransmitThread(void *rxv)
         goto cleanup;
     }
     
+    std::cout << "getStreamSampleRate = " << s->tt.audio->getStreamSampleRate() << '\n' << std::endl;
+
     try {
         s->tt.audio->startStream();
     }
@@ -841,12 +858,8 @@ int SendData(struct Info *info,unsigned int frames,short *bufin)
      
      */
     
-    
     msresamp_rrrf_execute(info->iqSampler, (float *)buf, frames, (float *)buf2, &num);  // decimate
     
-    info->am->modulate(buf2,num,r2);
-    
-
     if(info->modetype == Mode_AM){
         info->am->modulate(buf2,num,r2);
     }else if(info->modetype == Mode_NBFM){

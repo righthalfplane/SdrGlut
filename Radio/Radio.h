@@ -202,7 +202,7 @@ struct TransmitData{
     
     volatile double fc;
     double foffset;
-    
+    double gain;
     char text1z[255];
     GLUI_EditText *edittext1z[20];
     GLUI_Scrollbar *line_scroll[20];
