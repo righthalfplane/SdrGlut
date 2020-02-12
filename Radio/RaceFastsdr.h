@@ -1,6 +1,10 @@
 #ifndef RadioFMCRA_h
 #define RadioFMCRA_h
 
+#include <SoapySDR/Device.hpp>
+#include <SoapySDR/Formats.hpp>
+#include <SoapySDR/Errors.hpp>
+#include <SoapySDR/Time.hpp>
 #include <SoapySDR/Device.h>
 #include <SoapySDR/Formats.h>
 
@@ -117,9 +121,9 @@ struct playData{
     
     int decodemode;
 
-    SoapySDRStream *rxStream;
-    SoapySDRDevice *device;
-    
+    SoapySDR::Stream *rxStream;
+    SoapySDR::Device *device;
+
 /*
     int AgcSlope;
     int AgcThresh;

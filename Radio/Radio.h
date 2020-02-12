@@ -9,12 +9,6 @@
 #ifndef RadioRA_h
 #define RadioRA_h
 #include "RaceFastsdr.h"
-#include <SoapySDR/Device.hpp>
-#include <SoapySDR/Formats.hpp>
-#include <SoapySDR/Errors.hpp>
-#include <SoapySDR/Time.hpp>
-#include <SoapySDR/Device.h>
-#include <SoapySDR/Formats.h>
 #include "ulibTypes.h"
 #include <GL/glui.h>
 

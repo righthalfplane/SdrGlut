@@ -350,6 +350,8 @@ int Radio::updateLine()
 
     lineTime=rtime()+lineDumpInterval;
     
+    if(rx->controlRF != 2)return 0;
+    
     if(rx->FFTcount > FFTlength){
         printf(" FFTlength %ld\n",FFTlength);
         return 1;
@@ -559,7 +561,7 @@ int Radio::setFrequency(struct playData *rx)
 {
 
     if(rx->device){
-        SoapySDRDevice_setFrequency(rx->device,SOAPY_SDR_RX, 0, rx->fc,NULL);
+        rx->device->setFrequency(SOAPY_SDR_RX, 0, rx->fc);
     }
     
     setDialogFrequency(rx->f);
@@ -1166,7 +1168,7 @@ void antennaMenu(int item){
     
     //fprintf(stderr,"setAntenna '%s'\n",sdr->rx->antenna[item]);
     
-    SoapySDRDevice_setAntenna(sdr->rx->device,SOAPY_SDR_RX, 0, sdr->rx->antenna[item]);
+    sdr->rx->device->setAntenna(SOAPY_SDR_RX, 0, sdr->rx->antenna[item]);
     
     return;
 }

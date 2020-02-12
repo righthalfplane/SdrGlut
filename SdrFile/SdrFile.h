@@ -8,8 +8,6 @@
 
 #ifndef SdrFileRA_h
 #define SdrFileRA_h
-#include <SoapySDR/Device.h>
-#include <SoapySDR/Formats.h>
 #include "ulibTypes.h"
 #include <GL/glui.h>
 #include "smeter.h"

@@ -6,6 +6,7 @@
 //  Copyright © 2020 Dale Ranta. All rights reserved.
 //
 #include "firstFile.h"
+#include "Utilities.h"
 #include "Transmit.h"
 #include <cstdio>
 #include <cstdlib>
@@ -200,96 +201,105 @@ int Radio::Transmit(struct Scene *scene)
     
     tt.doTransmit=0;
     
-    tt.antenna=SoapySDRDevice_listAntennas(rx->device, SOAPY_SDR_TX, 0, &tt.antennaCount);
+    std::vector<std::string> names=rx->device->listAntennas( SOAPY_SDR_TX, 0);
     
-    for (size_t j = 0; j < tt.antennaCount; j++)
-    {
-        printf("Antenna %lu %s\n",j, tt.antenna[j]);
+    tt.antennaCount=names.size();
+    tt.antenna=(char **)cMalloc(tt.antennaCount*sizeof(char *),8833);
+    for (size_t i=0;i<names.size();++i){
+        tt.antenna[i]=strsave((char *)names[i].c_str(),5555);
     }
 
-    tt.gains=SoapySDRDevice_listGains(rx->device, SOAPY_SDR_TX, 0, &tt.gainsCount);
-    
+    names = rx->device->listGains(SOAPY_SDR_TX, 0);
+    tt.gainsCount=names.size();
+    tt.gains=(char **)cMalloc(tt.gainsCount*sizeof(char *),8833);
     tt.gainsMinimum=(double *)cMalloc((unsigned long)(tt.gainsCount*sizeof(double)),8891);
-    
     tt.gainsMaximum=(double *)cMalloc((unsigned long)(tt.gainsCount*sizeof(double)),8892);
     
     for (size_t j = 0; j < tt.gainsCount; j++)
     {
-         printf("Gains %lu %s ",j, tt.gains[j]);
-        
-        SoapySDRRange range3=SoapySDRDevice_getGainElementRange(rx->device, SOAPY_SDR_TX, 0, tt.gains[j]);
+        tt.gains[j]=strsave((char *)names[j].c_str(),5555);
+         //printf("Gains %lu %s ",j, tt.gains[j]);
+    
+        SoapySDR::Range range3=rx->device->getGainRange(SOAPY_SDR_TX, 0, tt.gains[j]);
         //double el=SoapySDRDevice_getGainElement(rx->device, SOAPY_SDR_TX, 0, rx->gains[j]);
-        printf("range max %g min %g\n",range3.maximum,range3.minimum);
-        tt.gainsMinimum[j]=range3.minimum;
-        tt.gainsMaximum[j]=range3.maximum;
+       // printf("range max %g min %g\n",range3.maximum(),range3.minimum());
+        tt.gainsMinimum[j]=range3.minimum();
+        tt.gainsMaximum[j]=range3.maximum();
     }
     
-    SoapySDRRange range=SoapySDRDevice_getGainRange(rx->device, SOAPY_SDR_TX, 0);
     
-    printf("range TX max %g min %g\n",range.maximum,range.minimum);
     
-    tt.gainsMin=range.minimum;
-    tt.gainsMax=range.maximum;
+    SoapySDR::Range range=rx->device->getGainRange(SOAPY_SDR_TX, 0);
+    
+    printf("range TX max %g min %g\n",range.maximum(),range.minimum());
+    
+    tt.gainsMin=range.minimum();
+    tt.gainsMax=range.maximum();
 
-    tt.hasGainMode=SoapySDRDevice_hasGainMode(rx->device, SOAPY_SDR_TX, 0);
+    tt.hasGainMode=rx->device->hasGainMode(SOAPY_SDR_TX, 0);
     
-    printf("hasGainMode %d\n",rx->hasGainMode);
+    //printf("hasGainMode %d\n",rx->hasGainMode);
     
     if(tt.hasGainMode){
-        tt.gainMode=SoapySDRDevice_getGainMode(rx->device, SOAPY_SDR_TX, 0);
-        printf("GainMode %d\n",tt.gainMode);
+        tt.gainMode=rx->device->getGainMode(SOAPY_SDR_TX, 0);
+        //printf("GainMode %d\n",tt.gainMode);
     }
     
-    SoapySDRRange *rlist=SoapySDRDevice_getFrequencyRange(rx->device, SOAPY_SDR_TX, 0, &tt.frequencyCount);
+    SoapySDR::RangeList rlist=rx->device->getFrequencyRange(SOAPY_SDR_TX, 0);
+    tt.frequencyCount=rlist.size();
     tt.frequencyMinimum=(double *)cMalloc((unsigned long)(tt.frequencyCount*sizeof(double)),8894);
     tt.frequencyMaximum=(double *)cMalloc((unsigned long)(tt.frequencyCount*sizeof(double)),8895);
     
     for (size_t j = 0; j < tt.frequencyCount; j++)
     {
-        printf("FrequencyRange max %g min %g\n",rlist[j].maximum,rlist[j].minimum);
-        tt.frequencyMinimum[j]=rlist[j].minimum;
-        tt.frequencyMaximum[j]=rlist[j].maximum;
+       // printf("FrequencyRange max %g min %g\n",rlist[j].maximum(),rlist[j].minimum());
+        tt.frequencyMinimum[j]=rlist[j].minimum();
+        tt.frequencyMaximum[j]=rlist[j].maximum();
     }
 
     
-    tt.hasDCOffset=SoapySDRDevice_hasDCOffset(rx->device, SOAPY_SDR_TX, 0);
+    tt.hasDCOffset=rx->device->hasDCOffset(SOAPY_SDR_TX, 0);
     
-    printf("hasDCOffset %d\n",tt.hasDCOffset);
+   // printf("hasDCOffset %d\n",tt.hasDCOffset);
     
     if(tt.hasDCOffset){
-        tt.DCOffset=SoapySDRDevice_getDCOffsetMode(rx->device, SOAPY_SDR_TX, 0);
-        printf("DCOffset %d\n",tt.DCOffset);
+        tt.DCOffset=rx->device->getDCOffsetMode(SOAPY_SDR_TX, 0);
+      //  printf("DCOffset %d\n",tt.DCOffset);
     }
     
-    double *band=SoapySDRDevice_listBandwidths(rx->device, SOAPY_SDR_TX, 0, &tt.bandwidthsCount);
+    std::vector<double> band=rx->device->listBandwidths(SOAPY_SDR_TX, 0);
+    tt.bandwidthsCount=band.size();
     tt.bandwidths=(double *)cMalloc((unsigned long)(tt.bandwidthsCount*sizeof(double)),8896);
     for (size_t j = 0; j < tt.bandwidthsCount; j++)
     {
-        printf("bandwidth %lu max %g\n",j,band[j]);
+      //  printf("bandwidth %lu max %g\n",j,band[j]);
         tt.bandwidths[j]=band[j];
     }
 
-    char **list=SoapySDRDevice_getStreamFormats(rx->device, SOAPY_SDR_TX, 0, &tt.streamFormatCount);
+    std::vector<std::string> list=rx->device->getStreamFormats(SOAPY_SDR_TX, 0);
+    tt.streamFormatCount=list.size();
     tt.streamFormat=(char **)cMalloc((unsigned long)(tt.streamFormatCount*sizeof(double)),8898);
     for (size_t j = 0; j < tt.streamFormatCount; j++)
     {
-        printf("StreamFormats %lu %s\n",j, list[j]);
-        tt.streamFormat[j]=list[j];
+        //printf("StreamFormats %lu %s\n",j, list[j].c_str());
+        tt.streamFormat[j]=strsave((char *)list[j].c_str(),95695);
     }
 
-    double *rate=SoapySDRDevice_listSampleRates(rx->device, SOAPY_SDR_TX, 0, &tt.sampleRatesCount);
+    std::vector<double> rate=rx->device->listSampleRates(SOAPY_SDR_TX, 0);
+    tt.sampleRatesCount=rate.size();
     tt.sampleRates=(double *)cMalloc((unsigned long)(tt.sampleRatesCount*sizeof(double)),8890);
     for (size_t j = 0; j < rx->sampleRatesCount; j++)
     {
-        printf("SampleRates %lu max %g\n",j,rate[j]);
+        //printf("SampleRates %lu max %g\n",j,rate[j]);
         tt.sampleRates[j]=rate[j];
     }
 
     size_t length;
-    rlist=SoapySDRDevice_getSampleRateRange(rx->device, SOAPY_SDR_TX, 0, &length);
+    rlist=rx->device->getSampleRateRange(SOAPY_SDR_TX, 0);
+    length=rlist.size();
     for (size_t j = 0; j < length; j++)
     {
-        printf("SampleRateRange max %g min %g\n",rlist[j].maximum,rlist[j].minimum);
+       // printf("SampleRateRange max %g min %g\n",rlist[j].maximum(),rlist[j].minimum());
     }
 
     tt.sceneLocal=scene;
@@ -300,17 +310,6 @@ int Radio::Transmit(struct Scene *scene)
     
     msprintf(tt.text1,sizeof(tt.text1),"%g",tt.foffset);
     msprintf(tt.text2,sizeof(tt.text2),"%g",rx->fc);
-    /*
-    msprintf(tt.text3,sizeof(tt.text3),"%g",rx->gain);
-    msprintf(tt.text4,sizeof(tt.text4),"%g",lineAlpha);
-    msprintf(tt.text5,sizeof(tt.text5),"%g",rx->samplerate);
-    msprintf(tt.text15,sizeof(tt.text15),"%g",rx->bandwidth);
-    msprintf(tt.text16,sizeof(tt.text16),"%g",rx->scaleFactor);
-    msprintf(tt.text17,sizeof(tt.text17),"%d",rx->audioThreads);
-    msprintf(tt.text6,sizeof(tt.text6),"%.0f",power);
-    msprintf(tt.text7,sizeof(tt.text7),"%g",pd.sPmin);
-    msprintf(tt.text8,sizeof(tt.text8),"%g",pd.sPmax);
-    */
     
     tt.glui = GLUI_Master.create_glui(rx->driveName);
     
