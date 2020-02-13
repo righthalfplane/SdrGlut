@@ -167,29 +167,43 @@ static int bacgroundPlay(struct playData *rx)
     
     return 0;
 }
-static int StartIt(struct playData *rx)
+static int startPlay(struct playData *rx)
 {
-	ALenum error;
     
-
-	for(int i=0;i<3;){
-		int ibuff;
-		ibuff=popBuffa(rx);
-		if (ibuff >= 0){
-			++i;
-			if(setBuffers(rx, ibuff)){
-				;
-			}
-		}
-   	}
+    rx->controlRF=0;
     
-    alSourcePlay(rx->source);
-    if ((error = alGetError()) != AL_NO_ERROR)
-    {
-        DisplayALError((unsigned char *)"StartIt alSourcePlay : ", error);
+    rx->witchRFBuffer=0;
+    
+    rx->witchAudioBuffer=0;
+    
+    
+    rx->source=getsourceAudio(audio);
+    if(rx->source== NO_MORE_SPACE){
+        fprintf(stderr,"getsourceAudio out of sources\n");
+        return 1;
     }
-   
-	return 0;
+    
+    {
+        double pi;
+        pi=4.0*atan(1.0);
+        rx->dt=1.0/(double)rx->samplerate;
+        rx->sino=0;
+        rx->coso=1;
+        rx->w=2.0*pi*(rx->fc - rx->f);
+        rx->sindt=sin(rx->w*rx->dt);
+        rx->cosdt=cos(rx->w*rx->dt);
+        // printf("fc %f f %f dt %g samplerate %.0f\n",rx->fc,rx->f,rx->dt,rx->samplerate);
+    }
+    
+    
+    if(findRadio(rx) || rx->device == NULL){
+        fprintf(stderr,"Error No SDR Found\n");
+        return 1;
+    }
+    
+    // fprintf(stderr,"startPlay done\n");
+    
+    return 0;
 }
 static int playRadio(struct playData *rx)
 {
@@ -267,6 +281,31 @@ static int playRadio(struct playData *rx)
         
     return 0;
 }
+static int StartIt(struct playData *rx)
+{
+    ALenum error;
+    
+    
+    for(int i=0;i<3;){
+        int ibuff;
+        ibuff=popBuffa(rx);
+        if (ibuff >= 0){
+            ++i;
+            if(setBuffers(rx, ibuff)){
+                ;
+            }
+        }
+    }
+    
+    alSourcePlay(rx->source);
+    if ((error = alGetError()) != AL_NO_ERROR)
+    {
+        DisplayALError((unsigned char *)"StartIt alSourcePlay : ", error);
+    }
+    
+    return 0;
+}
+
 static int ProcessSound(void *rxv)
 {
     struct playData *rx=(struct playData *)rxv;
@@ -384,6 +423,75 @@ static int ProcessSound(void *rxv)
     
     return 0;
 }
+
+static int stopPlay(struct playData *rx)
+{
+    
+    rx->controlProcess = -1;
+    
+    Sleep2(300);
+    
+    if(rx->controlAudio  != -1)
+    {
+        rx->controlAudio = -1;
+        Sleep2(100);
+        fprintf(stderr,"stopPlay ControlAudio Sleep\n");
+    }
+    if(rx->controlRF !=  1)
+    {
+        rx->controlRF = 1;
+        Sleep2(100);
+        fprintf(stderr,"stopPlay controlRF Sleep\n");
+    }
+    
+    
+    
+    ALint processed;
+    ALenum error;
+    
+    alSourceStopv(1, &rx->source);
+    
+    alGetSourcei(rx->source, AL_SOURCE_STATE, &rx->al_state);
+    fprintf(stderr,"stopPlay source %d al state %d %x\n",rx->source,rx->al_state,rx->al_state);
+    
+    processed=0;
+    alGetSourcei(rx->source, AL_BUFFERS_PROCESSED, &processed);
+    
+    while(processed){
+        ALuint fbuff;
+        alSourceUnqueueBuffers(rx->source, 1, &fbuff);
+        if ((error = alGetError()) != AL_NO_ERROR)
+        {
+            fprintf(stderr,"Device %s Error in ",rx->driveName);
+            DisplayALError((unsigned char *)"stopPlay alSourceUnqueueBuffers : ", error);
+        }
+        freebuffAudio(audio,fbuff);
+        --processed;
+    }
+    
+    freesourceAudio(audio,rx->source);
+    
+    if(rx->device){
+        
+        rx->device->deactivateStream(rx->rxStream, 0, 100000L);
+        
+        rx->device->closeStream(rx->rxStream);
+        
+        
+        SoapySDR::Device::unmake(rx->device);
+        
+        
+        rx->device=NULL;
+        
+        rx->rxStream=NULL;
+    }
+    
+    
+    // fprintf(stderr,"Out Of stopPlay\n");
+    
+    return 0;
+}
+
 static int sdrSetMode(struct playData *rx)
 {
     rx->controlAudio = -1;
@@ -401,9 +509,6 @@ static int sdrDone(struct playData *rx)
 
     stopPlay(rx);
     
-
-
-
     for(int k=0;k<NUM_DATA_BUFF5;++k){
         if(rx->buff[k])cFree((char *)rx->buff[k]);
         rx->buff[k]=NULL;
@@ -1117,112 +1222,7 @@ static int rxBuffer(void *rxv)
 }
 
 
-static int startPlay(struct playData *rx)
-{
-    
-	rx->controlRF=0;
-	
-    rx->witchRFBuffer=0;
-    
-    rx->witchAudioBuffer=0;
 
-   
-    rx->source=getsourceAudio(audio);
-    if(rx->source== NO_MORE_SPACE){
-        fprintf(stderr,"getsourceAudio out of sources\n");
-        return 1;
-    }
-    
-    {
-    	double pi;
-    	pi=4.0*atan(1.0);
-    	rx->dt=1.0/(double)rx->samplerate;
-    	rx->sino=0;
-    	rx->coso=1;
-    	rx->w=2.0*pi*(rx->fc - rx->f);
-    	rx->sindt=sin(rx->w*rx->dt);
-    	rx->cosdt=cos(rx->w*rx->dt);
-    	// printf("fc %f f %f dt %g samplerate %.0f\n",rx->fc,rx->f,rx->dt,rx->samplerate);
-    }
-    
-    
-    if(findRadio(rx) || rx->device == NULL){
-        fprintf(stderr,"Error No SDR Found\n");
-        return 1;
-    }
-    
-    // fprintf(stderr,"startPlay done\n");
-    
-	return 0;
-}
-
-static int stopPlay(struct playData *rx)
-{
-    
-    rx->controlProcess = -1;
-    
-    Sleep2(300);
-    
-    if(rx->controlAudio  != -1)
-    {
-        rx->controlAudio = -1;
-        Sleep2(100);
-        fprintf(stderr,"stopPlay ControlAudio Sleep\n");
-    }
-    if(rx->controlRF !=  1)
-    {
-        rx->controlRF = 1;
-        Sleep2(100);
-        fprintf(stderr,"stopPlay controlRF Sleep\n");
-   }
-
-
-    
-    ALint processed;
-    ALenum error;
-
-    alSourceStopv(1, &rx->source);
-
-    alGetSourcei(rx->source, AL_SOURCE_STATE, &rx->al_state);
-    fprintf(stderr,"stopPlay source %d al state %d %x\n",rx->source,rx->al_state,rx->al_state);
-
-    processed=0;
-    alGetSourcei(rx->source, AL_BUFFERS_PROCESSED, &processed);
-    
-    while(processed){
-        ALuint fbuff;
-        alSourceUnqueueBuffers(rx->source, 1, &fbuff);
-        if ((error = alGetError()) != AL_NO_ERROR)
-        {
-            fprintf(stderr,"Device %s Error in ",rx->driveName);
-            DisplayALError((unsigned char *)"stopPlay alSourceUnqueueBuffers : ", error);
-        }
-        freebuffAudio(audio,fbuff);
-        --processed;
-    }
-    
-    freesourceAudio(audio,rx->source);
-
-    if(rx->device){
-        
-        rx->device->deactivateStream(rx->rxStream, 0, 100000L);
-        
-        rx->device->closeStream(rx->rxStream);
-        
-    
-        SoapySDR::Device::unmake(rx->device);
-
-        
-        rx->device=NULL;
-        
-        rx->rxStream=NULL;
-    }
-    
-    
-    // fprintf(stderr,"Out Of stopPlay\n");
-
-	return 0;
-}
 
 static int zerol(unsigned char *s,unsigned long n)
 {

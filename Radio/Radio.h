@@ -119,7 +119,6 @@ struct DialogRadioData{
 };
 
 struct Info{
-    volatile int loop;
     int modetype;
     msresamp_rrrf iqSampler;
     class AMmod *am;

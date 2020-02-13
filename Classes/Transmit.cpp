@@ -45,7 +45,6 @@ int GLUI_Button2::mouse_down_handler( int local_x, int local_y )
          s->tt.foffset=foffset;
          s->rx->pstopPlay(s->rx);
          s->tt.doTransmit=1;
-         s->tt.info.loop=0;
          launchThread((void *)s,TransmitThread);
      }
      
@@ -56,17 +55,16 @@ int GLUI_Button2::mouse_down_handler( int local_x, int local_y )
  }
 int GLUI_Button2::mouse_up_handler( int local_x, int local_y, bool inside )
 {
-   fprintf(stderr,"mouse_up_handler %d %d \n",s->tt.info.loop,s->tt.doTransmit);
+   //fprintf(stderr,"mouse_up_handler %d \n",s->tt.doTransmit);
     if(s->tt.doTransmit == 1){
-        while(s->tt.info.loop == 0){
-            Sleep2(10);
-        }
-        s->tt.info.loop=0;
         s->tt.doTransmit=0;
-        while(s->tt.info.loop == 0){
+        int count2=0;
+        while(s->tt.doTransmit == 0){
+            ++count2;
            Sleep2(10);
         }
-        s->tt.info.loop=0;
+        //fprintf(stderr,"count2 %d %d\n",count2,s->tt.doTransmit);
+        s->tt.doTransmit=0;
         s->rx->pstartPlay(s->rx);
         s->rx->pplayRadio(s->rx);
     }
@@ -486,8 +484,6 @@ static void control_cb(int control)
     {
         if(s->tt.doTransmit == 1){
             s->tt.doTransmit=0;
-            s->tt.doTransmit=0;
-            s->tt.info.loop=0;
             Sleep2(100);
             s->rx->pstartPlay(s->rx);
             s->rx->pplayRadio(s->rx);
@@ -502,7 +498,6 @@ static void control_cb(int control)
         fprintf(stderr,"Stop_Button %d\n",control);
         if(s->tt.doTransmit == 1){
             s->tt.doTransmit=0;
-            s->tt.info.loop=0;
             Sleep2(100);
             fprintf(stderr,"Stop_Button Sleep\n");
             s->rx->pstartPlay(s->rx);
@@ -762,7 +757,6 @@ static int TransmitThread(void *rxv)
     
     s->tt.info.mod=mod;
 
-    s->tt.info.loop=1;
     
     std::vector<void *> buffs(2);
     
@@ -789,14 +783,13 @@ static int TransmitThread(void *rxv)
     }
 
     while(s->tt.doTransmit == 1){
-        while ( s->tt.audio->isStreamRunning() ) {
-            Sleep2(100);
+        if ( s->tt.audio->isStreamRunning() ) {
+            Sleep2(10);
         }
     }
 cleanup:
     
     if (  s->tt.audio->isStreamOpen() )  s->tt.audio->closeStream();
-    
     
     freqmod_destroy(mod);
     
@@ -808,7 +801,7 @@ cleanup:
     
     SoapySDR::Device::unmake(device);
     
-    s->tt.info.loop = -1;
+    s->tt.doTransmit = -1;
 
     device=NULL;
     
@@ -824,7 +817,6 @@ int input( void * /*outputBuffer*/, void *inputBuffer, unsigned int nBufferFrame
 {
     struct Info *info=(struct Info *)datain;
     unsigned int frames = nBufferFrames;
-    if(!info->loop)return 2;
     
     SendData(info,frames,(short *)inputBuffer);
     /*
