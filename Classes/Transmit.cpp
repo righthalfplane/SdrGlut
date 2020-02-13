@@ -45,6 +45,7 @@ int GLUI_Button2::mouse_down_handler( int local_x, int local_y )
          s->tt.foffset=foffset;
          s->rx->pstopPlay(s->rx);
          s->tt.doTransmit=1;
+         s->tt.info.loop=0;
          launchThread((void *)s,TransmitThread);
      }
      
@@ -55,10 +56,13 @@ int GLUI_Button2::mouse_down_handler( int local_x, int local_y )
  }
 int GLUI_Button2::mouse_up_handler( int local_x, int local_y, bool inside )
 {
-//    fprintf(stderr,"mouse_up_handler\n");
+   fprintf(stderr,"mouse_up_handler %d %d \n",s->tt.info.loop,s->tt.doTransmit);
     if(s->tt.doTransmit == 1){
-        s->tt.doTransmit=0;
+        while(s->tt.info.loop == 0){
+            Sleep2(10);
+        }
         s->tt.info.loop=0;
+        s->tt.doTransmit=0;
         while(s->tt.info.loop == 0){
            Sleep2(10);
         }
@@ -675,7 +679,7 @@ static int TransmitThread(void *rxv)
     
     device->setSampleRate(SOAPY_SDR_TX, 0, sample_rate);
 
-    cout << "Sample rate: " << sample_rate/1e6 << " MHz" << endl;
+    fprintf(stderr,"Sample rate: %g MHz rx->device %p\n",sample_rate/1e6,rx->device);
     
     //Set center frequency
     
@@ -695,8 +699,9 @@ static int TransmitThread(void *rxv)
     
     s->tt.info.txStream=txStream;
     
-    size_t MTU=device->getStreamMTU(txStream);
-    cout << "MTU: " << MTU << endl;
+    //size_t MTU=device->getStreamMTU(txStream);
+    
+   // fprintf(stderr,"MTU %ld\n",MTU);
     
 
     device->setHardwareTime(0); //clear HW time for easy debugging
@@ -771,7 +776,9 @@ static int TransmitThread(void *rxv)
         goto cleanup;
     }
     
-    std::cout << "getStreamSampleRate = " << s->tt.audio->getStreamSampleRate() << '\n' << std::endl;
+    fprintf(stderr,"getStreamSampleRate %u\n",s->tt.audio->getStreamSampleRate());
+    
+    fprintf(stderr,"Ready For Voice\n");
 
     try {
         s->tt.audio->startStream();

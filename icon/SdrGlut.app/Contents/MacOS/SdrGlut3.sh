@@ -3,5 +3,4 @@ export DYLD_LIBRARY_PATH=.
 export SOAPY_SDR_ROOT=.
 #export DYLD_PRINT_LIBRARIES=1
 cd `dirname $0`
-open -a Terminal.app SdrGlut3.sh
-
+./SdrGlut2

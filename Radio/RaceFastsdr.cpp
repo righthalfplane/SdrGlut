@@ -415,9 +415,9 @@ static int sdrDone(struct playData *rx)
     }
 
     
-    //if(rx->antenna)free((char *)rx->antenna);
+    if(rx->antenna)free((char *)rx->antenna);
     rx->antenna=NULL;
-    //if(rx->gains)free((char *)rx->gains);
+    if(rx->gains)free((char *)rx->gains);
     rx->gains=NULL;
     if(rx->gainsMinimum)cFree((char *)rx->gainsMinimum);
     rx->gainsMinimum=NULL;
@@ -1321,9 +1321,9 @@ int testRadio(struct playData *rx)
     
     rx->getRadioAttributes=1;
     
-    //if(rx->antenna)free((char *)rx->antenna);
+    if(rx->antenna)free((char *)rx->antenna);
     rx->antenna=NULL;
-    //if(rx->gains)free((char *)rx->gains);
+    if(rx->gains)free((char *)rx->gains);
     rx->gains=NULL;
     if(rx->gainsMinimum)cFree((char *)rx->gainsMinimum);
     rx->gainsMinimum=NULL;
@@ -1350,8 +1350,7 @@ int testRadio(struct playData *rx)
         
         for( SoapySDR::Kwargs::iterator  ii=it.begin(); ii!=it.end(); ++ii)
         {
-            std::cout << (*ii).first << ": " << (*ii).second << std::endl;
-            printf("%s=%s\n",(*ii).first.c_str(),(*ii).second.c_str());
+            //printf("%s: %s\n",(*ii).first.c_str(),(*ii).second.c_str());
         }
 
         
@@ -1446,7 +1445,7 @@ int testRadio(struct playData *rx)
         rx->streamFormat=(char **)cMalloc((unsigned long)(rx->streamFormatCount*sizeof(double)),8898);
         for (size_t j = 0; j < rx->streamFormatCount; j++)
         {
-            printf("StreamFormats %lu %s\n",j, list[j].c_str());
+           // printf("StreamFormats %lu %s\n",j, list[j].c_str());
             rx->streamFormat[j]=strsave((char *)list[j].c_str(),95695);
         }
 
