@@ -302,6 +302,8 @@ void Radio::playRadio (struct playData4 *rx)
 
 Radio::~Radio()
 {
+  //  fprintf(stderr,"~Radio() \n");
+    
     rx->psdrDone(rx);
 
     if(range)cFree((char *)range);
@@ -565,6 +567,8 @@ int Radio::setFrequency(struct playData *rx)
     }
     
     setDialogFrequency(rx->f);
+    
+    setFrequency(rx->f);
     
     setDialogFc(rx->fc);
     
@@ -1480,8 +1484,6 @@ int Radio::mMenuSelectl(struct Scene *scene,int item)
 
 		try {
 			backGroundEvents = 0;
-            rx->controlProcess = -1;
-            Sleep2(400);
 			if (FindScene(scenel))closeScene(lines->scene);
 			if (FindScene(scenel2))closeScene(lines2->scene);
 			if (FindScene(scene))closeScene(scene);
@@ -1610,7 +1612,7 @@ static void getMousel(int button, int state, int x, int y)
 
 void Radio::getMouse(int button, int state, int x, int y)
 {
-    
+
     if(button == 3){
         float fl,bw;
         bw=rx->bw*0.5;
@@ -1634,6 +1636,8 @@ void Radio::getMouse(int button, int state, int x, int y)
             rx->fc=fl;
         }
         setFrequency(rx);
+        return;
+    }else if(button != 0){
         return;
     }
     

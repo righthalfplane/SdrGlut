@@ -58,10 +58,10 @@ int GLUI_Button2::mouse_up_handler( int local_x, int local_y, bool inside )
    //fprintf(stderr,"mouse_up_handler %d \n",s->tt.doTransmit);
     if(s->tt.doTransmit == 1){
         s->tt.doTransmit=0;
-        int count2=0;
+        int count=0;
         while(s->tt.doTransmit == 0){
-            ++count2;
            Sleep2(10);
+            if(++count > 200)break;
         }
         //fprintf(stderr,"count2 %d %d\n",count2,s->tt.doTransmit);
         s->tt.doTransmit=0;
@@ -173,23 +173,25 @@ int Radio::setFrequency(double frequency)
 {
     char value[256];
     
-    if(!tt.edittext1 || !inTransmit)return 0;
+    if(!tt.edittext2 || !inTransmit)return 0;
+    
+   // fprintf(stderr,"frequency %f\n",frequency);
     
     msprintf(value,sizeof(value),"%g",frequency);
     
-    tt.edittext1->set_text(value);
-    
+    tt.edittext2->set_text(value);
+
     return 0;
 }
 int Radio::setFc(double frequency)
 {
     char value[256];
     
-    if(!tt.edittext2 || !inTransmit)return 0;
+    if(!tt.edittext1 || !inTransmit)return 0;
     
     msprintf(value,sizeof(value),"%g",frequency);
     
-    tt.edittext2->set_text(value);
+    tt.edittext1->set_text(value);
     
     return 0;
 }
@@ -311,7 +313,7 @@ int Radio::Transmit(struct Scene *scene)
     tt.foffset=0;
     
     msprintf(tt.text1,sizeof(tt.text1),"%g",tt.foffset);
-    msprintf(tt.text2,sizeof(tt.text2),"%g",rx->fc);
+    msprintf(tt.text2,sizeof(tt.text2),"%g",rx->f);
     
     tt.glui = GLUI_Master.create_glui(rx->driveName);
     
@@ -463,20 +465,7 @@ static void control_cb(int control)
     sscanf(s->tt.edittext2->get_text(),"%lg", &fc);
     sscanf(s->tt.edittext1->get_text(),"%lg", &foffset);
 
-    
-
-/*
-    sscanf(s->tt.edittext1->get_text(),"%lg", &f);
-    sscanf(s->tt.edittext3->get_text(),"%lg", &gain);
-    sscanf(s->tt.edittext4->get_text(),"%lg", &lineAlpha);
-    sscanf(s->tt.edittext5->get_text(),"%lg", &sameleRate);
-    sscanf(s->tt.edittext15->get_text(),"%lg", &bandwidth);
-    sscanf(s->tt.edittext16->get_text(),"%lg", &scaleFactor);
-    sscanf(s->tt.edittext17->get_text(),"%d", &audioThreads);
-    sscanf(s->tt.edittext7->get_text(),"%lg", &dmin);
-    sscanf(s->tt.edittext8->get_text(),"%lg", &dmax);
-*/
-    if(control == Mode_Buttons)
+        if(control == Mode_Buttons)
     {
         fprintf(stderr,"Mode_Buttons %d\n",s->tt.modetype);
     }
@@ -490,6 +479,7 @@ static void control_cb(int control)
         }
         s->tt.glui->close();
         s->tt.glui=NULL;
+        s->inTransmit=0;
         delete s->tt.audio;
 
     }

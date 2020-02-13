@@ -405,31 +405,40 @@ static int ProcessSound(void *rxv)
         
     }
     
-    rx->controlRF=0;
-    
-    Sleep2(100);
-    
     rx->controlRF=1;
     
-    Sleep2(100);
+    int count2=0;
+    while(rx->controlRF == 1){
+        Sleep2(10);
+        if(++count2 > 200)break;
+    }
     
+    rx->controlRF=1;
+
     rx->controlAudio=-1;
 
     Sleep2(100);
     
-    rx->controlRF=1;
+    
+    rx->controlProcess = -2;
 
-    //fprintf(stderr,"ProcessSound end\n");
+    fprintf(stderr,"ProcessSound end\n");
     
     return 0;
 }
 
 static int stopPlay(struct playData *rx)
 {
-    
+
     rx->controlProcess = -1;
     
-    Sleep2(300);
+    int count=0;
+    while(rx->controlProcess == -1){
+        Sleep2(10);
+        if(++count > 200)break;
+    }
+    
+    rx->controlProcess = -1;
     
     if(rx->controlAudio  != -1)
     {
@@ -477,9 +486,7 @@ static int stopPlay(struct playData *rx)
         
         rx->device->closeStream(rx->rxStream);
         
-        
         SoapySDR::Device::unmake(rx->device);
-        
         
         rx->device=NULL;
         
@@ -1111,6 +1118,7 @@ static int rxBuffer(void *rxv)
 	        break;
 	     case 1:
 	        //fprintf(stderr,"Exit rxBuffer\n");
+            rx->controlRF=0;
 	        return 0;
 		 case 2:
 	       // fprintf(stderr,"rxBuffer case 2\n");
