@@ -5,8 +5,6 @@
 #include "Tools.h"
 #include "ulibTypes.h"
 
-// #define DEBUG77
-
 int WarningBatch(char *buff);
 
 void checkall(void);

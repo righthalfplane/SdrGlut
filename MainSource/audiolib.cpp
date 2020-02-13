@@ -1,12 +1,6 @@
 #include "audiolib.h"
-
+#include <Utilities.h>
 #include <mutex>
-
-static int zerol(unsigned char *s,unsigned long n);
-
-static void *cMalloc(unsigned long n);
-
-static int cFree(unsigned char *data);
 
 static std::mutex buffermutex;
 
@@ -61,7 +55,7 @@ int startAudio(struct audioInfo *audio,int numsource,int numbuff)
 {
 	if(!audio)return 1;
 	
-	zerol((unsigned char *)audio,sizeof(*audio));
+	zerol((char *)audio,sizeof(*audio));
 	
     audio->dev = alcOpenDevice(NULL); // select the "preferred dev" 
     audio->ctx = alcCreateContext(audio->dev,NULL); 
@@ -69,13 +63,13 @@ int startAudio(struct audioInfo *audio,int numsource,int numbuff)
 	
 	audio->numsource=numsource;
 	
-	audio->source=(ALuint *)cMalloc(numsource*sizeof(*(audio->source)));
+	audio->source=(ALuint *)cMalloc(numsource*sizeof(*(audio->source)),3525);
 	if(!audio->source)return 1;
 	
-	audio->sourceFlag=(int *)cMalloc(numsource*sizeof(*(audio->sourceFlag)));
+	audio->sourceFlag=(int *)cMalloc(numsource*sizeof(*(audio->sourceFlag)),3456);
 	if(!audio->sourceFlag)return 1;
 	
-	zerol((unsigned char *)audio->sourceFlag,numsource*sizeof(*(audio->sourceFlag)));
+	zerol((char *)audio->sourceFlag,numsource*sizeof(*(audio->sourceFlag)));
 	
 	ALenum error;
 	
@@ -88,13 +82,13 @@ int startAudio(struct audioInfo *audio,int numsource,int numbuff)
     
 	audio->numbuff=numbuff;
 	
-	audio->buff=(ALuint *)cMalloc(numbuff*sizeof(*(audio->buff)));
+	audio->buff=(ALuint *)cMalloc(numbuff*sizeof(*(audio->buff)),4054);
 	if(!audio->buff)return 1;
 	
-	audio->buffFlag=(int *)cMalloc(numbuff*sizeof(*(audio->buffFlag)));
+	audio->buffFlag=(int *)cMalloc(numbuff*sizeof(*(audio->buffFlag)),3455);
 	if(!audio->buffFlag)return 1;
 	
-	zerol((unsigned char *)audio->buffFlag,numbuff*sizeof(*(audio->buffFlag)));
+	zerol((char *)audio->buffFlag,numbuff*sizeof(*(audio->buffFlag)));
 	
 	alGenBuffers(numbuff, audio->buff);
     if ((error = alGetError()) != AL_NO_ERROR){
@@ -155,20 +149,23 @@ ALuint getbuffAudio(struct audioInfo *audio)
 }
 int stopAudio(struct audioInfo *audio)
 {
+    
+    fprintf(stderr,"audio->source %p\n",audio->source);
+    
 	if(!audio)return 1;
 	
 	alSourceStopv(audio->numsource, audio->source);
     alDeleteSources(audio->numsource, audio->source);
 
 	
-	if(audio->source)cFree((unsigned char *)audio->source);
-	if(audio->sourceFlag)cFree((unsigned char *)audio->sourceFlag);
+	if(audio->source)cFree((char *)audio->source);
+	if(audio->sourceFlag)cFree((char *)audio->sourceFlag);
 	
 	
     alDeleteBuffers(audio->numbuff, audio->buff);
 	
-	if(audio->buff)cFree((unsigned char *)audio->buff);
-	if(audio->buffFlag)cFree((unsigned char *)audio->buffFlag);
+	if(audio->buff)cFree((char *)audio->buff);
+	if(audio->buffFlag)cFree((char *)audio->buffFlag);
 	
     audio->ctx = alcGetCurrentContext();
     audio->dev = alcGetContextsDevice(audio->ctx);
@@ -178,27 +175,6 @@ int stopAudio(struct audioInfo *audio)
     alcCloseDevice(audio->dev);
     
 	return 0;	
-}
-
-static int cFree(unsigned char *data)
-{
-	if(!data)return 1;
-	
-	free(data);
-	
-	return 0;
-}
-static void *cMalloc(unsigned long n)
-{
-	return malloc(n);
-}
-static int zerol(unsigned char *s,unsigned long n)
-{
-    if(!s || (n <= 0))return 1;
-
-	while(n-- > 0)*s++ = 0;
-	
-	return 0;
 }
 
 ALvoid DisplayALError(unsigned char *szText, ALint errorcode)

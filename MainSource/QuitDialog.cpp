@@ -57,8 +57,8 @@ static void control_cb(int control)
 	{
 		//FileManagerExit(1);
 		mainClean();
-		checkall();
         stopAudio(audio);
+		checkall();
         glui=NULL;
 		exit(0);
 	}

@@ -103,7 +103,7 @@ RadioPtr FindTransmit(int window);
 extern "C" int doFFT2(double *x,double *y,long length,int direction);
 
 // static int doWindow(double *x,double *y,long length,int type);
-
+int freeMemoryTransmit(struct TransmitData *rx);
 
 int Radio::setBandWidth(double bandwidth)
 {
@@ -235,7 +235,7 @@ int Radio::Transmit(struct Scene *scene)
     
     SoapySDR::Range range=rx->device->getGainRange(SOAPY_SDR_TX, 0);
     
-    printf("range TX max %g min %g\n",range.maximum(),range.minimum());
+   // printf("range TX max %g min %g\n",range.maximum(),range.minimum());
     
     tt.gainsMin=range.minimum();
     tt.gainsMax=range.maximum();
@@ -480,6 +480,7 @@ static void control_cb(int control)
         s->tt.glui->close();
         s->tt.glui=NULL;
         s->inTransmit=0;
+        freeMemoryTransmit(&s->tt);
         delete s->tt.audio;
 
     }
@@ -625,7 +626,7 @@ static int TransmitThread(void *rxv)
     RadioPtr s=(RadioPtr)rxv;
     struct playData *rx=s->rx;
     
-    fprintf(stderr,"Transmit Thread Start\n");
+    //fprintf(stderr,"Transmit Thread Start\n");
     
     std::vector<SoapySDR::Kwargs> results;
     
@@ -658,13 +659,13 @@ static int TransmitThread(void *rxv)
     
     frequency = s->tt.fc+s->tt.foffset;
     
-    fprintf(stderr,"frequency %g frequency %g Offset %g \n",frequency,s->tt.fc,s->tt.foffset);
+    fprintf(stderr,"frequency %g Offset %g \n",s->tt.fc,s->tt.foffset);
     
     s->tt.info.device=device;
     
     device->setSampleRate(SOAPY_SDR_TX, 0, sample_rate);
 
-    fprintf(stderr,"Sample rate: %g MHz rx->device %p\n",sample_rate/1e6,rx->device);
+    fprintf(stderr,"Sample rate: %g MHz\n",sample_rate/1e6);
     
     //Set center frequency
     
@@ -797,7 +798,7 @@ cleanup:
     
     txStream=NULL;
     
-    fprintf(stderr,"Transmit Thread End\n");
+    //fprintf(stderr,"Transmit Thread End\n");
 
     return 0;
 }
@@ -891,3 +892,47 @@ RadioPtr FindTransmit(int window)
     return NULL;
     
 }
+int freeMemoryTransmit(struct TransmitData *rx)
+{
+    if(rx->antenna){
+        for (size_t i=0;i<rx->antennaCount;++i){
+            cFree((char *)rx->antenna[i]);
+        }
+        cFree((char *)rx->antenna);
+        rx->antenna=NULL;
+    }
+    
+    if(rx->gains){
+        for (size_t j = 0; j < rx->gainsCount; j++)
+        {
+            cFree((char *)rx->gains[j]);
+        }
+        cFree((char *)rx->gains);
+        rx->gains=NULL;
+    }
+    
+    if(rx->streamFormat){
+        for (size_t j = 0; j < rx->streamFormatCount; j++)
+        {
+            cFree((char *)rx->streamFormat[j]);
+        }
+    }
+
+    
+    if(rx->gainsMinimum)cFree((char *)rx->gainsMinimum);
+    rx->gainsMinimum=NULL;
+    if(rx->gainsMaximum)cFree((char *)rx->gainsMaximum);
+    rx->gainsMaximum=NULL;
+    if(rx->frequencyMinimum)cFree((char *)rx->frequencyMinimum);
+    rx->frequencyMinimum=NULL;
+    if(rx->frequencyMaximum)cFree((char *)rx->frequencyMaximum);
+    rx->frequencyMaximum=NULL;
+    if(rx->bandwidths)cFree((char *)rx->bandwidths);
+    rx->bandwidths=NULL;
+    if(rx->streamFormat)cFree((char *)rx->streamFormat);
+    rx->streamFormat=NULL;
+    if(rx->sampleRates)cFree((char *)rx->sampleRates);
+    rx->sampleRates=NULL;
+    return 1;
+}
+

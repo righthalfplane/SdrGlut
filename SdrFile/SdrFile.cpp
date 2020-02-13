@@ -864,21 +864,21 @@ static int setFilters(struct playData4 *rx,struct Filters2 *f)
     if(f->buf1)cFree((char *)f->buf1);
     f->buf1=(float *)cMalloc(2*size*sizeof(float),8887);
     if(!f->buf1){
-        fprintf(stderr,"1 malloc Errror %ld\n",(long)(2*size*sizeof(float)));
+        fprintf(stderr,"1 cMalloc Errror %ld\n",(long)(2*size*sizeof(float)));
         return 1;
     }
     
     if(f->buf2)cFree((char *)f->buf2);
     f->buf2=(float *)cMalloc(2*size*sizeof(float),8887);
     if(!f->buf2){
-        fprintf(stderr,"2 malloc Errror %ld\n",(long)(2*size*sizeof(float)));
+        fprintf(stderr,"2 cMalloc Errror %ld\n",(long)(2*size*sizeof(float)));
         return 1;
     }
     
     if(f->data)cFree((char *)f->data);
     f->data=(short *)cMalloc(2*size*sizeof(float),8887);
     if(!f->data){
-        fprintf(stderr,"2 malloc Errror %ld\n",(long)(2*size*sizeof(float)));
+        fprintf(stderr,"2 cMalloc Errror %ld\n",(long)(2*size*sizeof(float)));
         return 1;
     }
 

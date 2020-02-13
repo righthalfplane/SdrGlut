@@ -333,8 +333,10 @@ Radio::~Radio()
     }
     
     if(inTransmit){
+        extern int freeMemoryTransmit(struct TransmitData *rx);
         inTransmit=0;
         if(tt.glui){
+            freeMemoryTransmit(&tt);
             glutSetWindow(tt.sub_window);
             tt.glui->close();
         }

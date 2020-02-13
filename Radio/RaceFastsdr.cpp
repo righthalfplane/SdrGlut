@@ -65,6 +65,8 @@ static int testRadio(struct playData *rx);
 
 static int SetAudio(struct playData *rx,char *name,int type);
 
+int freeMemoryRadio(struct playData *rx);
+
 int RadioStart(int argc, char * argv [],struct playData *rx)
 {
 
@@ -240,7 +242,7 @@ static int playRadio(struct playData *rx)
         if(rx->buff[k])cFree((char *)rx->buff[k]);
         rx->buff[k]=(float *)cMalloc(2*size*sizeof(float),8887);
         if(!rx->buff[k]){
-            fprintf(stderr,"1 malloc Errror %ld\n",(long)(2*size*sizeof(float)));
+            fprintf(stderr,"1 cMalloc Errror %ld\n",(long)(2*size*sizeof(float)));
             return 1;
         }
         zerol((unsigned char *)rx->buff[k],2*size*sizeof(float));
@@ -251,7 +253,7 @@ static int playRadio(struct playData *rx)
         if(rx->buffa[k])cFree((char *)rx->buffa[k]);
         rx->buffa[k]=(short int *)cMalloc(2*rx->fOut*4,8888);
         if(!rx->buffa[k]){
-            fprintf(stderr,"1 malloc Errror %ld\n",(long)(2*rx->fOut*4));
+            fprintf(stderr,"1 cMalloc Errror %ld\n",(long)(2*rx->fOut*4));
             return 1;
         }
         zerol((unsigned char *)rx->buffa[k],2*rx->fOut*4);
@@ -422,7 +424,7 @@ static int ProcessSound(void *rxv)
     
     rx->controlProcess = -2;
 
-    fprintf(stderr,"ProcessSound end\n");
+//    fprintf(stderr,"ProcessSound end\n");
     
     return 0;
 }
@@ -480,6 +482,8 @@ static int stopPlay(struct playData *rx)
     
     freesourceAudio(audio,rx->source);
     
+    freeMemoryRadio(rx);
+    
     if(rx->device){
         
         rx->device->deactivateStream(rx->rxStream, 0, 100000L);
@@ -511,6 +515,48 @@ static int sdrSetMode(struct playData *rx)
     
     return 0;
 }
+int freeMemoryRadio(struct playData *rx)
+{
+    if(rx->antenna){
+        for (size_t i=0;i<rx->antennaCount;++i){
+            cFree((char *)rx->antenna[i]);
+        }
+        cFree((char *)rx->antenna);
+        rx->antenna=NULL;
+    }
+    
+    if(rx->gains){
+        for (size_t j = 0; j < rx->gainsCount; j++)
+        {
+            cFree((char *)rx->gains[j]);
+        }
+        cFree((char *)rx->gains);
+        rx->gains=NULL;
+    }
+    
+    if(rx->streamFormat){
+        for (size_t j = 0; j < rx->streamFormatCount; j++)
+        {
+            cFree((char *)rx->streamFormat[j]);
+        }
+    }
+    
+    if(rx->gainsMinimum)cFree((char *)rx->gainsMinimum);
+    rx->gainsMinimum=NULL;
+    if(rx->gainsMaximum)cFree((char *)rx->gainsMaximum);
+    rx->gainsMaximum=NULL;
+    if(rx->frequencyMinimum)cFree((char *)rx->frequencyMinimum);
+    rx->frequencyMinimum=NULL;
+    if(rx->frequencyMaximum)cFree((char *)rx->frequencyMaximum);
+    rx->frequencyMaximum=NULL;
+    if(rx->bandwidths)cFree((char *)rx->bandwidths);
+    rx->bandwidths=NULL;
+    if(rx->streamFormat)cFree((char *)rx->streamFormat);
+    rx->streamFormat=NULL;
+    if(rx->sampleRates)cFree((char *)rx->sampleRates);
+    rx->sampleRates=NULL;
+    return 0;
+}
 static int sdrDone(struct playData *rx)
 {
 
@@ -527,25 +573,6 @@ static int sdrDone(struct playData *rx)
     }
 
     
-    if(rx->antenna)free((char *)rx->antenna);
-    rx->antenna=NULL;
-    if(rx->gains)free((char *)rx->gains);
-    rx->gains=NULL;
-    if(rx->gainsMinimum)cFree((char *)rx->gainsMinimum);
-    rx->gainsMinimum=NULL;
-    if(rx->gainsMaximum)cFree((char *)rx->gainsMaximum);
-    rx->gainsMaximum=NULL;
-    if(rx->frequencyMinimum)cFree((char *)rx->frequencyMinimum);
-    rx->frequencyMinimum=NULL;
-    if(rx->frequencyMaximum)cFree((char *)rx->frequencyMaximum);
-    rx->frequencyMaximum=NULL;
-    if(rx->bandwidths)cFree((char *)rx->bandwidths);
-    rx->bandwidths=NULL;
-    if(rx->streamFormat)cFree((char *)rx->streamFormat);
-    rx->streamFormat=NULL;
-    if(rx->sampleRates)cFree((char *)rx->sampleRates);
-    rx->sampleRates=NULL;
-
     return 0;
 
 }
@@ -608,7 +635,7 @@ static int Process(void *rxv)
 	
 	float *wBuff=(float *)cMalloc(bsize,8889);
     if(!wBuff){
-        fprintf(stderr,"2 malloc Errror %ld\n",(long)(bsize));
+        fprintf(stderr,"2 cMalloc Errror %ld\n",(long)(bsize));
        	 return 1;
     }
     zerol((unsigned char *)wBuff,bsize);
@@ -617,7 +644,7 @@ static int Process(void *rxv)
 	
 	float *aBuff=(float *)cMalloc(2*rx->fOut*4,8890);
     if(!aBuff){
-        fprintf(stderr,"3 malloc Errror %ld\n",(long)(2*rx->fOut*4));
+        fprintf(stderr,"3 cMalloc Errror %ld\n",(long)(2*rx->fOut*4));
        	 return 1;
     }
     zerol((unsigned char *)aBuff,2*rx->fOut*4);
@@ -1326,27 +1353,7 @@ static int doAudio(float *aBuff,struct playData *rx)
 int testRadio(struct playData *rx)
 {
     
-    
     rx->getRadioAttributes=1;
-    
-    if(rx->antenna)free((char *)rx->antenna);
-    rx->antenna=NULL;
-    if(rx->gains)free((char *)rx->gains);
-    rx->gains=NULL;
-    if(rx->gainsMinimum)cFree((char *)rx->gainsMinimum);
-    rx->gainsMinimum=NULL;
-    if(rx->gainsMaximum)cFree((char *)rx->gainsMaximum);
-    rx->gainsMaximum=NULL;
-    if(rx->frequencyMinimum)cFree((char *)rx->frequencyMinimum);
-    rx->frequencyMinimum=NULL;
-    if(rx->frequencyMaximum)cFree((char *)rx->frequencyMaximum);
-    rx->frequencyMaximum=NULL;
-    if(rx->bandwidths)cFree((char *)rx->bandwidths);
-    rx->bandwidths=NULL;
-    if(rx->streamFormat)cFree((char *)rx->streamFormat);
-    rx->streamFormat=NULL;
-    if(rx->sampleRates)cFree((char *)rx->sampleRates);
-    rx->sampleRates=NULL;
     
     try
     {
@@ -1379,7 +1386,7 @@ int testRadio(struct playData *rx)
         for (size_t j = 0; j < rx->gainsCount; j++)
         {
             rx->gains[j]=strsave((char *)names[j].c_str(),5555);
-            printf("Gains %lu %s ",j, rx->gains[j]);
+            //printf("Gains %lu %s ",j, rx->gains[j]);
             
             SoapySDR::Range range3=rx->device->getGainRange(SOAPY_SDR_RX, 0, rx->gains[j]);
             //double el=SoapySDRDevice_getGainElement(rx->device, SOAPY_SDR_RX, 0, rx->gains[j]);
@@ -1391,7 +1398,7 @@ int testRadio(struct playData *rx)
 
         SoapySDR::Range range=rx->device->getGainRange(SOAPY_SDR_RX, 0);
         
-        printf("range RX max %g min %g\n",range.maximum(),range.minimum());
+      //  printf("range RX max %g min %g\n",range.maximum(),range.minimum());
         
         rx->gainsMin=range.minimum();
         rx->gainsMax=range.maximum();
