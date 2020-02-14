@@ -144,61 +144,73 @@ int Radio::dialogRadio(struct Scene *scene)
     msprintf(dd.text7,sizeof(dd.text7),"%g",pd.sPmin);
     msprintf(dd.text8,sizeof(dd.text8),"%g",pd.sPmax);
 	
-	dd.edittext1 =
-	dd.glui->add_edittext( "Frequency:", GLUI_EDITTEXT_TEXT, dd.text1 );
+    GLUI_Panel *obj_panel =  dd.glui->add_panel( "Parameters" );
+
+    dd.edittext1 =
+	dd.glui->add_edittext_to_panel( obj_panel, "Frequency:", GLUI_EDITTEXT_TEXT, dd.text1 );
 	dd.edittext1->w=200;
 	
     dd.edittext2 =
-    dd.glui->add_edittext( "Center Frequency:", GLUI_EDITTEXT_TEXT, dd.text2 );
+    dd.glui->add_edittext_to_panel( obj_panel, "Center Frequency:", GLUI_EDITTEXT_TEXT, dd.text2 );
     dd.edittext2->w=200;
     
+    dd.edittext5 =
+    dd.glui->add_edittext_to_panel( obj_panel, "Sample Rate:", GLUI_EDITTEXT_TEXT, dd.text5);
+    dd.edittext5->w=200;
+    
+
+    obj_panel =  dd.glui->add_panel( "Gain + FFT Alpha" );
+    
     dd.edittext3 =
-    dd.glui->add_edittext( "Gain:", GLUI_EDITTEXT_TEXT, dd.text3);
+    dd.glui->add_edittext_to_panel( obj_panel, "Gain:", GLUI_EDITTEXT_TEXT, dd.text3);
     dd.edittext3->w=200;
     
     dd.edittext4 =
-    dd.glui->add_edittext( "Alpha:", GLUI_EDITTEXT_TEXT, dd.text4);
+    dd.glui->add_edittext_to_panel( obj_panel,"Alpha:", GLUI_EDITTEXT_TEXT, dd.text4);
     dd.edittext4->w=200;
     
-    dd.edittext5 =
-    dd.glui->add_edittext( "Sample Rate:", GLUI_EDITTEXT_TEXT, dd.text5);
-    dd.edittext5->w=200;
-    
+    obj_panel =  dd.glui->add_panel( "Power" );
+
     dd.edittext6 =
-    dd.glui->add_edittext( "Power:", GLUI_EDITTEXT_TEXT, dd.text6);
+    dd.glui->add_edittext_to_panel( obj_panel,"Power:", GLUI_EDITTEXT_TEXT, dd.text6);
     dd.edittext6->w=200;
     
-    new GLUI_Checkbox( dd.glui, "Set Scale Power", &pd.UsePlotScales, 3, control_cb );
+    new GLUI_Checkbox( obj_panel, "Set Scale Power", &pd.UsePlotScales, 3, control_cb );
     
     dd.edittext7 =
-    dd.glui->add_edittext( "Power Min", GLUI_EDITTEXT_TEXT, dd.text7);
+    dd.glui->add_edittext_to_panel( obj_panel, "Power Min", GLUI_EDITTEXT_TEXT, dd.text7);
     dd.edittext7->w=200;
     
     dd.edittext8 =
-    dd.glui->add_edittext( "Power Max:", GLUI_EDITTEXT_TEXT, dd.text8);
+    dd.glui->add_edittext_to_panel( obj_panel, "Power Max:", GLUI_EDITTEXT_TEXT, dd.text8);
     dd.edittext8->w=200;
+  
+    dd.edittext16 =
+    dd.glui->add_edittext_to_panel( obj_panel,  "Scale Factor:", GLUI_EDITTEXT_TEXT, dd.text16);
+    dd.edittext16->w=200;
+
     
-	new GLUI_Button(dd.glui, "Set Frequency", 5, control_cb);
+    obj_panel =  dd.glui->add_panel( "Commands" );
+
+	new GLUI_Button(obj_panel, "Set Frequency", 5, control_cb);
 	
-    new GLUI_Button(dd.glui, "Set Gain", 4, control_cb);
+    new GLUI_Button(obj_panel, "Set Gain", 4, control_cb);
     
-    new GLUI_Button(dd.glui, "Apply", 8, control_cb);
+    new GLUI_Button(obj_panel, "Apply", 8, control_cb);
     
-	new GLUI_Button(dd.glui, "Close", 2, control_cb);
+	new GLUI_Button(obj_panel, "Close", 2, control_cb);
     
     dd.glui->add_column(true);
 
+    obj_panel =  dd.glui->add_panel( "Bandwidth + Audio Thread Count" );
 
     dd.edittext15 =
-    dd.glui->add_edittext( "Bandwidth:", GLUI_EDITTEXT_TEXT, dd.text15);
+    dd.glui->add_edittext_to_panel( obj_panel, "Bandwidth:", GLUI_EDITTEXT_TEXT, dd.text15);
     dd.edittext15->w=200;
     
-    dd.edittext16 =
-    dd.glui->add_edittext( "Scale Factor:", GLUI_EDITTEXT_TEXT, dd.text16);
-    dd.edittext16->w=200;
     
     dd.edittext17 =
-    dd.glui->add_edittext( "Auto Threads:", GLUI_EDITTEXT_TEXT, dd.text17);
+    dd.glui->add_edittext_to_panel( obj_panel, "Audio Threads:", GLUI_EDITTEXT_TEXT, dd.text17);
     dd.edittext17->w=200;
     
 
@@ -209,10 +221,12 @@ int Radio::dialogRadio(struct Scene *scene)
     
     if(!rx->hasGainMode)check_box->disable();
 
+    obj_panel =  dd.glui->add_panel( "Controls" );
+
     dd.iic=0;
     
     for(size_t i=0;i<rx->gainsCount;++i){
-        GLUI_Panel *panel3 = new GLUI_Panel(dd.glui, rx->gains[dd.iic]);
+        GLUI_Panel *panel3 = new GLUI_Panel(obj_panel, rx->gains[dd.iic]);
         
 		double el =rx->device->getGain(SOAPY_SDR_RX, 0,  rx->gains[dd.iic]);;
 		msprintf(dd.text1z,sizeof(dd.text1z),"%.0f",el);
@@ -240,7 +254,7 @@ int Radio::dialogRadio(struct Scene *scene)
     
     dd.gain_Index=dd.iic;
     
-    GLUI_Panel *panel3 = new GLUI_Panel(dd.glui, "gain");
+    GLUI_Panel *panel3 = new GLUI_Panel(obj_panel, "gain");
     double el = rx->device->getGain(SOAPY_SDR_RX, 0);
     msprintf(dd.text1z,sizeof(dd.text1z),"%.0f",el);
     dd.edittext1z[dd.iic] =
