@@ -150,7 +150,7 @@ ALuint getbuffAudio(struct audioInfo *audio)
 int stopAudio(struct audioInfo *audio)
 {
     
-    fprintf(stderr,"audio->source %p\n",audio->source);
+   // fprintf(stderr,"audio->source %p\n",audio->source);
     
 	if(!audio)return 1;
 	

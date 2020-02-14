@@ -373,7 +373,7 @@ int Radio::Transmit(struct Scene *scene)
     
     // Determine the number of devices available
     int devices = tt.audio->getDeviceCount();
-    std::cout << "\nFound " << devices << " device(s) ...\n";
+ //   std::cout << "\nFound " << devices << " device(s) ...\n";
     
     // Scan through devices for various capabilities
     
@@ -385,9 +385,9 @@ int Radio::Transmit(struct Scene *scene)
             info = tt.audio->getDeviceInfo(i);
             if(info.inputChannels > 0){
             // Print, for example, the maximum number of output channels for each device
-                std::cout << "device = " << i;
-                std::cout << ": maximum input  channels = " << info.inputChannels;
-                std::cout << " Device Name = " << info.name << '\n';
+                //std::cout << "device = " << i;
+                //std::cout << ": maximum input  channels = " << info.inputChannels;
+                //std::cout << " Device Name = " << info.name << '\n';
                 new GLUI_Button(obj_panel, info.name.c_str(), 200+i, control_cb);
                 if(find == 0){
                     tt.Params.deviceId=i;
@@ -574,6 +574,8 @@ public:
         if(fabs(dmin) > average)average=fabs(dmin);
         
         float over=0.1/average;
+        
+        over=1.0;
         
         for(int i=0;i<sample_rate;++i){
             float v=over*(2.0f*average+mu*in[i]);
