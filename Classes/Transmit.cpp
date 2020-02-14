@@ -43,13 +43,13 @@ int GLUI_Button2::mouse_down_handler( int local_x, int local_y )
     if(s->tt.doTransmit == 0){
          s->tt.fc=fc;
          s->tt.foffset=foffset;
-         s->rx->pstopPlay(s->rx);
+         //s->rx->pstopPlay(s->rx);
          s->tt.doTransmit=1;
          launchThread((void *)s,TransmitThread);
      }
      
      GLUI_Button::mouse_down_handler( local_x, local_y);
-
+     
      return false;
      
  }
@@ -65,8 +65,8 @@ int GLUI_Button2::mouse_up_handler( int local_x, int local_y, bool inside )
         }
         //fprintf(stderr,"count2 %d %d\n",count2,s->tt.doTransmit);
         s->tt.doTransmit=0;
-        s->rx->pstartPlay(s->rx);
-        s->rx->pplayRadio(s->rx);
+        //s->rx->pstartPlay(s->rx);
+       // s->rx->pplayRadio(s->rx);
     }
     
     GLUI_Button::mouse_up_handler( local_x, local_y,inside );
@@ -626,37 +626,32 @@ static int TransmitThread(void *rxv)
 {
     
     RadioPtr s=(RadioPtr)rxv;
+    
     struct playData *rx=s->rx;
     
-    //fprintf(stderr,"Transmit Thread Start\n");
+    SoapySDR::Device *device=rx->device;
     
-    std::vector<SoapySDR::Kwargs> results;
+    if(!device->getFullDuplex(SOAPY_SDR_TX, 0)){
+       rx->controlRF=1;
     
-    results = SoapySDR::Device::enumerate();
+       int count2=0;
+       while(rx->controlRF == 1){
+           Sleep2(10);
+           if(++count2 > 200)break;
+       }
+    
+       rx->controlRF=1;
 
-    SoapySDR::Kwargs deviceArgs;
-    
-    SoapySDR::Device *device=NULL;
-
-    for(unsigned int k=0;k<results.size();++k){
-        
-        if(k == rx->deviceNumber){
-            
-            deviceArgs = results[k];
-            
-            device = SoapySDR::Device::make(deviceArgs);
-            break;
-            
-        }
+       device->deactivateStream(rx->rxStream);
     }
-    
+
     // fprintf(stderr,"getFullDuplex %d\n",device->getFullDuplex(SOAPY_SDR_TX, 0));
     
     //const double frequency = 27.315e6;  //center frequency to 500 MHz
     double frequency = 87.6e6;  //center frequency to 500 MHz
     const double sample_rate = 2e6;    //sample rate to 5 MHz
     float As = 60.0f;
-        
+    
     std::vector<size_t> channels;
     
     channels = {0};
@@ -668,7 +663,7 @@ static int TransmitThread(void *rxv)
     s->tt.info.device=device;
     
     device->setSampleRate(SOAPY_SDR_TX, 0, sample_rate);
-
+    
     fprintf(stderr,"Sample rate: %g MHz\n",sample_rate/1e6);
     
     //Set center frequency
@@ -691,9 +686,9 @@ static int TransmitThread(void *rxv)
     
     //size_t MTU=device->getStreamMTU(txStream);
     
-   // fprintf(stderr,"MTU %ld\n",MTU);
+    // fprintf(stderr,"MTU %ld\n",MTU);
     
-
+    
     device->setHardwareTime(0); //clear HW time for easy debugging
     
     int ret4=device->activateStream(txStream);
@@ -723,7 +718,7 @@ static int TransmitThread(void *rxv)
     }
     
     ampmodem demodAM;
-
+    
 #if LIQUID_VERSION_NUMBER < 1003001
     demodAM = ampmodem_create(0.5, 0.0, type, flag);
 #else
@@ -747,11 +742,11 @@ static int TransmitThread(void *rxv)
     AMmod modulation(1.0);
     
     s->tt.info.am=&modulation;
-
+    
     freqmod mod = freqmod_create(0.5);
     
     s->tt.info.mod=mod;
-
+    
     
     std::vector<void *> buffs(2);
     
@@ -765,10 +760,10 @@ static int TransmitThread(void *rxv)
         goto cleanup;
     }
     
-    fprintf(stderr,"getStreamSampleRate %u\n",s->tt.audio->getStreamSampleRate());
+    //fprintf(stderr,"getStreamSampleRate %u\n",s->tt.audio->getStreamSampleRate());
     
     fprintf(stderr,"Ready For Voice\n");
-
+    
     try {
         s->tt.audio->startStream();
     }
@@ -776,7 +771,7 @@ static int TransmitThread(void *rxv)
         std::cout << '\n' << e.getMessage() << '\n' << std::endl;
         goto cleanup;
     }
-
+    
     while(s->tt.doTransmit == 1){
         if ( s->tt.audio->isStreamRunning() ) {
             Sleep2(10);
@@ -789,23 +784,40 @@ cleanup:
     freqmod_destroy(mod);
     
     if(demodAM)ampmodem_destroy(demodAM);
-
+    
     device->deactivateStream(txStream);
     
     device->closeStream(txStream);
     
-    SoapySDR::Device::unmake(device);
-    
-    s->tt.doTransmit = -1;
+    if(!device->getFullDuplex(SOAPY_SDR_TX, 0)){
+        device->activateStream(rx->rxStream);
+        {
+            extern int rxBuffer(void *rxv);
+        
+            rx->controlRF=2;
 
+            launchThread((void *)rx,rxBuffer);
+        }
+    }else{
+        
+        device->setFrequency(SOAPY_SDR_TX, 0, frequency);
+        
+        device->setGain(SOAPY_SDR_TX, 0, 0.0);
+    }
+
+
+    s->tt.doTransmit = -1;
+    
     device=NULL;
     
     txStream=NULL;
     
-    //fprintf(stderr,"Transmit Thread End\n");
-
+    fprintf(stderr,"Transmit Thread End\n");
+    
     return 0;
 }
+
+
 
 int input( void * /*outputBuffer*/, void *inputBuffer, unsigned int nBufferFrames,
           double /*streamTime*/, RtAudioStreamStatus /*status*/, void *datain )

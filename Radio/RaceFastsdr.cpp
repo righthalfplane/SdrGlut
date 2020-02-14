@@ -38,7 +38,7 @@ static int findRadio(struct playData *rx);
 
 static int playRadio(struct playData *rx);
 
-static int rxBuffer(void *rxv);
+int rxBuffer(void *rxv);
 
 static int Process(void *rxv);
 
@@ -1132,7 +1132,7 @@ static int findRadio(struct playData *rx)
     return 0;
     
 }
-static int rxBuffer(void *rxv)
+int rxBuffer(void *rxv)
 {
 
 	struct playData *rx=(struct playData *)rxv;
