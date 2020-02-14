@@ -650,6 +650,8 @@ static int TransmitThread(void *rxv)
         }
     }
     
+    // fprintf(stderr,"getFullDuplex %d\n",device->getFullDuplex(SOAPY_SDR_TX, 0));
+    
     //const double frequency = 27.315e6;  //center frequency to 500 MHz
     double frequency = 87.6e6;  //center frequency to 500 MHz
     const double sample_rate = 2e6;    //sample rate to 5 MHz
@@ -680,7 +682,7 @@ static int TransmitThread(void *rxv)
     
     //Streaming Setup
     
-    auto txStream = device->setupStream(SOAPY_SDR_TX, SOAPY_SDR_CF32, channels);
+    SoapySDR::Stream *txStream = device->setupStream(SOAPY_SDR_TX, SOAPY_SDR_CF32, channels);
     //fprintf(stderr,"txStream %p\n",txStream);
     
     //fprintf(stderr,"txStream %p\n",txStream);
@@ -868,8 +870,12 @@ int SendData(struct Info *info,unsigned int frames,short *bufin)
 
     buffs[0] = buf2;
     
-    unsigned int ret = info->device->writeStream(info->txStream,  &buffs[0], num2, flags);
-    if (ret != num2)
+    int ret = info->device->writeStream(info->txStream,  &buffs[0], num2, flags);
+    if(ret < 0){
+        std::cerr << "writeStream " << SoapySDR::errToStr(ret) << std::endl;
+        return 0;
+    }
+    if (ret != (int)num2)
         cout << "error: samples sent: " << ret << "/" << num2 << endl;
     
     return 0;
