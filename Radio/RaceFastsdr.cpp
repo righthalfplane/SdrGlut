@@ -44,7 +44,8 @@ static int Process(void *rxv);
 
 static int pushBuff(int nbuffer,struct playData *rx);
 static int popBuff(struct playData *rx,struct Filters *f);
-static int AudioReset(struct playData *rx);
+
+int AudioReset(struct playData *rx);
 
 static int pushBuffa(int nbuffer,struct playData *rx);
 static int popBuffa(struct playData *rx);
@@ -346,7 +347,7 @@ static int ProcessSound(void *rxv)
                 // if(processed > 1)printf("%s processed %d count %lu\n",rx->driveName,processed,count);
                 
                 for(ALint k=0;k<processed;++k){
-                    //printf("finish bufferd %d\n",fbuff[k]);
+                    //fprintf(stderr,"finish bufferd %d\n",fbuff[k]);
                     freebuffAudio(audio,fbuff[k]);
                     
                     while((ibuff=popBuffa(rx)) < 0)Sleep2(10);
@@ -679,7 +680,7 @@ static int Process(void *rxv)
 	return 0;
 }
 
-static int AudioReset(struct playData *rx)
+int AudioReset(struct playData *rx)
 {
     
 	ALint processed;
@@ -902,7 +903,9 @@ static int pushBuffa(int nbuffer,struct playData *rx)
 {
 
 	rx->mutexa.lock();
-//	fprintf(stderr,"pushBuffa in %d\n",rx->bufftopa);
+    rx->bufftopa=0;
+    
+	//fprintf(stderr,"pushBuffa in %d\n",rx->bufftopa);
 	
     if(rx->bufftopa >= NUM_ABUFF5){
         rx->bufftopa=NUM_ABUFF5;
@@ -937,7 +940,8 @@ static int popBuffa(struct playData *rx)
 	
 	
 	rx->mutexa.lock();
-//	fprintf(stderr,"popBuffa in %d\n",rx->bufftopa);
+    
+    //fprintf(stderr,"popBuffa in %d\n",rx->bufftopa);
 	
 	ret=-1;
 	
@@ -983,9 +987,13 @@ static int pushBuff(int nbuffer,struct playData *rx)
 {
 
 	rx->mutex.lock();
-	//fprintf(stderr,"p in\n");
+    
+	//fprintf(stderr,"pushBuff pushBuff %d\n",rx->bufftop);
 	
     if(rx->bufftop >= NUM_DATA_BUFF5){
+        rx->bufftop=0;
+        rx->buffStack[rx->bufftop++]=nbuffer;
+/*
         rx->bufftop=NUM_DATA_BUFF5;
         int small,ks;
         small=1000000000;
@@ -1000,6 +1008,7 @@ static int pushBuff(int nbuffer,struct playData *rx)
         if(ks >= 0){
         	rx->buffStack[ks]=nbuffer;
         }
+ */
    }else{
     	rx->buffStack[rx->bufftop++]=nbuffer;
     }
@@ -1017,7 +1026,8 @@ static int popBuff(struct playData *rx,struct Filters *f)
 	
 	rx->mutex.lock();
 	
-	//fprintf(stderr,"popBuff %d in\n",f->thread);
+	//fprintf(stderr,"popBuff bufftop %d %d in\n",rx->bufftop,f->thread);
+    
 	ret=-1;
 	
  	if(rx->bufftop < 1)goto Out;
@@ -1277,7 +1287,7 @@ static int doAudio(float *aBuff,struct playData *rx)
 	
 	rx->mutexo.lock();
 	audioOut=rx->witchAudioBuffer;
-	//fprintf(stderr,"audioOut %d\n",audioOut);
+	//fprintf(stderr,"witchAudioBuffer %d\n",audioOut);
 	data=rx->buffa[rx->witchAudioBuffer++ % NUM_ABUFF5];
 	rx->mutexo.unlock();
 		

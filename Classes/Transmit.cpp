@@ -643,6 +643,8 @@ static int TransmitThread(void *rxv)
        rx->controlRF=1;
 
        device->deactivateStream(rx->rxStream);
+       device->closeStream(rx->rxStream);
+
     }
 
     // fprintf(stderr,"getFullDuplex %d\n",device->getFullDuplex(SOAPY_SDR_TX, 0));
@@ -790,12 +792,17 @@ cleanup:
     device->closeStream(txStream);
     
     if(!device->getFullDuplex(SOAPY_SDR_TX, 0)){
+        extern int AudioReset(struct playData *rx);
+        device->setSampleRate(SOAPY_SDR_RX, 0, rx->samplerate);
+        device->setFrequency(SOAPY_SDR_RX, 0, rx->fc);
         device->activateStream(rx->rxStream);
+        rx->rxStream=rx->device->setupStream(SOAPY_SDR_RX, SOAPY_SDR_CF32,(const std::vector<size_t>)0);
+        
         {
             extern int rxBuffer(void *rxv);
         
             rx->controlRF=2;
-
+            
             launchThread((void *)rx,rxBuffer);
         }
     }else{

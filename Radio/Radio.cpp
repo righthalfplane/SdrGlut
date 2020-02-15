@@ -563,35 +563,43 @@ int Radio::setFrequencyCoefficients(struct playData *rx)
 }
 int Radio::setFrequency(struct playData *rx)
 {
-
-    if(rx->device){
-        rx->device->setFrequency(SOAPY_SDR_RX, 0, rx->fc);
-    }
     
-    setDialogFrequency(rx->f);
     
-    setFrequency(rx->f);
-    
-    setDialogFc(rx->fc);
-    
-    setFrequencyCoefficients(rx);
-    
-    rx->aminGlobal=0;
-    
-    rx->amaxGlobal=0;
-    
-    rx->averageGlobal=0;
+    try {
         
-    rx->m_SMeter.Reset();
-    
-    if(FindScene(scenel2)){
-        SetFrequencyGlobal(scenel2, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
+        if(rx->device){
+            rx->device->setFrequency(SOAPY_SDR_RX, 0, rx->fc);
+        }
+        
+        setDialogFrequency(rx->f);
+        
+        setFrequency(rx->f);
+        
+        setDialogFc(rx->fc);
+        
+        setFrequencyCoefficients(rx);
+        
+        rx->aminGlobal=0;
+        
+        rx->amaxGlobal=0;
+        
+        rx->averageGlobal=0;
+        
+        rx->m_SMeter.Reset();
+        
+        if(FindScene(scenel2)){
+            SetFrequencyGlobal(scenel2, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
+        }
+        
+        if(FindScene(scenel)){
+            SetFrequencyGlobal(scenel, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
+        }
     }
-    
-    if(FindScene(scenel)){
-        SetFrequencyGlobal(scenel, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
+    catch (...)
+    {
+        fprintf(stderr, "exception Radio::setFrequency\n");
     }
-    
+
     return 0;
 }
 int Radio::stopPlay(struct playData4 *rx)

@@ -141,11 +141,11 @@ struct playData{
     
     float *buff[NUM_DATA_BUFF5];
     int buffStack[NUM_DATA_BUFF5];
-    int bufftop;
+    volatile int bufftop;
     
     short int *buffa[NUM_ABUFF5];
     int buffStacka[NUM_ABUFF5];
-    int bufftopa;
+    volatile int bufftopa;
     
     
     unsigned int deviceNumber;
