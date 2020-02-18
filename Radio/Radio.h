@@ -155,6 +155,9 @@ struct TransmitData{
     GLUI_EditText *edittext7;
     GLUI_EditText *edittext8;
 
+    
+    GLUI_Button *talk;
+
     struct Info info;
 
     char **antenna;

@@ -326,7 +326,7 @@ int Radio::Transmit(struct Scene *scene)
     tt.glui->add_radiobutton_to_group( tt.group2, "NBFM" );
     tt.glui->add_radiobutton_to_group( tt.group2, "USB" );
     tt.glui->add_radiobutton_to_group( tt.group2, "LSB" );
-    tt.glui->add_radiobutton_to_group( tt.group2, "CW" );
+  //  tt.glui->add_radiobutton_to_group( tt.group2, "CW" );
 
     tt.glui->add_column(true);
 
@@ -343,11 +343,12 @@ int Radio::Transmit(struct Scene *scene)
     
     obj_panel =  tt.glui->add_panel( "Controls" );
 
-    new GLUI_Button2(obj_panel, "Push to Talk", this, Start_Button, control_cb);
+    //tt.talk=new GLUI_Button2(obj_panel, "Push to Talk", this, Start_Button, control_cb);
+    //tt.talk->set_name("this is me");
     
-   // new GLUI_Button(obj_panel, "Stop", Stop_Button, control_cb);
+    tt.talk=new GLUI_Button(obj_panel, "Push to Send", Stop_Button, control_cb);
     
-    new GLUI_Button(obj_panel, "Key", Key_Button, control_cb);
+    // new GLUI_Button(obj_panel, "Key", Key_Button, control_cb);
     
     new GLUI_Button(obj_panel, "Close", 2, control_cb);
     
@@ -413,7 +414,7 @@ int Radio::Transmit(struct Scene *scene)
     
     tt.gain_Index=tt.iic;
     
-    GLUI_Panel *panel3 = new GLUI_Panel(tt.glui, "gain");
+    GLUI_Panel *panel3 = new GLUI_Panel(tt.glui, "RF Gain");
     tt.gain=0.5*(tt.gainsMax+tt.gainsMin);
     double el = tt.gain;
     msprintf(tt.text1z,sizeof(tt.text1z),"%.0f",el);
@@ -473,9 +474,13 @@ static void control_cb(int control)
     {
         if(s->tt.doTransmit == 1){
             s->tt.doTransmit=0;
-            Sleep2(100);
-            s->rx->pstartPlay(s->rx);
-            s->rx->pplayRadio(s->rx);
+            int count=0;
+            while(s->tt.doTransmit == 0){
+                Sleep2(10);
+                if(++count > 200)break;
+            }
+            s->tt.doTransmit=0;
+            s->tt.talk->set_name("Push To Send");
         }
         s->tt.glui->close();
         s->tt.glui=NULL;
@@ -486,14 +491,28 @@ static void control_cb(int control)
     }
     else if(control == Stop_Button)
     {
-        fprintf(stderr,"Stop_Button %d\n",control);
+       // fprintf(stderr,"Stop_Button %d\n",control);
+        
         if(s->tt.doTransmit == 1){
             s->tt.doTransmit=0;
-            Sleep2(100);
-            fprintf(stderr,"Stop_Button Sleep\n");
-            s->rx->pstartPlay(s->rx);
-            s->rx->pplayRadio(s->rx);
+            int count=0;
+            while(s->tt.doTransmit == 0){
+                Sleep2(10);
+                if(++count > 200)break;
+            }
+            s->tt.doTransmit=0;
+            s->tt.talk->set_name("Push To Send");
+            return;
         }
+        
+        if(s->tt.doTransmit == 0){
+            s->tt.fc=fc;
+            s->tt.foffset=foffset;
+            s->tt.doTransmit=1;
+            launchThread((void *)s,TransmitThread);
+            s->tt.talk->set_name("Push To Stop");
+        }
+
    }
     else if(control == Key_Button)
     {
