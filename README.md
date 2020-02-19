@@ -8,6 +8,9 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.8
 
 # Movies
 
+How to install RtAudio on Windows 10
+https://youtu.be/DyYIKiu2zVI
+
 Installing RtAudio on Ubuntu18.04
 https://youtu.be/mOGWG1K52wA
 
