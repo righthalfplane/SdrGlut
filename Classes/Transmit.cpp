@@ -235,7 +235,7 @@ int Radio::Transmit(struct Scene *scene)
     
     SoapySDR::Range range=rx->device->getGainRange(SOAPY_SDR_TX, 0);
     
-   // printf("range TX max %g min %g\n",range.maximum(),range.minimum());
+    //printf("range TX max %g min %g\n",range.maximum(),range.minimum());
     
     tt.gainsMin=range.minimum();
     tt.gainsMax=range.maximum();
@@ -256,7 +256,7 @@ int Radio::Transmit(struct Scene *scene)
     
     for (size_t j = 0; j < tt.frequencyCount; j++)
     {
-       // printf("FrequencyRange max %g min %g\n",rlist[j].maximum(),rlist[j].minimum());
+        printf("FrequencyRange max %g min %g\n",rlist[j].maximum(),rlist[j].minimum());
         tt.frequencyMinimum[j]=rlist[j].minimum();
         tt.frequencyMaximum[j]=rlist[j].maximum();
     }
@@ -327,6 +327,8 @@ int Radio::Transmit(struct Scene *scene)
     tt.glui->add_radiobutton_to_group( tt.group2, "USB" );
     tt.glui->add_radiobutton_to_group( tt.group2, "LSB" );
   //  tt.glui->add_radiobutton_to_group( tt.group2, "CW" );
+    new GLUI_Checkbox( obj_panel, "Tone", (int *)&tt.info.Tone, 3000, control_cb );
+
 
     tt.glui->add_column(true);
 
@@ -717,6 +719,15 @@ static int TransmitThread(void *rxv)
     
     unsigned int samples=48000;
     
+    double pi;
+    pi=4.0*atan(1.0);
+    s->tt.info.dt=1.0/(double)samples;
+    s->tt.info.sino=0;
+    s->tt.info.coso=1;
+    double w=2.0*pi*(1000);
+    s->tt.info.sindt=sin(w*s->tt.info.dt);
+    s->tt.info.cosdt=cos(w*s->tt.info.dt);
+
     float Ratio1 = (float)(10000/ (float)samples);
     
     float Ratio2 = (float)(sample_rate/(float)10000);
@@ -1031,8 +1042,25 @@ int input( void * /*outputBuffer*/, void *inputBuffer, unsigned int nBufferFrame
 {
     struct Info *info=(struct Info *)datain;
     unsigned int frames = nBufferFrames;
+    short *in=(short *)inputBuffer;
     
-    SendData(info,frames,(short *)inputBuffer);
+    if(info->Tone){
+        for(unsigned int k=0;k<frames;++k){
+            double sint=info->sino*info->cosdt+info->coso*info->sindt;
+            double cost=info->coso*info->cosdt-info->sino*info->sindt;
+            info->coso=cost;
+            info->sino=sint;
+            double v=in[k]+16000*cost;
+            if(v > 32000)v=32000;
+            if(v < -32000)v=-32000;
+            in[k]=(short)(v);
+        }
+        
+        double r=sqrt(info->coso*info->coso+info->sino*info->sino);
+        info->coso /= r;
+        info->sino /= r;
+    }
+    SendData(info,frames,in);
     /*
      static int count;
      static FILE *in;

@@ -127,6 +127,15 @@ struct Info{
     SoapySDR::Stream *txStream;
     ampmodem demodAM;
     freqmod mod;
+    
+    volatile int Tone;
+
+    double dt;
+    double sino;
+    double coso;
+    double sindt;
+    double cosdt;
+
 };
 
 struct TransmitData{
