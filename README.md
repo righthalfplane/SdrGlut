@@ -7,6 +7,10 @@ The Eighth release is now avaliable. It adds selection options for FFT window fi
 https://github.com/righthalfplane/SdrGlut/releases/tag/v1.8
 
 # Movies
+
+Installing RtAudio on Ubuntu18.04
+https://youtu.be/mOGWG1K52wA
+
 SdrGlut exploring Single Side Band on 80 meters
 https://youtu.be/Up48SK5BGSw
 
