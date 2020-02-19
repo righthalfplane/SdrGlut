@@ -8,6 +8,9 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.8
 
 # Movies
 
+How to Install RtAudio on MacOS
+https://youtu.be/HlnC5K5qQ98
+
 How to install RtAudio on Windows 10
 https://youtu.be/DyYIKiu2zVI
 
@@ -141,6 +144,20 @@ https://www.youtube.com/watch?v=PEfrJ4ZuN9g
 
 Lime Mini vs a RTL stick using SdrGlut at FRS frequencies
 https://www.youtube.com/watch?v=pDqNCe6GxnA
+
+# Installation of RtAudio
+
+The lastest version of SdrGlut needs to have RtAudio installed. Here are videos showing how to do the install on various systems. The Raspberry Pi can follows the instructions that were given for Ubuntu 18.04.
+
+How to Install RtAudio on MacOS
+https://youtu.be/HlnC5K5qQ98
+
+How to install RtAudio on Windows 10
+https://youtu.be/DyYIKiu2zVI
+
+Installing RtAudio on Ubuntu18.04
+https://youtu.be/mOGWG1K52wA
+
 
 # Installation of libliquid
 
