@@ -8,9 +8,6 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.9
 
 # Movies
 
-Using the HackRF One as a signal source
-https://youtu.be/Ja1DabbBL5g
-
 How to Install RtAudio on MacOS
 https://youtu.be/HlnC5K5qQ98
 
