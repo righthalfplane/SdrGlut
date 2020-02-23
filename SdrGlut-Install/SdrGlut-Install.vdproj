@@ -81,6 +81,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_68E14FCAE0A54632AFCA831BC3267A38"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_6AD0E00668394353B8C66DBA87549968"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -206,6 +212,14 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.6.1"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.6.1 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.6.1"
+                    }
+                }
             }
         }
         "Release"
@@ -230,6 +244,14 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.6.1"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.6.1 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.6.1"
+                    }
+                }
             }
         }
     }
@@ -458,6 +480,26 @@
             "TargetName" = "8:airspySupport.dll"
             "Tag" = "8:"
             "Folder" = "8:_B3923192229D4DAC9DFA8679E8453FDC"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_68E14FCAE0A54632AFCA831BC3267A38"
+            {
+            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\bin\\rtaudio.dll"
+            "TargetName" = "8:rtaudio.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_09CA993ACC3D40E7BE590A567D053294"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -913,7 +955,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:SdrGlut-Install"
         "ProductCode" = "8:{9B9C277C-2A05-42D3-A972-B7C762F0EC7D}"
-        "PackageCode" = "8:{D72A33BD-8FE6-4FC2-BBCC-4EA37C476773}"
+        "PackageCode" = "8:{02CB0F62-203C-4843-9726-88FFC3F296F5}"
         "UpgradeCode" = "8:{33DC4F52-87FF-4F01-A65B-2CD26F85B6F6}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
