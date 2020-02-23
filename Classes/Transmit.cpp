@@ -417,7 +417,7 @@ int Radio::Transmit(struct Scene *scene)
     tt.gain_Index=tt.iic;
     
     GLUI_Panel *panel3 = new GLUI_Panel(tt.glui, "RF Gain");
-    tt.gain=0.5*(tt.gainsMax+tt.gainsMin);
+    tt.gain=tt.gainsMin;
     double el = tt.gain;
     msprintf(tt.text1z,sizeof(tt.text1z),"%.0f",el);
     tt.edittext1z[tt.iic] =
