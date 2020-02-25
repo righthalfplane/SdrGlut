@@ -925,7 +925,7 @@ static int TransmitThread2(void *rxv)
     // fprintf(stderr,"MTU %ld\n",MTU);
     
     
-    device->setHardwareTime(0); //clear HW time for easy debugging
+    //device->setHardwareTime(0); //clear HW time for easy debugging
     
     int ret4=device->activateStream(txStream);
     if(ret4)fprintf(stderr,"ret4 %d\n",ret4);
