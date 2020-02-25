@@ -8,6 +8,9 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.10
 
 # Movies
 
+HackRf One vs. a Sdrplay RSP2 using SdrGlut at CB Frequencies
+https://youtu.be/0dzZtHT1u2M
+
 Using a HackRF One as a signal source.
 https://youtu.be/17qGxFdgvMY
 
