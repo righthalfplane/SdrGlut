@@ -839,7 +839,7 @@ cleanup:
         
         device->setFrequency(SOAPY_SDR_TX, 0, frequency);
         
-        device->setGain(SOAPY_SDR_TX, 0, 0.0);
+        device->setGain(SOAPY_SDR_TX, 0, s->tt.gainsMin);
     }
 
 
