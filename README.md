@@ -8,6 +8,9 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.10
 
 # Movies
 
+Using a LimeSDR Mini as a signal source with SdrGlut
+https://youtu.be/0jWvTtuV94Y
+
 HackRf One vs. a Sdrplay RSP2 using SdrGlut at CB Frequencies
 https://youtu.be/0dzZtHT1u2M
 
