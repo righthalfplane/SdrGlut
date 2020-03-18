@@ -7,6 +7,8 @@ The Tenth Release is now avaliable. It adds a window that can use the transmit c
 https://github.com/righthalfplane/SdrGlut/releases/tag/v1.10
 
 # Movies
+Using SdrGlut to capture local TV stations with a LimeSDR Mini
+https://youtu.be/x3yyEteT6qY
 
 Using gnuradio-companion to capture over the air ATSC video with the LimeSDR Mini
 https://youtu.be/guPmP1VPqKk
