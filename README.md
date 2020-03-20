@@ -8,6 +8,9 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.10
 
 # Movies
 
+Viewing Over-The-Air Digital Broadcasts with a Digital Converter Box
+https://youtu.be/ZJWdiFJ4HQ4
+
 Using SdrGlut to capture local TV stations with a SdrPlay RSP2
 https://youtu.be/HwxXSgmRJbI
 
