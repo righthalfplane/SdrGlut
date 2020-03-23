@@ -99,6 +99,7 @@
 /* Begin PBXFileReference section */
 		460C7DD4223960D300F9E64A /* PlayIQ.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PlayIQ.cpp; path = MainSource/PlayIQ.cpp; sourceTree = "<group>"; };
 		460C7DD5223960D300F9E64A /* PlayIQ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlayIQ.h; path = MainSource/PlayIQ.h; sourceTree = "<group>"; };
+		4612027E2428655000A80820 /* ulibTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ulibTypes.h; path = MainSource/ulibTypes.h; sourceTree = "<group>"; };
 		4616E5B62208B6A600240B9F /* smeter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = smeter.cpp; sourceTree = "<group>"; };
 		4616E5B72208B6A700240B9F /* smeter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = smeter.h; sourceTree = "<group>"; };
 		461AB5C922126C8E001522BD /* FileList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileList.h; path = CExpress/FileList.h; sourceTree = "<group>"; };
@@ -394,6 +395,7 @@
 		46E13ACF1C2C47BC007FF424 /* MainSource */ = {
 			isa = PBXGroup;
 			children = (
+				4612027E2428655000A80820 /* ulibTypes.h */,
 				46CE01BE22125E9100140F6C /* mThread.h */,
 				46963ED223D789A30059B4AA /* printInfo.cpp */,
 				46266831239D9E8D002CCCF4 /* mThread.cpp */,
