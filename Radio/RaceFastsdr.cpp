@@ -1,3 +1,4 @@
+#include "firstFile.h"
 #include <SoapySDR/Version.h>
 #include "RaceFastsdr.h"
 #include "Utilities.h"
@@ -774,7 +775,7 @@ static int setFilters(struct playData *rx,struct Filters *f)
     
     f->demod=freqdem_create(0.5);
     
-#if LIQUID_VERSION_NUMBER < 1003001
+#ifdef LIQUID_VERSION_4
     f->demodAM = ampmodem_create(0.5, 0.0, mode, iflag);
  #else
     f->demodAM = ampmodem_create(0.5, mode, iflag);

@@ -751,7 +751,7 @@ static int TransmitThread(void *rxv)
     
     ampmodem demodAM;
     
-#if LIQUID_VERSION_NUMBER < 1003001
+#ifdef LIQUID_VERSION_4
     demodAM = ampmodem_create(0.5, 0.0, type, flag);
 #else
     demodAM = ampmodem_create(0.5, type, flag);
@@ -955,7 +955,7 @@ static int TransmitThread2(void *rxv)
     
     ampmodem demodAM;
     
-#if LIQUID_VERSION_NUMBER < 1003001
+#ifdef LIQUID_VERSION_4
     demodAM = ampmodem_create(0.5, 0.0, type, flag);
 #else
     demodAM = ampmodem_create(0.5, type, flag);

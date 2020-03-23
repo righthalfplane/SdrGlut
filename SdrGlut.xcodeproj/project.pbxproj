@@ -111,6 +111,7 @@
 		46268889223360BD0074B5DF /* audiolib.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = audiolib.cpp; path = MainSource/audiolib.cpp; sourceTree = "<group>"; };
 		4626888A223360BE0074B5DF /* audiolib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = audiolib.h; path = MainSource/audiolib.h; sourceTree = "<group>"; };
 		4629CAA923DD4E040059898D /* libglut.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libglut.3.dylib; sourceTree = "<group>"; };
+		462DC5462428FBE70032466B /* firstFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = firstFile.h; path = MainSource/firstFile.h; sourceTree = "<group>"; };
 		462FB7F3220389830028D417 /* RaceFastsdr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RaceFastsdr.h; sourceTree = "<group>"; };
 		46371C891D12F31B002D3788 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = ../../../../../../System/Library/Frameworks/OpenAL.framework; sourceTree = "<group>"; };
 		46371C8B1D12F32A002D3788 /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = ../../../../../../System/Library/Frameworks/OpenCL.framework; sourceTree = "<group>"; };
@@ -396,6 +397,7 @@
 			isa = PBXGroup;
 			children = (
 				4612027E2428655000A80820 /* ulibTypes.h */,
+				462DC5462428FBE70032466B /* firstFile.h */,
 				46CE01BE22125E9100140F6C /* mThread.h */,
 				46963ED223D789A30059B4AA /* printInfo.cpp */,
 				46266831239D9E8D002CCCF4 /* mThread.cpp */,

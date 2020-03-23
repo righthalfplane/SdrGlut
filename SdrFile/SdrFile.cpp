@@ -5,6 +5,7 @@
 //  Created by Dale on 10/8/16.
 //  Copyright © 2016 Dale Ranta. All rights reserved.
 //
+#include "firstFile.h"
 #include <SoapySDR/Version.h>
 
 #include "SdrFile.h"
@@ -835,7 +836,7 @@ static int setFilters(struct playData4 *rx,struct Filters2 *f)
 
     
     f->demod=freqdem_create(0.5);
-#if LIQUID_VERSION_NUMBER < 1003001
+#ifdef LIQUID_VERSION_4
     f->demodAM = ampmodem_create(0.5, 0.0, mode, iflag);
 #else
     f->demodAM = ampmodem_create(0.5, mode, iflag);
