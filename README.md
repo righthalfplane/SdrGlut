@@ -1,7 +1,7 @@
 # SdrGult
 SdrGlut is a simple software defined radio player. Using glut for drawing and glui for its dialogs makes it tiny compared to programs that use QT5 or wxWidgets. SdrGlut uses liquid-sdr and SoapySDR to preform the SDR calculations. The audio is handled by OpenAL and RtAudio.
 
-The Tenth Release is now avaliable. It adds a window that can use the transmit capable SDRs to send AM, NBFM, USB, and LSB. It has a prebuild exe for macOS, a zipped folder for Windows and a zipped folder for Ubuntu 18.04 to unpack and run from 
+The Eleventh Release is now avaliable. It adds a window that can use the transmit capable SDRs to send AM, NBFM, USB, and LSB. It has a prebuild exe for macOS, a zipped folder for Windows and a zipped folder for Ubuntu 18.04 to unpack and run from 
 
 
 https://github.com/righthalfplane/SdrGlut/releases/tag/v1.11
