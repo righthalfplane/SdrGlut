@@ -825,9 +825,8 @@ cleanup:
         extern int AudioReset(struct playData *rx);
         device->setSampleRate(SOAPY_SDR_RX, 0, rx->samplerate);
         device->setFrequency(SOAPY_SDR_RX, 0, rx->fc);
-        device->activateStream(rx->rxStream);
         rx->rxStream=rx->device->setupStream(SOAPY_SDR_RX, SOAPY_SDR_CF32,(const std::vector<size_t>)0);
-        
+        device->activateStream(rx->rxStream);        
         {
             extern int rxBuffer(void *rxv);
         
