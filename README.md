@@ -8,6 +8,9 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.11
 
 # Movies
 
+SdrGlut uses SoapyRemote to play a remote Software Defined Radio
+https://youtu.be/Z6yNH2zKDRo
+
 Viewing Over-The-Air Digital Broadcasts with a Digital Converter Box
 https://youtu.be/ZJWdiFJ4HQ4
 
