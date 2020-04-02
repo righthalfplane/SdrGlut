@@ -190,6 +190,8 @@ struct playData{
 
     double *sampleRates;
     size_t sampleRatesCount;
+    
+    int directSampleMode;
 
     int getRadioAttributes;
     

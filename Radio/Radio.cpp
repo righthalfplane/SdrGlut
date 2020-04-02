@@ -89,6 +89,7 @@ static char sfrequency[255]="1";
 static char ssamplerate[255]="2";
 
 void doFFTMenu(int item);
+void doDirectSampleMode(int item);
 void doFilterMenu(int item);
 
 Radio::Radio(struct Scene *scene): CWindow(scene)
@@ -1074,7 +1075,10 @@ int Radio::OpenWindows(struct Scene *scene)
     glutAddMenuEntry("BLACKMANHARRIS", FILTER_BLACKMANHARRIS);
     glutAddMenuEntry("BLACKMANHARRIS7", FILTER_BLACKMANHARRIS7);
     
-    
+    int menu62=glutCreateMenu(doDirectSampleMode);
+    glutAddMenuEntry("Off", FFT_1024);
+   // glutAddMenuEntry("?", FFT_2048);
+    glutAddMenuEntry("On", FFT_4096);
 
     glutCreateMenu(menu_selectl);
     glutAddMenuEntry("Sdr Dialog...", SdrDialog);
@@ -1087,6 +1091,8 @@ int Radio::OpenWindows(struct Scene *scene)
     glutAddSubMenu("Recording", menu4);
     glutAddSubMenu("FFT Size", menu5);
     glutAddSubMenu("Window Filter", menu6);
+    glutAddSubMenu("Direct Sample Mode", menu62);
+
 
     glutAddMenuEntry("--------------------", -1);
     glutAddMenuEntry("Close", ControlClose);
@@ -1347,6 +1353,43 @@ void doFilterMenu(int item)
     
     sdr->rx->FFTfilter=ifft;
 
+}
+void doDirectSampleMode(int item)
+{
+    
+    std::string value;
+    
+    switch(item){
+        case FFT_1024:
+            value="0";
+            break;
+        case FFT_2048:
+            value="1";
+            break;
+        case FFT_4096:
+            value="2";
+            break;
+    }
+
+    struct SceneList *list;
+    RadioPtr sdr;
+    
+    list=SceneFindByNumber(glutGetWindow());
+    if(!list){
+        sdr=FindSdrRadioWindow(glutGetWindow());
+    }else{
+        sdr=(RadioPtr)FindScene(&list->scene);
+    }
+    
+    if(!sdr)return;
+    
+    SoapySDR::ArgInfo arg;
+    
+    sdr->rx->device->writeSetting("direct_samp",value);
+    
+   // sdr->rx->FFTcount=ifft;
+
+    return;
 }
 void doFFTMenu(int item)
 {

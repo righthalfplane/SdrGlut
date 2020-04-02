@@ -231,7 +231,6 @@ static int playRadio(struct playData *rx)
     }
     
     double bw=rx->device->getBandwidth(SOAPY_SDR_RX, 0);
-    
     int size=(int)(0.5+rate/10.0);
     
     rx->size=size;
@@ -1497,8 +1496,17 @@ int testRadio(struct playData *rx)
             rx->sampleRates[j]=rate[j];
         }
 
-        
-        
+
+        rx->directSampleMode=0;
+        SoapySDR::ArgInfoList args = rx->device->getSettingInfo();
+        if (args.size()) {
+            for (SoapySDR::ArgInfoList::const_iterator args_i = args.begin(); args_i != args.end(); args_i++) {
+                SoapySDR::ArgInfo arg = (*args_i);
+                //printf("key %s value %s read %s\n",arg.key.c_str(),arg.value.c_str(),rx->device->readSetting(arg.key).c_str());
+                if(arg.key == "direct_samp")rx->directSampleMode=1;
+            }
+        }
+       // printf("rx->directSampleMode %d\n",rx->directSampleMode);
 /*
  size_t length;
  rlist=rx->device->getSampleRateRange(SOAPY_SDR_RX, 0);
