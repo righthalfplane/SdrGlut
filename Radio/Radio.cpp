@@ -1075,11 +1075,14 @@ int Radio::OpenWindows(struct Scene *scene)
     glutAddMenuEntry("BLACKMANHARRIS", FILTER_BLACKMANHARRIS);
     glutAddMenuEntry("BLACKMANHARRIS7", FILTER_BLACKMANHARRIS7);
     
-    int menu62=glutCreateMenu(doDirectSampleMode);
-    glutAddMenuEntry("Off", FFT_1024);
-   // glutAddMenuEntry("?", FFT_2048);
-    glutAddMenuEntry("On", FFT_4096);
-
+    int menu62=NULL;
+    if(rx->directSampleMode){
+        menu62=glutCreateMenu(doDirectSampleMode);
+        glutAddMenuEntry("Off", FFT_1024);
+       // glutAddMenuEntry("?", FFT_2048);
+        glutAddMenuEntry("On", FFT_4096);
+    }
+    
     glutCreateMenu(menu_selectl);
     glutAddMenuEntry("Sdr Dialog...", SdrDialog);
     glutAddMenuEntry("Transmit...", SdrTransmit);
@@ -1091,7 +1094,7 @@ int Radio::OpenWindows(struct Scene *scene)
     glutAddSubMenu("Recording", menu4);
     glutAddSubMenu("FFT Size", menu5);
     glutAddSubMenu("Window Filter", menu6);
-    glutAddSubMenu("Direct Sample Mode", menu62);
+    if(rx->directSampleMode)glutAddSubMenu("Direct Sample Mode", menu62);
 
 
     glutAddMenuEntry("--------------------", -1);
