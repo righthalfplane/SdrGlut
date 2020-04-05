@@ -58,6 +58,7 @@
 		4686063A22028C1F0078D9F2 /* Radio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4686063822028C1F0078D9F2 /* Radio.cpp */; };
 		468D261C2238A04D005BE154 /* RecordIQ.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 468D261A2238A04D005BE154 /* RecordIQ.cpp */; };
 		469215B023EE7ADD009B2C34 /* librtaudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 469215AF23EE7ADD009B2C34 /* librtaudio.a */; };
+		469445EF2436E12500F049C8 /* WriteToGLUIWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 469445EE2436E12500F049C8 /* WriteToGLUIWindow.cpp */; };
 		46963ED323D789A30059B4AA /* printInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46963ED223D789A30059B4AA /* printInfo.cpp */; };
 		46B4EB1B2212570900041F98 /* cMalloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 46B4EB192212570900041F98 /* cMalloc.c */; };
 		46B4EB1C2212570900041F98 /* Utilities.c in Sources */ = {isa = PBXBuildFile; fileRef = 46B4EB1A2212570900041F98 /* Utilities.c */; };
@@ -172,6 +173,7 @@
 		468D261A2238A04D005BE154 /* RecordIQ.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RecordIQ.cpp; path = MainSource/RecordIQ.cpp; sourceTree = "<group>"; };
 		468D261B2238A04D005BE154 /* RecordIQ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RecordIQ.h; path = MainSource/RecordIQ.h; sourceTree = "<group>"; };
 		469215AF23EE7ADD009B2C34 /* librtaudio.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = librtaudio.a; sourceTree = "<group>"; };
+		469445EE2436E12500F049C8 /* WriteToGLUIWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WriteToGLUIWindow.cpp; path = MainSource/WriteToGLUIWindow.cpp; sourceTree = "<group>"; };
 		46963ED223D789A30059B4AA /* printInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = printInfo.cpp; path = MainSource/printInfo.cpp; sourceTree = "<group>"; };
 		46B4EB182212570900041F98 /* Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Utilities.h; path = MainSource/Utilities.h; sourceTree = "<group>"; };
 		46B4EB192212570900041F98 /* cMalloc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cMalloc.c; path = MainSource/cMalloc.c; sourceTree = "<group>"; };
@@ -429,6 +431,7 @@
 				46CE01A32212597700140F6C /* SceneList.h */,
 				46B4EB1A2212570900041F98 /* Utilities.c */,
 				46B4EB182212570900041F98 /* Utilities.h */,
+				469445EE2436E12500F049C8 /* WriteToGLUIWindow.cpp */,
 			);
 			name = MainSource;
 			sourceTree = "<group>";
@@ -521,6 +524,7 @@
 				46CE01AC22125C8400140F6C /* FFT2.c in Sources */,
 				467FE40B1C2C4F9B007D260F /* glui_panel.cpp in Sources */,
 				467FE3FC1C2C4F9B007D260F /* algebra3.cpp in Sources */,
+				469445EF2436E12500F049C8 /* WriteToGLUIWindow.cpp in Sources */,
 				46E13AD11C2C48AF007FF424 /* main.cpp in Sources */,
 				467FE3FD1C2C4F9B007D260F /* glui_add_controls.cpp in Sources */,
 				467FE40E1C2C4F9B007D260F /* glui_rotation.cpp in Sources */,

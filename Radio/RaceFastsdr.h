@@ -192,6 +192,7 @@ struct playData{
     size_t sampleRatesCount;
     
     int directSampleMode;
+    std::string biasMode;
 
     int getRadioAttributes;
     

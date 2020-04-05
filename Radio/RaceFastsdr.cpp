@@ -1498,15 +1498,19 @@ int testRadio(struct playData *rx)
 
 
         rx->directSampleMode=0;
+        rx->biasMode="";
         SoapySDR::ArgInfoList args = rx->device->getSettingInfo();
         if (args.size()) {
             for (SoapySDR::ArgInfoList::const_iterator args_i = args.begin(); args_i != args.end(); args_i++) {
                 SoapySDR::ArgInfo arg = (*args_i);
                 printf("key %s value %s read %s\n",arg.key.c_str(),arg.value.c_str(),rx->device->readSetting(arg.key).c_str());
                 if(arg.key == "direct_samp")rx->directSampleMode=1;
+                if(arg.key == "bias_tx")rx->biasMode=arg.key;
+                if(arg.key == "biasT_ctrl")rx->biasMode=arg.key;
             }
         }
-       // printf("rx->directSampleMode %d\n",rx->directSampleMode);
+        printf("rx->biasMode %s\n",rx->biasMode.c_str());
+        // printf("rx->directSampleMode %d\n",rx->directSampleMode);
 /*
  size_t length;
  rlist=rx->device->getSampleRateRange(SOAPY_SDR_RX, 0);

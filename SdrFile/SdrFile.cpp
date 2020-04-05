@@ -267,7 +267,6 @@ int SdrFile::LoadFile(struct Scene *scene,char *filename, int fileType)
         }
         
         play.f=play.fc;
-        play.f=162.4e6;
 
         printf("play.fc %.0f play.samplerate %.0f\n",play.fc,play.samplerate);
         

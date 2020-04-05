@@ -234,7 +234,7 @@ void WarningPrint(const char *fmt, ...)
 	}
     va_end(arg);
 	
-	/* if(!WriteToGLUIWindow(buff))return; */
+	if(!WriteToGLUIWindow(buff))return;
 	
 	WarningBatch((char *)buff);
 

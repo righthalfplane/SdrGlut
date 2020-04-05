@@ -90,6 +90,7 @@ static char ssamplerate[255]="2";
 
 void doFFTMenu(int item);
 void doDirectSampleMode(int item);
+void doBiasMode(int item);
 void doFilterMenu(int item);
 
 Radio::Radio(struct Scene *scene): CWindow(scene)
@@ -1075,11 +1076,20 @@ int Radio::OpenWindows(struct Scene *scene)
     glutAddMenuEntry("BLACKMANHARRIS", FILTER_BLACKMANHARRIS);
     glutAddMenuEntry("BLACKMANHARRIS7", FILTER_BLACKMANHARRIS7);
     
-    int menu62=NULL;
+    int menu62=-1;
     if(rx->directSampleMode){
         menu62=glutCreateMenu(doDirectSampleMode);
         glutAddMenuEntry("Off", FFT_1024);
        // glutAddMenuEntry("?", FFT_2048);
+        glutAddMenuEntry("On", FFT_4096);
+    }
+ 
+    int menu63=-1;
+
+    if(rx->biasMode!= ""){
+        menu63=glutCreateMenu(doBiasMode);
+        glutAddMenuEntry("Off", FFT_1024);
+        // glutAddMenuEntry("?", FFT_2048);
         glutAddMenuEntry("On", FFT_4096);
     }
     
@@ -1095,6 +1105,7 @@ int Radio::OpenWindows(struct Scene *scene)
     glutAddSubMenu("FFT Size", menu5);
     glutAddSubMenu("Window Filter", menu6);
     if(rx->directSampleMode)glutAddSubMenu("Direct Sample Mode", menu62);
+    if(rx->biasMode!= "")glutAddSubMenu("Voltage Bias", menu63);
 
 
     glutAddMenuEntry("--------------------", -1);
@@ -1357,6 +1368,44 @@ void doFilterMenu(int item)
     sdr->rx->FFTfilter=ifft;
 
 }
+
+
+
+void doBiasMode(int item)
+{
+    
+    std::string value;
+    
+    switch(item){
+        case FFT_1024:
+            value="false";
+            break;
+        case FFT_4096:
+            value="true";
+            break;
+    }
+    
+    struct SceneList *list;
+    RadioPtr sdr;
+    
+    list=SceneFindByNumber(glutGetWindow());
+    if(!list){
+        sdr=FindSdrRadioWindow(glutGetWindow());
+    }else{
+        sdr=(RadioPtr)FindScene(&list->scene);
+    }
+    
+    if(!sdr)return;
+    
+    SoapySDR::ArgInfo arg;
+    
+    sdr->rx->device->writeSetting(sdr->rx->biasMode,value);
+    
+    // sdr->rx->FFTcount=ifft;
+    
+    return;
+}
+
 void doDirectSampleMode(int item)
 {
     
