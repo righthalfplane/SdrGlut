@@ -456,6 +456,9 @@
       <Filter>MainSource</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\Transmit.cpp" />
+    <ClCompile Include="..\MainSource\WriteToGLUIWindow.cpp">
+      <Filter>MainSource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SdrGlut.rc" />

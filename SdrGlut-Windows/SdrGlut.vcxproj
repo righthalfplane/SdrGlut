@@ -368,6 +368,7 @@
     <ClCompile Include="..\CExpress\FFT2.c" />
     <ClCompile Include="..\CExpress\Utilities2.c" />
     <ClCompile Include="..\DrawFindPointHistory\GridPlot.c" />
+    <ClCompile Include="..\MainSource\WriteToGLUIWindow.cpp" />
     <ClCompile Include="..\Radio\DialogRadio.cpp" />
     <ClCompile Include="..\Radio\RaceFastsdr.cpp" />
     <ClCompile Include="..\Radio\Radio.cpp" />
