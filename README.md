@@ -8,6 +8,9 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.12
 
 # Movies
 
+Installing  gnss-sdr a software radio for processing satellite signal data
+https://youtu.be/qfOcMfVFw3k
+
 SdrGlut uses SoapyRemote to play a remote Software Defined Radio
 https://youtu.be/Z6yNH2zKDRo
 
