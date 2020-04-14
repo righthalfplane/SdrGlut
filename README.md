@@ -8,6 +8,9 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.12
 
 # Movies
 
+DISCON the Ultimate computer system of 1982
+https://youtu.be/a3yK93VcKm4
+
 SdrGlut captures GPS data for playback and analysis.
 https://youtu.be/gAJw4ciOgQY
 
