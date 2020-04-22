@@ -519,12 +519,47 @@ int Radio::BackGroundEvents(struct Scene *scene)
     
     return 0;
 }
+int Radio::sendMessage(char *m1,char *m2,int type)
+{
+    char *Mode_Names[] = {(char *)"FM",(char *)"NBFM",(char *)"AM",(char *)"NAM",(char *)"USB",(char *)"LSB",(char *)"CW"};
+
+    if(type == M_SEND){
+       // fprintf(stderr,"Radio m1 %s m2 %s type %d\n",m1,m2,type);
+        for(unsigned int k=0;k<sizeof(Mode_Names)/sizeof(char *);++k){
+            if(!strcmp(m2,Mode_Names[k]))type=k;
+        }
+        
+        double ff=atof(m1)*1e6;
+        
+        //fprintf(stderr,"f %g mode %s\n",ff,Mode_Names[type]);
+        
+        if(type != rx->decodemode){
+            //fprintf(stderr,"type = %d\n",type);
+            glutSetWindow(window1);
+            setMode(type);
+        }
+        
+        rx->f=ff;
+        rx->fc=ff+6000;
+
+        setFrequency(rx);
+        
+    }
+    
+    return 0;
+}
+
 int Radio::SetFrequency(struct Scene *scene,double f,double bw, int message)
 {
-    
+    char *Mode_Names[] = {(char *)"FM",(char *)"NBFM",(char *)"AM",(char *)"NAM",(char *)"USB",(char *)"LSB",(char *)"CW"};
+
+    static int count;
     
     if(message == M_MUTE){
         rx->mute = !rx->mute;
+        return 0;
+    }else if(message == M_SAVE){
+        WarningPrint("F%d,%0.4f,%s\n",count++,rx->f/1e6,Mode_Names[rx->decodemode]);
         return 0;
     } else if(message == M_FREQUENCY){
         
@@ -1268,6 +1303,8 @@ void setMode(int item)
     struct SceneList *list;
     RadioPtr sdr;
     
+    //fprintf(stderr,"1 setMode %d\n",item);
+    
     list=SceneFindByNumber(glutGetWindow());
     if(!list){
         sdr=FindSdrRadioWindow(glutGetWindow());
@@ -1277,6 +1314,8 @@ void setMode(int item)
     
     if(!sdr)return;
     
+    //fprintf(stderr,"2 setMode %d\n",item);
+
     sdr->lines->wShift = 0;
     sdr->lines2->wShift = 0;
     sdr->rx->wShift = 0;

@@ -34,7 +34,7 @@ static void control_cb(int control);
 
 static void control_cb2(int control);
 
-char *ProgramVersion=(char *)"SdrGlut-534";
+char *ProgramVersion=(char *)"SdrGlut-537";
 
 extern "C" struct Scene *sceneRoot(void);
 
@@ -204,7 +204,7 @@ int dialogStart(void)
 			
     new GLUI_Button(glui, "Close", 3, control_cb);
     
-    new GLUI_Button(glui, "SdrFile", 5, control_cb);
+    new GLUI_Button(glui, "Files", 5, control_cb);
 
     new GLUI_Button(glui, "Radio", 8, control_cb);
 

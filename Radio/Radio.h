@@ -231,6 +231,7 @@ public:
     virtual int LoadFile (struct Scene *scene,char *name, int fileType);
     virtual int BackGroundEvents(struct Scene *scene);
     virtual int UpdateTemperatureColors(struct Scene *scene);
+    virtual int sendMessage(char *m1,char *m2,int type);
     virtual int SetFrequency(struct Scene *scene,double f,double bw,int messageType);
     int SetWindow(struct Scene *scene);
     int mMenuSelectl(struct Scene *scene,int item);

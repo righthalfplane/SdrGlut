@@ -15,6 +15,8 @@
 /* #define EXTERN  */
 
 #include "BackgroundQ.h"
+#include "LoadFiles.h"
+#include "CWindow.h"
 
 #include <GL/glui.h>
 
@@ -31,6 +33,52 @@ static void textbox_cb(GLUI_Control *control) {
 
 static int SetInsertQ(struct QStruct *q);
 
+
+int doFrequnecyFile(char *name);
+
+int doFrequnecyFile(char *path)
+{
+    char buff[5120],word[20000];
+    FILE *inout;
+    int n,m,k,itWas,c;
+
+    if(!path)return 1;
+    
+    if((inout=fopen(path,"rb")) == NULL){
+        sprintf(buff,"doFrequnecyFile Cannot open file : %s to read%c\n",path,0);
+        fprintf(stderr,"%s",buff);
+        return 1;
+    }
+
+    itWas = -7777;
+    k=0;
+    while((m=(int)fread(buff,1,5120,inout)) > 0){
+        for(n=0;n<m;++n){
+            c=buff[n];
+            if(c == '\n' || c == '\r' || (k >= 19998)){
+                if((c == '\n') && (itWas == '\r')){
+                    continue;
+                }
+                word[k++]='\n';
+                word[k++]='\0';
+                WriteToGLUIWindow(word);
+                k=0;
+            }else{
+                word[k++]=buff[n];
+            }
+            itWas = c;
+        }
+    }
+    if(k != 0){
+        word[k++]='\n';
+        word[k++]='\0';
+        WriteToGLUIWindow(word);
+    }
+
+    if(inout)fclose(inout);
+    
+    return 0;
+}
 static void SaveIt(struct Scene *scene,char *name)
 {
 	FILE *out;
@@ -70,7 +118,42 @@ static void menu_select(int item)
 		moo=NULL;
 		
 		gluiID = -1;
-	}
+    }else if(item == 31){
+        char buff[256];
+        int n;
+        glui = GLUI_Master.find_glui_by_window_id(gluiID);
+        
+        const char *test=moo->get_text();
+        
+        int start=moo->sel_start;
+        int end=moo->sel_end;
+        if(start > end){
+            n=start;
+            start=end;
+            end=n;
+        }
+        n=0;
+        for(int k=start;k<end;++k){
+            buff[n++]=test[k];
+            if(n > 254)break;
+        }
+        buff[n++]=0;
+        int n1=-1;
+        int n2=0;
+        for(int k=0;k<n;++k){
+            if(n1 == -1 && buff[k] == ','){
+                n1=k+1;
+            }else if(n1 > -1 && buff[k] == ','){
+                buff[k]=0;
+                n2=k+1;
+                break;
+          }
+        }
+
+       // fprintf(stderr,"%d %d buff %s\n",moo->sel_start,moo->sel_end,buff);
+        
+        sendMessageGlobal(&buff[n1],&buff[n2],M_SEND);
+    }
 }
 
 int WriteToGLUIWindow(char *message)
@@ -101,9 +184,11 @@ int WriteToGLUIWindow(char *message)
 		
 		glutCreateMenu(menu_select);
 		
-		glutAddMenuEntry("Save", 32);
-		glutAddMenuEntry("Close", 33);
-		
+        glutAddMenuEntry("Set Frequency", 31);
+        glutAddMenuEntry("Save", 32);
+        glutAddMenuEntry("-------------", 34);
+        glutAddMenuEntry("Close", 33);
+
 		glutAttachMenu(GLUT_RIGHT_BUTTON);
 		
 		glutSetWindow(window);

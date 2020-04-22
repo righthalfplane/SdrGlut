@@ -55,6 +55,7 @@ extern      "C"
 	int ReLoadFile(struct Scene *scene,int flag);
 	int GetTemperatures (struct Scene *scene,double *min, double *max);
 	int UpdateTemperatureColors(struct Scene *scene);
+    int sendMessageGlobal(char *m1,char *m2,int type);
 
 #if defined c_plusplus || defined __cplusplus
 }

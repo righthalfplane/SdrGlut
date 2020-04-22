@@ -96,6 +96,10 @@ int CWindow::UpdateTemperatureColors(struct Scene *scene)
 {
 	return 0;
 }
+int CWindow::sendMessage(char *m1,char *m2,int type)
+{
+    return 0;
+}
 int CWindow::ReDrawScene(struct Scene *scene)
 {
 	return 0;
@@ -279,6 +283,22 @@ int UpdateTemperatureColors(struct Scene *scene)
 	return 1;
 }
 
+int sendMessageGlobal(char *m1,char *m2,int type)
+{
+    CWinPtr w;
+    
+//    fprintf(stderr,"sendMessageGlobal m1 %s m2 %s type %d Root %p\n",m1,m2,type,Root);
+
+    if(!Root)return NULL;
+    
+
+    w=Root;
+    while(w){
+        w->sendMessage(m1, m2, type);
+        w=w->CNext;
+    }
+    return 0;
+}
 CWinPtr FindScene(struct Scene *scene)
 {
 	CWinPtr w;

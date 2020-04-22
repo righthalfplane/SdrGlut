@@ -12,6 +12,8 @@
 #define M_FREQUENCY             0
 #define M_FREQUENCY_BANDWIDTH   1
 #define M_MUTE                  2
+#define M_SAVE                  3
+#define M_SEND                  4
 
 class CWindow{
 public:	
@@ -26,6 +28,8 @@ public:
 	virtual int LoadFile (struct Scene *scene,char *name, int fileType);
 	virtual int Keys(struct Scene *scene,unsigned int key, int x, int y);
 	virtual int SelectionBoxUpdate(struct Scene *scene,int flag);
+
+    virtual int sendMessage(char *m1,char *m2,int type);
 
 	int New();
 	virtual ~CWindow();

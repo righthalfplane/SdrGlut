@@ -42,6 +42,8 @@ extern "C" int SaveFluencePath(struct Scene *scene,char *path);
 
 int doSdrFileOpen(char *name);
 
+int doFrequnecyFile(char *name);
+
 int dialogFileOpen(struct Scene *scene)
 {
 
@@ -80,7 +82,7 @@ int dialogFileOpen(struct Scene *scene)
     
     glui->add_radiobutton_to_group( group1, "FileType SDR File" );
     
-    // glui->add_radiobutton_to_group( group1, "FileType Images" );
+    glui->add_radiobutton_to_group( group1, "FileType Frequency File" );
 
 	GLUI_Button *b=new GLUI_Button(glui, "Open", 3, control_cb); 
 	b->set_w(120);
@@ -126,12 +128,17 @@ static void control_cb(int control)
 		//LoadFiles (sceneLocal,(char *)file_name.c_str(),type+1);
         
         // fprintf(stderr,"Name %s %p len %lu\n",(char *)file_name.c_str(),file_name.c_str(),strlen((char *)file_name.c_str()));
-		int glu = glutGetWindow();
+        
+        
+        if(type == 0){
+		  int glu = glutGetWindow();
 
-        doSdrFileOpen((char *)file_name.c_str());
+          doSdrFileOpen((char *)file_name.c_str());
 
-		glutSetWindow(glu);
-
+		  glutSetWindow(glu);
+        }else if(type == 1){
+            doFrequnecyFile((char *)file_name.c_str());
+        }
         glui->close();
 		glui=NULL;
 	}
