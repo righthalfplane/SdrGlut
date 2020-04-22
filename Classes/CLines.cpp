@@ -407,6 +407,8 @@ static void keys2(unsigned char key, int x, int y)
     
     if(key == 'm'){
         SetFrequencyGlobal(l->sceneSource,l->Frequency,l->BandWidth,M_MUTE);
+    }else if(key == 's'){
+        ;
     }
    // fprintf(stderr,"Clines keys - key %d key %c lines %p\n",key,key,l);
     

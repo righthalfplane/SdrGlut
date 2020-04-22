@@ -1607,8 +1607,11 @@ int Radio::mMenuSelectl(struct Scene *scene,int item)
 }
 static void keys2(unsigned char key, int x, int y)
 {
+    char *Mode_Names[] = {(char *)"FM",(char *)"NBFM",(char *)"AM",(char *)"NAM",(char *)"USB",(char *)"LSB",(char *)"CW"};
+
     struct SceneList *list;
     RadioPtr sdr;
+    static int count=0;
     
     list=SceneFindByNumber(glutGetWindow());
     if(!list){
@@ -1620,6 +1623,8 @@ static void keys2(unsigned char key, int x, int y)
     if(sdr){
         if(key == 'm'){
            sdr->rx->mute = !sdr->rx->mute;
+        }else if(key == 's'){
+            WarningPrint("F%d,%0.4f,%s\n",count++,sdr->rx->f/1e6,Mode_Names[sdr->rx->decodemode]);
         }
     }
     

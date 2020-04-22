@@ -288,6 +288,7 @@ static int StartIt(struct playData *rx)
 {
     ALenum error;
     
+    //double start=rtime();
     
     for(int i=0;i<3;){
         int ibuff;
@@ -299,6 +300,11 @@ static int StartIt(struct playData *rx)
             }
         }
     }
+    //double end=rtime();
+    
+    //fprintf(stderr,"time = %g\n",end-start);
+
+   // exit(0);
     
     alSourcePlay(rx->source);
     if ((error = alGetError()) != AL_NO_ERROR)

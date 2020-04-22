@@ -56,6 +56,7 @@
 #define MODE_LSB  5
 #define MODE_CW   6
 
+
 #define FILTER_RECTANGULAR     0
 #define FILTER_HANN            1
 #define FILTER_HAMMING         2
