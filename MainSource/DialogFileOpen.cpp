@@ -22,7 +22,7 @@ static GLUI_FileBrowser *fb;
 
 static GLUI *glui;
 
-static int type;
+static int type=0;
 
 static int boxSelection;
 
@@ -72,7 +72,7 @@ int dialogFileOpen(struct Scene *scene)
 	
 	glui->add_column(true);
 	
-	type=0; /* For the distribution vesion */
+	// type=0; /* For the distribution vesion */
 	
 
 	obj_panel =  glui->add_panel( "Options" );

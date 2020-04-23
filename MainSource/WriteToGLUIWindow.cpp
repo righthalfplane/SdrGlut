@@ -101,16 +101,35 @@ static void SaveIt(struct Scene *scene,char *name)
 }
 static void menu_select(int item)
 {
+    static char buff[4096];
 	GLUI *glui;
+    int n;
+
 	if(item == 32){
-			
 		dialogSaveC(NULL,SaveIt,3,NULL);
-	
 		return;
-		
-	}if(item == 33){
-		glui = GLUI_Master.find_glui_by_window_id(gluiID);
-		
+    }else if(item == 35){
+        const char *test=moo->get_text();
+        int start=moo->sel_start;
+        int end=moo->sel_end;
+        if(start > end){
+            n=start;
+            start=end;
+            end=n;
+        }
+        n=0;
+        for(int k=start;k<end;++k){
+            buff[n++]=test[k];
+            if(n > 4094)break;
+        }
+        buff[n++]=0;
+    }else if(item == 36){
+        moo->text.insert(moo->insertion_pt,buff);
+        moo->insertion_pt += strlen(buff);
+      //  fprintf(stderr,"point %d buff %s\n",moo->insertion_pt,buff);
+    }else if(item == 33){
+        glui = GLUI_Master.find_glui_by_window_id(gluiID);
+
 		if(glui){
 			glui->close();
 		}
@@ -119,9 +138,7 @@ static void menu_select(int item)
 		
 		gluiID = -1;
     }else if(item == 31){
-        char buff[256];
         int n;
-        glui = GLUI_Master.find_glui_by_window_id(gluiID);
         
         const char *test=moo->get_text();
         
@@ -139,16 +156,20 @@ static void menu_select(int item)
         }
         buff[n++]=0;
         int n1=-1;
-        int n2=0;
+        int n2=-1;
         for(int k=0;k<n;++k){
             if(n1 == -1 && buff[k] == ','){
                 n1=k+1;
-            }else if(n1 > -1 && buff[k] == ','){
+            }else if(n1 > -1 && n2 == -1 && buff[k] == ','){
                 buff[k]=0;
                 n2=k+1;
-                break;
-          }
+            } else if(buff[k] == ','){
+                buff[k]=0;
+            }
+          
         }
+        
+        if(n1 == -1 || n2 == -1)return;
 
        // fprintf(stderr,"%d %d buff %s\n",moo->sel_start,moo->sel_end,buff);
         
@@ -185,6 +206,8 @@ int WriteToGLUIWindow(char *message)
 		glutCreateMenu(menu_select);
 		
         glutAddMenuEntry("Set Frequency", 31);
+        glutAddMenuEntry("Copy", 35);
+        glutAddMenuEntry("Paste", 36);
         glutAddMenuEntry("Save", 32);
         glutAddMenuEntry("-------------", 34);
         glutAddMenuEntry("Close", 33);
@@ -194,7 +217,16 @@ int WriteToGLUIWindow(char *message)
 		glutSetWindow(window);
 
 	}else{
-		if(moo)moo->append_text(message);
+        if(moo){
+            fprintf(stderr,"point %d\n",moo->insertion_pt);
+            if(moo->insertion_pt == -1){
+                moo->append_text(message);
+            }else{
+                moo->text.insert(moo->insertion_pt,message);
+                moo->insertion_pt += strlen(message);
+            }
+        }
+        //if(moo)moo->text.insert(moo->insertion_pt,message);
 		/* qBackground(NULL,(int (*)(void *))SetInsertQ); */
 
 	}
