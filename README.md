@@ -1,288 +1,130 @@
 # SdrGult
+
 SdrGlut is a simple software defined radio player. Using glut for drawing and glui for its dialogs makes it tiny compared to programs that use QT5 or wxWidgets. SdrGlut uses liquid-sdr and SoapySDR to preform the SDR calculations. The audio is handled by OpenAL and RtAudio.
 
-The Twelfth Release is now avaliable. It adds Voltage bias for powered antennas and Direct Sample Mode for RTL devices. It adds a window that can use the transmit capable SDRs to send AM, NBFM, USB, and LSB. It has a prebuild exe for macOS, a zipped folder for Windows and a zipped folder for Ubuntu 18.04 to unpack and run from 
-
+The Twelfth release is now avaliable. It adds Voltage bias for powered antennas and Direct Sample Mode for RTL devices. It adds a window that can use the transmit capable SDRs to send AM, NBFM, USB, and LSB. It has a prebuild exe for macOS, a zipped folder for Windows and a zipped folder for Ubuntu 18.04 to unpack and run from 
 
 https://github.com/righthalfplane/SdrGlut/releases/tag/v1.12
 
-# Movies
+## Demo videos
 
-SdrGlut Looks at signals around 450MHZ - What Are They ?
-https://youtu.be/zt7G_6yNRcE
-
-DISCON the Ultimate computer system of 1982
-https://youtu.be/a3yK93VcKm4
-
-SdrGlut captures GPS data for playback and analysis.
-https://youtu.be/gAJw4ciOgQY
-
-Installing  gnss-sdr a software radio for processing satellite signal data
-https://youtu.be/qfOcMfVFw3k
-
-SdrGlut uses SoapyRemote to play a remote Software Defined Radio
-https://youtu.be/Z6yNH2zKDRo
-
-Viewing Over-The-Air Digital Broadcasts with a Digital Converter Box
-https://youtu.be/ZJWdiFJ4HQ4
-
-Using SdrGlut to capture local TV stations with a SdrPlay RSP2
-https://youtu.be/HwxXSgmRJbI
-
-Using SdrGlut to capture local TV stations with a LimeSDR Mini
-https://youtu.be/x3yyEteT6qY
-
-Using gnuradio-companion to capture over the air ATSC video with the LimeSDR Mini
-https://youtu.be/guPmP1VPqKk
-
-Using gnuradio-companion to capture over the air ATSC video
-https://youtu.be/jQGk9dORKrc
-
-Using a LimeSDR Mini as a signal source with SdrGlut
-https://youtu.be/0jWvTtuV94Y
-
-HackRf One vs. a Sdrplay RSP2 using SdrGlut at CB Frequencies
-https://youtu.be/0dzZtHT1u2M
-
-Using a HackRF One as a signal source.
-https://youtu.be/17qGxFdgvMY
-
-How to Install RtAudio on MacOS
-https://youtu.be/HlnC5K5qQ98
-
-How to install RtAudio on Windows 10
-https://youtu.be/DyYIKiu2zVI
-
-Installing RtAudio on Ubuntu18.04
-https://youtu.be/mOGWG1K52wA
-
-SdrGlut exploring Single Side Band on 80 meters
-https://youtu.be/Up48SK5BGSw
-
-Cobra 148 GTL ST AM vs USB at CB frequencies
-https://youtu.be/40ih6kHTxSA
-
-SDRPlay RSP2 vs Grundig Satellit-750 at CB Frequencies
-https://youtu.be/s3AlTwK_APg
-
-SRPlay RSP2 vs Realistic DX-440 at CB Frequencies
-https://youtu.be/36ug6qZUKBI
-
-SdrGlut - The New Capabilities of Version 8
-https://youtu.be/Vet6VFHjQ2E
+- [SdrGlut Looks at signals around 450MHZ - What Are They ?](https://youtu.be/zt7G_6yNRcE)
+- [DISCON the Ultimate computer system of 1982](https://youtu.be/a3yK93VcKm4)
+- [SdrGlut captures GPS data for playback and analysis.](https://youtu.be/gAJw4ciOgQY)
+- [Installing  gnss-sdr a software radio for processing satellite signal data](https://youtu.be/qfOcMfVFw3k)
+- [SdrGlut uses SoapyRemote to play a remote Software Defined Radio](https://youtu.be/Z6yNH2zKDRo)
+- [Viewing Over-The-Air Digital Broadcasts with a Digital Converter Box](https://youtu.be/ZJWdiFJ4HQ4)
+- [Using SdrGlut to capture local TV stations with a SdrPlay RSP2](https://youtu.be/HwxXSgmRJbI)
+- [Using SdrGlut to capture local TV stations with a LimeSDR Mini](https://youtu.be/x3yyEteT6qY)
+- [Using gnuradio-companion to capture over the air ATSC video with the LimeSDR Mini](https://youtu.be/guPmP1VPqKk)
+- [Using gnuradio-companion to capture over the air ATSC video](https://youtu.be/jQGk9dORKrc)
+- [Using a LimeSDR Mini as a signal source with SdrGlut](https://youtu.be/0jWvTtuV94Y)
+- [HackRf One vs. a Sdrplay RSP2 using SdrGlut at CB Frequencies](https://youtu.be/0dzZtHT1u2M)
+- [Using a HackRF One as a signal source.](https://youtu.be/17qGxFdgvMY)
+- [How to Install RtAudio on MacOS](https://youtu.be/HlnC5K5qQ98)
+- [How to install RtAudio on Windows 10](https://youtu.be/DyYIKiu2zVI)
+- [Installing RtAudio on Ubuntu18.04](https://youtu.be/mOGWG1K52wA)
+- [SdrGlut exploring Single Side Band on 80 meters](https://youtu.be/Up48SK5BGSw)
+- [Cobra 148 GTL ST AM vs USB at CB frequencies](https://youtu.be/40ih6kHTxSA)
+- [SDRPlay RSP2 vs Grundig Satellit-750 at CB Frequencies](https://youtu.be/s3AlTwK_APg)
+- [SRPlay RSP2 vs Realistic DX-440 at CB Frequencies](https://youtu.be/36ug6qZUKBI)
+- [SdrGlut - The New Capabilities of Version 8](https://youtu.be/Vet6VFHjQ2E)
+- [SdrPlay RSP2 vs Grundig G6 Aviator at CB frequencies](https://youtu.be/bUyQk_1ANHo)
+- [SdrGlut views CW signals on 80 meters](https://youtu.be/-WTC74p6WtY)
+- [SdrGlut a Software Defined Radio player - Test drive #1](https://www.youtube.com/watch?v=zxgcRjTahcA)
+- [SdrGlut a Software Defined Radio controller - Test drive #2](https://youtu.be/VRcvR2V-WFU)
+- [SdrGlut a Software Defined Radio controller - Test drive #3](https://youtu.be/K3jH6BMdKkQ)
+- [SdrPlay RSP2 vs NetSDR+ using SdrGlut Part 1. ](https://youtu.be/LdIaFVuAICw)
+- [SdrPlay RSP2 vs NetSDR+ using SdrGlut Part 2. ](https://youtu.be/1QJromJ76Lo)
+- [SdrPlay RSP2 vs NetSDR+ using SdrGlut Part 3. ](https://youtu.be/NXLYYvLQN_k)
+- [LimeSDR Mini using SdrGlut on Several Systems](https://youtu.be/yhxqu5VcO3w)
+- [LimeSDR Mini using CubicSDR 0.2.5 on Several Systems](https://youtu.be/zCTIK82YW9w)
+- [A Power Meter for CubicSDR 0.2.5](https://youtu.be/07vbIeXHukI)
+- [SDRPlay RSP2 vs NetSDR+ at CB frequencies](https://youtu.be/BpmVxCTGsQQ)
+- [Gqrx vs SdrGlut at CB frequencies](https://youtu.be/P7zBRdvK6Jg)
+- [Gqrx vs SdrGlut at FRS frequencies](https://youtu.be/g_v3TBrCw4o)
+- [Alinco DX-R8 vs a NetSDR+ using SdrGlut at CB frequencies](https://youtu.be/AxeiXFVd1x0)
+- [Icom IC-R75 vs a NetSDR+ using SdrGlut at CB frequencies](https://youtu.be/bPzqTMoz9vc)
+- [Icom IC-R20 vs a NetSDR+ using SdrGlut at CB frequencies](https://youtu.be/lAphTfKnU6M)
+- [Icom IC-R30 vs a Icom IC-R20 at FRS frequencies](https://youtu.be/_ANaNVrqPz8)
+- [Icom IC-R30 vs a NetSDR+ using SdrGlut at CB Frequencies](https://youtu.be/J4iJYugcG_Q)
+- [Icom IC-R8600 vs a NetSDR+ using SdrGlut at CB Frequencies](https://youtu.be/rl7geOwf7Oc)
+- [Icom IC-R30 vs a Icom IC-R8600 at FRS frequencies](https://youtu.be/nJeMPKXaWy4)
+- [Icom IC-R8600 vs a SDRPlay RSP1 using SdrGlut at CB Frequencies](https://youtu.be/YfC5wsm0xyk)
+- [Icom IC-R8600 vs a SDRPlay RSP1 using SdrGlut at FRS frequencies](https://youtu.be/fDBAtwQ26GQ)
+- [Icom IC-R20 vs a SDRPlay RSP1 using SdrGlut at Family Radio Service frequencies](https://youtu.be/_SXy9OXZxAM)
+- [Icom IC-R30 vs a SDRPlay RSP1 using SdrGlut at Family Radio Service frequencies](https://youtu.be/mEg04f57UGc)
+- [NetSDR+ vs a HackRF One using SdrGlut at FRS frequencies](https://www.youtube.com/watch?v=5ubHUx9Naio)
+- [LimeSDR Mini vs a HackRF One using SdrGlut at FRS frequencies](https://youtu.be/1EQcBYiyWAA)
+- [Cobra 38 WXST testing an inverted T antenna using SdrGlut](https://www.youtube.com/watch?v=s-Rg2XC7bUY)
+- [SDRPlay RSP2 vs a HackRF One using SdrGlut at FRS frequencies](https://www.youtube.com/watch?v=42uEKTncpbQ)
+- [Corbra 38WXST vs Radio Shack TRC-236](https://www.youtube.com/watch?v=O9MQbf1ArQk)
+- [Corbra 38WXST using three different antennas](https://www.youtube.com/watch?v=JDmxGQFwX-Y)
+- [SdrGlut Simultaneously Running Five SDRs](https://www.youtube.com/watch?v=BmUNrAn1Llk)
+- [Raspberry PI 4 using SdrGlut to control the NetSDR](https://www.youtube.com/watch?v=jV-LxQS_acY)
+- [SdrGlut vs CubicSDR on the Raspberry pi 4 with a Lime Mini SDR](https://www.youtube.com/watch?v=C18bGxbXNsA)
+- [SdrPlay RSP2 vs a simple RTL stick using SdrGlut at FRS frequencies](https://www.youtube.com/watch?v=eiuTO5yIR7w)
+- [SdrPlay RSP2 vs a LimeSDR Mini using SdrGlut at FRS frequencies](https://www.youtube.com/watch?v=PEfrJ4ZuN9g)
+- [Lime Mini vs a RTL stick using SdrGlut at FRS frequencies](https://www.youtube.com/watch?v=pDqNCe6GxnA)
 
 
-SdrPlay RSP2 vs Grundig G6 Aviator at CB frequencies
-https://youtu.be/bUyQk_1ANHo
-
-SdrGlut views CW signals on 80 meters
-https://youtu.be/-WTC74p6WtY
-
-SdrGlut a Software Defined Radio player - Test drive #1
-https://www.youtube.com/watch?v=zxgcRjTahcA
-
-SdrGlut a Software Defined Radio controller - Test drive #2
-https://youtu.be/VRcvR2V-WFU
-
-SdrGlut a Software Defined Radio controller - Test drive #3
-https://youtu.be/K3jH6BMdKkQ
-
-SdrPlay RSP2 vs NetSDR+ using SdrGlut Part 1. 
-https://youtu.be/LdIaFVuAICw
-
-SdrPlay RSP2 vs NetSDR+ using SdrGlut Part 2. 
-https://youtu.be/1QJromJ76Lo
-
-SdrPlay RSP2 vs NetSDR+ using SdrGlut Part 3. 
-https://youtu.be/NXLYYvLQN_k
-
-LimeSDR Mini using SdrGlut on Several Systems
-https://youtu.be/yhxqu5VcO3w
-
-LimeSDR Mini using CubicSDR 0.2.5 on Several Systems
-https://youtu.be/zCTIK82YW9w
-
-
-A Power Meter for CubicSDR 0.2.5
-https://youtu.be/07vbIeXHukI
-
-SDRPlay RSP2 vs NetSDR+ at CB frequencies
-https://youtu.be/BpmVxCTGsQQ
-
-Gqrx vs SdrGlut at CB frequencies
-https://youtu.be/P7zBRdvK6Jg
-
-Gqrx vs SdrGlut at FRS frequencies
-https://youtu.be/g_v3TBrCw4o
-
-Alinco DX-R8 vs a NetSDR+ using SdrGlut at CB frequencies
-https://youtu.be/AxeiXFVd1x0
-
-Icom IC-R75 vs a NetSDR+ using SdrGlut at CB frequencies
-https://youtu.be/bPzqTMoz9vc
-
-Icom IC-R20 vs a NetSDR+ using SdrGlut at CB frequencies
-https://youtu.be/lAphTfKnU6M
-
-Icom IC-R30 vs a Icom IC-R20 at FRS frequencies
-https://youtu.be/_ANaNVrqPz8
-
-Icom IC-R30 vs a NetSDR+ using SdrGlut at CB Frequencies
-https://youtu.be/J4iJYugcG_Q
-
-Icom IC-R8600 vs a NetSDR+ using SdrGlut at CB Frequencies
-https://youtu.be/rl7geOwf7Oc
-
-Icom IC-R30 vs a Icom IC-R8600 at FRS frequencies
-https://youtu.be/nJeMPKXaWy4
-
-Icom IC-R8600 vs a SDRPlay RSP1 using SdrGlut at CB Frequencies
-https://youtu.be/YfC5wsm0xyk
-
-Icom IC-R8600 vs a SDRPlay RSP1 using SdrGlut at FRS frequencies
-https://youtu.be/fDBAtwQ26GQ
-
-Icom IC-R20 vs a SDRPlay RSP1 using SdrGlut at Family Radio Service frequencies
-https://youtu.be/_SXy9OXZxAM
-
-Icom IC-R30 vs a SDRPlay RSP1 using SdrGlut at Family Radio Service frequencies
-https://youtu.be/mEg04f57UGc
-
-NetSDR+ vs a HackRF One using SdrGlut at FRS frequencies
-https://www.youtube.com/watch?v=5ubHUx9Naio
-
-LimeSDR Mini vs a HackRF One using SdrGlut at FRS frequencies
-https://youtu.be/1EQcBYiyWAA
-
-Cobra 38 WXST testing an inverted T antenna using SdrGlut
-https://www.youtube.com/watch?v=s-Rg2XC7bUY
-
-SDRPlay RSP2 vs a HackRF One using SdrGlut at FRS frequencies
-https://www.youtube.com/watch?v=42uEKTncpbQ
-
-Corbra 38WXST vs Radio Shack TRC-236
-https://www.youtube.com/watch?v=O9MQbf1ArQk
-
-Corbra 38WXST using three different antennas
-https://www.youtube.com/watch?v=JDmxGQFwX-Y
-
-SdrGlut Simultaneously Running Five SDRs
-https://www.youtube.com/watch?v=BmUNrAn1Llk
-
-Raspberry PI 4 using SdrGlut to control the NetSDR
-https://www.youtube.com/watch?v=jV-LxQS_acY
-
-SdrGlut vs CubicSDR on the Raspberry pi 4 with a Lime Mini SDR
-https://www.youtube.com/watch?v=C18bGxbXNsA
-
-SdrPlay RSP2 vs a simple RTL stick using SdrGlut at FRS frequencies
-https://www.youtube.com/watch?v=eiuTO5yIR7w
-
-SdrPlay RSP2 vs a LimeSDR Mini using SdrGlut at FRS frequencies
-https://www.youtube.com/watch?v=PEfrJ4ZuN9g
-
-Lime Mini vs a RTL stick using SdrGlut at FRS frequencies
-https://www.youtube.com/watch?v=pDqNCe6GxnA
-
-# Installation of RtAudio
+## Installation of RtAudio
 
 The lastest version of SdrGlut needs to have RtAudio installed. Here are videos showing how to do the install on various systems. The Raspberry Pi can follows the instructions that were given for Ubuntu 18.04.
 
-How to Install RtAudio on MacOS
-https://youtu.be/HlnC5K5qQ98
+Video of RtAudio installation on:
+- [MacOS](https://youtu.be/HlnC5K5qQ98)
+- [Windows 10](https://youtu.be/DyYIKiu2zVI)
+- [Ubuntu18.04](https://youtu.be/mOGWG1K52wA)
 
-How to install RtAudio on Windows 10
-https://youtu.be/DyYIKiu2zVI
+## Installation of libliquid
 
-Installing RtAudio on Ubuntu18.04
-https://youtu.be/mOGWG1K52wA
+There are several recent versions of libliquid. The call to ampmodem_create differs. If a complier error occurs, switch the line that is commented out. It occurs in two places.
 
-
-# Installation of libliquid
-
-There are several recent versions of libliquid. The call to ampmodem_create differs. If a complier error happens,  switch the line that is commented out. It occurs in two places.
-
+```
       f->demodAM = ampmodem_create(0.5, mode, iflag);
-    
   //  f->demodAM = ampmodem_create(0.5, 0.0, mode, iflag);
+```
   
-# Install on Ubuntu 18.04
-
+## Installation steps on Ubuntu 18.04
 
 This is what I did to get SdrGlut running on a fresh install of Ubuntu 18.04.3
 
+```bash
 sudo apt-get update
-
 sudo apt-get upgrade
-
 sudo apt-get install build-essential
-
 sudo apt-get install libsoapysdr0.6
-
 sudo apt-get install libsoapysdr-dev
-
 sudo apt-get install libopenal-dev
-
 sudo apt-get install libliquid-dev
-
 sudo apt-get install freeglut3
-
 sudo apt-get install freeglut3-dev
-
 sudo apt-get install libalut0
-
 sudo apt-get install libalut-dev
-
 sudo apt-get install git
-
 cd ~/Desktop
-
 git clone https://github.com/righthalfplane/SdrGlut.git
-
 cd SdrGlut
-
 make -f makefileUbunta
-
 ./sdrglut.x
+```
 
 ## Add SDRPlay to Ubuntu 18.04
 
-go to
+1. Go to https://www.sdrplay.com/downloads/
+2. Select to download: API/HW DRIVER – V2.13 (20TH JUN 2018)
+3. This will download SDRplay_RSP_API-Linux-2.13.1.run
+4. In the bash shell, install of the drivers by running ```./SDRplay_RSP_API-Linux-2.13.1.run```
+5. Append to the blacklist file (/etc/modprobe.d/blacklist.conf) the following 3 lines
+      ```txt
+        blacklist sdr_msi3101
+        blacklist msi001
+        blacklist msi2500
+      ```
+6. Reboot and you should be ready to go
 
-https://www.sdrplay.com/downloads/
-
-select to download
-
-API/HW DRIVER – V2.13 (20TH JUN 2018)
-
-This downloads  
-
-SDRplay_RSP_API-Linux-2.13.1.run
-
-in the bash Shell do the install of the drivers by running -
-
-./SDRplay_RSP_API-Linux-2.13.1.run
-
-then add to the blacklist file (/etc/modprobe.d/blacklist.conf) the follown 3 lines
-
-blacklist sdr_msi3101
-
-blacklist msi001
-
-blacklist msi2500
-
-then reboot and you should be ready to go
-
-
-
-
-
-
-
-
-
-
-# Install on Raspberry pi
+## Install on Raspberry pi
 
 SdrGlut runs nicely on the Raspberry pi 4 -  Do not know if slower version have enough horsepower for it
 
@@ -525,16 +367,3 @@ Select "Release" and "X64" and then find and switch the comments on the lines -
 
 
 Then select "Start without Debugging", SdrGlut should compile and start running.
-
-
-
-
-
-
-
-
-
-
-
-
-
