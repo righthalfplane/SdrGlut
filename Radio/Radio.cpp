@@ -439,7 +439,7 @@ int Radio::updateLine()
         Plot->xSetMaximum=rmax;
         Plot->xSetMinimum=rmin;
         if(rx->cutOFFSearch > 0){
-            fprintf(stderr,"length %d cutOFF %g bw %g\n",length,rx->cutOFF,rx->bw);
+            //fprintf(stderr,"length %d cutOFF %g bw %g\n",length,rx->cutOFF,rx->bw);
             int itwas = -1;
             int ns=0;
             for(int k=0;k<length;++k){
@@ -466,7 +466,7 @@ int Radio::updateLine()
                     static int count;
                     
                     if(dmin > rx->cutOFF){
-                       fprintf(stderr,"dmin %g range %g nn %d itwas %d\n",dmin,range[nn],nn,itwas);
+                      // fprintf(stderr,"dmin %g range %g nn %d itwas %d\n",dmin,range[nn],nn,itwas);
                         if(nn-itwas > 5){
                            WarningPrint("F%d,%0.4f,%s\n",count++,range[nn]/1e6,Mode_Names[rx->decodemode]);
                         }
@@ -574,9 +574,10 @@ int Radio::sendMessage(char *m1,char *m2,int type)
         
         //fprintf(stderr,"f %g mode %s\n",ff,Mode_Names[type]);
         
-        if(type != rx->decodemode){
+       glutSetWindow(window1);
+        
+       if(type != rx->decodemode){
             //fprintf(stderr,"type = %d\n",type);
-            glutSetWindow(window1);
             setMode(type);
         }
         
