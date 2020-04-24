@@ -226,7 +226,8 @@ void WarningPrint(const char *fmt, ...)
 	char buff[4096];
 	va_list arg;
 	int ret;
-	
+
+    buff[0]=0;
     va_start(arg, fmt);
     ret = vsnprintf((char *)buff, sizeof(buff)-1, fmt, arg);
 	if(ret){

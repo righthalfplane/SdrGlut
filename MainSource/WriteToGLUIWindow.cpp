@@ -25,16 +25,47 @@ extern "C" int WriteToGLUIWindow(char *message);
 
 static int gluiID = -1;
 
-static GLUI_TextBox *moo;
 
 static void textbox_cb(GLUI_Control *control) {
-    /* printf("Got textbox callback\n"); */
+    //printf("Got textbox callback\n");
 }
 
 static int SetInsertQ(struct QStruct *q);
 
 
 int doFrequnecyFile(char *name);
+
+static int insert=0;
+
+class GLUIAPI GLUI_TextBox2 : public GLUI_TextBox
+{
+public:
+    virtual int mouse_down_handler( int local_x, int local_y );
+    GLUI_TextBox2( GLUI_Node *parent, bool scroll = false,
+                  int id=-1, GLUI_CB cb=GLUI_CB() );
+    
+};
+int GLUI_TextBox2::mouse_down_handler( int local_x, int local_y)
+{
+    
+    GLUI_TextBox::mouse_down_handler( local_x, local_y);
+    
+   // fprintf(stderr,"a mouse_down_handler insertion_pt %d\n",insertion_pt);
+    
+    insert=insertion_pt;
+
+    return false;
+    
+}
+
+GLUI_TextBox2::GLUI_TextBox2( GLUI_Node *parent,
+                             bool scroll, int id,
+                             GLUI_CB cb) : GLUI_TextBox(parent,scroll,id,cb)
+{
+    ;
+}
+
+static GLUI_TextBox2 *moo;
 
 int doFrequnecyFile(char *path)
 {
@@ -104,6 +135,9 @@ static void menu_select(int item)
     static char buff[4096];
 	GLUI *glui;
     int n;
+    
+    
+    //fprintf(stderr,"menu_select window %d\n",glutGetWindow());
 
 	if(item == 32){
 		dialogSaveC(NULL,SaveIt,3,NULL);
@@ -181,28 +215,28 @@ int WriteToGLUIWindow(char *message)
 {
 	GLUI *glui;
 
+    
+    static int window=-1;
+    
 	if(!message)return 1;
 	
 	glui = GLUI_Master.find_glui_by_window_id(gluiID);
 	
 	if(!glui){
-		int window;
-		
-		
-		glui = GLUI_Master.create_glui("BatchPrint", 0);
-		if(!glui)return 1;
-		gluiID=glui->get_glut_window_id();
-		glui->set_main_gfx_window(glutGetWindow());
-		GLUI_Panel *ep = new GLUI_Panel(glui,"",true);
-		moo = new GLUI_TextBox(ep,true,1,textbox_cb);
-		moo->set_text(message);
-		moo->set_h(400);
-		moo->set_w(610);
-		
-		window=glutGetWindow();
-		
-		glutSetWindow(gluiID);
-		
+        glui = GLUI_Master.create_glui("BatchPrint", 0);
+        if(!glui)return 1;
+        gluiID=glui->get_glut_window_id();
+        //glui->set_main_gfx_window(glutGetWindow());
+        GLUI_Panel *ep = new GLUI_Panel(glui,"",true);
+        moo = new GLUI_TextBox2(ep,true,1,textbox_cb);
+       // moo->set_text(message);
+        moo->set_h(400);
+        moo->set_w(610);
+        
+        window=glutGetWindow();
+        
+        glutSetWindow(gluiID);
+
 		glutCreateMenu(menu_select);
 		
         glutAddMenuEntry("Set Frequency", 31);
@@ -213,23 +247,39 @@ int WriteToGLUIWindow(char *message)
         glutAddMenuEntry("Close", 33);
 
 		glutAttachMenu(GLUT_RIGHT_BUTTON);
-		
-		glutSetWindow(window);
 
-	}else{
+        //fprintf(stderr,"Setup Done window %d\n",glutGetWindow());
+
+		glutSetWindow(window);
+        
+        moo->insertion_pt = -2;
+        
+
+	}
         if(moo){
-            fprintf(stderr,"point %d\n",moo->insertion_pt);
-            if(moo->insertion_pt == -1){
-                moo->append_text(message);
+            //fprintf(stderr,"point %d window %d\n",moo->insertion_pt,glutGetWindow());
+            if(moo->insertion_pt == -2){
+                moo->insertion_pt = -1;
+                moo->text=message;
+                //fprintf(stderr,"1 moo->insertion_pt %d length %lu\n",moo->insertion_pt,strlen(message));
+                insert=(int)strlen(message);
+                moo->insertion_pt += strlen(message);
             }else{
+                if(moo->insertion_pt == -1){
+                    moo->insertion_pt=insert;
+                    //fprintf(stderr,"3 moo->insertion_pt %d\n",moo->insertion_pt);
+               }
+               //fprintf(stderr,"2 moo->insertion_pt %d\n",moo->insertion_pt);
                 moo->text.insert(moo->insertion_pt,message);
                 moo->insertion_pt += strlen(message);
+                insert=moo->insertion_pt;
+                moo->redraw_window();
             }
         }
         //if(moo)moo->text.insert(moo->insertion_pt,message);
 		/* qBackground(NULL,(int (*)(void *))SetInsertQ); */
 
-	}
+	
   
 	return 0;
 }

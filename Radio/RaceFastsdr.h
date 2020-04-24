@@ -215,6 +215,10 @@ struct playData{
     
     double scaleFactor;
     
+    double cutOFF;
+
+    volatile int cutOFFSearch;
+    
     int audioThreads;
     
     int end;
