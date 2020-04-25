@@ -3,6 +3,9 @@ SdrGlut is a simple software defined radio player. Using glut for drawing and gl
 
 The FourTeenth Release is now avaliable. SdrGlut can now search for signals and save the frequencies and modes to a file. The saved frequencies can be recalled by selecting the line with the desired frequency and picking "Set Frequency" from the popup menu. It adds Voltage bias for powered antennas and Direct Sample Mode for RTL devices. It adds a window that can use the transmit capable SDRs to send AM, NBFM, USB, and LSB. It has a prebuild exe for macOS, a zipped folder for Windows and a zipped folder for Ubuntu 18.04 to unpack and run from 
 
+SdrGlut scans SDRs to look for and save stations for playback.
+https://youtu.be/HGv9suKBJU8
+
 
 https://github.com/righthalfplane/SdrGlut/releases/tag/v1.14
 
