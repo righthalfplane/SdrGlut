@@ -24,8 +24,6 @@
 static GLUI_Checkbox *check_box;
 static void control_cb(int control);
 
-int ReDrawScene(struct Scene *scene);
-
 extern "C" int doFFT2(double *x,double *y,long length,int direction);
 
 // static int doWindow(double *x,double *y,long length,int type);

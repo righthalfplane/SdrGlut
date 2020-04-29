@@ -574,6 +574,8 @@ int Radio::sendMessage(char *m1,char *m2,int type)
         
         //fprintf(stderr,"f %g mode %s\n",ff,Mode_Names[type]);
         
+       int wnd=glutGetWindow();
+        
        glutSetWindow(window1);
         
        if(type != rx->decodemode){
@@ -586,6 +588,8 @@ int Radio::sendMessage(char *m1,char *m2,int type)
 
         setFrequency(rx);
         
+        glutSetWindow(wnd);
+
     }
     
     return 0;
@@ -781,7 +785,6 @@ int Radio::Display(struct Scene *scene)
 {
     if(!scene)return 1;
     
-    
     Radio::SetWindow(scene);
     
     water.SRect.y=water.ysize+1-water.nline;
@@ -919,6 +922,7 @@ static void displayc(void)
 {
     struct SceneList *list;
     struct Scene *scene;
+    
     list=SceneFindByNumber(glutGetWindow());
     if(!list){
         return;
@@ -927,6 +931,8 @@ static void displayc(void)
     
     RadioPtr images=(RadioPtr)FindScene(scene);
     if(!images)return;
+    
+    //fprintf(stderr,"glut %d win1 %d win %d\n",glutGetWindow(),images->window1,list->window);
     
     glutSetWindow(images->window1);
     

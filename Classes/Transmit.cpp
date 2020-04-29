@@ -93,10 +93,7 @@ GLUI_Button2::GLUI_Button2( GLUI_Node *parent, const char *name,RadioPtr ss,
 #define Mode_LSB         3
 #define Mode_CW          4
 
-
 static void control_cb(int control);
-
-int ReDrawScene(struct Scene *scene);
 
 RadioPtr FindTransmit(int window);
 

@@ -174,6 +174,7 @@ static void displayc(void)
 {
 	struct SceneList *list;
 	struct Scene *scene;
+    
 	list=SceneFindByNumber(glutGetWindow());
 	if(!list)return;
 	scene=&list->scene;
