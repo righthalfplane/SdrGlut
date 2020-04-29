@@ -81,7 +81,9 @@ int RadioStart(int argc, char * argv [],struct playData *rx)
 
     rx->samplerate=2000000;
 	rx->deviceNumber=0;
-	rx->gain=0.25;
+    rx->cutOFF=-70;
+    rx->cutOFFSearch=0;
+    rx->gain=0.25;
 	rx->fc=1.0e6;
 	rx->f=0.6e6;
     rx->scaleFactor=0.0;

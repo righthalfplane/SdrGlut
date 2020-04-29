@@ -202,6 +202,17 @@ int Radio::dialogRadio(struct Scene *scene)
     
     dd.glui->add_column(true);
 
+    obj_panel =  dd.glui->add_panel( "Search" );
+    
+    msprintf(dd.text20,sizeof(dd.text20),"%g",rx->cutOFF);
+
+    dd.edittext20 =
+    dd.glui->add_edittext_to_panel( obj_panel,  "Cut Off (db):", GLUI_EDITTEXT_TEXT, dd.text20);
+    dd.edittext20->w=200;
+
+    
+    new GLUI_Button(obj_panel, "Search", 2222, control_cb);
+
     obj_panel =  dd.glui->add_panel( "Bandwidth + Audio Thread Count" );
 
     dd.edittext15 =
@@ -289,6 +300,7 @@ static void control_cb(int control)
     double dmin,dmax;
     double sameleRate;
     double bandwidth;
+    double cutOFF;
     int audioThreads;
     
     RadioPtr s=(RadioPtr)FindSceneRadio(glutGetWindow());
@@ -304,8 +316,13 @@ static void control_cb(int control)
     sscanf(s->dd.edittext17->get_text(),"%d", &audioThreads);
     sscanf(s->dd.edittext7->get_text(),"%lg", &dmin);
     sscanf(s->dd.edittext8->get_text(),"%lg", &dmax);
+    sscanf(s->dd.edittext20->get_text(),"%lg", &cutOFF);
+
     
-    if(control == 4){
+    if(control == 2222){
+        s->rx->cutOFF=cutOFF;
+        s->rx->cutOFFSearch=1;
+    } else if(control == 4){
         s->rx->gain=gain;
         s->rx->scaleFactor=scaleFactor;
         if(s->pd.UsePlotScales)

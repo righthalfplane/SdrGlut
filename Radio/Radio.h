@@ -93,7 +93,8 @@ struct DialogRadioData{
     char text6[255];
     char text7[255];
     char text8[255];
-    
+    char text20[255];
+
     GLUI_EditText *edittext1;
     GLUI_EditText *edittext2;
     GLUI_EditText *edittext3;
@@ -105,7 +106,8 @@ struct DialogRadioData{
     GLUI_EditText *edittext6;
     GLUI_EditText *edittext7;
     GLUI_EditText *edittext8;
-    
+    GLUI_EditText *edittext20;
+
     char text1z[255];
     GLUI_EditText *edittext1z[20];
     GLUI_Scrollbar *line_scroll[20];
