@@ -8,6 +8,7 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.14
 
 ## Demo videos
 
+- [SdrGlut scans SDRs to look for and save stations for playback](https://youtu.be/HGv9suKBJU8)
 - [SdrGlut Looks at signals around 450MHZ - What Are They ?](https://youtu.be/zt7G_6yNRcE)
 - [DISCON the Ultimate computer system of 1982](https://youtu.be/a3yK93VcKm4)
 - [SdrGlut captures GPS data for playback and analysis.](https://youtu.be/gAJw4ciOgQY)
