@@ -584,7 +584,7 @@ int Radio::sendMessage(char *m1,char *m2,int type)
         }
         
         rx->f=ff;
-        rx->fc=ff+6000;
+        rx->fc=ff+rx->bw;
 
         setFrequency(rx);
         

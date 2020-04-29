@@ -40,6 +40,8 @@ static int insert=0;
 
 int rxScan(void *rxv);
 
+static double lineTime=0;
+
 class GLUIAPI GLUI_TextBox2 : public GLUI_TextBox
 {
 public:
@@ -271,12 +273,27 @@ static void menu_select(int item)
         sendMessageGlobal(&buff[n1],&buff[n2],M_SEND);
     }
 }
-
+static void iddle(void){
+    static int nn=0;
+    if(rtime() < lineTime)return;
+    lineTime = rtime()+5;
+    int jj = nn % 4;
+    fprintf(stderr,"nn %d jj %d\n",nn++,jj);
+    if(jj == 0){
+        sendMessageGlobal((char *)"101.5",(char *)"FM",M_SEND);
+    }else if(jj == 1){
+        sendMessageGlobal((char *)"100.7",(char *)"FM",M_SEND);
+    }else if(jj == 2){
+        sendMessageGlobal((char *)"102.9",(char *)"FM",M_SEND);
+    }else if(jj == 3){
+        sendMessageGlobal((char *)"105.3",(char *)"FM",M_SEND);
+    }
+    return;
+}
 int WriteToGLUIWindow(char *message)
 {
 	GLUI *glui;
 
-    
     static int window=-1;
     
 	if(!message)return 1;
@@ -290,16 +307,14 @@ int WriteToGLUIWindow(char *message)
         glui->set_main_gfx_window(glutGetWindow());
         GLUI_Panel *ep = new GLUI_Panel(glui,"",true);
         moo = new GLUI_TextBox2(ep,true,1,textbox_cb);
-       // moo->set_text(message);
         moo->set_h(400);
         moo->set_w(610);
-/*
-        GLUI_Panel *panel3 = new GLUI_Panel(glui, "Scan Frequencies");
-        new GLUI_Button(panel3, "Scan", 400, menu_select);
-        new GLUI_Button(panel3, "Stop", 401, menu_select);
-*/
-
         
+     //   GLUI_Master.set_glutIdleFunc(iddle);
+
+     //   GLUI_Panel *panel3 = new GLUI_Panel(glui, "Scan Frequencies");
+     //   new GLUI_Button(panel3, "Stop", 401, menu_select);
+
         window=glutGetWindow();
         
         glutSetWindow(gluiID);
@@ -307,7 +322,7 @@ int WriteToGLUIWindow(char *message)
 		glutCreateMenu(menu_select);
 		
         glutAddMenuEntry("Set Frequency", 31);
-     //   glutAddMenuEntry("Scan Frequencies", 400);
+    //    glutAddMenuEntry("Scan Frequencies", 400);
         glutAddMenuEntry("Copy", 35);
         glutAddMenuEntry("Paste", 36);
         glutAddMenuEntry("Save", 32);
@@ -316,13 +331,10 @@ int WriteToGLUIWindow(char *message)
 
 		glutAttachMenu(GLUT_RIGHT_BUTTON);
 
-        //fprintf(stderr,"Setup Done window %d\n",glutGetWindow());
-
 		glutSetWindow(window);
         
         moo->insertion_pt = -2;
         
-
 	}
         if(moo){
             //fprintf(stderr,"point %d window %d\n",moo->insertion_pt,glutGetWindow());
