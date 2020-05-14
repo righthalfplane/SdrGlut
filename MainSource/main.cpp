@@ -19,6 +19,9 @@
 
 #include <liquid/liquid.h>
 
+#include "BatchFile.h"
+
+
 int printInfo(void);
 
 char ApplicationDirectory[2048];
@@ -34,7 +37,7 @@ static void control_cb(int control);
 
 static void control_cb2(int control);
 
-char *ProgramVersion=(char *)"SdrGlut-543";
+char *ProgramVersion=(char *)"SdrGlut-544";
 
 extern "C" struct Scene *sceneRoot(void);
 
@@ -280,36 +283,7 @@ static void control_cb2(int control)
 }
 int main (int argc, char *argv[]) {
     
-    
     printInfo();
-/*
-    std::cout << "Lib Version: v" << SoapySDR_getLibVersion() << std::endl;
-    std::cout << "API Version: v" << SoapySDR_getAPIVersion() << std::endl;
-    std::cout << "ABI Version: v" << SoapySDR_getABIVersion() << std::endl;
-    std::cout << "Install root: " << SoapySDR_getRootPath() << std::endl;
-    
-    size_t length2;
-    
-    char **names=SoapySDR_listSearchPaths(&length2);
-    
-    for (size_t k=0;k<length2;++k){
-        std::cout << "Search path: " << names[k] << std::endl;
-    }
-    
-    names=SoapySDR_listModules(&length2);
-    for (size_t k=0;k<length2;++k){
-        std::cout << "modules: " << names[k] << std::endl;
-        char *name=SoapySDR_loadModule(names[k]);
-        if(name)std::cout << "name: " << name << std::endl;
-        name=SoapySDR_getModuleVersion(names[k]);
-        if(name)std::cout << "name: " << name << std::endl;
-    }
-
-*/
-    
-    
-    
-    
     
     if(startAudio(&audioStruct,6,18)){
         fprintf(stderr,"startAudio Failed\n");
@@ -317,15 +291,14 @@ int main (int argc, char *argv[]) {
     }
     
     audio=&audioStruct;
-    
+/*
     if((argc > 1) && !strcmp(argv[1],"-batch")){
         
         for(int n=2;n<argc;++n){
-            //if(processFile(argv[n]))break;
+            if(processFile(argv[n]))break;
         }
-        exit(1);
     }
-    
+*/
     argcs=argc;
     argvs=argv;
     

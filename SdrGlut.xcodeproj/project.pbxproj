@@ -21,6 +21,7 @@
 		4643CAC6222845F80059451C /* SdrFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4643CAC3222845F70059451C /* SdrFile.cpp */; };
 		4643CAC7222845F80059451C /* DialogSdrFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4643CAC4222845F70059451C /* DialogSdrFile.cpp */; };
 		464918A220E53121008BDC72 /* libliquid.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 464918A120E53121008BDC72 /* libliquid.a */; };
+		46543CC2246D9D77000DDD71 /* BatchFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46543CC0246D9D77000DDD71 /* BatchFile.cpp */; };
 		4664F28D1DA95E6E00BBF9EB /* libSoapySDR.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4664F28C1DA95E6E00BBF9EB /* libSoapySDR.dylib */; };
 		467FE3FC1C2C4F9B007D260F /* algebra3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 467FE3D91C2C4F9B007D260F /* algebra3.cpp */; };
 		467FE3FD1C2C4F9B007D260F /* glui_add_controls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 467FE3DC1C2C4F9B007D260F /* glui_add_controls.cpp */; };
@@ -60,6 +61,7 @@
 		469215B023EE7ADD009B2C34 /* librtaudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 469215AF23EE7ADD009B2C34 /* librtaudio.a */; };
 		469445EF2436E12500F049C8 /* WriteToGLUIWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 469445EE2436E12500F049C8 /* WriteToGLUIWindow.cpp */; };
 		46963ED323D789A30059B4AA /* printInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46963ED223D789A30059B4AA /* printInfo.cpp */; };
+		46A5B3D6246D9F770071072C /* Poly.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46A5B3D4246D9F760071072C /* Poly.cpp */; };
 		46B4EB1B2212570900041F98 /* cMalloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 46B4EB192212570900041F98 /* cMalloc.c */; };
 		46B4EB1C2212570900041F98 /* Utilities.c in Sources */ = {isa = PBXBuildFile; fileRef = 46B4EB1A2212570900041F98 /* Utilities.c */; };
 		46C36C52222596D90045691F /* DialogSave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46C36C51222596D90045691F /* DialogSave.cpp */; };
@@ -124,6 +126,7 @@
 		4644187822126CC800F625B7 /* SetFrameData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SetFrameData.h; path = CExpress/SetFrameData.h; sourceTree = "<group>"; };
 		4644187922126CC800F625B7 /* Xappl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Xappl.h; path = CExpress/Xappl.h; sourceTree = "<group>"; };
 		464918A120E53121008BDC72 /* libliquid.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libliquid.a; sourceTree = "<group>"; };
+		46543CC0246D9D77000DDD71 /* BatchFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BatchFile.cpp; path = digital/BatchFile.cpp; sourceTree = SOURCE_ROOT; };
 		4664F28C1DA95E6E00BBF9EB /* libSoapySDR.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libSoapySDR.dylib; path = ../../../../usr/local/lib/libSoapySDR.dylib; sourceTree = "<group>"; };
 		4672B31E22126D0D00668D72 /* Limits2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Limits2.h; path = CExpress/Limits2.h; sourceTree = "<group>"; };
 		4675AE981C2C43DE00FE0144 /* SdrGlut */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SdrGlut; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -175,6 +178,9 @@
 		469215AF23EE7ADD009B2C34 /* librtaudio.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = librtaudio.a; sourceTree = "<group>"; };
 		469445EE2436E12500F049C8 /* WriteToGLUIWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WriteToGLUIWindow.cpp; path = MainSource/WriteToGLUIWindow.cpp; sourceTree = "<group>"; };
 		46963ED223D789A30059B4AA /* printInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = printInfo.cpp; path = MainSource/printInfo.cpp; sourceTree = "<group>"; };
+		46A5B3D4246D9F760071072C /* Poly.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Poly.cpp; path = Digital/Poly.cpp; sourceTree = SOURCE_ROOT; };
+		46A5B3D5246D9F770071072C /* Poly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Poly.h; path = Digital/Poly.h; sourceTree = SOURCE_ROOT; };
+		46A5B3D7246DA3510071072C /* BatchFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BatchFile.h; path = Digital/BatchFile.h; sourceTree = SOURCE_ROOT; };
 		46B4EB182212570900041F98 /* Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Utilities.h; path = MainSource/Utilities.h; sourceTree = "<group>"; };
 		46B4EB192212570900041F98 /* cMalloc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cMalloc.c; path = MainSource/cMalloc.c; sourceTree = "<group>"; };
 		46B4EB1A2212570900041F98 /* Utilities.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Utilities.c; path = MainSource/Utilities.c; sourceTree = "<group>"; };
@@ -274,6 +280,18 @@
 			name = DrawFindPointHistory;
 			sourceTree = "<group>";
 		};
+		464E0939246D9D110093F3DD /* Digital */ = {
+			isa = PBXGroup;
+			children = (
+				46543CC0246D9D77000DDD71 /* BatchFile.cpp */,
+				46A5B3D7246DA3510071072C /* BatchFile.h */,
+				46A5B3D4246D9F760071072C /* Poly.cpp */,
+				46A5B3D5246D9F770071072C /* Poly.h */,
+			);
+			name = Digital;
+			path = "New Group";
+			sourceTree = "<group>";
+		};
 		466C645822028B8300D4EAE0 /* Radio */ = {
 			isa = PBXGroup;
 			children = (
@@ -294,6 +312,7 @@
 		4675AE8F1C2C43DD00FE0144 = {
 			isa = PBXGroup;
 			children = (
+				464E0939246D9D110093F3DD /* Digital */,
 				462A2643222845730042A6BE /* SdrFile */,
 				466C645822028B8300D4EAE0 /* Radio */,
 				4634DFA71C2F92B3007E91A6 /* DrawFindPointHistory */,
@@ -526,6 +545,7 @@
 				467FE3FC1C2C4F9B007D260F /* algebra3.cpp in Sources */,
 				469445EF2436E12500F049C8 /* WriteToGLUIWindow.cpp in Sources */,
 				46E13AD11C2C48AF007FF424 /* main.cpp in Sources */,
+				46543CC2246D9D77000DDD71 /* BatchFile.cpp in Sources */,
 				467FE3FD1C2C4F9B007D260F /* glui_add_controls.cpp in Sources */,
 				467FE40E1C2C4F9B007D260F /* glui_rotation.cpp in Sources */,
 				467FE4031C2C4F9B007D260F /* glui_commandline.cpp in Sources */,
@@ -535,6 +555,7 @@
 				467FE40F1C2C4F9B007D260F /* glui_scrollbar.cpp in Sources */,
 				46CE01D92212669200140F6C /* GridPlot.c in Sources */,
 				467FE4081C2C4F9B007D260F /* glui_listbox.cpp in Sources */,
+				46A5B3D6246D9F770071072C /* Poly.cpp in Sources */,
 				467FE4011C2C4F9B007D260F /* glui_checkbox.cpp in Sources */,
 				467FE40D1C2C4F9B007D260F /* glui_rollout.cpp in Sources */,
 				467FE4191C2C4F9B007D260F /* glui.cpp in Sources */,
