@@ -37,7 +37,7 @@ static void control_cb(int control);
 
 static void control_cb2(int control);
 
-char *ProgramVersion=(char *)"SdrGlut-544";
+char *ProgramVersion=(char *)"SdrGlut-546";
 
 extern "C" struct Scene *sceneRoot(void);
 
@@ -283,6 +283,11 @@ static void control_cb2(int control)
 }
 int main (int argc, char *argv[]) {
     
+    for(int n=1;n<argc;++n){
+        if(processFile(argv[n]))break;
+    }
+    if(argc > 1)exit(0);
+    
     printInfo();
     
     if(startAudio(&audioStruct,6,18)){
@@ -291,14 +296,7 @@ int main (int argc, char *argv[]) {
     }
     
     audio=&audioStruct;
-/*
-    if((argc > 1) && !strcmp(argv[1],"-batch")){
-        
-        for(int n=2;n<argc;++n){
-            if(processFile(argv[n]))break;
-        }
-    }
-*/
+    
     argcs=argc;
     argvs=argv;
     

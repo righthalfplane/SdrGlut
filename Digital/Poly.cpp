@@ -29,6 +29,10 @@ Poly::Poly()
     coef2=NULL;
     type=NULL;
     pz=NULL;
+    FIRCount=0;
+    xn=NULL;
+    yn=NULL;
+    FIRCoefficients=NULL;
 
     
 }
@@ -58,8 +62,16 @@ Poly::~Poly()
     
     if(pz)delete [] pz;
     pz=NULL;
+  
+    if(FIRCoefficients)delete [] FIRCoefficients;
+    FIRCoefficients=NULL;
     
-
+    if(xn)delete [] xn;
+    xn=NULL;
+    
+    if(yn)delete [] yn;
+    yn=NULL;
+    
     
 }
 int Poly::forceFIR(double *input,int npoint)

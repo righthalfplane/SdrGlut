@@ -83,6 +83,8 @@ int dialogFileOpen(struct Scene *scene)
     glui->add_radiobutton_to_group( group1, "FileType SDR File" );
     
     glui->add_radiobutton_to_group( group1, "FileType Frequency File" );
+    
+    glui->add_radiobutton_to_group( group1, "FileType Filter File" );
 
 	GLUI_Button *b=new GLUI_Button(glui, "Open", 3, control_cb); 
 	b->set_w(120);
@@ -138,6 +140,8 @@ static void control_cb(int control)
 		  glutSetWindow(glu);
         }else if(type == 1){
             doFrequnecyFile((char *)file_name.c_str());
+        }else if(type == 2){
+            processFile((char *)file_name.c_str());
         }
         glui->close();
 		glui=NULL;

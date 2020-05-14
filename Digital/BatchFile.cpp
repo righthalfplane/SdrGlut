@@ -98,7 +98,7 @@ int processFile(char *pathname)
 	
 	end=rtime();
 	
-	WarningPrint("Total Time in processFile %.2f Seconds\n",end-start);
+	printf("Total Time in processFile %.2f Seconds\n",end-start);
 		
 	if(input)fclose(input);
     
