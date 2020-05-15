@@ -131,7 +131,6 @@ static void control_cb(int control)
         
         // fprintf(stderr,"Name %s %p len %lu\n",(char *)file_name.c_str(),file_name.c_str(),strlen((char *)file_name.c_str()));
         
-        
         if(type == 0){
 		  int glu = glutGetWindow();
 

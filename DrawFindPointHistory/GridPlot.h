@@ -259,6 +259,7 @@ struct uGridPlot{
     double xSetMaximum;
     double ySetMaximum;
     
+    int mode;
 };
 
 typedef struct uGridPlot *uGridPlotPtr;

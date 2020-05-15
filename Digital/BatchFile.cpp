@@ -3,7 +3,10 @@
 #include <stdlib.h>
 #include <errno.h>
 #include "Utilities.h"
+#include "SceneList.h"
 #include "Poly.h"
+#include "CLines.h"
+
 
 char *DefaultPathString(void);
 
@@ -45,6 +48,76 @@ int doResponse(BatchPtr Batch,double value);
 
 static char working[256];
 
+static char fname[256];
+
+static int initScene(struct Scene *scene)
+{
+    
+    if(!scene)return 1;
+    
+    SceneInit(scene);
+    
+    scene->windowType=FileTypeLines;
+    
+    scene->scale.showPalette=1;
+    
+    scene->scale.updateTemperatureScale=1;
+    
+    scene->scale.logscale=1;
+    
+    return 0;
+}
+
+int BatchPlot(char *name,double *x,double *y,long n)
+{
+    char namewindow[256];
+    struct Scene *scenel2;
+    struct SceneList *list;
+    CLines *lines2;
+
+    mstrncpy(namewindow,fname,sizeof(namewindow));
+    mstrncat(namewindow,(char*)"-",sizeof(namewindow));
+    mstrncat(namewindow,name,sizeof(namewindow));
+    fprintf(stderr,"BatchPlot %ld fname %s namewindow %s\n",n,fname,namewindow);
+    
+    list=SceneNext();
+    if(list == NULL)
+    {
+        WarningPrint("FMRadio : Error Allocation Scene Memory File\n");
+        return 0;
+    }
+    
+    scenel2=&list->scene;
+    zerol((char *)scenel2,sizeof(struct Scene));
+    
+    initScene(scenel2);
+    
+    lines2 = CLines::CLinesOpen(scenel2,-1000);
+    
+    lines2->plotPutData(scenel2,x,y,n,-1L);
+    
+    lines2->sceneSource=NULL;
+    
+    lines2->wShift=0;
+    
+    //    lines2->sdr=NULL;
+    
+    lines2->lines->Plot->yLogScale=0;
+    
+    lines2->lines->Plot->gridHash=1;
+    /*
+     lines2->lines->Plot->yAutoMaximum=FALSE;
+     lines2->lines->Plot->yAutoMinimum=FALSE;
+     lines2->lines->Plot->ySetMaximum=-20;
+     lines2->lines->Plot->ySetMinimum=-120;
+     lines2->lines->Plot->yMajorStep=20;
+     */
+    
+    glutSetWindowTitle(namewindow);
+
+    return 0;
+}
+
 int BatchNextLine(BatchPtr Batch,char *line,long len)
 {
 	if(!Batch || !line || (len <= 0))return 1;
@@ -80,6 +153,13 @@ int processFile(char *pathname)
 	input=NULL;
 	
 	start=rtime();
+    
+    char *p=strrchr(pathname,FILE_NAME_SEPERATOR_CHAR);
+    if(p){
+        mstrncpy(fname,p,strlen(p)+1);
+    }else{
+        mstrncpy(fname,pathname,strlen(pathname)+1);
+    }
 
 	input=fopen(pathname,"r");
 	if(input == NULL){

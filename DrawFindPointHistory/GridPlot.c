@@ -987,7 +987,11 @@ static int CPlotxLin(struct uGridPlot *b,rRect *r,DOListPtr d)
 	
 	cWidth=PixelToLocal(Info.CWidth,d);
 
-	iyy = r->y+r->ysize-LineHeight-0.5*cWidth;
+    if(b->mode== 0){
+        iyy = r->y-b->xMajorOut-LineHeight-0.5*cWidth;
+    }else{
+        iyy = r->y+r->ysize-LineHeight-0.5*cWidth;
+   }
 	
 	if(((b->xViewMax-b->xViewMin)/b->xMajorStep) > b->xMajorLimit){
 	    b->xMajorStep=(b->xViewMax-b->xViewMin)/(double)b->xMajorLimit;
@@ -1131,9 +1135,12 @@ static int CPlotyLin(struct uGridPlot *b,rRect *r,DOListPtr d)
 	LineHeight=PixelToLocal(Info.LineHeight,d);
 	
 	cWidth=PixelToLocal(Info.CWidth,d);
-	
-    ixx=r->x-b->yMajorOut-0.75*cWidth;
-    ixx=r->x+b->yMajorOut+4.0*cWidth;
+    
+    if(b->mode== 0){
+        ixx=r->x-b->yMajorOut-0.75*cWidth;
+    }else{
+        ixx=r->x+b->yMajorOut+4.0*cWidth;
+    }
 
 	if(((b->yViewMax-b->yViewMin)/b->yMajorStep) > b->yMajorLimit){
 	    b->yMajorStep=(b->yViewMax-b->yViewMin)/(double)b->yMajorLimit;
@@ -1152,8 +1159,9 @@ static int CPlotyLin(struct uGridPlot *b,rRect *r,DOListPtr d)
 	    iy=(y-b->yViewMin)*b->yScale+b->yOff;
 		msprintf(Label,sizeof(Label),"%g%c",y,0);
         
-
-		// iy -= (LineHeight)/2;
+        if(b->mode == 0){
+            iy -= (LineHeight)/2;
+        }
 
 		width=PixelToLocal(uCStringWidth(Label,d->myIcon),d);
 
@@ -1205,9 +1213,11 @@ static int CPlotyLog(struct uGridPlot *b,rRect *r,DOListPtr d)
 	    Step=4;
 	}
 		
-    ixx=r->x-b->yMajorOut-0.75*cWidth;
-    
-    ixx=r->x+b->yMajorOut+5*cWidth;
+    if(b->mode == 0){
+        ixx=r->x-b->yMajorOut-0.75*cWidth;
+    }else{
+        ixx=r->x+b->yMajorOut+5*cWidth;
+    }
 
 	if(((End-Start)/Step) > b->yMajorLimit){
 	    Step=(End-Start)/(double)b->yMajorLimit;
@@ -1228,9 +1238,12 @@ static int CPlotyLog(struct uGridPlot *b,rRect *r,DOListPtr d)
 		if(PlotrPoint(b,&x,&Exp,&ix,&iy))continue;
 		msprintf(Label,sizeof(Label),"%g%c",Exp,0);
 		width=PixelToLocal(uCStringWidth(Label,d->myIcon),d);
-
-
-		iy -= 0.3*LineHeight;
+        if(b->mode == 0){
+         //   iy += 0.5*LineHeight;
+            iy -= 0.3*LineHeight;
+        }else{
+            iy -= 0.3*LineHeight;
+        }
         
 		rMoveTo(ixx-width+b->yBoxOffset.x,iy+b->yBoxOffset.y,d);
 		rDrawString(Label,d);		    

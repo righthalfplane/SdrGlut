@@ -17,7 +17,10 @@
 
 #include <iostream>
 
+#include "Utilities.h"
+
 #include "BatchFile.h"
+
 
 #ifdef max
 #undef max

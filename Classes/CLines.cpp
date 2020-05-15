@@ -564,17 +564,20 @@ void CLines::reshape(struct Scene *scene,int wscr,int hscr)
 	
 	lines->l.xsize=wscr;
 	lines->l.ysize=hscr;
-/*
-    lines->Plot->box.x=1.0;
-    lines->Plot->box.y=0.5;
-    lines->Plot->box.xsize=(lines->w)/72.0-lines->Plot->box.x-1.25;
-    lines->Plot->box.ysize=(lines->h)/72.0-lines->Plot->box.y-0.25;
-*/
     
-    lines->Plot->box.x=0.0;
-    lines->Plot->box.y=0.0;
-    lines->Plot->box.xsize=(lines->w)/72.0;
-    lines->Plot->box.ysize=(lines->h)/72.0;
+    if(sceneSource == NULL){
+        lines->Plot->box.x=1.0;
+        lines->Plot->box.y=0.5;
+        lines->Plot->box.xsize=(lines->w)/72.0-lines->Plot->box.x-1.25;
+        lines->Plot->box.ysize=(lines->h)/72.0-lines->Plot->box.y-0.25;
+        lines->Plot->mode=0;
+    }else{
+        lines->Plot->box.x=0.0;
+        lines->Plot->box.y=0.0;
+        lines->Plot->box.xsize=(lines->w)/72.0;
+        lines->Plot->box.ysize=(lines->h)/72.0;
+        lines->Plot->mode=1;
+    }
 
 }
 

@@ -6,8 +6,6 @@
 //  Copyright © 2016 Dale. All rights reserved.
 //
 
-#include "utilities.h"
-
 #include "Poly.h"
 
 int doFFT2(double *x,double *y,long length,int direction);
@@ -1094,18 +1092,20 @@ int Poly::sweep(double f1,double f2,int ns,int npass,int ilog)
     
     ns=ns+1;
     
+    double *xnp=new double[ns];
+    double *ynp=new double[ns];
+    
     int ncount=max(np,nz);
     
     for(int kpass=1;kpass<=npass;++kpass){
         double f=f1;
-        int nn=0;
+        long nn=0;
         if(iangle > 0){
             fprintf(stderr,"      FREQUENCY,         ANGLE\n");
         }else{
             fprintf(stderr,"      FREQUENCY,         AMPLITUDE\n");
         }
         for(int ks=1;ks<=ns;++ks){
-            nn=nn+1;
             double w=pi2*f;
             double r=con;
             double theta=0.0;
@@ -1130,9 +1130,13 @@ int Poly::sweep(double f1,double f2,int ns,int npass,int ilog)
             
                 }
             }
+            
+            xnp[nn]=f;
             if(iangle > 0){
+              ynp[nn]=theta*cont;
                 fprintf(stderr,"%18.9e,%18.9e\n",f,theta*cont);
             }else{
+               ynp[nn]=r;
                 fprintf(stderr,"%18.9e,%18.9e\n",f,r);
             }
             if(ilog <= 0){
@@ -1140,8 +1144,14 @@ int Poly::sweep(double f1,double f2,int ns,int npass,int ilog)
             }else{
                 f=f*df10;
             }
-        }
+            nn=nn+1;
+       }
+        BatchPlot((char *)"Sweep",xnp,ynp,nn);
     }
+    
+    delete [] xnp;
+    delete [] ynp;
+    
     return 0;
 }
 
