@@ -1,0 +1,6 @@
+samplerate 48000
+chev 21 0.1
+bilinear 5000
+response 101
+exit
+

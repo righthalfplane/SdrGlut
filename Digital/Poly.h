@@ -9,6 +9,21 @@
 #ifndef Poly_hpp
 #define Poly_hpp
 
+#ifdef max
+#undef max
+#endif
+
+#ifdef min
+#undef min
+#endif
+
+
+#define max(x1,x2)    (((x1) > (x2)) ? (x1) : (x2))
+#define min(x1,x2)    (((x1) < (x2)) ? (x1) : (x2))
+
+
+
+
 #include <stdio.h>
 
 #include <stdio.h>

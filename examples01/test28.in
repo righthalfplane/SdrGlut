@@ -1,0 +1,6 @@
+samplerate 48000
+butter 50 0.1
+bilinear 2500
+response 101
+exit
+

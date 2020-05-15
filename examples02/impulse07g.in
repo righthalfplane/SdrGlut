@@ -1,0 +1,9 @@
+butter 15 1
+low 5000 1
+band  750000 1 1.e-6
+forces 1
+impulse 1.
+end
+invert 1
+march 200 1.0e-6 1
+stop

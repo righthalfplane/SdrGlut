@@ -28,6 +28,9 @@
     <Filter Include="sdrFile">
       <UniqueIdentifier>{00eedb73-90f2-4bde-adb0-1a6745a2e192}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Digital">
+      <UniqueIdentifier>{60ea0f2c-ae2d-4495-8cec-ad648f924494}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\KdTree-routines\Defs.h">
@@ -237,9 +240,6 @@
     <ClInclude Include="..\CExpress\uFiles.h">
       <Filter>CExpress</Filter>
     </ClInclude>
-    <ClInclude Include="..\CExpress\BatchFile.h">
-      <Filter>CExpress</Filter>
-    </ClInclude>
     <ClInclude Include="..\SdrFile\DialogSdrFile.h">
       <Filter>sdrFile</Filter>
     </ClInclude>
@@ -257,6 +257,12 @@
     </ClInclude>
     <ClInclude Include="resource.h" />
     <ClInclude Include="..\Classes\Transmit.h" />
+    <ClInclude Include="..\Digital\BatchFile.h">
+      <Filter>Digital</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Digital\Poly.h">
+      <Filter>Digital</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\glui-routines\algebra3.cpp">
@@ -458,6 +464,15 @@
     <ClCompile Include="..\Classes\Transmit.cpp" />
     <ClCompile Include="..\MainSource\WriteToGLUIWindow.cpp">
       <Filter>MainSource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Digital\BatchFile.cpp">
+      <Filter>Digital</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Digital\FFT.cpp">
+      <Filter>Digital</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Digital\Poly.cpp">
+      <Filter>Digital</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

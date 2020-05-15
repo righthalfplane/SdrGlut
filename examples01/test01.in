@@ -1,0 +1,7 @@
+! write butterworth
+butter 5 1
+low 5000 1
+! write chebyshev
+chev 5 1.0  
+low 5000 1
+exit

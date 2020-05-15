@@ -1,0 +1,9 @@
+butter 25 1
+low 5000 1
+sweep 0. 40000. 100 1
+forces 1
+step 1.
+end
+invert 1
+march 100 2.0833e-5 1
+stop

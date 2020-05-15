@@ -1,0 +1,8 @@
+butter 11 0.1
+low 1000 1.0
+sweep 0 5000 100 1
+butter 11 0.1
+bilinear 1000
+response 101
+exit
+

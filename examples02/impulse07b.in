@@ -1,0 +1,4 @@
+butter 15 1
+high 2500 1
+sweep 0. 40000. 400 1
+stop

@@ -1,0 +1,8 @@
+samplerate 48000
+butter 25 0.1
+bilinear 5000
+diff
+force step 101
+force impulse 101
+exit
+

@@ -1,0 +1,7 @@
+butter 3 0.1
+bilinear 1000
+diff
+force step 101
+force impulse 101
+exit
+

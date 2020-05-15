@@ -1,0 +1,8 @@
+samplerate 48000
+chev 15 0.1
+bilinear 5000
+response 101
+diff
+force step 201
+exit
+

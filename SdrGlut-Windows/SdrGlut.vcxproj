@@ -172,7 +172,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>C:\Program Files/RtAudio/include;../SdrFile;../Radio;../SdrGlut;"C:/Program Files (x86)/OpenAL 1.1 SDK/include";"C:/Program Files/PothosSDR/include";../MainSource;../Classes;../include;../CExpress;../glui-routines/include;../glui-routines;../DrawFindPointHistory;../KdTree-routines;../mShowOpenGL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)/RtAudio/include;C:\Program Files/RtAudio/include;../Digital;../SdrFile;../Radio;../SdrGlut;"C:/Program Files (x86)/OpenAL 1.1 SDK/include";"C:/Program Files/PothosSDR/include";../MainSource;../Classes;../include;../CExpress;../glui-routines/include;../glui-routines;../DrawFindPointHistory;../KdTree-routines;../mShowOpenGL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;GLEW_STATIC;GLUT_NO_LIB_PRAGMA;GLUT_BUILDING_LIB;FREEGLUT_STATIC;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -185,7 +185,7 @@
       <AdditionalDependencies>rtaudio.lib;freeglut_staticd.lib;libliquid.lib; pthreadVC2.lib;OpenAL32.lib;SoapySDR.lib;winmm.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <TargetMachine>MachineX64</TargetMachine>
-      <AdditionalLibraryDirectories>C:\Program Files/RtAudio/lib;"../freeglut-3.2.1/lib";"C:/Program Files/PothosSDR/lib";"C:/Program Files (x86)/OpenAL 1.1 SDK/libs/Win64";</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files (x86)/RtAudio/lib;C:\Program Files/RtAudio/lib;"../freeglut-3.2.1/lib";"C:/Program Files/PothosSDR/lib";"C:/Program Files (x86)/OpenAL 1.1 SDK/libs/Win64";</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'">
@@ -230,7 +230,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\CExpress\BatchFile.h" />
     <ClInclude Include="..\CExpress\uFiles.h" />
     <ClInclude Include="..\Classes\CLines.h" />
     <ClInclude Include="..\Classes\ClinesAttributes.h" />
@@ -238,6 +237,8 @@
     <ClInclude Include="..\Classes\CLInesPlotLabels.h" />
     <ClInclude Include="..\Classes\Contours.h" />
     <ClInclude Include="..\Classes\Transmit.h" />
+    <ClInclude Include="..\Digital\BatchFile.h" />
+    <ClInclude Include="..\Digital\Poly.h" />
     <ClInclude Include="..\KdTree-routines\Defs.h" />
     <ClInclude Include="..\KdTree-routines\Tools.h" />
     <ClInclude Include="..\MainSource\audiolib.h" />
@@ -315,6 +316,9 @@
     <ClCompile Include="..\Classes\CLinesPlotBox.cpp" />
     <ClCompile Include="..\Classes\CLInesPlotLabels.cpp" />
     <ClCompile Include="..\Classes\Transmit.cpp" />
+    <ClCompile Include="..\Digital\BatchFile.cpp" />
+    <ClCompile Include="..\Digital\FFT.cpp" />
+    <ClCompile Include="..\Digital\Poly.cpp" />
     <ClCompile Include="..\MainSource\audiolib.cpp" />
     <ClCompile Include="..\MainSource\BackgroundQ.c" />
     <ClCompile Include="..\MainSource\cMalloc.c" />
