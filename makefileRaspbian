@@ -3,7 +3,7 @@
 
 CFLAGS = -O3 -DNO_FORTRAN -pthread -I/usr/local/hdf-64/include -I/usr/X11R6/include  -I./DrawFindPointHistory -I./MainSource -I./KdTree-routines -I./glui-routines/include -I./CExpress -I./FMRadio -I./Radio -Wall 
 
-CXXFLAGS = -O3 -std=gnu++11 -DNO_FORTRAN -pthread -I./glui-routines/include -I/usr/local/hdf-64/include -I/usr/X11R6/include  -I./DrawFindPointHistory  -I ./SdrFile -I./MainSource -I./KdTree-routines -I./glui-routines/include -I./CExpress -I./Classes -I./SdrGlut -I./FMRadio  -I./Radio -Wall 
+CXXFLAGS = -O3 -std=gnu++11 -DNO_FORTRAN  -I./Digital -pthread -I./glui-routines/include -I/usr/local/hdf-64/include -I/usr/X11R6/include  -I./DrawFindPointHistory  -I ./SdrFile -I./MainSource -I./KdTree-routines -I./glui-routines/include -I./CExpress -I./Classes -I./SdrGlut -I./FMRadio  -I./Radio -Wall 
 
 #CFLAGS = -g -I/usr/local/hdf-64/include -I/usr/X11R6/include  -I./DrawFindPointHistory -I./MainSource -I./KdTree-routines -I./glui-routines/include -I./CExpress -Wall 
 
@@ -65,7 +65,8 @@ CCFILES= ./glui-routines/algebra3.cpp ./glui-routines/arcball.cpp ./glui-routine
 	./CExpress/uFilesBatchSds3d.cpp ./MainSource/fir.cpp \
 	./Classes/fastfir.cpp ./Classes/fft.cpp ./Classes/CLines.cpp ./Classes/CLInesPlotLabels.cpp ./Classes/ClinesAttributes.cpp \
 	./Classes/Contours.cpp ./Classes/ClinesPlotAttributes.cpp ./Radio/smeter.cpp ./Classes/CLinesPlotBox.cpp \
-	./Radio/Radio.cpp ./Radio/DialogRadio.cpp ./Radio/RaceFastsdr.cpp ./SimpleOpenGL/raceFMCsdr.cpp ./MainSource/printInfo.cpp
+	./Radio/Radio.cpp ./Radio/DialogRadio.cpp ./Radio/RaceFastsdr.cpp ./SimpleOpenGL/raceFMCsdr.cpp ./MainSource/printInfo.cpp \
+	./Digital/Poly.cpp ./Digital/BatchFile.cpp
 
 
 
@@ -93,7 +94,8 @@ CCOBJS = ./glui-routines/algebra3.o ./glui-routines/arcball.o ./glui-routines/gl
 	./Classes/fastfir.o  ./Classes/fft.o ./Classes/CLines.o ./Classes/CLInesPlotLabels.o ./Classes/ClinesAttributes.o ./Classes/ClinesPlotAttributes.o ./Radio/smeter.o ./Classes/CLinesPlotBox.o \
 	./Radio/Radio.o ./Radio/DialogRadio.o ./Radio/RaceFastsdr.o ./MainSource/DialogFileOpen.o ./SdrFile/SdrFile.o \
     ./MainSource/DialogSave.o ./SdrFile/DialogSdrFile.o ./MainSource/fir.o ./MainSource/DialogFolder.o \
-	./MainSource/PlayIQ.o ./MainSource/RecordIQ.o ./MainSource/printInfo.o ./Classes/Transmit.o ./MainSource/WriteToGLUIWindow.o
+	./MainSource/PlayIQ.o ./MainSource/RecordIQ.o ./MainSource/printInfo.o ./Classes/Transmit.o ./MainSource/WriteToGLUIWindow.o \
+	./Digital/Poly.o ./Digital/BatchFile.o
 
 
 fireball:  ${COBJS} ${CCOBJS}
