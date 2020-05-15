@@ -9,6 +9,16 @@
 #ifndef Poly_hpp
 #define Poly_hpp
 
+#include <stdio.h>
+
+#include <stdio.h>
+
+#include <complex>
+
+#include <iostream>
+
+#include "BatchFile.h"
+
 #ifdef max
 #undef max
 #endif
@@ -21,18 +31,6 @@
 #define max(x1,x2)    (((x1) > (x2)) ? (x1) : (x2))
 #define min(x1,x2)    (((x1) < (x2)) ? (x1) : (x2))
 
-
-
-
-#include <stdio.h>
-
-#include <stdio.h>
-
-#include <complex>
-
-#include <iostream>
-
-#include "BatchFile.h"
 
 using namespace std;
 
