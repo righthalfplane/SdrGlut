@@ -1015,7 +1015,11 @@ static int CPlotxLin(struct uGridPlot *b,rRect *r,DOListPtr d)
     for(x=Start;x <= End;x += b->xMajorStep){
         if(x < (b->xViewMin-xSmall) || x > (b->xViewMax+xSmall))continue;
     		ix=(x-b->xViewMin)*b->xScale+b->xOff;
-		msprintf(Label,sizeof(Label),"%.2f%c",x/1e6,0);
+        if(b->mode == 0){
+            msprintf(Label,sizeof(Label),"%g%c",x,0);
+        }else{
+		    msprintf(Label,sizeof(Label),"%.2f%c",x/1e6,0);
+        }
 
 		width=PixelToLocal(uCStringWidth(Label,d->myIcon),d);
 

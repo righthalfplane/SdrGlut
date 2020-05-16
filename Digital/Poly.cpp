@@ -90,7 +90,9 @@ int Poly::forceFIR(double *input,int npoint)
     
     for(int n=0;n<FIRCount;++n)xn[n]=0;
     
-    
+    double *xnp = new double[npoint];
+    double *ynp = new double[npoint];
+
     for(int n=0;n<npoint;++n){
         double y;
         double x;
@@ -109,8 +111,18 @@ int Poly::forceFIR(double *input,int npoint)
         }
         xn[0]=x;
         
+        xnp[n]=n*t;
+        
+        ynp[n]=y/scale;
+
         fprintf(stderr,"    %18.9e, %18.9e , %18.9e\n",n*t,y/scale,x);
     }
+    
+    BatchPlot((char *)"forceFIR",xnp,ynp,npoint);
+    
+    delete [] xnp;
+    
+    delete [] ynp;
     
     delete [] xn;
     
@@ -160,6 +172,9 @@ int Poly::force(double *input,int npoint)
     
     for(int n=0;n<nback;++n)yn[n]=0;
     
+    double *xnp = new double[npoint];
+    double *ynp = new double[npoint];
+    
     for(int n=0;n<npoint;++n){
         double y;
         double x;
@@ -186,10 +201,20 @@ int Poly::force(double *input,int npoint)
             xn[nfore-k-1]=xn[nfore-k-2];
         }
         xn[0]=x;
+        
+        xnp[n]=n*t;
+        
+        ynp[n]=y/scale;
             
         fprintf(stderr,"    %18.9e, %18.9e , %18.9e\n",n*t,y/scale,x);
     }
-   
+    
+    BatchPlot((char *)"force",xnp,ynp,npoint);
+
+    delete [] xnp;
+    
+    delete [] ynp;
+
     return 0;
 }
 int Poly::SetPolesAndZeros(int np,int nz)
@@ -333,7 +358,9 @@ int Poly::response(double steps)
 
     double scale=abs(sum);  // normalize at 0 Hz
 
-    
+    double *xnp=new double[(long)steps];
+    double *ynp=new double[(long)steps];
+
     double pi=4.0*atan(1.0);
     
     double dt=(pi)/(steps-1);
@@ -354,9 +381,17 @@ int Poly::response(double steps)
                 sum /= (z-poles[n]);
             }
         }
+        
+        xnp[k]=theta*sampleRate/(2*pi);
+        ynp[k]=abs(sum)/scale;
         fprintf(stderr,"%18.9e, %18.9e\n",theta*sampleRate/(2*pi),abs(sum)/scale);
     }
     
+    BatchPlot((char *)"response",xnp,ynp,(long)steps);
+    
+    delete [] xnp;
+    delete [] ynp;
+
     return 0;
 }
 int Poly::dft(int npoints)
@@ -377,6 +412,9 @@ int Poly::dft(int npoints)
     
     double df=sampleRate/FIRCount;
     
+    double *xnp = new double[FIRCount];
+    double *ynp = new double[FIRCount];
+    
     fprintf(stderr,"\n       FREQUENCY,       AMPLITUDE\n");
     for(int k=0;k<FIRCount;++k){
         sum=0;
@@ -384,10 +422,17 @@ int Poly::dft(int npoints)
             sum +=FIRCoefficients[n]*exp(complex<double>(0.0,(-2.0*pi*k*n)/(FIRCount)));
         }
         x[k]=sum;
+        xnp[k]=df*k;
+        ynp[k]=::norm(sum);
         fprintf(stderr,"%18.9e,%18.9e\n",df*k,::norm(sum));
     }
     
+    BatchPlot((char *)"dft",xnp,ynp,FIRCount);
     
+    delete [] xnp;
+    
+    delete [] ynp;
+
 /*
      This is the inverse and it works
  */

@@ -90,6 +90,12 @@ CLines::CLines(): CWindow(NULL)
     
     sceneSource=NULL;
     
+    Frequency=0;
+    
+    BandWidth=0;
+    
+    wShift=0;
+    
 }
 
 CLines::~CLines()
@@ -251,7 +257,7 @@ void CLines::getMouse(int button, int state, int x, int y)
         lines->Plot->xSetMinimum=lines->Plot->xMinimum;
     }else{
         if(sceneSource){
-            SetFrequencyGlobal(sceneSource,Frequency,BandWidth,M_FREQUENCY_BANDWIDTH);
+           SetFrequencyGlobal(sceneSource,Frequency,BandWidth,M_FREQUENCY_BANDWIDTH);
         }
         lines->Plot->xAutoMaximum=TRUE;
         lines->Plot->xAutoMinimum=TRUE;
