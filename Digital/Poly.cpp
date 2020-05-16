@@ -686,6 +686,10 @@ int Poly::march(int nstep,double step,int flag)
 {
     fprintf(stderr,"%d %g %d\n",nstep,step,flag);
     
+    double *xnp = new double[(long)(nstep)+1];
+    double *ynp = new double[(long)(nstep)+1];
+
+    
     fprintf(stderr,"          t,              rsr,               rsi \n");
     double t = -step;
     for(int n=0;n<nstep+1;++n){
@@ -706,9 +710,17 @@ int Poly::march(int nstep,double step,int flag)
             rsi=rsi+rsii*pz[nf].con;
             rsr=rsr+rsrr*pz[nf].con;
         }
-        
+        xnp[n]=t;
+        ynp[n]=rsr;
         fprintf(stderr,"%18.9e,%18.9e,%18.9e\n",t,rsr,rsi);
     }
+    
+    BatchPlot((char *)"march",xnp,ynp,(long)(nstep+1));
+    
+    delete [] xnp;
+    delete [] ynp;
+
+    
     return 1;
 }
 int Poly::band(double f,int flag,double iter)
