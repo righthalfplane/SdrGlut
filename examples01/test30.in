@@ -2,7 +2,7 @@ samplerate 48000
 chev 25 0.1
 bilinear 5000
 diff
-force step 101
-force impulse 101
+force step 201
+force impulse 201
 exit
 

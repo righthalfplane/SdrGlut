@@ -185,6 +185,10 @@ static void displayc(void)
 	if(!list)return;
 	scene=&list->scene;
 	
+    if(!scene){
+        fprintf(stderr,"scene %p\n",scene);
+    }
+    
 	CLinesPtr images=(CLinesPtr)FindScene(scene);
 	
 	images->display(scene);
@@ -246,9 +250,9 @@ void CLines::getMouse(int button, int state, int x, int y)
    	if(state == GLUT_DOWN)
     {
         double dpi=lines->l.dpi;
-        Frequency=lines->Plot->xViewMin+(x-dpi*lines->Plot->box.x)*(lines->Plot->xViewMax-lines->Plot->xViewMin)/(dpi*lines->Plot->box.xsize);
         if(sceneSource){
-             SetFrequencyGlobal(sceneSource,Frequency,BandWidth,M_FREQUENCY);
+            Frequency=lines->Plot->xViewMin+(x-dpi*lines->Plot->box.x)*(lines->Plot->xViewMax-lines->Plot->xViewMin)/(dpi*lines->Plot->box.xsize);
+            SetFrequencyGlobal(sceneSource,Frequency,BandWidth,M_FREQUENCY);
         }
         lines->Plot->xAutoMaximum=FALSE;
         lines->Plot->xSetMaximum=lines->Plot->xMaximum;
@@ -274,22 +278,23 @@ static void moveMouse(int x, int y)
     struct CLines::LineStruct *lines=myAppl->lines;
     if(!lines)return;
     double dpi=lines->l.dpi;
-    myAppl->Frequency=lines->Plot->xViewMin+(x-dpi*lines->Plot->box.x)*(lines->Plot->xViewMax-lines->Plot->xViewMin)/(dpi*lines->Plot->box.xsize);
     
     if(myAppl->sceneSource){
+        myAppl->Frequency=lines->Plot->xViewMin+(x-dpi*lines->Plot->box.x)*(lines->Plot->xViewMax-lines->Plot->xViewMin)/(dpi*lines->Plot->box.xsize);
         SetFrequencyGlobal(myAppl->sceneSource,myAppl->Frequency,myAppl->BandWidth,M_FREQUENCY);
     }
 }
 int CLines::SetFrequency(struct Scene *scene,double f,double bw,int message)
 {
     
-    CLinesPtr myAppl=(CLinesPtr)FindScene(scene);
+    CLinesPtr lines=(CLinesPtr)FindScene(scene);
     
-    if(!myAppl)return 1;
+    if(!lines)return 1;
     
-    myAppl->Frequency=f;
-    myAppl->BandWidth=bw;
-    
+    if(lines->sceneSource){
+        lines->Frequency=f;
+        lines->BandWidth=bw;
+    }
     return 0;
 }
 int CLines::OpenWindows(struct Scene *scene,int windowParent)
@@ -413,9 +418,9 @@ static void keys2(unsigned char key, int x, int y)
     CLinesPtr l=FindLinesWindow(glutGetWindow());
     
     if(key == 'm'){
-        SetFrequencyGlobal(l->sceneSource,l->Frequency,l->BandWidth,M_MUTE);
+        if(l->sceneSource)SetFrequencyGlobal(l->sceneSource,l->Frequency,l->BandWidth,M_MUTE);
     }else if(key == 's'){
-        SetFrequencyGlobal(l->sceneSource,l->Frequency,l->BandWidth,M_SAVE);
+        if(l->sceneSource)SetFrequencyGlobal(l->sceneSource,l->Frequency,l->BandWidth,M_SAVE);
     }
    // fprintf(stderr,"Clines keys - key %d key %c lines %p\n",key,key,l);
     
@@ -607,7 +612,7 @@ void CLines::display(struct Scene *scene)
 		
 		/*		if(g.dpp != NULL)glDrawPixels( w, h, GL_RGB, GL_UNSIGNED_BYTE, g.dpp); */
 		
-		DrawIt(scene);
+		if(DrawIt(scene))return;
 		
         uRect box;
         

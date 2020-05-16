@@ -223,7 +223,7 @@ int doBatch(BatchPtr Batch,CommandPtr cp)
 	command=stringCommand(cp);
 	if(!command)goto ErrorOut;
     
-    fprintf(stderr,"command %s\n",command);
+   // fprintf(stderr,"command %s\n",command);
 	
 	if(!mstrcmp((char *)"butter",command)){
         ++(cp->n);
