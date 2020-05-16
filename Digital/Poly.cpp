@@ -854,6 +854,8 @@ int Poly::forces(BatchPtr Batch,int nforces)
     
     for(int n=0;n<nforces;++n)delay[n]=0;
     
+    double pi=4.0*atan(1.0);
+    
     for(int n=0;n<nforces;++n){
         double v1,v2;
         int n1;
@@ -892,6 +894,7 @@ int Poly::forces(BatchPtr Batch,int nforces)
         ++(cp.n);
         ret=doubleCommand(&coef2[n],&cp);
         if(ret)coef2[n]=0;
+        if(type[n] == SIN  || type[n] == COS)coef2[n]=2*pi*coef2[n];
         fprintf(stderr,"     %s   %g    %g\n",command,coef1[n],coef2[n]);
     }
     
@@ -1009,6 +1012,7 @@ int Poly::invert(int flag)
             pz[nf].rs[nr]=r;
         }
         
+        
         if(flag == 0)continue;
         
         fprintf(stderr," nf %d con %g delay %g\n",nf,pz[nf].con,delay[nf]);
@@ -1042,7 +1046,7 @@ int Poly::forcepoleszeros(int nf)
     for(int n=0;n<nz;++n){
         pz[nf].zeros[n]=zeros[n];
     }
-    
+        
     pz[nf].np=np;
     pz[nf].nz=nz;
 

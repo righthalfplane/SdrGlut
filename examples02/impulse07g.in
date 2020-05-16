@@ -1,6 +1,7 @@
 butter 15 1
 low 5000 1
 band  750000 1 1.e-6
+sweep 0. 1e6 400 1
 forces 1
 impulse 1.
 end
