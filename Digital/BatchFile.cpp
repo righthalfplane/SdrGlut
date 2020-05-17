@@ -382,7 +382,10 @@ int doFIRRead(BatchPtr Batch,double value)
     pl->FIRCount=0;
     
     pl->FIRCoefficients = new double[nf];
-  
+    
+    double *xnp=new double[(long)nf];
+    double *ynp=new double[(long)nf];
+
     zerol((char *)&cp,sizeof(struct CommandInfo));
     
     for(int n=0;n<nf;++n){
@@ -394,9 +397,19 @@ int doFIRRead(BatchPtr Batch,double value)
         ++(cp.n);
         //printf("value1 %f value2 %f\n",value1,value2);
         
+        xnp[pl->FIRCount]=(double)n/pl->sampleRate;
+        ynp[pl->FIRCount]=value2;
+
         pl->FIRCoefficients[pl->FIRCount++]=value2;
         
    }
+    
+    
+    BatchPlot((char *)"FIRCoefficients",xnp,ynp,(long)pl->FIRCount);
+    
+    delete [] xnp;
+    delete [] ynp;
+
     if(BatchNextLine(Batch,line,sizeof(line)))return 1;
     if(getCommand(line,&cp))return 1;
     command=stringCommand(&cp);

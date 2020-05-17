@@ -1,0 +1,28 @@
+samplerate 100000
+butter 10 0.1
+low 2500 1
+band 10000 1 1.e-6
+sweep 0. 25000. 100 1
+bilinear 0.159154943
+response 101
+exit
+
+
+bilinear 0.159154943
+
+chev 10 0.1
+
+samplerate 10000
+chev 10 0.1
+high 2500 1
+bilinear 0.164
+response 101
+exit
+
+low 5000 1
+
+bilinear 0.159154943
+
+
+bilinear 6.2831
+

@@ -340,9 +340,11 @@ int Poly::mult(complex<double> *prod,complex<double> *a,complex<double> *b,int m
 }
 int Poly::response(double steps)
 {
-    complex<double> sum;
+    complex<double> sum,diff;
 
-    complex<double> z = 1.0;
+    fprintf(stderr,"\n      Response thetaNorm %g\n",thetaNorm);
+
+    complex<double> z = exp(complex<double>(0,thetaNorm));
     sum = 1;
     if(nz > 0){
         for(int n=0;n<nz;++n){
@@ -353,11 +355,13 @@ int Poly::response(double steps)
     if(np > 0){
         for(int n=0;n<np;++n){
             sum /= (z-poles[n]);
-        }
+       }
     }
 
     double scale=abs(sum);  // normalize at 0 Hz
 
+    printf("scale %g\n",scale);
+    
     double *xnp=new double[(long)steps];
     double *ynp=new double[(long)steps];
 
@@ -384,7 +388,7 @@ int Poly::response(double steps)
         
         xnp[k]=theta*sampleRate/(2*pi);
         ynp[k]=abs(sum)/scale;
-        fprintf(stderr,"%18.9e, %18.9e\n",theta*sampleRate/(2*pi),abs(sum)/scale);
+        fprintf(stderr,"%18.9e, %18.9e %18.9e\n",theta/* *sampleRate/(2*pi) */,abs(sum)/scale,theta/pi);
     }
     
     BatchPlot((char *)"response",xnp,ynp,(long)steps);
@@ -495,21 +499,21 @@ int Poly::bilinear(double wT)
 }
 int Poly::warp(double f)
 {
-    double pi=4.0*atan(1.0);
+   double pi=4.0*atan(1.0);
     
     double w=2*pi*f;
-    
+
     double wd=tan(w*0.5/sampleRate);
     
     if(nz > 0){
         for(int n=0;n<nz;++n){
-            zeros[n]= -wd*zeros[n];
+            zeros[n]= wd*zeros[n];
         }
     }
     
     if(np > 0){
         for(int n=0;n<np;++n){
-            poles[n]= -wd*poles[n];
+            poles[n]= wd*poles[n];
         }
     }
     
@@ -535,7 +539,7 @@ int Poly::doButterWorth(int np)
         double zk=2*(k+1)-1;
         double ang=pi*(0.5+zk*zpole);
         poles[k]=complex<double>(-cos(ang),-sin(ang));
-        // poles[k]= -poles[k];
+        poles[k]= -poles[k];
     }
     
     writePoly((char *)"Butterworth Poles");
@@ -565,7 +569,7 @@ int Poly::doChev(int np,double r)
     for(int k=0;k<np;++k){
         v=zn*(2.0*(double)(k+1+np)-1.0);
         poles[k]=complex<double>(-sinh*sin(v),cosh*cos(v));
-        //poles[k] = -poles[k];
+        poles[k] = -poles[k];
     }
     
     norm();
@@ -646,6 +650,8 @@ int Poly::high(double f,int inorm)
         nz=nz+nd;
     }
     
+    thetaNorm=pi*0.75;
+    
     char mes[256];
     
     sprintf(mes,"High Pass Transformation f = %18.9e",f);
@@ -673,6 +679,8 @@ int Poly::low(double f,int inorm)
     }
     
     if(inorm > 0)norm();
+    
+    thetaNorm=0;
     
     char mes[256];
     
@@ -787,6 +795,10 @@ int Poly::band(double f,int flag,double iter)
     delete [] poles;
     
     poles=poles2;
+    
+    if(thetaNorm == 0){
+        thetaNorm=2*pi*f/sampleRate;
+    }
     
     char mes[256];
     

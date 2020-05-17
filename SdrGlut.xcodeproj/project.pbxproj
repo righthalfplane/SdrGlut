@@ -283,8 +283,8 @@
 		464E0939246D9D110093F3DD /* Digital */ = {
 			isa = PBXGroup;
 			children = (
-				46543CC0246D9D77000DDD71 /* BatchFile.cpp */,
 				46A5B3D7246DA3510071072C /* BatchFile.h */,
+				46543CC0246D9D77000DDD71 /* BatchFile.cpp */,
 				46A5B3D4246D9F760071072C /* Poly.cpp */,
 				46A5B3D5246D9F770071072C /* Poly.h */,
 			);

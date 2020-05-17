@@ -102,6 +102,7 @@ public:
     double *yn;
     double *FIRCoefficients;
     int FIRCount;
+    double thetaNorm;
 };
 
 

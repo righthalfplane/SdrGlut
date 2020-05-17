@@ -1,0 +1,15 @@
+samplerate 10000
+chev 10 0.1
+high 1000 1
+sweep 0. 5000. 100 1
+bilinear  0.1638
+response 101
+exit
+
+low 1000 1
+
+band 1500 1 1e6
+
+bilinear 1.0
+bilinear 1.02918
+bilinear 0.1638

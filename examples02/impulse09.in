@@ -1,4 +1,4 @@
-butter 15 1
+butter 50 1
 low 1000 1
 band 10000 1 1.e-6
 sweep 0. 40000. 400 1
