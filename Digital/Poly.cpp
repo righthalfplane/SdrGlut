@@ -118,7 +118,7 @@ int Poly::forceFIR(double *input,int npoint)
         fprintf(stderr,"    %18.9e, %18.9e , %18.9e\n",n*t,y/scale,x);
     }
     
-    BatchPlot((char *)"forceFIR",xnp,ynp,npoint);
+    BatchPlot((char *)"forceFIR",0,xnp,ynp,npoint);
     
     delete [] xnp;
     
@@ -209,7 +209,10 @@ int Poly::force(double *input,int npoint)
         fprintf(stderr,"    %18.9e, %18.9e , %18.9e\n",n*t,y/scale,x);
     }
     
-    BatchPlot((char *)"force",xnp,ynp,npoint);
+    BatchPlot((char *)"force",0,xnp,ynp,npoint);
+    
+    if(npoint == 512 || npoint == 1024 || npoint == 2048 || npoint == 4096)
+            BatchPlot((char *)"force",1,xnp,ynp,npoint);
 
     delete [] xnp;
     
@@ -391,7 +394,7 @@ int Poly::response(double steps)
         fprintf(stderr,"%18.9e, %18.9e %18.9e\n",theta/* *sampleRate/(2*pi) */,abs(sum)/scale,theta/pi);
     }
     
-    BatchPlot((char *)"response",xnp,ynp,(long)steps);
+    BatchPlot((char *)"response",0,xnp,ynp,(long)steps);
     
     delete [] xnp;
     delete [] ynp;
@@ -431,7 +434,7 @@ int Poly::dft(int npoints)
         fprintf(stderr,"%18.9e,%18.9e\n",df*k,::norm(sum));
     }
     
-    BatchPlot((char *)"dft",xnp,ynp,FIRCount);
+    BatchPlot((char *)"dft",0,xnp,ynp,FIRCount);
     
     delete [] xnp;
     
@@ -569,7 +572,7 @@ int Poly::doChev(int np,double r)
     for(int k=0;k<np;++k){
         v=zn*(2.0*(double)(k+1+np)-1.0);
         poles[k]=complex<double>(-sinh*sin(v),cosh*cos(v));
-        poles[k] = -poles[k];
+       // poles[k] = -poles[k];
     }
     
     norm();
@@ -710,10 +713,10 @@ int Poly::march(int nstep,double step,int flag)
             double rsrr=0.0;
             double rsii=0.0;
             for(int nr=0;nr<pz[nf].np;++nr){
-                double exc=pz[nf].rs[nr]*exp(-pz[nf].poles[nr].real()*(t-del));
-                double csc=pz[nf].ts[nr]-pz[nf].poles[nr].imag()*(t-del);
-                rsrr=rsrr+exc*cos(csc);
-                rsii=rsii+exc*sin(csc);
+                double exc=pz[nf].rs[nr]*exp(+pz[nf].poles[nr].real()*(t-del));
+                double csc=pz[nf].ts[nr]+pz[nf].poles[nr].imag()*(t-del);
+                rsrr=rsrr-exc*cos(csc);
+                rsii=rsii-exc*sin(csc);
             }
             rsi=rsi+rsii*pz[nf].con;
             rsr=rsr+rsrr*pz[nf].con;
@@ -723,7 +726,7 @@ int Poly::march(int nstep,double step,int flag)
         fprintf(stderr,"%18.9e,%18.9e,%18.9e\n",t,rsr,rsi);
     }
     
-    BatchPlot((char *)"march",xnp,ynp,(long)(nstep+1));
+    BatchPlot((char *)"march",0,xnp,ynp,(long)(nstep+1));
     
     delete [] xnp;
     delete [] ynp;
@@ -1219,7 +1222,7 @@ int Poly::sweep(double f1,double f2,int ns,int npass,int ilog)
             }
             nn=nn+1;
        }
-        BatchPlot((char *)"Sweep",xnp,ynp,nn);
+        BatchPlot((char *)"sweep",0,xnp,ynp,nn);
     }
     
     delete [] xnp;

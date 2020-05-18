@@ -1,0 +1,11 @@
+samplerate 10000
+chev 10 0.1
+high 1000 1
+sweep 0. 5000. 100 1
+bilinear  0.1638
+response 101
+exit
+
+
+diff
+force impulse 101

@@ -1,5 +1,5 @@
-chev 10 0.1
-high 5000 1
+butter 10 0.1
+low 5000 1
 band 8660 1 1.e-6
 sweep 0. 48000. 128 1
 forces 1

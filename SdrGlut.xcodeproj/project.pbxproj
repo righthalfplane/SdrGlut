@@ -295,8 +295,8 @@
 		466C645822028B8300D4EAE0 /* Radio */ = {
 			isa = PBXGroup;
 			children = (
-				4616E5B62208B6A600240B9F /* smeter.cpp */,
 				4616E5B72208B6A700240B9F /* smeter.h */,
+				4616E5B62208B6A600240B9F /* smeter.cpp */,
 				4686063522028C1F0078D9F2 /* DialogRadio.cpp */,
 				4686063622028C1F0078D9F2 /* DialogRadio.h */,
 				46E216E723EE4300002C059A /* Transmit.cpp */,

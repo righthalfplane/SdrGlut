@@ -38,7 +38,7 @@ int ProcessLine(char *line,BatchPtr Batch);
 
 int BatchNextLine(BatchPtr Batch,char *line,long len);
 
-int BatchPlot(char *name,double *x,double *y,long n);
+int BatchPlot(char *name,int flag,double *x,double *y,long n);
 
 #define BATCH_DOUBLE	0
 #define BATCH_STRING	1

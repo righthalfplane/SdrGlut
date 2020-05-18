@@ -1,7 +1,13 @@
-butter 3 0.1
+butter 10 0.1
 bilinear 1000
 diff
 force step 101
 force impulse 101
+force sin 10 500 101
+force sin 10 2000 101
+force sin 10 1000 101
+force random 4096
+force sin 10 1000 1024
+force sin 10 2000 512
 exit
 

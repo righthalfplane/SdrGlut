@@ -103,6 +103,8 @@ fir 101
 100,  -2.00855512E-05
 end
 dft 200
-force step 201
+force impulse 101
+force sin 10 1000 501
+force sin 10 6000 501
 exit
 

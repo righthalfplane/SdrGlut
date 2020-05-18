@@ -103,5 +103,6 @@ fir 100
  end
 dft 200
 force step 201
+force impulse 201
 exit
 

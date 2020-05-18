@@ -2,11 +2,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <random>
 #include "Utilities.h"
 #include "SceneList.h"
 #include "Poly.h"
 #include "CLines.h"
+#include "Radio.h"
 
+int doWindow(double *x,double *y,long length,int type);
+
+extern "C" int doFFT2(double *x,double *y,long length,int direction);
 
 char *DefaultPathString(void);
 
@@ -14,7 +19,7 @@ int doFIRRead(BatchPtr Batch,double value);
 
 int doDft(BatchPtr Batch,double value);
 
-int doForce(BatchPtr Batch,char *command,double value);
+int doForce(BatchPtr Batch,CommandPtr cp);
 
 int doDiff(BatchPtr Batch);
 
@@ -50,6 +55,8 @@ static char working[256];
 
 static char fname[256];
 
+static struct Icon myIcon;
+
 static int initScene(struct Scene *scene)
 {
     
@@ -68,7 +75,7 @@ static int initScene(struct Scene *scene)
     return 0;
 }
 
-int BatchPlot(char *name,double *x,double *y,long n)
+int BatchPlot(char *name,int flag,double *x,double *y,long n)
 {
     char namewindow[256];
     struct Scene *scenel2;
@@ -94,24 +101,55 @@ int BatchPlot(char *name,double *x,double *y,long n)
     
     lines2 = CLines::CLinesOpen(scenel2,-1000);
     
-    lines2->plotPutData(scenel2,x,y,n,-1L);
+    if(flag == 1){
+        //std::default_random_engine generator;
+        //std::uniform_real_distribution<double> distribution(-1.0, 1.0);
+
+        double *real=new double[n];
+        double *imag=new double[n];
+        double *rl=new double[n];
+        for(int k=0;k<n;++k){
+            real[k]=y[k];
+            //real[k]=distribution(generator);
+            imag[k]=0.0;
+        }
+        
+        doWindow(real,imag,n,FILTER_BLACKMANHARRIS);
+        
+        for(int k=0;k<n;++k){
+            real[k] *= pow(-1.0,k);
+            imag[k] *= pow(-1.0,k);
+        }
+        
+        doFFT2(real,imag,(long)n,1);
+        
+        for(int k=0;k<n;++k){
+            rl[k]=sqrt(real[k]*real[k]+imag[k]*imag[k]);
+        }
+        
+        for(int k=0;k<n;++k){
+            real[k]=k*myIcon.pl->sampleRate/(double)n;
+        }
+        
+        lines2->plotPutData(scenel2,real,&rl[n/2],n/2,-1L);
+        
+        printf("BatchPlot FFT %ld",n);
+        
+        delete [] real;
+        delete [] imag;
+        delete [] rl;
+
+    }else{
+        lines2->plotPutData(scenel2,x,y,n,-1L);
+    }
     
     lines2->sceneSource=NULL;
     
     lines2->wShift=0;
     
-    //    lines2->sdr=NULL;
-    
     lines2->lines->Plot->yLogScale=0;
     
     lines2->lines->Plot->gridHash=1;
-    /*
-     lines2->lines->Plot->yAutoMaximum=FALSE;
-     lines2->lines->Plot->yAutoMinimum=FALSE;
-     lines2->lines->Plot->ySetMaximum=-20;
-     lines2->lines->Plot->ySetMinimum=-120;
-     lines2->lines->Plot->yMajorStep=20;
-     */
     
     glutSetWindowTitle(namewindow);
 
@@ -134,7 +172,6 @@ int BatchNextLine(BatchPtr Batch,char *line,long len)
 int processFile(char *pathname)
 {
 	struct BatchInfo Batch;
-	struct Icon myIcon;
 	char line[4096];
 	double start,end;
 	FILE *input;
@@ -330,13 +367,7 @@ int doBatch(BatchPtr Batch,CommandPtr cp)
         ++(cp->n);
         doTrans(Batch,value1,value2);
     }else if(!mstrcmp((char *)"force",command)){
-        ++(cp->n);
-        command=stringCommand(cp);
-        if(!command)goto ErrorOut;
-        ++(cp->n);
-        ret=doubleCommand(&value1,cp);
-        if(ret)goto ErrorOut;
-        doForce(Batch,command,value1);
+        doForce(Batch,cp);
     }else if(!mstrcmp((char *)"samplerate",command)){
         struct Poly *pl=Batch->myIcon->pl;
         ++(cp->n);
@@ -403,9 +434,8 @@ int doFIRRead(BatchPtr Batch,double value)
         pl->FIRCoefficients[pl->FIRCount++]=value2;
         
    }
-    
-    
-    BatchPlot((char *)"FIRCoefficients",xnp,ynp,(long)pl->FIRCount);
+
+    BatchPlot((char *)"FIRCoefficients",0,xnp,ynp,(long)pl->FIRCount);
     
     delete [] xnp;
     delete [] ynp;
@@ -427,9 +457,23 @@ int doDft(BatchPtr Batch,double value)
     
     return 0;
 }
-int doForce(BatchPtr Batch,char *command,double value)
+int doForce(BatchPtr Batch,struct CommandInfo *cp)
 {
+    char *command;
+    double value;
+    int ret;
+
     struct Poly *pl=Batch->myIcon->pl;
+    
+    
+    ++(cp->n);
+    command=stringCommand(cp);
+    if(!command)goto ErrorOut;
+    ++(cp->n);
+    ret=doubleCommand(&value,cp);
+    if(ret)goto ErrorOut;
+    ++(cp->n);
+
     
       if(!mstrcmp((char *)"step",command)){
           
@@ -452,7 +496,7 @@ int doForce(BatchPtr Batch,char *command,double value)
           
           fprintf(stderr,"impulse %d\n",(int)value);
           
-         double *force = new double[np];
+          double *force = new double[np];
           
           force[0]=1;
           
@@ -461,8 +505,52 @@ int doForce(BatchPtr Batch,char *command,double value)
           pl->force(force,np);
           
           delete [] force;
-      }
-    
+      }else if(!mstrcmp((char *)"random",command)){
+          std::default_random_engine generator;
+          std::uniform_real_distribution<double> distribution(-1.0, 1.0);
+
+          int np=(int)value;
+          
+          fprintf(stderr,"random %d\n",(int)value);
+          
+          double *force = new double[np];
+          
+          for(int n=0;n<np;++n)force[n]=distribution(generator);
+          
+          pl->force(force,np);
+          
+          delete [] force;
+      }else if(!mstrcmp((char *)"sin",command)){
+          double a=value;
+          double npp;
+          double f;
+          
+          ret=doubleCommand(&f,cp);
+          if(ret)goto ErrorOut;
+          ++(cp->n);
+          
+          ret=doubleCommand(&npp,cp);
+          if(ret)goto ErrorOut;
+          ++(cp->n);
+          
+          int np=(int)npp;
+          
+          double *force = new double[np];
+          
+          double pi=4.0*atan(1.0);
+          
+          fprintf(stderr,"step %d a %g f %g\n",np,a,f);
+
+          for(int n=0;n<np;++n){
+              force[n]=a*sin(2*pi*f*n/(double)pl->sampleRate);
+          }
+          
+          pl->force(force,np);
+          
+          delete [] force;
+
+     }
+ErrorOut:
     return 0;
 }
 int doDiff(BatchPtr Batch)
@@ -662,7 +750,7 @@ int getCommand(char *line,CommandPtr cp)
 		}
 	
 		inum = 0;
-		for(k=0;k<sizeof(number);++k){
+		for(k=0;k<(int)sizeof(number);++k){
 			if(*buff == number[k]){
 				inum = 1;
 				break;
