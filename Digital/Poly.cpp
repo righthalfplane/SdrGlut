@@ -7,6 +7,8 @@
 //
 
 #include "Poly.h"
+#include "eMemory.h"
+
 
 int doFFT2(double *x,double *y,long length,int direction);
 
@@ -36,38 +38,46 @@ Poly::Poly()
 }
 Poly::~Poly()
 {
-    if(poles)delete [] poles;
-    if(zeros)delete [] zeros;
+    if(poles)eFree(poles);
+    if(zeros)eFree(zeros);
     poles=NULL;
     zeros=NULL;
     
-    if(fore)delete [] fore;
-    if(back)delete [] back;
+    if(fore)eFree(fore);
+    if(back)eFree(back);
     fore=NULL;
     back=NULL;
     
-    if(delay)delete [] delay;
+    if(delay)eFree(delay);
     delay=NULL;
     
-    if(coef1)delete [] coef1;
+    if(coef1)eFree(coef1);
     coef1=NULL;
     
-    if(coef2)delete [] coef2;
+    if(coef2)eFree(coef2);
     coef2=NULL;
     
-    if(type)delete [] type;
+    if(type)eFree(type);
     type=NULL;
     
-    if(pz)delete [] pz;
+    if(pz){
+        if(pz[0].poles)eFree(pz[0].poles);
+        if(pz[0].markpole)eFree(pz[0].markpole);
+        if(pz[0].zeros)eFree(pz[0].zeros);
+        if(pz[0].markzero)eFree(pz[0].markzero);
+        if(pz[0].ts)eFree(pz[0].ts);
+        if(pz[0].rs)eFree(pz[0].rs);
+        eFree(pz);
+    }
     pz=NULL;
   
-    if(FIRCoefficients)delete [] FIRCoefficients;
+    if(FIRCoefficients)eFree(FIRCoefficients);
     FIRCoefficients=NULL;
     
-    if(xn)delete [] xn;
+    if(xn)eFree(xn);
     xn=NULL;
     
-    if(yn)delete [] yn;
+    if(yn)eFree(yn);
     yn=NULL;
     
     
@@ -86,12 +96,12 @@ int Poly::forceFIR(double *input,int npoint)
     
     
     
-    double *xn = new double[FIRCount];
+    double *xn = (double *)eMalloc(FIRCount*sizeof(double),20001);
     
     for(int n=0;n<FIRCount;++n)xn[n]=0;
     
-    double *xnp = new double[npoint];
-    double *ynp = new double[npoint];
+    double *xnp = (double *)eMalloc(npoint*sizeof(double),20002);
+    double *ynp = (double *)eMalloc(npoint*sizeof(double),20003);
 
     for(int n=0;n<npoint;++n){
         double y;
@@ -120,11 +130,11 @@ int Poly::forceFIR(double *input,int npoint)
     
     BatchPlot((char *)"forceFIR",0,xnp,ynp,npoint);
     
-    delete [] xnp;
+    if(xnp)eFree(xnp);
     
-    delete [] ynp;
+    if(ynp)eFree(ynp);
     
-    delete [] xn;
+    if(xn)eFree(xn);
     
     return 0;
 }
@@ -137,7 +147,7 @@ int Poly::force(double *input,int npoint)
     
     complex<double> sum;
     
-    complex<double> z = 1.0;
+    complex<double> z = exp(complex<double>(0,thetaNorm));
     sum = 1;
     if(nz > 0){
         for(int n=0;n<nz;++n){
@@ -160,20 +170,20 @@ int Poly::force(double *input,int npoint)
     fprintf(stderr,"           SECONDS,           AMPLITUDE,             INPUT\n");
   
 
-    if(xn)delete [] xn;
+    if(xn)eFree(xn);
     
-    if(yn)delete [] yn;
+    if(yn)eFree(yn);
     
-    xn = new double[nfore];
+    xn = (double *)eMalloc(nfore*sizeof(double),20003);
     
     for(int n=0;n<nfore;++n)xn[n]=0;
     
-    yn = new double[nback];
+    yn = (double *)eMalloc(nback*sizeof(double),20004);
     
     for(int n=0;n<nback;++n)yn[n]=0;
     
-    double *xnp = new double[npoint];
-    double *ynp = new double[npoint];
+    double *xnp = (double *)eMalloc(npoint*sizeof(double),20004);
+    double *ynp = (double *)eMalloc(npoint*sizeof(double),20005);
     
     for(int n=0;n<npoint;++n){
         double y;
@@ -214,9 +224,9 @@ int Poly::force(double *input,int npoint)
     if(npoint == 512 || npoint == 1024 || npoint == 2048 || npoint == 4096)
             BatchPlot((char *)"force",1,xnp,ynp,npoint);
 
-    delete [] xnp;
+    if(xnp)eFree(xnp);
     
-    delete [] ynp;
+    if(ynp)eFree(ynp);
 
     return 0;
 }
@@ -226,15 +236,15 @@ int Poly::SetPolesAndZeros(int np,int nz)
     
     this->nz=nz;
     
-    if(poles)delete [] poles;
+    if(poles)eFree(poles);
     poles=NULL;
     
-    if(zeros)delete [] zeros;
+    if(zeros)eFree(zeros);
     zeros=NULL;
     
-    if(np > 0)poles=new complex<double>[np];
+    if(np > 0)poles=(complex<double> *)eMalloc(np*sizeof(complex<double>),20006);
     
-    if(nz > 0)zeros=new complex<double>[nz];
+    if(nz > 0)zeros=(complex<double> *)eMalloc(nz*sizeof(complex<double>),20007);
     
     
     return 0;
@@ -246,11 +256,11 @@ int Poly::diff()
     nback=0;
     
     if(nz > 0){
-        if(fore)delete [] fore;
-        fore=new double[nz+1];
-        complex<double> *t1=new complex<double>[nz+1];
-        complex<double> *t2=new complex<double>[nz+1];
-        complex<double> *prod=new complex<double>[2*nz+1];
+        if(fore)eFree(fore);
+        fore=(double *)eMalloc((nz+1)*sizeof(double),20008);
+        complex<double> *t1=(complex<double> *)eMalloc((nz+1)*sizeof(complex<double>),20009);
+        complex<double> *t2=(complex<double> *)eMalloc((nz+1)*sizeof(complex<double>),20010);
+        complex<double> *prod=(complex<double> *)eMalloc((2*nz+1)*sizeof(complex<double>),20011);
         
         int n1,n2,n3;
         
@@ -278,17 +288,17 @@ int Poly::diff()
             if(iprint)fprintf(stderr,"%4d %18.9e, %18.9e \n",n+1,t2[n].real(),t2[n].imag());
         }
         
-        delete [] t1;
-        delete [] t2;
-        delete [] prod;
+        if(t1)eFree(t1);
+        if(t2)eFree(t2);
+        if(prod)eFree(prod);
         
     }
     if(np > 0){
-        if(back)delete [] back;
-        back=new double[nz+1];
-        complex<double> *t1=new complex<double>[nz+1];
-        complex<double> *t2=new complex<double>[nz+1];
-        complex<double> *prod=new complex<double>[2*nz+1];
+        if(back)eFree(back);
+        back=(double *)eMalloc((np+1)*sizeof(double),20012);
+        complex<double> *t1=(complex<double> *)eMalloc((np+1)*sizeof(complex<double>),20014);
+        complex<double> *t2=(complex<double> *)eMalloc((np+1)*sizeof(complex<double>),20015);
+        complex<double> *prod=(complex<double> *)eMalloc((2*np+1)*sizeof(complex<double>),20015);
         
         int n1,n2,n3;
         
@@ -316,9 +326,9 @@ int Poly::diff()
             if(iprint)fprintf(stderr,"%4d %18.9e, %18.9e \n",n+1,t2[n].real(),t2[n].imag());
         }
         
-        delete [] t1;
-        delete [] t2;
-        delete [] prod;
+        if(t1)eFree(t1);
+        if(t2)eFree(t2);
+        if(prod)eFree(prod);
         
     }
     
@@ -365,8 +375,8 @@ int Poly::response(double steps)
 
     printf("scale %g\n",scale);
     
-    double *xnp=new double[(long)steps];
-    double *ynp=new double[(long)steps];
+    double *xnp=(double *)eMalloc(steps*sizeof(double),20016);
+    double *ynp=(double *)eMalloc(steps*sizeof(double),20017);
 
     double pi=4.0*atan(1.0);
     
@@ -396,8 +406,8 @@ int Poly::response(double steps)
     
     BatchPlot((char *)"response",0,xnp,ynp,(long)steps);
     
-    delete [] xnp;
-    delete [] ynp;
+    if(xnp)eFree(xnp);
+    if(ynp)eFree(ynp);
 
     return 0;
 }
@@ -411,7 +421,7 @@ int Poly::dft(int npoints)
         printf("         %3d,       %18.9e\n",n, FIRCoefficients[n]);
     }
     
-    complex<double> *x = new complex<double>[FIRCount];
+    complex<double> *x = (complex<double> *)eMalloc(FIRCount*sizeof(complex<double>),20018);
     
     complex<double> sum;
     
@@ -419,8 +429,8 @@ int Poly::dft(int npoints)
     
     double df=sampleRate/FIRCount;
     
-    double *xnp = new double[FIRCount];
-    double *ynp = new double[FIRCount];
+    double *xnp = (double *)eMalloc(FIRCount*sizeof(double),20019);
+    double *ynp = (double *)eMalloc(FIRCount*sizeof(double),20020);
     
     fprintf(stderr,"\n       FREQUENCY,       AMPLITUDE\n");
     for(int k=0;k<FIRCount;++k){
@@ -436,9 +446,11 @@ int Poly::dft(int npoints)
     
     BatchPlot((char *)"dft",0,xnp,ynp,FIRCount);
     
-    delete [] xnp;
+    if(xnp)eFree(xnp);
     
-    delete [] ynp;
+    if(ynp)eFree(ynp);
+
+    if(x)eFree(x);
 
 /*
      This is the inverse and it works
@@ -455,7 +467,6 @@ int Poly::dft(int npoints)
     }
 */
     
-    delete [] x;
     
     return 0;
 }
@@ -474,7 +485,8 @@ int Poly::bilinear(double wT)
         }
     }else{
         nz=np;
-        zeros=new complex<double>[nz];
+        if(zeros)eFree(zeros);
+        zeros=(complex<double> *)eMalloc(nz*sizeof(complex<double>),20039);;
         for(int n=0;n<nz;++n){
             zeros[n]=complex<double>(-1.0,0.0);
         }
@@ -572,7 +584,7 @@ int Poly::doChev(int np,double r)
     for(int k=0;k<np;++k){
         v=zn*(2.0*(double)(k+1+np)-1.0);
         poles[k]=complex<double>(-sinh*sin(v),cosh*cos(v));
-       // poles[k] = -poles[k];
+        poles[k] = -poles[k];
     }
     
     norm();
@@ -637,12 +649,12 @@ int Poly::high(double f,int inorm)
     int nd=np-nz;
     
     if(nd > 0){
-        complex<double> *zeros2=new complex<double>[nz+nd];
+        complex<double> *zeros2=(complex<double> *)eMalloc((nz+nd)*sizeof(complex<double>),20021);
         if(nz > 0){
             for(int n=0;n<nz;++n){
                 zeros2[n]=zeros[n];
             }
-            delete [] zeros;
+            if(zeros)eFree(zeros);
         }
         for(int n=0;n<nd;++n){
             zeros2[n+nz]=complex<double>(0,0);
@@ -697,8 +709,8 @@ int Poly::march(int nstep,double step,int flag)
 {
     fprintf(stderr,"%d %g %d\n",nstep,step,flag);
     
-    double *xnp = new double[(long)(nstep)+1];
-    double *ynp = new double[(long)(nstep)+1];
+    double *xnp = (double *)eMalloc((nstep+1)*sizeof(double),20022);
+    double *ynp = (double *)eMalloc((nstep+1)*sizeof(double),20023);
 
     
     fprintf(stderr,"          t,              rsr,               rsi \n");
@@ -728,8 +740,8 @@ int Poly::march(int nstep,double step,int flag)
     
     BatchPlot((char *)"march",0,xnp,ynp,(long)(nstep+1));
     
-    delete [] xnp;
-    delete [] ynp;
+    if(xnp)eFree(xnp);
+    if(ynp)eFree(ynp);
 
     
     return 1;
@@ -745,9 +757,9 @@ int Poly::band(double f,int flag,double iter)
     int np2=2*np;
     int nz2=2*nz+np-nz;
     
-    complex<double> *zeros2=new complex<double>[nz2];
+    complex<double> *zeros2=(complex<double> *)eMalloc(nz2*sizeof(complex<double>),20024);
     
-    complex<double> *poles2=new complex<double>[np2];
+    complex<double> *poles2=(complex<double> *)eMalloc(np2*sizeof(complex<double>),20025);
     
     for(int n=0;n<np;++n){
         double zr=2.0*poles[n].real();
@@ -791,11 +803,11 @@ int Poly::band(double f,int flag,double iter)
     np=np2;
     nz=nz2;
     
-    delete [] zeros;
+    if(zeros)eFree(zeros);
     
     zeros=zeros2;
     
-    delete [] poles;
+    if(poles)eFree(poles);
     
     poles=poles2;
     
@@ -849,23 +861,23 @@ int Poly::forces(BatchPtr Batch,int nforces)
     
     this->nforces=nforces;
     
-    if(delay)delete [] delay;
+    if(delay)eFree(delay);
     delay=NULL;
     
-    if(coef1)delete [] coef1;
+    if(coef1)eFree(coef1);
     coef1=NULL;
     
-    if(coef2)delete [] coef2;
+    if(coef2)eFree(coef2);
     coef2=NULL;
     
-    if(type)delete [] type;
+    if(type)eFree(type);
     type=NULL;
 
  
-    delay=new double(nforces);
-    coef1=new double(nforces);
-    coef2=new double(nforces);
-    type=new int(nforces);
+    delay=(double *)eMalloc(nforces*sizeof(double),20027);
+    coef1=(double *)eMalloc(nforces*sizeof(double),20028);
+    coef2=(double *)eMalloc(nforces*sizeof(double),20029);
+    type=(int *)eMalloc(nforces*sizeof(int),20030);
     
     for(int n=0;n<nforces;++n)delay[n]=0;
     
@@ -995,9 +1007,19 @@ int Poly::invert(int flag)
     
     fprintf(stderr,"invert \n");
     
-    if(pz)delete [] pz;
+    if(pz){
+        if(pz[0].poles)eFree(pz[0].poles);
+        if(pz[0].markpole)eFree(pz[0].markpole);
+        if(pz[0].zeros)eFree(pz[0].zeros);
+        if(pz[0].markzero)eFree(pz[0].markzero);
+        if(pz[0].ts)eFree(pz[0].ts);
+        if(pz[0].rs)eFree(pz[0].rs);
+        eFree(pz);
+    }
+    
 
-    pz=new poleszeros[nforces];
+    pz=(poleszeros *)eMalloc(nforces*sizeof(poleszeros),20031);
+    zerol((char *)pz,nforces*sizeof(poleszeros));
     
     for(int nf=0;nf < nforces;++nf){
         nt=type[nf];
@@ -1047,12 +1069,12 @@ int Poly::forcepoleszeros(int nf)
     if(nt == IC)nzp += coef2[nf];
     
 
-    pz[nf].poles=new complex<double>[np+npp1];
-    pz[nf].markpole=new int[np+npp1];
-    pz[nf].zeros=new complex<double>[nz+nzp];
-    pz[nf].markzero=new int[nz+nzp];
-    pz[nf].ts=new double[np+npp1];
-    pz[nf].rs=new double[np+npp1];
+    pz[nf].poles=(complex<double> *)eMalloc((np+npp1)*sizeof(complex<double>),20032);
+    pz[nf].markpole=(int *)eMalloc((np+npp1)*sizeof(int),20033);
+    pz[nf].zeros=(complex<double> *)eMalloc((nz+nzp)*sizeof(complex<double>),20034);
+    pz[nf].markzero=(int *)eMalloc((nz+nzp)*sizeof(int),20035);
+    pz[nf].ts=(double *)eMalloc((np+npp1)*sizeof(double),20036);
+    pz[nf].rs=(double *)eMalloc((np+npp1)*sizeof(double),20037);
 
     for(int n=0;n<np;++n){
         pz[nf].poles[n]=poles[n];
@@ -1168,8 +1190,8 @@ int Poly::sweep(double f1,double f2,int ns,int npass,int ilog)
     
     ns=ns+1;
     
-    double *xnp=new double[ns];
-    double *ynp=new double[ns];
+    double *xnp=(double *)eMalloc((ns+5)*sizeof(double),200381);
+    double *ynp=(double *)eMalloc((ns+5)*sizeof(double),20038);
     
     int ncount=max(np,nz);
     
@@ -1223,11 +1245,15 @@ int Poly::sweep(double f1,double f2,int ns,int npass,int ilog)
             nn=nn+1;
        }
         BatchPlot((char *)"sweep",0,xnp,ynp,nn);
+        fprintf(stderr,"ns %d nn %ld\n",ns,nn);
     }
     
-    delete [] xnp;
-    delete [] ynp;
-    
+    fprintf(stderr,"Free 1\n");
+    if(xnp)eFree(xnp);
+    fprintf(stderr,"Free 2\n");
+    if(ynp)eFree(ynp);
+    fprintf(stderr,"Free 3\n");
+
     return 0;
 }
 

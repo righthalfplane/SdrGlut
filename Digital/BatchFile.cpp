@@ -5,6 +5,7 @@
 #include <random>
 #include "Utilities.h"
 #include "SceneList.h"
+#include "eMemory.h"
 #include "Poly.h"
 #include "CLines.h"
 #include "Radio.h"
@@ -105,9 +106,9 @@ int BatchPlot(char *name,int flag,double *x,double *y,long n)
         //std::default_random_engine generator;
         //std::uniform_real_distribution<double> distribution(-1.0, 1.0);
 
-        double *real=new double[n];
-        double *imag=new double[n];
-        double *rl=new double[n];
+        double *real=(double *)eMalloc(n*sizeof(double),20040);
+        double *imag=(double *)eMalloc(n*sizeof(double),20041);
+        double *rl=(double *)eMalloc(n*sizeof(double),20042);
         for(int k=0;k<n;++k){
             real[k]=y[k];
             //real[k]=distribution(generator);
@@ -135,9 +136,9 @@ int BatchPlot(char *name,int flag,double *x,double *y,long n)
         
         printf("BatchPlot FFT %ld",n);
         
-        delete [] real;
-        delete [] imag;
-        delete [] rl;
+        if(real)eFree(real);
+        if(imag)eFree(imag);
+        if(rl)eFree(rl);
 
     }else{
         lines2->plotPutData(scenel2,x,y,n,-1L);
@@ -207,19 +208,28 @@ int processFile(char *pathname)
 	}
 	
 	Batch.input=input;
+    
+    try{
 
-	while(1){
-	    if(BatchNextLine(&Batch,line,sizeof(line)))break;
-	    if(ProcessLine(line,&Batch))break;
-	}
-	
+        while(1){
+            if(BatchNextLine(&Batch,line,sizeof(line)))break;
+            if(ProcessLine(line,&Batch))break;
+        }
+        
+        delete myIcon.pl;
+        
+    }
+    catch(...)
+    {
+        fprintf(stderr,"Exception Processing File\n");
+    }
+
 	end=rtime();
 	
 	printf("Total Time in processFile %.2f Seconds\n",end-start);
 		
 	if(input)fclose(input);
     
-    delete myIcon.pl;
 	
 	return 0;
 }
@@ -408,14 +418,14 @@ int doFIRRead(BatchPtr Batch,double value)
     char *command;
     int ret;
     
-    if(pl->FIRCoefficients) delete [] pl->FIRCoefficients;
+    if(pl->FIRCoefficients) eFree(pl->FIRCoefficients);
     
     pl->FIRCount=0;
     
-    pl->FIRCoefficients = new double[nf];
+    pl->FIRCoefficients = (double *)eMalloc(nf*sizeof(double),20044);
     
-    double *xnp=new double[(long)nf];
-    double *ynp=new double[(long)nf];
+    double *xnp=(double *)eMalloc(nf*sizeof(double),20045);
+    double *ynp=(double *)eMalloc(nf*sizeof(double),20046);
 
     zerol((char *)&cp,sizeof(struct CommandInfo));
     
@@ -437,8 +447,8 @@ int doFIRRead(BatchPtr Batch,double value)
 
     BatchPlot((char *)"FIRCoefficients",0,xnp,ynp,(long)pl->FIRCount);
     
-    delete [] xnp;
-    delete [] ynp;
+    if(xnp)eFree(xnp);
+    if(ynp)eFree(ynp);
 
     if(BatchNextLine(Batch,line,sizeof(line)))return 1;
     if(getCommand(line,&cp))return 1;
@@ -481,13 +491,13 @@ int doForce(BatchPtr Batch,struct CommandInfo *cp)
           
           fprintf(stderr,"step %d\n",np);
           
-          double *force = new double[np];
+          double *force = (double *)eMalloc(np*sizeof(double),20047);
           
           for(int n=0;n<np;++n)force[n]=1;
           
           pl->force(force,np);
           
-          delete [] force;
+          if(force)eFree(force);
           
           
       }else if(!mstrcmp((char *)"impulse",command)){
@@ -496,7 +506,7 @@ int doForce(BatchPtr Batch,struct CommandInfo *cp)
           
           fprintf(stderr,"impulse %d\n",(int)value);
           
-          double *force = new double[np];
+          double *force = (double *)eMalloc(np*sizeof(double),20048);
           
           force[0]=1;
           
@@ -504,7 +514,7 @@ int doForce(BatchPtr Batch,struct CommandInfo *cp)
           
           pl->force(force,np);
           
-          delete [] force;
+          if(force)eFree(force);
       }else if(!mstrcmp((char *)"random",command)){
           std::default_random_engine generator;
           std::uniform_real_distribution<double> distribution(-1.0, 1.0);
@@ -513,13 +523,13 @@ int doForce(BatchPtr Batch,struct CommandInfo *cp)
           
           fprintf(stderr,"random %d\n",(int)value);
           
-          double *force = new double[np];
+          double *force =  (double *)eMalloc(np*sizeof(double),20049);
           
           for(int n=0;n<np;++n)force[n]=distribution(generator);
           
           pl->force(force,np);
           
-          delete [] force;
+          if(force)eFree(force);
       }else if(!mstrcmp((char *)"sin",command)){
           double a=value;
           double npp;
@@ -535,7 +545,7 @@ int doForce(BatchPtr Batch,struct CommandInfo *cp)
           
           int np=(int)npp;
           
-          double *force = new double[np];
+          double *force = (double *)eMalloc(np*sizeof(double),20050);;
           
           double pi=4.0*atan(1.0);
           
@@ -547,7 +557,7 @@ int doForce(BatchPtr Batch,struct CommandInfo *cp)
           
           pl->force(force,np);
           
-          delete [] force;
+          if(force)eFree(force);
 
      }
 ErrorOut:

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		460C7DD6223960D300F9E64A /* PlayIQ.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 460C7DD4223960D300F9E64A /* PlayIQ.cpp */; };
+		4614BF382473180E006E6894 /* eMemory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4614BF362473180E006E6894 /* eMemory.cpp */; };
 		4616E5B82208B6A700240B9F /* smeter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4616E5B62208B6A600240B9F /* smeter.cpp */; };
 		461B756E220379E400D8CBE6 /* RaceFastsdr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 461B756D220379E400D8CBE6 /* RaceFastsdr.cpp */; };
 		461E83582228916B00220E94 /* DialogFileOpen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 461E83572228916B00220E94 /* DialogFileOpen.cpp */; };
@@ -103,6 +104,8 @@
 		460C7DD4223960D300F9E64A /* PlayIQ.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PlayIQ.cpp; path = MainSource/PlayIQ.cpp; sourceTree = "<group>"; };
 		460C7DD5223960D300F9E64A /* PlayIQ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlayIQ.h; path = MainSource/PlayIQ.h; sourceTree = "<group>"; };
 		4612027E2428655000A80820 /* ulibTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ulibTypes.h; path = MainSource/ulibTypes.h; sourceTree = "<group>"; };
+		4614BF362473180E006E6894 /* eMemory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = eMemory.cpp; path = MainSource/eMemory.cpp; sourceTree = "<group>"; };
+		4614BF372473180E006E6894 /* eMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = eMemory.h; path = MainSource/eMemory.h; sourceTree = "<group>"; };
 		4616E5B62208B6A600240B9F /* smeter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = smeter.cpp; sourceTree = "<group>"; };
 		4616E5B72208B6A700240B9F /* smeter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = smeter.h; sourceTree = "<group>"; };
 		461AB5C922126C8E001522BD /* FileList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileList.h; path = CExpress/FileList.h; sourceTree = "<group>"; };
@@ -423,6 +426,8 @@
 				46963ED223D789A30059B4AA /* printInfo.cpp */,
 				46266831239D9E8D002CCCF4 /* mThread.cpp */,
 				460C7DD4223960D300F9E64A /* PlayIQ.cpp */,
+				4614BF362473180E006E6894 /* eMemory.cpp */,
+				4614BF372473180E006E6894 /* eMemory.h */,
 				460C7DD5223960D300F9E64A /* PlayIQ.h */,
 				468D261A2238A04D005BE154 /* RecordIQ.cpp */,
 				468D261B2238A04D005BE154 /* RecordIQ.h */,
@@ -561,6 +566,7 @@
 				467FE4191C2C4F9B007D260F /* glui.cpp in Sources */,
 				4686063A22028C1F0078D9F2 /* Radio.cpp in Sources */,
 				46CE01C122125F3000140F6C /* Getpalette.c in Sources */,
+				4614BF382473180E006E6894 /* eMemory.cpp in Sources */,
 				46C36C52222596D90045691F /* DialogSave.cpp in Sources */,
 				46CE01B622125D8400140F6C /* Scene.c in Sources */,
 				467FE4121C2C4F9B007D260F /* glui_statictext.cpp in Sources */,

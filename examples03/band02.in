@@ -7,6 +7,8 @@ bilinear 0.159154943
 response 101
 diff
 force impulse 101
+force sin 10 10000 401
+force sin 10 14000 401
 exit
 
 

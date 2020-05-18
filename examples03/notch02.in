@@ -4,11 +4,9 @@ high 2500 1
 band 8819.4088334 1 1.e-6
 bilinear 0.159154943
 response 101
-exit
-
 diff
 force impulse 101
-
-low 5000 1
-
-bilinear 6.2831
+force sin 10 1000 201
+force sin 10 8819 401
+force sin 10 12000 201
+exit

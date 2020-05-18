@@ -67,6 +67,9 @@ empty:
     end[r+1]=0xff;
     end[r+2]=0xff;
     end[r+3]=0xff;
+    
+    //fprintf(stderr,"malloc tag %d\n",tagm[k]);
+
 
 	pthread_mutex_unlock(&mutex);
 
@@ -125,6 +128,7 @@ int cFree(char *p)
 	pthread_mutex_unlock(&mutex);
 	return 1;
 found:
+    //fprintf(stderr,"free tag %d\n",tagm[k]);
     r=givenLength[k]-4;
     end=(unsigned char *)p;
     if(end[r] != 0xff || end[r+1] != 0xff || end[r+2] != 0xff || end[r+3] != 0xff){
@@ -168,14 +172,14 @@ void *cMalloc(unsigned long length,int tag)
 	
 	tag=tag;
 	
-	ret=(char *)calloc(length+4L,1);
+	ret=(char *)calloc(length+8L,1);
 	if(ret == NULL){
 	    fprintf(stderr,"cMalloc Out of Memory Requested (%ld) Total Used (%ld) tag (%d)\n",length,total,tag);
 	    sprintf(buff,"cMalloc Out of Memory Requested (%ld) Total Used (%ld) tag (%d)\n",length,total,tag);
 	    WarningBatch(buff);
 	    return (char *)NULL;
 	}
-	total += length+4L;
+	total += length+8L;
 	return ret;
 }
 void *cRealloc(char *p,unsigned long r,int tag)
