@@ -470,9 +470,9 @@ int Poly::dft(int npoints)
     
     return 0;
 }
-int Poly::bilinear(double wT)
+int Poly::bilinear(double f)
 {
-    warp(wT);
+    warp(f);
     
     if(nz > 0){
         for(int n=0;n<nz;++n){
@@ -506,9 +506,8 @@ int Poly::bilinear(double wT)
     char mes[256];
     
     sprintf(mes,"bilinear Coefficients");
-    
+        
     writePoly(mes);
-    
     
     return 0;
 }

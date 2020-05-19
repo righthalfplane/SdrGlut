@@ -1,0 +1,9 @@
+samplerate 10000
+butter 3 1
+high 0.159154943 1
+bilinear 2000
+response 26
+diff
+force step 101
+exit
+

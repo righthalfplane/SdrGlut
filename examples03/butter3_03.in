@@ -1,0 +1,10 @@
+samplerate 10000
+butter 3 1
+high 0.159154943 1
+band 0.159154943 1 1.e-6
+bilinear 3000
+response 26
+diff
+force step 101
+exit
+

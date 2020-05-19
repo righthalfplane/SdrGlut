@@ -1,9 +1,12 @@
-samplerate 48000
-butter 10 1
-low 2500 1
-bilinear 0.159154943
+samplerate 10000
+butter 3 1
+bilinear 1000
+response 26
+diff
+force step 101
 exit
 
+low 2500 1
 
 response 101
 diff
