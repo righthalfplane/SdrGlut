@@ -66,7 +66,7 @@ CCFILES= ./glui-routines/algebra3.cpp ./glui-routines/arcball.cpp ./glui-routine
 	./Classes/fastfir.cpp ./Classes/fft.cpp ./Classes/CLines.cpp ./Classes/CLInesPlotLabels.cpp ./Classes/ClinesAttributes.cpp \
 	./Classes/Contours.cpp ./Classes/ClinesPlotAttributes.cpp ./Radio/smeter.cpp ./Classes/CLinesPlotBox.cpp \
 	./Radio/Radio.cpp ./Radio/DialogRadio.cpp ./Radio/RaceFastsdr.cpp ./SimpleOpenGL/raceFMCsdr.cpp ./MainSource/printInfo.cpp \
-	./Digital/Poly.cpp ./Digital/BatchFile.cpp
+	./Digital/Poly.cpp ./Digital/BatchFile.cpp ./MainSource/eMemory.cpp
 
 
 
@@ -95,7 +95,7 @@ CCOBJS = ./glui-routines/algebra3.o ./glui-routines/arcball.o ./glui-routines/gl
 	./Radio/Radio.o ./Radio/DialogRadio.o ./Radio/RaceFastsdr.o ./MainSource/DialogFileOpen.o ./SdrFile/SdrFile.o \
     ./MainSource/DialogSave.o ./SdrFile/DialogSdrFile.o ./MainSource/fir.o ./MainSource/DialogFolder.o \
 	./MainSource/PlayIQ.o ./MainSource/RecordIQ.o ./MainSource/printInfo.o ./Classes/Transmit.o ./MainSource/WriteToGLUIWindow.o \
- 	./Digital/Poly.o ./Digital/BatchFile.o
+ 	./Digital/Poly.o ./Digital/BatchFile.o ./MainSource/eMemory.o
 
 
 fireball:  ${COBJS} ${CCOBJS}

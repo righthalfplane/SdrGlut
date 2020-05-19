@@ -1,9 +1,9 @@
 
 
 
-CFLAGS = -DNO_FORTRAN  -I/usr/X11R6/include  -I./DrawFindPointHistory -I./MainSource -I./KdTree-routines -I./glui-routines/include -I./CExpress -Wall 
+CFLAGS = -DNO_FORTRAN  -O0 -g -I/usr/X11R6/include  -I./DrawFindPointHistory -I./MainSource -I./KdTree-routines -I./glui-routines/include -I./CExpress -Wall 
 
-CXXFLAGS = -std=c++11 -DNO_FORTRAN  -I./Digital -I./glui-routines/include  -I/usr/X11R6/include  -I./DrawFindPointHistory  -I./MainSource -I./KdTree-routines -I./SdrFile -I./Radio -I./glui-routines/include -I./CExpress -I./Classes -I./SdrGlut -Wall 
+CXXFLAGS = -std=c++11 -O0 -g -DNO_FORTRAN  -I./Digital -I./glui-routines/include  -I/usr/X11R6/include  -I./DrawFindPointHistory  -I./MainSource -I./KdTree-routines -I./SdrFile -I./Radio -I./glui-routines/include -I./CExpress -I./Classes -I./SdrGlut -Wall 
 
 
 CFILES= ./MainSource/Geom.c \
@@ -65,7 +65,7 @@ CCFILES= ./glui-routines/algebra3.cpp ./glui-routines/arcball.cpp ./glui-routine
 	./Classes/fastfir.cpp ./Classes/fft.cpp ./Classes/CLines.cpp ./Classes/CLInesPlotLabels.cpp ./Classes/ClinesAttributes.cpp \
 	./Classes/Contours.cpp ./Classes/ClinesPlotAttributes.cpp ./Radio/smeter.cpp ./Classes/CLinesPlotBox.cpp \
 	./Radio/Radio.cpp ./Radio/DialogRadio.cpp ./Radio/RaceFastsdr.cpp ./SimpleOpenGL/raceFMCsdr.cpp ./MainSource/printInfo.cpp \
-	./Digital/Poly.cpp ./Digital/BatchFile.cpp
+	./Digital/Poly.cpp ./Digital/BatchFile.cpp ./MainSource/eMemory.cpp
 
 
 
@@ -93,7 +93,7 @@ CCOBJS = ./glui-routines/algebra3.o ./glui-routines/arcball.o ./glui-routines/gl
 	./Radio/Radio.o ./Radio/DialogRadio.o ./Radio/RaceFastsdr.o ./MainSource/DialogFileOpen.o ./SdrFile/SdrFile.o \
     ./MainSource/DialogSave.o ./SdrFile/DialogSdrFile.o ./MainSource/fir.o ./MainSource/DialogFolder.o \
 	./MainSource/PlayIQ.o ./MainSource/RecordIQ.o ./MainSource/printInfo.o ./Classes/Transmit.o ./MainSource/WriteToGLUIWindow.o \
-	./Digital/Poly.o ./Digital/BatchFile.o
+	./Digital/Poly.o ./Digital/BatchFile.o ./MainSource/eMemory.o
 
 
 

@@ -594,7 +594,9 @@ void CLines::reshape(struct Scene *scene,int wscr,int hscr)
 
 void CLines::display(struct Scene *scene)
 {
-	
+    
+    if(!scene)return;
+    
 	{
 		glPixelStorei(GL_UNPACK_ALIGNMENT,1);
 

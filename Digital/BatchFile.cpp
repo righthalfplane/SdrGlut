@@ -102,6 +102,18 @@ int BatchPlot(char *name,int flag,double *x,double *y,long n)
     
     lines2 = CLines::CLinesOpen(scenel2,-1000);
     
+    lines2->sceneSource=NULL;
+    
+    lines2->Frequency=0;
+    
+    lines2->BandWidth=0;
+
+    lines2->wShift=0;
+    
+    lines2->lines->Plot->yLogScale=0;
+    
+    lines2->lines->Plot->gridHash=1;
+
     if(flag == 1){
         //std::default_random_engine generator;
         //std::uniform_real_distribution<double> distribution(-1.0, 1.0);
@@ -144,13 +156,6 @@ int BatchPlot(char *name,int flag,double *x,double *y,long n)
         lines2->plotPutData(scenel2,x,y,n,-1L);
     }
     
-    lines2->sceneSource=NULL;
-    
-    lines2->wShift=0;
-    
-    lines2->lines->Plot->yLogScale=0;
-    
-    lines2->lines->Plot->gridHash=1;
     
     glutSetWindowTitle(namewindow);
 
