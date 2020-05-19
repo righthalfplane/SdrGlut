@@ -483,10 +483,22 @@ int Poly::bilinear(double f)
             double y=2.0*w/d;
             zeros[n]=complex<double>(x,y);
         }
+        if(nz < np){
+            complex<double> *zeros2=(complex<double> *)eMalloc(np*sizeof(complex<double>),20039);
+            for(int n=0;n<nz;++n){
+                zeros2[n]=zeros[n];
+            }
+            for(int n=nz;n<np;++n){
+                zeros2[n]=complex<double>(-1.0,0.0);
+            }
+            if(zeros)eFree(zeros);
+            zeros=zeros2;
+            nz=np;
+       }
     }else{
         nz=np;
         if(zeros)eFree(zeros);
-        zeros=(complex<double> *)eMalloc(nz*sizeof(complex<double>),20039);;
+        zeros=(complex<double> *)eMalloc(nz*sizeof(complex<double>),20039);
         for(int n=0;n<nz;++n){
             zeros[n]=complex<double>(-1.0,0.0);
         }
@@ -1244,14 +1256,10 @@ int Poly::sweep(double f1,double f2,int ns,int npass,int ilog)
             nn=nn+1;
        }
         BatchPlot((char *)"sweep",0,xnp,ynp,nn);
-        fprintf(stderr,"ns %d nn %ld\n",ns,nn);
     }
     
-    fprintf(stderr,"Free 1\n");
     if(xnp)eFree(xnp);
-    fprintf(stderr,"Free 2\n");
     if(ynp)eFree(ynp);
-    fprintf(stderr,"Free 3\n");
 
     return 0;
 }

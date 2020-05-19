@@ -1,9 +1,9 @@
 samplerate 48000
 butter 10 1
 bilinear 2500
-exit
-
-
 response 101
 diff
 force impulse 101
+exit
+
+
