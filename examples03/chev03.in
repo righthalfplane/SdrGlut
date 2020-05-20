@@ -1,19 +1,23 @@
 samplerate 10000
 chev 3 2.0
-low 0.051712576 1
-band 0.159154943 1 1.e-6
-bilinear 2500
-frequencyNorm 2500
-response 101
-exit
-
-samplerate 10000
-chev 3 2.0
 low 0.066973673 1
 band 0.063339688 1 1.e-6
 bilinear 2500
 frequencyNorm 1500
 response 101
+diff
+force step 101
+exit
+
+samplerate 10000
+chev 5 0.2
+high 0.051712576 1
+band 0.159154943 1 1.e-6
+bilinear 2500
+frequencyNorm 0
+response 401
+diff
+force step 101
 exit
 
 samplerate 10000

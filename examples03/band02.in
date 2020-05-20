@@ -2,14 +2,29 @@ samplerate 100000
 butter 10 0.1
 low 2500 1
 band 10000 1 1.e-6
-sweep 0. 25000. 100 1
+sweep 0. 25000. 128 1
 bilinear 0.159154943
 response 101
 diff
-force impulse 101
-force sin 10 10000 401
-force sin 10 14000 401
+force impulse 200
 exit
 
+samplerate 100000
+butter 10 0.1
+low 2500 1
+band 20000 1 1.e-6
+sweep 0. 25000. 128 1
+bilinear 0.318309886
+response 101
+diff
+force impulse 200
+exit
+
+bilinear 0.079577472
+
+
+
+force sin 10 10000 401
+force sin 10 14000 401
 
 

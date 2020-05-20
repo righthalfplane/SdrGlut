@@ -1,7 +1,8 @@
-samplerate 48000
-butter 25 0.1
-bilinear 2500
+samplerate 10000
+chev 20 0.2
+bilinear 1000
+response 201
 diff
-force step 201
+force impulse 201
 exit
 

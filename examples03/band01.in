@@ -1,10 +1,10 @@
 butter 10 0.1
-low 5000 1
-band 8660 1 1.e-6
-sweep 0. 48000. 128 1
+low 2500 1
+band 20000 1 1.e-6
+sweep 0. 25000. 128 1
 forces 1
 impulse 1.
 end
 invert 1
-march 200 1.0833e-5 1
+march 200 1.0e-5 1
 stop

@@ -271,10 +271,12 @@ int doBatch(BatchPtr Batch,CommandPtr cp)
 	
 	if(!Batch || !cp)return 1;
 	
+    double pi=4.0*atan(1.0);
+
 	ret = 1;
 	command=stringCommand(cp);
 	if(!command)goto ErrorOut;
-    
+
    // fprintf(stderr,"command %s\n",command);
 	
 	if(!mstrcmp((char *)"butter",command)){
@@ -389,6 +391,12 @@ int doBatch(BatchPtr Batch,CommandPtr cp)
         ret=doubleCommand(&value,cp);
         if(ret)goto ErrorOut;
         pl->sampleRate=value;
+    }else if(!mstrcmp((char *)"frequencyNorm",command)){
+        struct Poly *pl=Batch->myIcon->pl;
+        ++(cp->n);
+        ret=doubleCommand(&value,cp);
+        if(ret)goto ErrorOut;
+        pl->thetaNorm=2*pi*value/pl->sampleRate;
     }else if(!mstrcmp((char *)"exit",command)){
         goto ErrorOut;
     }else if(!mstrcmp((char *)"stop",command)){
