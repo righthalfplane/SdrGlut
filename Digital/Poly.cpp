@@ -106,20 +106,23 @@ int Poly::forceFIR(double *input,int npoint)
     for(int n=0;n<npoint;++n){
         double y;
         double x;
+        
         x=input[n];
-        y=x*FIRCoefficients[FIRCount-1];
         
+        xn[0]=x;
         
-        for(int k=1;k<FIRCount;++k){
-            y += xn[k-1]*FIRCoefficients[FIRCount-k-1];
-            //fprintf(stderr,"y1 %g\n",y);
+        y=0;
+        
+        for(int k=0;k<FIRCount;++k){
+            y += xn[k]*FIRCoefficients[k];
         }
         
         
         for(int k=0;k<FIRCount-1;++k){
             xn[FIRCount-k-1]=xn[FIRCount-k-2];
         }
-        xn[0]=x;
+        
+        
         
         xnp[n]=n*t;
         
