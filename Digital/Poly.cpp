@@ -188,18 +188,17 @@ int Poly::force(double *input,int npoint)
     for(int n=0;n<npoint;++n){
         double y;
         double x;
+        
         x=input[n];
         y=x*fore[nfore-1];
   
         
         for(int k=1;k<nfore;++k){
             y += xn[k-1]*fore[nfore-k-1];
-            //fprintf(stderr,"y1 %g\n",y);
         }
        
         for(int k=1;k<nback;++k){
             y -= yn[k-1]*back[nback-k-1];
-            //fprintf(stderr,"y2 %g\n",y);
         }
         
         for(int k=0;k<nback-1;++k){

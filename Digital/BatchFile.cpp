@@ -22,6 +22,8 @@ int doDft(BatchPtr Batch,double value);
 
 int doForce(BatchPtr Batch,CommandPtr cp);
 
+int doBandPass(BatchPtr Batch,CommandPtr cp,int flag);
+
 int doDiff(BatchPtr Batch);
 
 int doBilinear(BatchPtr Batch,double value);
@@ -385,6 +387,10 @@ int doBatch(BatchPtr Batch,CommandPtr cp)
         doTrans(Batch,value1,value2);
     }else if(!mstrcmp((char *)"force",command)){
         doForce(Batch,cp);
+    }else if(!mstrcmp((char *)"bandpass",command)){
+        doBandPass(Batch,cp,0);
+    }else if(!mstrcmp((char *)"bandstop",command)){
+        doBandPass(Batch,cp,1);
     }else if(!mstrcmp((char *)"samplerate",command)){
         struct Poly *pl=Batch->myIcon->pl;
         ++(cp->n);
@@ -478,6 +484,77 @@ int doDft(BatchPtr Batch,double value)
     
     pl->dft((int)value);
     
+    return 0;
+}
+int doBandPass(BatchPtr Batch,struct CommandInfo *cp,int flag)
+{
+    double ripple,fmin,fmax,save,pi,order;
+    double w1,w2,wc,w0;
+    char *command;
+    int ret;
+    
+    struct Poly *pl=Batch->myIcon->pl;
+    
+    pi=4.0*atan(1.0);
+    
+    ++(cp->n);
+    command=stringCommand(cp);
+    if(!command)goto ErrorOut;
+    ++(cp->n);
+    
+    ret=doubleCommand(&order,cp);
+    if(ret)goto ErrorOut;
+    ++(cp->n);
+    
+    ret=doubleCommand(&ripple,cp);
+    if(ret)goto ErrorOut;
+    ++(cp->n);
+    
+    ret=doubleCommand(&fmin,cp);
+    if(ret)goto ErrorOut;
+    ++(cp->n);
+    
+    ret=doubleCommand(&fmax,cp);
+    if(ret)goto ErrorOut;
+    ++(cp->n);
+    
+    if(fmax < fmin){
+        save=fmax;
+        fmax=fmin;
+        fmin=save;
+    }
+    
+    w1=tan(pi*fmin/pl->sampleRate);
+    
+    w2=tan(pi*fmax/pl->sampleRate);
+    
+    wc=sqrt(w1*w2)/(2.0*pi);
+    
+    w0=0.5*(w2-w1)/(2.0*pi);
+    
+    if(!mstrcmp((char *)"chev",command)){
+        pl->doChev(order,ripple);
+    }else if(!mstrcmp((char *)"butter",command)){
+        pl->doButterWorth(order);
+    }
+    
+    if(flag == 0){
+        pl->low(w0,1);
+    }else{
+        pl->high(w0,1);
+    }
+
+    pl->band(wc,1,1e6);
+
+    pl->bilinear(pl->sampleRate/4.0);
+
+    if(flag == 0){
+        pl->thetaNorm=2*pi*sqrt(fmin*fmax)/pl->sampleRate;
+    }else{
+        pl->thetaNorm=0.9*pi;
+    }
+
+ErrorOut:
     return 0;
 }
 int doForce(BatchPtr Batch,struct CommandInfo *cp)
