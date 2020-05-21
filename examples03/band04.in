@@ -1,0 +1,10 @@
+butter 40 0.1
+low 1500 1
+band 750000 1 1.e-6
+sweep 0. 1e6 1500 1
+forces 1
+impulse 1.
+end
+invert 1
+march 600 1.0e-5 1
+stop

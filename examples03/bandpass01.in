@@ -1,26 +1,17 @@
-samplerate 10000
-bandstop chev 3 2.0 2000 3000
-response 201
-bandstop chev 3 0.2 1000 2000
-response 201
-bandstop chev 3 0.2 3000 4000
-response 201
-bandstop chev 25 0.2 2000 4000
-response 201
+samplerate 2000000
+bandpass butter 7 0.2 745000 755000
+response 101
 diff
-force impulse 700
+force impulse 101
 exit
 
-samplerate 20000
-bandpass chev 3 2.0 2000 3000
-response 201
-bandpass chev 3 0.2 1000 2000
-response 201
-bandpass chev 3 0.2 3000 4000
-response 201
-bandpass chev 3 0.2 2000 4000
-response 201
+samplerate 2000000
+bandpass butter 40 0.2 745000 755000
+response 101
 exit
+diff
+force impulse 1501
+
 
 samplerate 10000
 chev 3 2.0

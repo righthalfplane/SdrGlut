@@ -5,8 +5,10 @@ bandpass chev 3 0.2 1000 2000
 response 201
 bandpass chev 3 0.2 3000 4000
 response 201
-bandpass chev 3 0.2 2000 4000
+bandpass chev 14 0.2 2000 4000
 response 201
+diff
+force impulse 501
 exit
 
 samplerate 10000
