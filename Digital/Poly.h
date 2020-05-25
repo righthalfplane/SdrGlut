@@ -45,11 +45,20 @@ struct poleszeros{
     int nz;
     complex<double> *poles;
     complex<double> *zeros;
-    int *markpole;
-    int *markzero;
     double *ts;
     double *rs;
     double con;
+};
+
+struct BiQuad{
+    double kk;
+    double a1;
+    double a2;
+    double b0;
+    double b1;
+    double b2;
+    double d1;
+    double d2;
 };
 
 class Poly {
@@ -61,6 +70,7 @@ public:
     int wpz();
     int norm();
     int diff();
+    int cascadeEM();
     int dft(int npoints);
     int low(double w0,int inorm);
     int high(double w0,int inorm);
@@ -75,8 +85,10 @@ public:
     int bilinear(double wT);
     int response(double wT);
     int mult(complex<double> *sum,complex<double> *t1,complex<double> *t2,int n1,int n2,int *n3);
+    int canelPolesZeros(complex<double> *poles,complex<double> *zeros,int *np,int *nz);
     int force(double *input,int npoint);
     int forceFIR(double *input,int npoint);
+    int forceCascade(double *input,int npoint);
     int forcepoleszeros(int);
     Poly();
     ~Poly();
@@ -103,6 +115,10 @@ public:
     double *FIRCoefficients;
     int FIRCount;
     double thetaNorm;
+    double **cfore;
+    double **cback;
+    struct BiQuad *biquad;
+    int cascade;
 };
 
 

@@ -22,9 +22,15 @@ int doDft(BatchPtr Batch,double value);
 
 int doForce(BatchPtr Batch,CommandPtr cp);
 
+int doCLowPass(BatchPtr Batch,CommandPtr cp,int flag);
+
+int doCHighPass(BatchPtr Batch,CommandPtr cp,int flag);
+
 int doBandPass(BatchPtr Batch,CommandPtr cp,int flag);
 
 int doDiff(BatchPtr Batch);
+
+int doCascadeEM(BatchPtr Batch);
 
 int doBilinear(BatchPtr Batch,double value);
 
@@ -376,6 +382,8 @@ int doBatch(BatchPtr Batch,CommandPtr cp)
         doResponse(Batch,value);
     }else if(!mstrcmp((char *)"diff",command)){
         doDiff(Batch);
+    }else if(!mstrcmp((char *)"cascadeEM",command)){
+        doCascadeEM(Batch);
     }else if(!mstrcmp((char *)"trans",command)){
         ++(cp->n);
         ret=doubleCommand(&value1,cp);
@@ -387,6 +395,14 @@ int doBatch(BatchPtr Batch,CommandPtr cp)
         doTrans(Batch,value1,value2);
     }else if(!mstrcmp((char *)"force",command)){
         doForce(Batch,cp);
+    }else if(!mstrcmp((char *)"lowpass",command)){
+        doCLowPass(Batch,cp,0);
+    }else if(!mstrcmp((char *)"clowpass",command)){
+        doCLowPass(Batch,cp,1);
+    }else if(!mstrcmp((char *)"highpass",command)){
+        doCHighPass(Batch,cp,0);
+    }else if(!mstrcmp((char *)"chighpass",command)){
+        doCHighPass(Batch,cp,1);
     }else if(!mstrcmp((char *)"bandpass",command)){
         doBandPass(Batch,cp,0);
     }else if(!mstrcmp((char *)"bandstop",command)){
@@ -557,6 +573,105 @@ int doBandPass(BatchPtr Batch,struct CommandInfo *cp,int flag)
 ErrorOut:
     return 0;
 }
+int doCHighPass(BatchPtr Batch,struct CommandInfo *cp,int flag)
+{
+    char *command;
+    double value,ripple,fc;
+    int order;
+    int ret;
+    
+    double pi=4.0*atan(1.0);
+    
+    struct Poly *pl=Batch->myIcon->pl;
+    
+    ++(cp->n);
+    command=stringCommand(cp);
+    if(!command)goto ErrorOut;
+    ++(cp->n);
+    ret=doubleCommand(&value,cp);
+    if(ret)goto ErrorOut;
+    ++(cp->n);
+    order=value;
+    ret=doubleCommand(&value,cp);
+    if(ret)goto ErrorOut;
+    ++(cp->n);
+    ripple=value;
+    ret=doubleCommand(&value,cp);
+    if(ret)goto ErrorOut;
+    ++(cp->n);
+    fc=value;
+    
+    if(order & 1)order++;
+    
+    if(!mstrcmp((char *)"chev",command)){
+        pl->doChev(order,ripple);
+    }else if(!mstrcmp((char *)"butter",command)){
+        pl->doButterWorth(order);
+    }
+    
+    pl->high(1.0/(2.0*pi),1);
+    
+    pl->bilinear(fc);
+    
+    pl->thetaNorm=0.9*3.1415926;
+    
+    if(flag){
+       pl->cascadeEM();
+    }else{
+        pl->diff();
+    }
+
+    return 0;
+ErrorOut:
+    return 0;
+}
+int doCLowPass(BatchPtr Batch,struct CommandInfo *cp,int flag)
+{
+
+    char *command;
+    double value,ripple,fc;
+    int order;
+    int ret;
+    
+    struct Poly *pl=Batch->myIcon->pl;
+    
+    ++(cp->n);
+    command=stringCommand(cp);
+    if(!command)goto ErrorOut;
+    ++(cp->n);
+    ret=doubleCommand(&value,cp);
+    if(ret)goto ErrorOut;
+    ++(cp->n);
+    order=value;
+    ret=doubleCommand(&value,cp);
+    if(ret)goto ErrorOut;
+    ++(cp->n);
+    ripple=value;
+    ret=doubleCommand(&value,cp);
+    if(ret)goto ErrorOut;
+    ++(cp->n);
+    fc=value;
+    
+    if(order & 1)order++;
+    
+    if(!mstrcmp((char *)"chev",command)){
+        pl->doChev(order,ripple);
+    }else if(!mstrcmp((char *)"butter",command)){
+        pl->doButterWorth(order);
+    }
+    
+    pl->bilinear(fc);
+    
+    pl->thetaNorm=0.0;
+    
+    if(flag){
+        pl->cascadeEM();
+    }else{
+        pl->diff();
+    }
+ErrorOut:
+    return 0;
+}
 int doForce(BatchPtr Batch,struct CommandInfo *cp)
 {
     char *command;
@@ -651,6 +766,14 @@ int doForce(BatchPtr Batch,struct CommandInfo *cp)
 
      }
 ErrorOut:
+    return 0;
+}
+int doCascadeEM(BatchPtr Batch)
+{
+    struct Poly *pl=Batch->myIcon->pl;
+    
+    pl->cascadeEM();
+    
     return 0;
 }
 int doDiff(BatchPtr Batch)

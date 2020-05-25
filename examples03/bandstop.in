@@ -1,4 +1,17 @@
 samplerate 10000
+bandstop butter 15 0.2 1000 2000
+response 201
+bandstop butter 15 2.0 2000 3000
+response 201
+bandstop butter 15 0.2 3000 4000
+response 201
+bandstop butter 15 0.2 2000 4000
+response 201
+diff
+force impulse 700
+exit
+
+samplerate 10000
 bandstop chev 3 2.0 2000 3000
 response 201
 bandstop chev 3 0.2 1000 2000

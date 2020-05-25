@@ -1,0 +1,19 @@
+samplerate 10000
+lowpass "butter" 15 1 1000
+response 101
+lowpass "butter" 15 1 2000
+response 101
+lowpass "butter" 15 1 3000
+response 101
+lowpass "butter" 15 1 4000
+response 101
+exit
+
+
+force step 1800
+force sin 10 100 1800
+force sin 10 500 1800
+force sin 10 1000 1800
+force sin 10 2000 1800
+force sin 10 2400 1800
+force sin 10 4000 1800

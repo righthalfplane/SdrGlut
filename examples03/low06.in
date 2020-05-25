@@ -1,0 +1,57 @@
+samplerate 10000
+butter 16 0.1
+bilinear 4000
+response 201
+exit
+samplerate 10000
+butter 16 0.1
+bilinear 3000
+response 201
+exit
+
+samplerate 10000
+butter 16 0.1
+bilinear 2000
+response 201
+exit
+
+samplerate 10000
+butter 16 0.1
+bilinear 1000
+response 201
+exit
+
+samplerate 10000
+butter 16 0.1
+low 0.628318531 1
+bilinear 2500
+response 201
+exit
+
+samplerate 10000
+butter 16 0.1
+low 0.052083333 1
+bilinear 2500
+response 201
+exit
+
+
+response 101
+diff
+force impulse 101
+
+
+samplerate 48000
+chev 10 0.1
+low 0.052083333 1
+band 0.4088334 1 1.e-6
+bilinear 2500
+response 101
+exit
+
+low 5000 1
+
+band 8819.4088334 1 1.e-6
+bilinear 6.2831
+
+

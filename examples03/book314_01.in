@@ -1,19 +1,11 @@
-samplerate 48000
-butter 20 1
-low 2500 1
-bilinear 0.15915494309
+samplerate 100
+chev 2 1.0
+bilinear 20
 response 101
 diff
-force step 800
+force impulse 101
 exit
 
-force impulse 101
-force sin 10 2000 400
-
-force sin 10 100 400
-force sin 10 500 400
-force sin 10 1000 400
-force sin 10 4000 400
 
 
 samplerate 48000

@@ -33,6 +33,10 @@ Poly::Poly()
     xn=NULL;
     yn=NULL;
     FIRCoefficients=NULL;
+    cascade=0;
+    cfore=NULL;
+    cback=NULL;
+    biquad=NULL;
 
     
 }
@@ -62,9 +66,7 @@ Poly::~Poly()
     
     if(pz){
         if(pz[0].poles)eFree(pz[0].poles);
-        if(pz[0].markpole)eFree(pz[0].markpole);
         if(pz[0].zeros)eFree(pz[0].zeros);
-        if(pz[0].markzero)eFree(pz[0].markzero);
         if(pz[0].ts)eFree(pz[0].ts);
         if(pz[0].rs)eFree(pz[0].rs);
         eFree(pz);
@@ -138,14 +140,68 @@ int Poly::forceFIR(double *input,int npoint)
     if(ynp)eFree(ynp);
     
     if(xn)eFree(xn);
+    xn=NULL;
     
     return 0;
+}
+int Poly::forceCascade(double *input,int npoint)
+{
+    double *xnp = (double *)eMalloc(npoint*sizeof(double),20002);
+    double *ynp = (double *)eMalloc(npoint*sizeof(double),20003);
+    
+    for(int k=0;k<cascade;++k){
+        biquad[k].d1=0.0;
+        biquad[k].d2=0.0;
+    }
+
+    double scale=1.0;  // normalize at 0 Hz
+    
+    double t=1.0/sampleRate;
+
+    for(int n=0;n<npoint;++n){
+        double y;
+        double x;
+        
+        x=input[n];
+        
+        y=0;
+        
+        for(int k=0;k<cascade;++k){
+            x = x*biquad[k].kk-biquad[k].a1*biquad[k].d1-biquad[k].a2*biquad[k].d2;
+            biquad[k].d2=biquad[k].d1;
+            biquad[k].d1=x;
+            y = x*biquad[k].b0+biquad[k].b1*biquad[k].d1+biquad[k].b2*biquad[k].d2;
+            x=y;
+        }
+
+        xnp[n]=n*t;
+        
+        ynp[n]=y/scale;
+        
+        fprintf(stderr,"    %18.9e, %18.9e , %18.9e\n",n*t,y/scale,x);
+    }
+
+    BatchPlot((char *)"forceCascade",0,xnp,ynp,npoint);
+    
+    if(xnp)eFree(xnp);
+    
+    if(ynp)eFree(ynp);
+    
+    xn=NULL;
+    
+    yn=NULL;
+    
+   return 0;
 }
 int Poly::force(double *input,int npoint)
 {
     
     if(FIRCount > 0){
         return forceFIR(input,npoint);
+    }
+    
+    if(cascade > 0){
+        return forceCascade(input,npoint);
     }
     
     complex<double> sum;
@@ -184,7 +240,7 @@ int Poly::force(double *input,int npoint)
     yn = (double *)eMalloc(nback*sizeof(double),20004);
     
     for(int n=0;n<nback;++n)yn[n]=0;
-    
+
     double *xnp = (double *)eMalloc(npoint*sizeof(double),20004);
     double *ynp = (double *)eMalloc(npoint*sizeof(double),20005);
     
@@ -325,7 +381,7 @@ int Poly::diff()
         nback=n3;
         for(int n=0;n<nback;++n){
             back[n]=t2[n].real();
-            if(iprint)fprintf(stderr,"%4d %18.9e, %18.9e \n",n+1,t2[n].real(),t2[n].imag());
+            if(iprint)fprintf(stderr,"%4d %18.9e, %18.9e , %18.9e \n",n+1,t2[n].real(),t2[n].imag(),abs(t2[n]));
         }
         
         if(t1)eFree(t1);
@@ -352,6 +408,49 @@ int Poly::mult(complex<double> *prod,complex<double> *a,complex<double> *b,int m
     }
     
     return 1;
+}
+int Poly::cascadeEM()
+{
+    
+    if(biquad)eFree(biquad);
+    
+    int nnp=np/2;
+    
+    biquad=(struct BiQuad *)eMalloc(nnp*sizeof(struct BiQuad),20032);
+    zerol((char *)biquad,nnp*sizeof(struct BiQuad));
+    
+    cascade=nnp;
+    
+    for(int k=0;k<nnp;++k){
+        int nl=np-k-1;
+        printf("k %d nl %d %g %g %g %g\n",k,nl,poles[k].real(),poles[k].imag(),poles[nl].real(),poles[nl].imag());
+        biquad[k].b0=1;
+        biquad[k].b1=2;
+        biquad[k].b2=1;
+        biquad[k].b0=1;
+        biquad[k].b1= -(zeros[k].real()+zeros[nl].real());
+        biquad[k].b2=zeros[k].real()*zeros[nl].real();
+        biquad[k].a1= -(poles[k].real()+poles[nl].real());
+        double pk=abs(poles[k]);
+        biquad[k].a2=pk*pk;
+        
+        printf("b0 %g b1 %g b2 %g ",biquad[k].b0,biquad[k].b1,biquad[k].b2);
+        printf("a1 %g a2 %g ",biquad[k].a1,biquad[k].a2);
+
+        complex<double> sum;
+        complex<double> z = exp(complex<double>(0,thetaNorm));
+        
+        sum = 1;
+        sum *= (z-zeros[k]);
+        sum *= (z-zeros[nl]);
+        sum /= (z-poles[k]);
+        sum /= (z-poles[nl]);
+        biquad[k].kk=1.0/abs(sum);
+        printf("biquad[k].kk %g suming %g %g %g \n",biquad[k].kk,(1.0+biquad[k].a1+biquad[k].a2),
+               (biquad[k].b0+biquad[k].b1+biquad[k].b2),(1.0+biquad[k].a1+biquad[k].a2)/(biquad[k].b0+biquad[k].b1+biquad[k].b2));
+
+    }
+    return 0;
 }
 int Poly::response(double steps)
 {
@@ -516,6 +615,7 @@ int Poly::bilinear(double f)
             poles[n]=complex<double>(x,y);
         }
     }
+    
     
     char mes[256];
     
@@ -1022,9 +1122,7 @@ int Poly::invert(int flag)
     
     if(pz){
         if(pz[0].poles)eFree(pz[0].poles);
-        if(pz[0].markpole)eFree(pz[0].markpole);
         if(pz[0].zeros)eFree(pz[0].zeros);
-        if(pz[0].markzero)eFree(pz[0].markzero);
         if(pz[0].ts)eFree(pz[0].ts);
         if(pz[0].rs)eFree(pz[0].rs);
         eFree(pz);
@@ -1083,11 +1181,10 @@ int Poly::forcepoleszeros(int nf)
     
 
     pz[nf].poles=(complex<double> *)eMalloc((np+npp1)*sizeof(complex<double>),20032);
-    pz[nf].markpole=(int *)eMalloc((np+npp1)*sizeof(int),20033);
     pz[nf].zeros=(complex<double> *)eMalloc((nz+nzp)*sizeof(complex<double>),20034);
-    pz[nf].markzero=(int *)eMalloc((nz+nzp)*sizeof(int),20035);
     pz[nf].ts=(double *)eMalloc((np+npp1)*sizeof(double),20036);
     pz[nf].rs=(double *)eMalloc((np+npp1)*sizeof(double),20037);
+    
 
     for(int n=0;n<np;++n){
         pz[nf].poles[n]=poles[n];
@@ -1140,34 +1237,63 @@ int Poly::forcepoleszeros(int nf)
     int npp=pz[nf].np;
     int nzz=pz[nf].nz;
     
+    canelPolesZeros(pz[nf].poles,pz[nf].zeros,&npp,&nzz);
+
+    pz[nf].np=npp;
+    pz[nf].nz=nzz;
+
+    return 0;
+}
+int Poly::canelPolesZeros(complex<double> *poles,complex<double> *zeros,int *npi,int *nzi)
+{
+    int npp=*npi;
+    int nzz=*nzi;
     
-    for(int n=0;n<npp;++n)pz[nf].markpole[n]=0;
-    for(int k=0;k<nzz;++k)pz[nf].markzero[k]=0;
+    int *markpole=(int *)eMalloc(npp*sizeof(int),20033);
+    int *markzero=(int *)eMalloc(nzz*sizeof(int),20035);
     
+    for(int n=0;n<npp;++n)markpole[n]=0;
+    for(int k=0;k<nzz;++k)markzero[k]=0;
+
     for(int n=0;n<npp;++n){
         for(int k=0;k<nzz;++k){
-            if((pz[nf].markzero[k] == 0) && (pz[nf].poles[n] == pz[nf].zeros[k])){
-                pz[nf].markzero[k]=1;
-                pz[nf].markpole[n]=1;
+            //double dist=abs(poles[n]-zeros[k]);
+            //printf("%d %d dist %g  %g %g %g %g\n",n,k,dist,poles[n].real(),poles[n].imag(),zeros[k].real(),zeros[k].imag());
+            if((markzero[k] == 0) && (poles[n] == zeros[k])){
+                markzero[k]=1;
+                markpole[n]=1;
                 break;
             }
         }
     }
-
-    pz[nf].np=0;
+    
+    int npo=0;
     for(int n=0;n<npp;++n){
-        if(pz[nf].markpole[n] == 1)continue;
-        pz[nf].poles[pz[nf].np++]=pz[nf].poles[n];
+        if(markpole[n] == 1){
+            //printf("pole %d removed\n",n);
+            continue;
+        }
+        poles[npo++]=poles[n];
     }
     
-    pz[nf].nz=0;
+    int nzo=0;
     for(int k=0;k<nzz;++k){
-        if(pz[nf].markzero[k] == 1)continue;
-        pz[nf].zeros[pz[nf].nz++]=pz[nf].zeros[k];
+        if(markzero[k] == 1){
+           // printf("zero %d removed\n",k);
+            continue;
+        }
+        zeros[nzo++]=zeros[k];
     }
     
+    *npi=npo;
+    *nzi=nzo;
+    
+    if(markzero)eFree(markzero);
+    if(markpole)eFree(markpole);
+
     return 0;
 }
+
 int Poly::wpz()
 {
     fprintf(stderr,"con = %18.9e\n",con);

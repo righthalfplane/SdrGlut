@@ -1,0 +1,32 @@
+samplerate 100
+trans 0 2 1
+17410.145
+S,  6.897268000E+01, -1.124851742E+02
+S,  6.897268000E+01,  1.124851742E+02
+end
+sweep 0. 50. 100 1
+exit
+
+chev 2 1.0
+bilinear 20
+response 101
+diff
+force impulse 101
+exit
+
+
+
+samplerate 48000
+chev 10 0.1
+low 0.052083333 1
+band 0.4088334 1 1.e-6
+bilinear 2500
+response 101
+exit
+
+low 5000 1
+
+band 8819.4088334 1 1.e-6
+bilinear 6.2831
+
+

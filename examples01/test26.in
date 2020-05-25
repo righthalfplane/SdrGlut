@@ -1,6 +1,7 @@
 samplerate 48000
 butter 25 0.1
 bilinear 5000
+frequencyNorm 0
 response 101
 exit
 

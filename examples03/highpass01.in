@@ -1,0 +1,86 @@
+samplerate 48000
+highpass "butter" 4 1 2500
+response 101
+force sin 10 100 400
+force sin 10 500 400
+force sin 10 1000 400
+force sin 10 2000 400
+force sin 10 3000 400
+force sin 10 4000 400
+exit
+
+
+
+samplerate 50000
+butter 4 1
+bilinear 2500
+diff
+trans 0 2
+1.0
+s,   -9.238795325e-01,  -3.826834324e-01
+s,   -9.238795325e-01,   3.826834324e-01
+end
+bilinear 2500
+diff
+trans 0 2
+1.0
+s,   -3.826834324e-01,   9.238795325e-01
+s,   -3.826834324e-01,  -9.238795325e-01
+end
+bilinear 2500
+diff
+exit
+
+
+samplerate 50000
+butter 4 1
+bilinear 2500
+response 101
+diff
+trans 0 2
+1.0
+s,   -9.238795325e-01,  -3.826834324e-01
+s,   -9.238795325e-01,   3.826834324e-01
+end
+bilinear 2500
+response 101
+diff
+trans 0 2
+1.0
+s,   -3.826834324e-01,   9.238795325e-01
+s,   -3.826834324e-01,  -9.238795325e-01
+end
+bilinear 2500
+response 101
+diff
+exit
+
+
+
+
+
+
+samplerate 50000
+butter 4 1
+bilinear 2500
+response 101
+trans 0 2
+1.0
+s,   -3.826834324e-01,   9.238795325e-01
+s,   -9.238795325e-01,   3.826834324e-01
+end
+bilinear 2500
+response 101
+trans 0 2
+1.0
+s,   -9.238795325e-01,  -3.826834324e-01
+s,   -3.826834324e-01,  -9.238795325e-01
+end
+bilinear 2500
+response 101
+exit
+
+
+
+diff
+force impulse 400
