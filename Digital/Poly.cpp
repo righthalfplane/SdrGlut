@@ -150,14 +150,16 @@ int Poly::forceCascade(double *input,int npoint)
     double *ynp = (double *)eMalloc(npoint*sizeof(double),20003);
     
     for(int k=0;k<cascade;++k){
-        biquad[k].d1=0.0;
-        biquad[k].d2=0.0;
+        biquad[k].dx1=0.0;
+        biquad[k].dx2=0.0;
+        biquad[k].dy1=0.0;
+        biquad[k].dy2=0.0;
     }
-
+    
     double scale=1.0;  // normalize at 0 Hz
     
     double t=1.0/sampleRate;
-
+    
     for(int n=0;n<npoint;++n){
         double y;
         double x;
@@ -167,20 +169,23 @@ int Poly::forceCascade(double *input,int npoint)
         y=0;
         
         for(int k=0;k<cascade;++k){
-            x = x*biquad[k].kk-biquad[k].a1*biquad[k].d1-biquad[k].a2*biquad[k].d2;
-            biquad[k].d2=biquad[k].d1;
-            biquad[k].d1=x;
-            y = x*biquad[k].b0+biquad[k].b1*biquad[k].d1+biquad[k].b2*biquad[k].d2;
+            x=x*biquad[k].kk;
+            y=x*biquad[k].b0+biquad[k].dx1*biquad[k].b1+biquad[k].dx2*biquad[k].b2-
+            biquad[k].dy1*biquad[k].a1-biquad[k].dy2*biquad[k].a2;
+            biquad[k].dx2=biquad[k].dx1;
+            biquad[k].dx1=x;
+            biquad[k].dy2=biquad[k].dy1;
+            biquad[k].dy1=y;
             x=y;
         }
-
+        
         xnp[n]=n*t;
         
         ynp[n]=y/scale;
         
         fprintf(stderr,"    %18.9e, %18.9e , %18.9e\n",n*t,y/scale,x);
     }
-
+    
     BatchPlot((char *)"forceCascade",0,xnp,ynp,npoint);
     
     if(xnp)eFree(xnp);
@@ -191,7 +196,7 @@ int Poly::forceCascade(double *input,int npoint)
     
     yn=NULL;
     
-   return 0;
+    return 0;
 }
 int Poly::force(double *input,int npoint)
 {
@@ -419,18 +424,20 @@ int Poly::cascadeEM()
     biquad=(struct BiQuad *)eMalloc(nnp*sizeof(struct BiQuad),20032);
     zerol((char *)biquad,nnp*sizeof(struct BiQuad));
     
+    int *match=(int *)eMalloc(np*sizeof(int),20032);
+    zerol((char *)match,np*sizeof(int));
+
     cascade=nnp;
     
     for(int k=0;k<nnp;++k){
-        int nl=np-k-1;
-        printf("k %d nl %d %g %g %g %g\n",k,nl,poles[k].real(),poles[k].imag(),poles[nl].real(),poles[nl].imag());
+        printf("k %d  %g %g\n",k,poles[k].real(),poles[k].imag());
         biquad[k].b0=1;
         biquad[k].b1=2;
         biquad[k].b2=1;
         biquad[k].b0=1;
-        biquad[k].b1= -(zeros[k].real()+zeros[nl].real());
-        biquad[k].b2=zeros[k].real()*zeros[nl].real();
-        biquad[k].a1= -(poles[k].real()+poles[nl].real());
+        biquad[k].b1= -(zeros[k].real()+zeros[k].real());
+        biquad[k].b2=zeros[k].real()*zeros[k].real()+zeros[k].imag()*zeros[k].imag();
+        biquad[k].a1= -(poles[k].real()+poles[k].real());
         double pk=abs(poles[k]);
         biquad[k].a2=pk*pk;
         
@@ -442,14 +449,17 @@ int Poly::cascadeEM()
         
         sum = 1;
         sum *= (z-zeros[k]);
-        sum *= (z-zeros[nl]);
+        sum *= (z-conj(zeros[k]));
         sum /= (z-poles[k]);
-        sum /= (z-poles[nl]);
+        sum /= (z-conj(poles[k]));
         biquad[k].kk=1.0/abs(sum);
         printf("biquad[k].kk %g suming %g %g %g \n",biquad[k].kk,(1.0+biquad[k].a1+biquad[k].a2),
                (biquad[k].b0+biquad[k].b1+biquad[k].b2),(1.0+biquad[k].a1+biquad[k].a2)/(biquad[k].b0+biquad[k].b1+biquad[k].b2));
 
     }
+    
+    if(match)eFree(match);
+    
     return 0;
 }
 int Poly::response(double steps)

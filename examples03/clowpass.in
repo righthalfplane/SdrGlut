@@ -1,13 +1,13 @@
 samplerate 48000
 clowpass "butter" 14 1 2500
 response 101
-force sin 10 100 1800
-force sin 10 500 1800
-force sin 10 1000 1800
-force sin 10 2000 1800
-force sin 10 2400 1800
-force sin 10 4000 1800
+force sin 10 100 400
+force sin 10 500 400
+force sin 10 1000 400
+force sin 10 3000 400
+force sin 10 4000 400
 exit
+
 
 force step 1800
 force sin 10 100 1800

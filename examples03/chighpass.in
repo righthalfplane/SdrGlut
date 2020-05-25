@@ -1,10 +1,10 @@
-samplerate 10000
+samplerate 48000
 chighpass "butter" 12 1 2000
 response 101
-force sin 10 500 400
-force sin 10 1000 400
-force sin 10 3000 400
-force sin 10 4000 400
+force sin 10 500 200
+force sin 10 1000 200
+force sin 10 3000 200
+force sin 10 4000 200
 exit
 
 

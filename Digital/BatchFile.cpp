@@ -26,7 +26,7 @@ int doCLowPass(BatchPtr Batch,CommandPtr cp,int flag);
 
 int doCHighPass(BatchPtr Batch,CommandPtr cp,int flag);
 
-int doBandPass(BatchPtr Batch,CommandPtr cp,int flag);
+int doBandPass(BatchPtr Batch,CommandPtr cp,int flag,int cflag);
 
 int doDiff(BatchPtr Batch);
 
@@ -404,9 +404,13 @@ int doBatch(BatchPtr Batch,CommandPtr cp)
     }else if(!mstrcmp((char *)"chighpass",command)){
         doCHighPass(Batch,cp,1);
     }else if(!mstrcmp((char *)"bandpass",command)){
-        doBandPass(Batch,cp,0);
+        doBandPass(Batch,cp,0,0);
     }else if(!mstrcmp((char *)"bandstop",command)){
-        doBandPass(Batch,cp,1);
+        doBandPass(Batch,cp,1,0);
+    }else if(!mstrcmp((char *)"cbandpass",command)){
+        doBandPass(Batch,cp,0,1);
+    }else if(!mstrcmp((char *)"cbandstop",command)){
+        doBandPass(Batch,cp,1,1);
     }else if(!mstrcmp((char *)"samplerate",command)){
         struct Poly *pl=Batch->myIcon->pl;
         ++(cp->n);
@@ -502,7 +506,7 @@ int doDft(BatchPtr Batch,double value)
     
     return 0;
 }
-int doBandPass(BatchPtr Batch,struct CommandInfo *cp,int flag)
+int doBandPass(BatchPtr Batch,struct CommandInfo *cp,int flag,int cflag)
 {
     double ripple,fmin,fmax,save,pi,order;
     double w1,w2,wc,w0;
@@ -568,6 +572,12 @@ int doBandPass(BatchPtr Batch,struct CommandInfo *cp,int flag)
         pl->thetaNorm=2*pi*sqrt(fmin*fmax)/pl->sampleRate;
     }else{
         pl->thetaNorm=0.9*pi;
+    }
+    
+    if(cflag == 1){
+        pl->cascadeEM();
+    }else{
+        pl->diff();
     }
 
 ErrorOut:

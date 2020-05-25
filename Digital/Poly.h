@@ -57,8 +57,10 @@ struct BiQuad{
     double b0;
     double b1;
     double b2;
-    double d1;
-    double d2;
+    double dx1;
+    double dx2;
+    double dy1;
+    double dy2;
 };
 
 class Poly {

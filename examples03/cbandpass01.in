@@ -1,0 +1,84 @@
+samplerate 2000000
+samplerate 2000000
+cbandpass butter 8 0.2 745000 755000
+response 401
+force sin 10 760000 2401
+force sin 10 750000 2401
+force sin 10 740000 2401
+exit
+
+cbandpass butter 8 0.2 745000 755000
+response 401
+force sin 10 760000 4401
+force sin 10 750000 4401
+force sin 10 740000 4401
+exit
+
+cbandpass butter 12 0.2 745000 755000
+response 401
+force sin 10 770000 4401
+force sin 10 750000 4401
+force sin 10 730000 4401
+exit
+
+cbandpass butter 26 0.2 745000 755000
+response 401
+force sin 10 770000 4401
+force sin 10 750000 4401
+force sin 10 730000 4401
+exit
+
+
+
+
+
+
+force impulse 1401
+
+samplerate 2000000
+bandpass butter 40 0.2 745000 755000
+response 101
+exit
+diff
+force impulse 1501
+
+
+samplerate 10000
+chev 3 2.0
+low 0.066973673 1
+band 0.063339688 1 1.e-6
+bilinear 2500
+frequencyNorm 1500
+response 101
+exit
+
+samplerate 10000
+chev 3 0.2
+bilinear 1000
+response 26
+diff
+force step 101
+exit
+
+
+
+low 2500 1
+
+response 101
+diff
+force impulse 101
+
+samplerate 48000
+chev 10 0.1
+low 0.052083333 1
+band 0.4088334 1 1.e-6
+bilinear 2500
+response 101
+exit
+
+low 5000 1
+
+band 8819.4088334 1 1.e-6
+bilinear 6.2831
+
+
