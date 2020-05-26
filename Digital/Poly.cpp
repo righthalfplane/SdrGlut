@@ -30,20 +30,21 @@ Poly::Poly()
     type=NULL;
     pz=NULL;
     FIRCount=0;
-    xn=NULL;
-    yn=NULL;
     FIRCoefficients=NULL;
     cascade=0;
-    cfore=NULL;
-    cback=NULL;
     biquad=NULL;
 
     
 }
 Poly::~Poly()
 {
+    
+    if(biquad)eFree(biquad);
+    biquad=NULL;
+    
     if(poles)eFree(poles);
     if(zeros)eFree(zeros);
+    
     poles=NULL;
     zeros=NULL;
     
@@ -75,13 +76,6 @@ Poly::~Poly()
   
     if(FIRCoefficients)eFree(FIRCoefficients);
     FIRCoefficients=NULL;
-    
-    if(xn)eFree(xn);
-    xn=NULL;
-    
-    if(yn)eFree(yn);
-    yn=NULL;
-    
     
 }
 int Poly::forceFIR(double *input,int npoint)
@@ -188,14 +182,6 @@ int Poly::forceCascade(double *input,int npoint)
     
     BatchPlot((char *)"forceCascade",0,xnp,ynp,npoint);
     
-    if(xnp)eFree(xnp);
-    
-    if(ynp)eFree(ynp);
-    
-    xn=NULL;
-    
-    yn=NULL;
-    
     return 0;
 }
 int Poly::force(double *input,int npoint)
@@ -233,16 +219,12 @@ int Poly::force(double *input,int npoint)
    
     fprintf(stderr,"           SECONDS,           AMPLITUDE,             INPUT\n");
   
-
-    if(xn)eFree(xn);
     
-    if(yn)eFree(yn);
-    
-    xn = (double *)eMalloc(nfore*sizeof(double),20003);
+    double *xn = (double *)eMalloc(nfore*sizeof(double),20003);
     
     for(int n=0;n<nfore;++n)xn[n]=0;
     
-    yn = (double *)eMalloc(nback*sizeof(double),20004);
+    double *yn = (double *)eMalloc(nback*sizeof(double),20004);
     
     for(int n=0;n<nback;++n)yn[n]=0;
 
@@ -254,9 +236,9 @@ int Poly::force(double *input,int npoint)
         double x;
         
         x=input[n];
+        
         y=x*fore[nfore-1];
   
-        
         for(int k=1;k<nfore;++k){
             y += xn[k-1]*fore[nfore-k-1];
         }
@@ -290,7 +272,11 @@ int Poly::force(double *input,int npoint)
     if(xnp)eFree(xnp);
     
     if(ynp)eFree(ynp);
-
+    
+    if(xn)eFree(xn);
+    
+    if(yn)eFree(yn);
+    
     return 0;
 }
 int Poly::SetPolesAndZeros(int np,int nz)
@@ -424,16 +410,13 @@ int Poly::cascadeEM()
     biquad=(struct BiQuad *)eMalloc(nnp*sizeof(struct BiQuad),20032);
     zerol((char *)biquad,nnp*sizeof(struct BiQuad));
     
-    int *match=(int *)eMalloc(np*sizeof(int),20032);
-    zerol((char *)match,np*sizeof(int));
-
     cascade=nnp;
     
+    printf("\n                                           Biquid Coefficents\n\n");
+    printf("           gain               b0                   b1                 b2                  a1                 a2\n\n");
+
     for(int k=0;k<nnp;++k){
-        printf("k %d  %g %g\n",k,poles[k].real(),poles[k].imag());
-        biquad[k].b0=1;
-        biquad[k].b1=2;
-        biquad[k].b2=1;
+        //printf("k %d  %g %g\n",k,poles[k].real(),poles[k].imag());
         biquad[k].b0=1;
         biquad[k].b1= -(zeros[k].real()+zeros[k].real());
         biquad[k].b2=zeros[k].real()*zeros[k].real()+zeros[k].imag()*zeros[k].imag();
@@ -441,8 +424,6 @@ int Poly::cascadeEM()
         double pk=abs(poles[k]);
         biquad[k].a2=pk*pk;
         
-        printf("b0 %g b1 %g b2 %g ",biquad[k].b0,biquad[k].b1,biquad[k].b2);
-        printf("a1 %g a2 %g ",biquad[k].a1,biquad[k].a2);
 
         complex<double> sum;
         complex<double> z = exp(complex<double>(0,thetaNorm));
@@ -453,21 +434,22 @@ int Poly::cascadeEM()
         sum /= (z-poles[k]);
         sum /= (z-conj(poles[k]));
         biquad[k].kk=1.0/abs(sum);
-        printf("biquad[k].kk %g suming %g %g %g \n",biquad[k].kk,(1.0+biquad[k].a1+biquad[k].a2),
-               (biquad[k].b0+biquad[k].b1+biquad[k].b2),(1.0+biquad[k].a1+biquad[k].a2)/(biquad[k].b0+biquad[k].b1+biquad[k].b2));
+        
+        printf(" %18.9e, %18.9e, %18.9e, %18.9e, %18.9e, %18.9e \n",biquad[k].kk,biquad[k].b0,biquad[k].b1,biquad[k].b2,biquad[k].a1,biquad[k].a2);
+
+       // printf("biquad[k].kk %g suming %g %g %g \n",biquad[k].kk,(1.0+biquad[k].a1+biquad[k].a2),
+       //        (biquad[k].b0+biquad[k].b1+biquad[k].b2),(1.0+biquad[k].a1+biquad[k].a2)/(biquad[k].b0+biquad[k].b1+biquad[k].b2));
 
     }
-    
-    if(match)eFree(match);
+
+    printf("\n");
     
     return 0;
 }
 int Poly::response(double steps)
 {
     complex<double> sum,diff;
-
-    fprintf(stderr,"\n      Response thetaNorm %g\n",thetaNorm);
-
+    
     complex<double> z = exp(complex<double>(0,thetaNorm));
     sum = 1;
     if(nz > 0){
@@ -484,7 +466,7 @@ int Poly::response(double steps)
 
     double scale=abs(sum);  // normalize at 0 Hz
 
-    printf("scale %g\n",scale);
+    fprintf(stderr,"\n      Response thetaNorm %g scale %g\n",thetaNorm,scale);
     
     double *xnp=(double *)eMalloc(steps*sizeof(double),20016);
     double *ynp=(double *)eMalloc(steps*sizeof(double),20017);

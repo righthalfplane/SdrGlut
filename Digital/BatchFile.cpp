@@ -94,7 +94,7 @@ int BatchPlot(char *name,int flag,double *x,double *y,long n)
     mstrncpy(namewindow,fname,sizeof(namewindow));
     mstrncat(namewindow,(char*)"-",sizeof(namewindow));
     mstrncat(namewindow,name,sizeof(namewindow));
-    fprintf(stderr,"BatchPlot %ld fname %s namewindow %s\n",n,fname,namewindow);
+    fprintf(stderr,"\nBatchPlot %ld fname %s namewindow %s\n\n",n,fname,namewindow);
     
     list=SceneNext();
     if(list == NULL)
@@ -704,7 +704,7 @@ int doForce(BatchPtr Batch,struct CommandInfo *cp)
           
           int np=(int)value;
           
-          fprintf(stderr,"step %d\n",np);
+          fprintf(stderr,"\n     step  steps %d\n\n",np);
           
           double *force = (double *)eMalloc(np*sizeof(double),20047);
           
@@ -719,7 +719,7 @@ int doForce(BatchPtr Batch,struct CommandInfo *cp)
           
           int np=(int)value;
           
-          fprintf(stderr,"impulse %d\n",(int)value);
+          fprintf(stderr,"\n    impulse   steps %d\n\n",(int)value);
           
           double *force = (double *)eMalloc(np*sizeof(double),20048);
           
@@ -736,7 +736,7 @@ int doForce(BatchPtr Batch,struct CommandInfo *cp)
 
           int np=(int)value;
           
-          fprintf(stderr,"random %d\n",(int)value);
+          fprintf(stderr,"\n     random    steps %d\n\n",(int)value);
           
           double *force =  (double *)eMalloc(np*sizeof(double),20049);
           
@@ -764,7 +764,7 @@ int doForce(BatchPtr Batch,struct CommandInfo *cp)
           
           double pi=4.0*atan(1.0);
           
-          fprintf(stderr,"step %d a %g f %g\n",np,a,f);
+          fprintf(stderr,"\n    sine steps %d amplitude %g frequency %g\n\n",np,a,f);
 
           for(int n=0;n<np;++n){
               force[n]=a*sin(2*pi*f*n/(double)pl->sampleRate);

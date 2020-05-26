@@ -112,13 +112,9 @@ public:
     complex<double> *zeros;
     double *fore;
     double *back;
-    double *xn;
-    double *yn;
     double *FIRCoefficients;
     int FIRCount;
     double thetaNorm;
-    double **cfore;
-    double **cback;
     struct BiQuad *biquad;
     int cascade;
 };
