@@ -69,7 +69,6 @@ public:
     int SetPolesAndZeros(int np,int nz);
     int doButterWorth(int np);
     int doChev(int np,double r);
-    int wpz();
     int norm();
     int diff();
     int cascadeEM();
@@ -86,6 +85,7 @@ public:
     int invert(int flag);
     int bilinear(double wT);
     int response(double wT);
+    int cresponse(double wT);
     int mult(complex<double> *sum,complex<double> *t1,complex<double> *t2,int n1,int n2,int *n3);
     int canelPolesZeros(complex<double> *poles,complex<double> *zeros,int *np,int *nz);
     int force(double *input,int npoint);

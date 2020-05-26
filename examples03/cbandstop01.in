@@ -1,15 +1,19 @@
-samplerate 10000
-cbandpass butter 14 0.2 1000 2000
+samplerate 48000
+cbandstop butter 25 2.0 2000 3000
 response 201
-cbandpass butter 14 2.0 2000 3000
-response 201
-cbandpass butter 14 0.2 3000 4000
-response 201
-cbandpass butter 14 0.2 2000 4000
-response 201
-diff
-force impulse 501
+force sin 10 500 1800
+force sin 10 1000 1800
+force sin 10 2500 1800
+force sin 10 3500 1800
+force sin 10 4000 1800
 exit
+
+response 201
+
+
+
+
+diff
 
 
 

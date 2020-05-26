@@ -1,33 +1,40 @@
-samplerate 48000
-cbandstop butter 25 2.0 2000 3000
+samplerate 10000
+cbandstop butter 15 0.2 1000 2000
 response 201
-force sin 10 500 200
-force sin 10 1000 200
-force sin 10 2500 200
-force sin 10 3500 200
-force sin 10 4000 200
+cbandstop butter 15 2.0 2000 3000
+response 201
+cbandstop butter 15 0.2 3000 4000
+response 201
+cbandstop butter 15 0.2 2000 4000
+response 201
+diff
+force impulse 700
 exit
 
+
+
+samplerate 10000
+bandstop chev 3 2.0 2000 3000
 response 201
-
-
-
-
+bandstop chev 3 0.2 1000 2000
+response 201
+bandstop chev 3 0.2 3000 4000
+response 201
+bandstop chev 25 0.2 2000 4000
+response 201
 diff
-
-
+force impulse 700
+exit
 
 samplerate 20000
-bandpass chev 14 0.2 1000 2000
+bandpass chev 3 2.0 2000 3000
 response 201
-bandpass chev 14 2.0 2000 3000
+bandpass chev 3 0.2 1000 2000
 response 201
-bandpass chev 14 0.2 3000 4000
+bandpass chev 3 0.2 3000 4000
 response 201
-bandpass chev 14 0.2 2000 4000
+bandpass chev 3 0.2 2000 4000
 response 201
-diff
-force impulse 501
 exit
 
 samplerate 10000

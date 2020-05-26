@@ -150,10 +150,16 @@ int Poly::forceCascade(double *input,int npoint)
         biquad[k].dy2=0.0;
     }
     
+
+
     double scale=1.0;  // normalize at 0 Hz
     
     double t=1.0/sampleRate;
     
+    fprintf(stderr,"        forceCascade steps %d period %18.9e\n\n",npoint,t);
+
+    fprintf(stderr,"           SECONDS,           AMPLITUDE,             INPUT\n");
+
     for(int n=0;n<npoint;++n){
         double y;
         double x;
@@ -165,7 +171,7 @@ int Poly::forceCascade(double *input,int npoint)
         for(int k=0;k<cascade;++k){
             x=x*biquad[k].kk;
             y=x*biquad[k].b0+biquad[k].dx1*biquad[k].b1+biquad[k].dx2*biquad[k].b2-
-            biquad[k].dy1*biquad[k].a1-biquad[k].dy2*biquad[k].a2;
+                             biquad[k].dy1*biquad[k].a1-biquad[k].dy2*biquad[k].a2;
             biquad[k].dx2=biquad[k].dx1;
             biquad[k].dx1=x;
             biquad[k].dy2=biquad[k].dy1;
@@ -412,43 +418,75 @@ int Poly::cascadeEM()
     
     cascade=nnp;
     
-    printf("\n                                           Biquid Coefficents\n\n");
+    printf("\n                                           Biquad Coefficents\n\n");
     printf("           gain               b0                   b1                 b2                  a1                 a2\n\n");
 
     for(int k=0;k<nnp;++k){
-        //printf("k %d  %g %g\n",k,poles[k].real(),poles[k].imag());
+        int nl=np-k-1;
+        if(zeros[k].real()*zeros[nl].real() > 0)nl=k;
         biquad[k].b0=1;
-        biquad[k].b1= -(zeros[k].real()+zeros[k].real());
-        biquad[k].b2=zeros[k].real()*zeros[k].real()+zeros[k].imag()*zeros[k].imag();
+        biquad[k].b1= -(zeros[k].real()+zeros[nl].real());
+        biquad[k].b2=zeros[k].real()*zeros[nl].real()+zeros[k].imag()*zeros[nl].imag();
         biquad[k].a1= -(poles[k].real()+poles[k].real());
         double pk=abs(poles[k]);
         biquad[k].a2=pk*pk;
         
 
-        complex<double> sum;
         complex<double> z = exp(complex<double>(0,thetaNorm));
-        
-        sum = 1;
-        sum *= (z-zeros[k]);
-        sum *= (z-conj(zeros[k]));
-        sum /= (z-poles[k]);
-        sum /= (z-conj(poles[k]));
+        complex<double> sum;
+
+        sum=(z*z*biquad[k].b0+z*biquad[k].b1+biquad[k].b2)/(z*z+z*biquad[k].a1+biquad[k].a2);
         biquad[k].kk=1.0/abs(sum);
-        
+                
         printf(" %18.9e, %18.9e, %18.9e, %18.9e, %18.9e, %18.9e \n",biquad[k].kk,biquad[k].b0,biquad[k].b1,biquad[k].b2,biquad[k].a1,biquad[k].a2);
-
-       // printf("biquad[k].kk %g suming %g %g %g \n",biquad[k].kk,(1.0+biquad[k].a1+biquad[k].a2),
-       //        (biquad[k].b0+biquad[k].b1+biquad[k].b2),(1.0+biquad[k].a1+biquad[k].a2)/(biquad[k].b0+biquad[k].b1+biquad[k].b2));
-
     }
 
     printf("\n");
     
     return 0;
 }
+int Poly::cresponse(double steps)
+{
+    
+    complex<double> sum;
+    
+    double *xnp=(double *)eMalloc(steps*sizeof(double),20016);
+    double *ynp=(double *)eMalloc(steps*sizeof(double),20017);
+
+    double pi=4.0*atan(1.0);
+    
+    double dt=(pi)/(steps-1);
+
+    fprintf(stderr,"\n      cresponse thetaNorm %g \n",thetaNorm);
+
+    fprintf(stderr,"\n      FREQUENCY,         AMPLITUDE\n");
+
+    for(int k=0;k<steps;++k){
+        double theta=k*dt;
+        complex<double> z = exp(complex<double>(0,theta));
+        sum = 1.0;
+        for(int k=0;k<cascade;++k){
+            sum=sum*biquad[k].kk*(z*z*biquad[k].b0+z*biquad[k].b1+biquad[k].b2)/(z*z+z*biquad[k].a1+biquad[k].a2);
+        }
+        xnp[k]=theta*sampleRate/(2*pi);
+        ynp[k]=abs(sum);
+        fprintf(stderr,"%18.9e, %18.9e %18.9e\n",theta/* *sampleRate/(2*pi) */,abs(sum),theta/pi);
+    }
+    BatchPlot((char *)"cresponse",0,xnp,ynp,(long)steps);
+    
+    if(xnp)eFree(xnp);
+    if(ynp)eFree(ynp);
+    
+
+    return 0;
+}
 int Poly::response(double steps)
 {
     complex<double> sum,diff;
+    
+    if(cascade > 0){
+        return cresponse(steps);
+    }
     
     complex<double> z = exp(complex<double>(0,thetaNorm));
     sum = 1;
@@ -1283,21 +1321,6 @@ int Poly::canelPolesZeros(complex<double> *poles,complex<double> *zeros,int *npi
     if(markzero)eFree(markzero);
     if(markpole)eFree(markpole);
 
-    return 0;
-}
-
-int Poly::wpz()
-{
-    fprintf(stderr,"con = %18.9e\n",con);
-    
-    if(nz > 0){
-        ;
-    }
-    
-    if(np > 0){
-        ;
-    }
-    
     return 0;
 }
 int Poly::sweep(double f1,double f2,int ns,int npass,int ilog)

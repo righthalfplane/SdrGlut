@@ -1,5 +1,4 @@
 samplerate 2000000
-samplerate 2000000
 cbandpass butter 8 0.2 745000 755000
 response 401
 force sin 10 760000 2401
