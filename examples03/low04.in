@@ -1,6 +1,7 @@
 samplerate 50000
 butter 20 1
 bilinear 2500
+frequencyNorm 2500
 response 101
 diff
 force impulse 400

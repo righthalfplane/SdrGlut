@@ -236,15 +236,15 @@ int Poly::force(double *input,int npoint)
         double x;
         
         x=input[n];
-        
-        y=x*fore[nfore-1];
+        y=x*fore[0];
   
+        
         for(int k=1;k<nfore;++k){
-            y += xn[k-1]*fore[nfore-k-1];
+            y += xn[k-1]*fore[k];
         }
        
         for(int k=1;k<nback;++k){
-            y -= yn[k-1]*back[nback-k-1];
+            y -= yn[k-1]*back[k];
         }
         
         for(int k=0;k<nback-1;++k){
@@ -333,8 +333,8 @@ int Poly::diff()
         
         nfore=n3;
         for(int n=0;n<nfore;++n){
-            fore[n]=t2[n].real();
-            if(iprint)fprintf(stderr,"%4d %18.9e, %18.9e \n",n+1,t2[n].real(),t2[n].imag());
+            fore[n]=t2[nfore-n-1].real();
+            if(iprint)fprintf(stderr,"%4d %18.9e, %18.9e \n",n+1,t2[nfore-n-1].real(),t2[nfore-n-1].imag());
         }
         
         if(t1)eFree(t1);
@@ -371,8 +371,8 @@ int Poly::diff()
         
         nback=n3;
         for(int n=0;n<nback;++n){
-            back[n]=t2[n].real();
-            if(iprint)fprintf(stderr,"%4d %18.9e, %18.9e , %18.9e \n",n+1,t2[n].real(),t2[n].imag(),abs(t2[n]));
+            back[n]=t2[nback-n-1].real();
+            if(iprint)fprintf(stderr,"%4d %18.9e, %18.9e , %18.9e \n",n+1,t2[nback-n-1].real(),t2[nback-n-1].imag(),abs(t2[nback-n-1]));
         }
         
         if(t1)eFree(t1);
