@@ -304,6 +304,198 @@ int Poly::SetPolesAndZeros(int np,int nz)
     
     return 0;
 }
+int writeString()
+{
+    string sub = "\
+int cascadestart(struct BiQuad *biquad,long cascade)\n\
+{\n\
+    for(int k=0;k<cascade;++k){\n\
+        biquad[k].dx1=0.0;\n\
+        biquad[k].dx2=0.0;\n\
+        biquad[k].dy1=0.0;\n\
+        biquad[k].dy2=0.0;\n\
+    }\n\
+    \n\
+    return 0;\n\
+}\n\
+int cascadesine(struct BiQuad *biquad,long cascade,double frequency,int steps)\n\
+{\n\
+    double *force = new double[steps];\n\n\
+    double pi=4.0*atan(1.0);\n\n\
+    for(int n=0;n<steps;++n){\n\n\
+        force[n]=sin(2*pi*frequency*n/(double)sampleRate);\n\
+    }\n\n\
+    cascadeforce(biquad,cascade,force,steps,frequency);\n\n\
+    delete [] force;\n\n\
+    return 0;\n\n\
+}\n\
+int cascadeforce(struct BiQuad *biquad,long cascade,double *input,int steps,double frequency)\n\
+{\n\
+\n\
+    double scale=1.0;  // normalize at 0 Hz\n\
+\n\
+    double t=1.0/sampleRate;\n\
+ \n\
+    fprintf(stderr,\"plot %d \\\"Sine Responce Frequency %g\\\"\\n\",steps,frequency);\n\
+    fprintf(stderr,\"           SECONDS,           AMPLITUDE,             INPUT\\n\");\n\
+  \n\
+    for(int n=0;n<steps;++n){\n\
+        double y;\n\
+        double x;\n\
+ \n\
+        x=input[n];\n\
+\n\
+        y=0;\n\
+ \n\
+        for(int k=0;k<cascade;++k){\n\
+            x=x*biquad[k].kk;\n\
+            y=x*biquad[k].b0+biquad[k].dx1*biquad[k].b1+biquad[k].dx2*biquad[k].b2-\n\
+            biquad[k].dy1*biquad[k].a1-biquad[k].dy2*biquad[k].a2;\n\
+            biquad[k].dx2=biquad[k].dx1;\n\
+            biquad[k].dx1=x;\n\
+            biquad[k].dy2=biquad[k].dy1;\n\
+            biquad[k].dy1=y;\n\
+            x=y;\n\
+        }\n\
+\n\
+        fprintf(stderr,\"    %18.9e, %18.9e , %18.9e\\n\",n*t,y/scale,x);\n\
+    }\n\
+\n\
+    return 0;\n\
+}\n\
+int cascaderesponce(struct BiQuad *biquad,long cascade,int steps)\n\
+{\n\
+ \n\
+    complex<double> sum;\n\
+\n\
+    double pi=4.0*atan(1.0);\n\
+ \n\
+    double dt=(pi)/(steps-1);\n\
+\n\
+    fprintf(stderr,\"\\n      cresponse thetaNorm %g \\n\",thetaNorm);\n\
+ \n\
+    fprintf(stderr,\"plot %d \\\"Frequency Sweep\\\" \\n\",steps);\n\
+    fprintf(stderr,\"      FREQUENCY,         AMPLITUDE\\n\");\n\
+ \n\
+    for(int k=0;k<steps;++k){\n\
+        double theta=k*dt;\n\
+        complex<double> z = exp(complex<double>(0,theta));\n\
+        sum = 1.0;\n\
+        for(int k=0;k<cascade;++k){\n\
+            sum=sum*biquad[k].kk*(z*z*biquad[k].b0+z*biquad[k].b1+biquad[k].b2)/(z*z+z*biquad[k].a1+biquad[k].a2);\n\
+        }\n\
+        fprintf(stderr,\"%18.9e, %18.9e %18.9e\\n\",theta*sampleRate/(2*pi),abs(sum),theta/pi);\n\
+    }\n\
+\n\
+    return 0;\n\
+}\n\
+********************\
+\n";
+
+    
+    
+    
+    cout << sub;
+    
+    return 0;
+}
+
+int Poly::writefilter()
+{
+    if(cascade){
+        printf("********************\n");
+        printf("#include <stdio.h>\n\n");
+        printf("#include <complex>\n\n");
+        printf("#include <iostream>\n\n");
+        printf("using namespace std;\n\n");
+        
+
+        printf("struct BiQuad{\n");
+        printf("    double kk;\n");
+        printf("    double b0;\n");
+        printf("    double b1;\n");
+        printf("    double b2;\n");
+        printf("    double a1;\n");
+        printf("    double a2;\n");
+        printf("    double dx1;\n");
+        printf("    double dx2;\n");
+        printf("    double dy1;\n");
+        printf("    double dy2;\n");
+        printf("};\n");
+        printf("\n");
+        printf("struct BiQuad biquad[] = {\n");
+        
+        for(int k=0;k<cascade;++k){
+            printf("                            {%18.9e, %18.9e, %18.9e, %18.9e, %18.9e, %18.9e}",
+                   biquad[k].kk,biquad[k].b0,biquad[k].b1,biquad[k].b2,biquad[k].a1,biquad[k].a2);
+            if(k < cascade-1){
+                printf(",\n");
+            }else{
+                printf("\n");
+            }
+        }
+
+        printf("                         };\n\n");
+        
+        printf("double sampleRate=%g;\n\n",sampleRate);
+        printf("double thetaNorm=%g;\n\n",thetaNorm);
+        
+        if(filterType == LOWPASS){
+            printf("double Corner=%g;\n\n",lowCorner);
+        }else if(filterType == HIGHPASS){
+            printf("double Corner=%g;\n\n",highCorner);
+        }else{
+            printf("double lowCorner=%g;\n\n",lowCorner);
+            printf("double highCorner=%g;\n\n",highCorner);
+
+        }
+
+        printf("int cascaderesponce(struct BiQuad *biquad,long cascade,int steps);\n\n");
+
+        printf("int cascadestart(struct BiQuad *biquad,long cascade);\n\n");
+        
+        printf("int cascadesine(struct BiQuad *biquad,long cascade,double frequency,int steps);\n\n");
+        
+        printf("int cascadeforce(struct BiQuad *biquad,long cascade,double *input,int npoint,double frequency);\n\n");
+        
+        printf("int main(int argv,char *argc[])\n");
+        
+        printf("{\n");
+        
+        printf("    long cascade=(long)(sizeof(biquad)/sizeof(struct BiQuad));\n\n");
+        
+        printf("%s\n","    printf(\"sampleRate \%g cascade \%ld\\n\",sampleRate,cascade);\n\n");
+        
+        printf("    cascaderesponce(&biquad[0],cascade,101);\n\n");
+        
+        printf("    cascadestart(&biquad[0],cascade);\n\n");
+        
+
+        if(filterType == LOWPASS || filterType == HIGHPASS){
+            printf("    cascadesine(&biquad[0],cascade,Corner*0.5,101);\n\n");
+            printf("    cascadesine(&biquad[0],cascade,0.5*(Corner+0.5*sampleRate),101);\n\n");
+        }else{
+            printf("    cascadesine(&biquad[0],cascade,lowCorner*0.5,101);\n\n");
+            printf("    cascadesine(&biquad[0],cascade,0.5*(lowCorner+highCorner),101);\n\n");
+            printf("    cascadesine(&biquad[0],cascade,0.5*(highCorner+0.5*sampleRate),101);\n\n");
+
+        }
+
+        printf("    return 0;\n\n");
+        printf("}\n");
+
+        writeString();
+
+
+        return 0;
+    }
+    
+    if(nfore || nback){
+        printf("norm\n");
+        return 0;
+    }
+    return 0;
+}
 int Poly::diff()
 {
 

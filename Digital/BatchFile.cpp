@@ -18,6 +18,8 @@ char *DefaultPathString(void);
 
 int doFIRRead(BatchPtr Batch,double value);
 
+int doPlot(BatchPtr Batch,double value,char *label);
+
 int doDft(BatchPtr Batch,double value);
 
 int doForce(BatchPtr Batch,CommandPtr cp);
@@ -29,6 +31,8 @@ int doCHighPass(BatchPtr Batch,CommandPtr cp,int flag);
 int doBandPass(BatchPtr Batch,CommandPtr cp,int flag,int cflag);
 
 int doDiff(BatchPtr Batch);
+
+int doWriteFilter(BatchPtr Batch);
 
 int doCascadeEM(BatchPtr Batch);
 
@@ -382,6 +386,8 @@ int doBatch(BatchPtr Batch,CommandPtr cp)
         doResponse(Batch,value);
     }else if(!mstrcmp((char *)"diff",command)){
         doDiff(Batch);
+    }else if(!mstrcmp((char *)"writefilter",command)){
+        doWriteFilter(Batch);
     }else if(!mstrcmp((char *)"cascadeEM",command)){
         doCascadeEM(Batch);
     }else if(!mstrcmp((char *)"trans",command)){
@@ -437,6 +443,14 @@ int doBatch(BatchPtr Batch,CommandPtr cp)
         ret=doubleCommand(&value,cp);
         if(ret)goto ErrorOut;
         doFIRRead(Batch,value);
+    }else if(!mstrcmp((char *)"plot",command)){
+        ++(cp->n);
+        ret=doubleCommand(&value,cp);
+        if(ret)goto ErrorOut;
+        ++(cp->n);
+        command=stringCommand(cp);
+        if(!command)goto ErrorOut;
+        doPlot(Batch,value,command);
 	}else{
 	    WarningPrint("doBatch Unknown Command %s\n",command);
 	    goto ErrorOut;
@@ -446,6 +460,43 @@ int doBatch(BatchPtr Batch,CommandPtr cp)
 	
 ErrorOut:
 	return ret;
+}
+int doPlot(BatchPtr Batch,double value,char *label)
+{
+    double value1,value2;
+    int nf=(int)value;
+    char line[4096];
+    struct CommandInfo cp;
+    int ret;
+    
+    double *xnp=(double *)eMalloc(nf*sizeof(double),20045);
+    double *ynp=(double *)eMalloc(nf*sizeof(double),20046);
+    
+    zerol((char *)&cp,sizeof(struct CommandInfo));
+    
+    BatchNextLine(Batch,line,sizeof(line));
+                  
+    for(int n=0;n<nf;++n){
+        if(BatchNextLine(Batch,line,sizeof(line)))break;
+        if(getCommand(line,&cp))break;
+        ret=doubleCommand(&value1,&cp);
+        ++(cp.n);
+        ret=doubleCommand(&value2,&cp);
+        ++(cp.n);
+        
+        xnp[n]=value1;
+        ynp[n]=value2;
+    
+    }
+    
+    BatchPlot(label,0,xnp,ynp,(long)nf);
+    
+    if(xnp)eFree(xnp);
+    if(ynp)eFree(ynp);
+    
+    //printf("command = %s\n",command);
+    
+    return 0;
 }
 int doFIRRead(BatchPtr Batch,double value)
 {
@@ -560,9 +611,15 @@ int doBandPass(BatchPtr Batch,struct CommandInfo *cp,int flag,int cflag)
     
     if(flag == 0){
         pl->low(w0,1);
+        pl->filterType=BANDPASS;
     }else{
         pl->high(w0,1);
+        pl->filterType=BANDSTOP;
     }
+    
+    pl->lowCorner=fmin;
+    pl->highCorner=fmax;
+
 
     pl->band(wc,1,1e6);
 
@@ -630,6 +687,9 @@ int doCHighPass(BatchPtr Batch,struct CommandInfo *cp,int flag)
     }else{
         pl->diff();
     }
+    
+    pl->filterType=HIGHPASS;
+    pl->highCorner=fc;
 
     return 0;
 ErrorOut:
@@ -679,6 +739,10 @@ int doCLowPass(BatchPtr Batch,struct CommandInfo *cp,int flag)
     }else{
         pl->diff();
     }
+    
+    pl->filterType=LOWPASS;
+    pl->lowCorner=fc;
+
 ErrorOut:
     return 0;
 }
@@ -783,6 +847,14 @@ int doCascadeEM(BatchPtr Batch)
     struct Poly *pl=Batch->myIcon->pl;
     
     pl->cascadeEM();
+    
+    return 0;
+}
+int doWriteFilter(BatchPtr Batch)
+{
+    struct Poly *pl=Batch->myIcon->pl;
+    
+    pl->writefilter();
     
     return 0;
 }

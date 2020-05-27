@@ -38,7 +38,8 @@
 using namespace std;
 
 
-enum fType { SIN = 1, COS, EXP, IMPULSE, STEP, IC, DELAY};
+enum fType { SIN = 1, COS, EXP, IMPULSE, STEP, IC, DELAY,
+             HIGHPASS, LOWPASS, BANDPASS, BANDSTOP};
 
 struct poleszeros{
     int np;
@@ -71,6 +72,7 @@ public:
     int doChev(int np,double r);
     int norm();
     int diff();
+    int writefilter();
     int cascadeEM();
     int dft(int npoints);
     int low(double w0,int inorm);
@@ -117,6 +119,9 @@ public:
     double thetaNorm;
     struct BiQuad *biquad;
     int cascade;
+    int filterType;
+    double lowCorner;
+    double highCorner;
 };
 
 
