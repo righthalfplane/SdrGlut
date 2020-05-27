@@ -2,9 +2,9 @@
 
 SdrGlut is a simple software defined radio player. Using glut for drawing and glui for its dialogs makes it tiny compared to programs that use QT5 or wxWidgets. SdrGlut uses liquid-sdr and SoapySDR to preform the SDR calculations. The audio is handled by OpenAL and RtAudio.
 
-The FourTeenth Release is now avaliable. SdrGlut can now search for signals and save the frequencies and modes to a file. The saved frequencies can be recalled by selecting the line with the desired frequency and picking "Set Frequency" from the popup menu. It adds Voltage bias for powered antennas and Direct Sample Mode for RTL devices. It adds a window that can use the transmit capable SDRs to send AM, NBFM, USB, and LSB. It has a prebuild exe for macOS, a zipped folder for Windows and a zipped folder for Ubuntu 18.04 to unpack and run from
+The Fifteenth Release is now avaliable. SdrGlut now has digital filter design mode. It can do highpass, lowpass, bandpass and bandstop filters. Best of all - it generates a c++ program that implements and tests the filter - so there is no question about how to make it work. It adds Voltage bias for powered antennas and Direct Sample Mode for RTL devices. It adds a window that can use the transmit capable SDRs to send AM, NBFM, USB, and LSB. It has a prebuild exe for macOS, a zipped folder for Windows and a zipped folder for Ubuntu 18.04 to unpack and run from
 
-https://github.com/righthalfplane/SdrGlut/releases/tag/v1.14
+https://github.com/righthalfplane/SdrGlut/releases/tag/v1.15
 
 ## Demo videos
 
