@@ -102,10 +102,7 @@ typedef Vec ColorVEC ;
 #define PToVec(a,b)	 (b)[0]=(a.x);(b)[1]=(a.y);(b)[2]=(a.z);
 
 
- 
-/* #define max(a,b) 	((a)>(b)?(a):(b)) */
-/* #define min(a,b) 	((a)<(b)?(a):(b)) */
- 
+
 /*----------------------------------------------------------------------*/
  
 typedef struct Material Surface ;

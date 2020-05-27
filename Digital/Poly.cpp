@@ -464,7 +464,7 @@ int Poly::writefilter()
         
         printf("    long cascade=(long)(sizeof(biquad)/sizeof(struct BiQuad));\n\n");
         
-        printf("%s\n","    printf(\"sampleRate \%g cascade \%ld\\n\",sampleRate,cascade);\n\n");
+        printf("%s\n","    fprintf(stderr,\"sampleRate \%g cascade \%ld\\n\",sampleRate,cascade);\n\n");
         
         printf("    cascaderesponce(&biquad[0],cascade,101);\n\n");
         
@@ -1539,7 +1539,7 @@ int Poly::sweep(double f1,double f2,int ns,int npass,int ilog)
     double *xnp=(double *)eMalloc((ns+5)*sizeof(double),200381);
     double *ynp=(double *)eMalloc((ns+5)*sizeof(double),20038);
     
-    int ncount=max(np,nz);
+    int ncount=maxmy(np,nz);
     
     for(int kpass=1;kpass<=npass;++kpass){
         double f=f1;

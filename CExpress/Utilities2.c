@@ -310,7 +310,7 @@ int FloatToImage(double *d,long length,struct paletteDraw *pd,unsigned char *bp)
 	
 			dx=dmax-dmin;
 	
-			mmax=max(fabs(dmin),fabs(dmax));
+			mmax=maxmy(fabs(dmin),fabs(dmax));
 	
 			if(dx <= 0.0 || dx < 1e-5*mmax){
 				dmax=dmin+1.;
@@ -408,7 +408,7 @@ int FloatToColor(double *d,struct paletteDraw *pd,unsigned char *bp)
     	
     	dx=dmax-dmin;
     	
-    	mmax=max(fabs(dmin),fabs(dmax));
+    	mmax=maxmy(fabs(dmin),fabs(dmax));
 	    	    
 	    if(dx <= 0.0 || dx < 1e-5*mmax){
 	        dmax=dmin+1.;

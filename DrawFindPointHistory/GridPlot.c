@@ -12,16 +12,8 @@
 #include "Scene.h"
 #include "GridPlot.h"
 
-#ifdef min
-#undef min
-#endif
-
-#ifdef max
-#undef max
-#endif
-
-#define max(a,b) 	((a)>(b)?(a):(b))
-#define min(a,b) 	((a)<(b)?(a):(b))
+#define maxmy(a,b) 	((a)>(b)?(a):(b))
+#define minmy(a,b) 	((a)<(b)?(a):(b))
 #define sign(a,b) 	((b)>=(0)?(fabs(a)):(-fabs(a)))
 
 
@@ -683,8 +675,8 @@ static int clip2(struct uGridPlot *b,double *x1i,double *y1i,double *x2i,double 
 l90: 
       xt=x1;
       yt=y1;
-      sn=min(s[1],s[2]);
-      sx=max(s[1],s[2]);
+      sn=minmy(s[1],s[2]);
+      sx=maxmy(s[1],s[2]);
       *x1i=sn*x2+(1.-sn)*xt;
       *y1i=sn*y2+(1.-sn)*yt;
       *x2i=sx*x2+(1.-sx)*xt;

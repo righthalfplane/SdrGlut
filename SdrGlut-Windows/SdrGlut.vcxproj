@@ -325,6 +325,7 @@
     <ClCompile Include="..\MainSource\DialogFileOpen.cpp" />
     <ClCompile Include="..\MainSource\DialogFolder.cpp" />
     <ClCompile Include="..\MainSource\DialogSave.cpp" />
+    <ClCompile Include="..\MainSource\eMemory.cpp" />
     <ClCompile Include="..\MainSource\Getpalette.c" />
     <ClCompile Include="..\MainSource\main.cpp" />
     <ClCompile Include="..\MainSource\mThread.cpp" />

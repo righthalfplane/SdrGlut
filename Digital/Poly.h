@@ -21,18 +21,8 @@
 
 #include "BatchFile.h"
 
-
-#ifdef max
-#undef max
-#endif
-
-#ifdef min
-#undef min
-#endif
-
-
-#define max(x1,x2)    (((x1) > (x2)) ? (x1) : (x2))
-#define min(x1,x2)    (((x1) < (x2)) ? (x1) : (x2))
+#define maxmy(x1,x2)    (((x1) > (x2)) ? (x1) : (x2))
+#define minmy(x1,x2)    (((x1) < (x2)) ? (x1) : (x2))
 
 
 using namespace std;

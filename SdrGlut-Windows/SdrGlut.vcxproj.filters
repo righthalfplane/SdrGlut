@@ -474,6 +474,9 @@
     <ClCompile Include="..\Digital\Poly.cpp">
       <Filter>Digital</Filter>
     </ClCompile>
+    <ClCompile Include="..\MainSource\eMemory.cpp">
+      <Filter>MainSource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SdrGlut.rc" />
