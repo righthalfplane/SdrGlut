@@ -559,9 +559,10 @@ int doDft(BatchPtr Batch,double value)
 }
 int doBandPass(BatchPtr Batch,struct CommandInfo *cp,int flag,int cflag)
 {
-    double ripple,fmin,fmax,save,pi,order;
+    double ripple,fmin,fmax,save,pi,value;
     double w1,w2,wc,w0;
     char *command;
+    int order;
     int ret;
     
     struct Poly *pl=Batch->myIcon->pl;
@@ -573,9 +574,10 @@ int doBandPass(BatchPtr Batch,struct CommandInfo *cp,int flag,int cflag)
     if(!command)goto ErrorOut;
     ++(cp->n);
     
-    ret=doubleCommand(&order,cp);
+    ret=doubleCommand(&value,cp);
     if(ret)goto ErrorOut;
     ++(cp->n);
+    order=value;
     
     ret=doubleCommand(&ripple,cp);
     if(ret)goto ErrorOut;
@@ -603,6 +605,13 @@ int doBandPass(BatchPtr Batch,struct CommandInfo *cp,int flag,int cflag)
     
     w0=0.5*(w2-w1)/(2.0*pi);
     
+    if(cflag == 1){
+        if(order & 1){
+            order++;
+            fprintf(stderr,"cascade filter order must be even - order set to %d\n",order);
+        }
+    }
+
     if(!mstrcmp((char *)"chev",command)){
         pl->doChev(order,ripple);
     }else if(!mstrcmp((char *)"butter",command)){
@@ -668,7 +677,10 @@ int doCHighPass(BatchPtr Batch,struct CommandInfo *cp,int flag)
     ++(cp->n);
     fc=value;
     
-    if(order & 1)order++;
+    if(order & 1){
+        order++;
+        fprintf(stderr,"cascade filter order must be even - order set to %d\n",order);
+    }
     
     if(!mstrcmp((char *)"chev",command)){
         pl->doChev(order,ripple);
@@ -722,8 +734,10 @@ int doCLowPass(BatchPtr Batch,struct CommandInfo *cp,int flag)
     ++(cp->n);
     fc=value;
     
-    if(order & 1)order++;
-    
+    if(order & 1){
+        order++;
+        fprintf(stderr,"cascade filter order must be even - order set to %d\n",order);
+    }
     if(!mstrcmp((char *)"chev",command)){
         pl->doChev(order,ripple);
     }else if(!mstrcmp((char *)"butter",command)){

@@ -1,15 +1,15 @@
 samplerate 10000
-clowpass "butter" 16 1 1000
+highpass "butter" 15 1 1000
 response 101
-writefilter
+highpass "butter" 15 1 2000
+response 101
+highpass "butter" 15 1 3000
+response 101
+highpass "chev" 15 0.2 4000
+response 101
 exit
 
-clowpass "butter" 16 1 2000
-response 101
-clowpass "butter" 16 1 3000
-response 101
-clowpass "butter" 16 1 4000
-response 101
+
 
 force sin 10 100 400
 force sin 10 500 400

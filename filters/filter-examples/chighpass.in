@@ -1,11 +1,11 @@
 samplerate 10000
-chighpass "butter" 15 1 1000
+chighpass "butter" 16 1 1000
 response 101
-chighpass "butter" 15 1 2000
+chighpass "butter" 16 1 2000
 response 101
-chighpass "butter" 15 1 3000
+chighpass "butter" 16 1 3000
 response 101
-chighpass "butter" 15 1 4000
+chighpass "chev" 16 0.2 4000
 response 101
 exit
 
