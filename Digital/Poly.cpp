@@ -336,8 +336,8 @@ int cascadeforce(struct BiQuad *biquad,long cascade,double *input,int steps,doub
 \n\
     double t=1.0/sampleRate;\n\
  \n\
-    fprintf(stderr,\"plot %d \\\"Sine Responce Frequency %g\\\"\\n\",steps,frequency);\n\
-    fprintf(stderr,\"           SECONDS,           AMPLITUDE,             INPUT\\n\");\n\
+    fprintf(stdout,\"plot %d \\\"Sine Responce Frequency %g\\\"\\n\",steps,frequency);\n\
+    fprintf(stdout,\"           SECONDS,           AMPLITUDE,             INPUT\\n\");\n\
   \n\
     for(int n=0;n<steps;++n){\n\
         double y;\n\
@@ -358,7 +358,7 @@ int cascadeforce(struct BiQuad *biquad,long cascade,double *input,int steps,doub
             x=y;\n\
         }\n\
 \n\
-        fprintf(stderr,\"    %18.9e, %18.9e , %18.9e\\n\",n*t,y/scale,x);\n\
+        fprintf(stdout,\"    %18.9e, %18.9e , %18.9e\\n\",n*t,y/scale,x);\n\
     }\n\
 \n\
     return 0;\n\
@@ -372,10 +372,10 @@ int cascaderesponce(struct BiQuad *biquad,long cascade,int steps)\n\
  \n\
     double dt=(pi)/(steps-1);\n\
 \n\
-    fprintf(stderr,\"\\n      cresponse thetaNorm %g \\n\",thetaNorm);\n\
+    fprintf(stdout,\"#\\n#      cresponse thetaNorm %g \\n#\\n\",thetaNorm);\n\
  \n\
-    fprintf(stderr,\"plot %d \\\"Frequency Sweep\\\" \\n\",steps);\n\
-    fprintf(stderr,\"      FREQUENCY,         AMPLITUDE\\n\");\n\
+    fprintf(stdout,\"plot %d \\\"Frequency Sweep\\\" \\n\",steps);\n\
+    fprintf(stdout,\"      FREQUENCY,         AMPLITUDE\\n\");\n\
  \n\
     for(int k=0;k<steps;++k){\n\
         double theta=k*dt;\n\
@@ -384,7 +384,7 @@ int cascaderesponce(struct BiQuad *biquad,long cascade,int steps)\n\
         for(int k=0;k<cascade;++k){\n\
             sum=sum*biquad[k].kk*(z*z*biquad[k].b0+z*biquad[k].b1+biquad[k].b2)/(z*z+z*biquad[k].a1+biquad[k].a2);\n\
         }\n\
-        fprintf(stderr,\"%18.9e, %18.9e %18.9e\\n\",theta*sampleRate/(2*pi),abs(sum),theta/pi);\n\
+        fprintf(stdout,\"%18.9e, %18.9e %18.9e\\n\",theta*sampleRate/(2*pi),abs(sum),theta/pi);\n\
     }\n\
 \n\
     return 0;\n\
@@ -464,7 +464,7 @@ int Poly::writefilter()
         
         printf("    long cascade=(long)(sizeof(biquad)/sizeof(struct BiQuad));\n\n");
         
-        printf("%s\n","    fprintf(stderr,\"sampleRate \%g cascade \%ld\\n\",sampleRate,cascade);\n\n");
+        printf("%s\n","    fprintf(stdout,\"#\\n#      sampleRate \%g cascade \%ld\\n\",sampleRate,cascade);\n\n");
         
         printf("    cascaderesponce(&biquad[0],cascade,101);\n\n");
         

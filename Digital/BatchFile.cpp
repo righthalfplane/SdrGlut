@@ -1112,7 +1112,7 @@ doWhite:
 
 	if(c == EOF){
 	    return 1;
-	}else if(c == '!'){
+    }else if(c == '#'){
 	    while(1){
 	        c=fgetc(input);
 	        if(c == '\n' || c == '\r' || c == EOF){
