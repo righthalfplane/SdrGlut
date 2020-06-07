@@ -263,6 +263,9 @@
     <ClInclude Include="..\Digital\Poly.h">
       <Filter>Digital</Filter>
     </ClInclude>
+    <ClInclude Include="..\Radio\SocketDefs.h">
+      <Filter>Radio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\glui-routines\algebra3.cpp">
@@ -476,6 +479,9 @@
     </ClCompile>
     <ClCompile Include="..\MainSource\eMemory.cpp">
       <Filter>MainSource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Radio\send.cpp">
+      <Filter>Radio</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

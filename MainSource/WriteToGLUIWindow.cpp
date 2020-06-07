@@ -222,7 +222,7 @@ static void menu_select(int item)
         buff[n++]=0;
     }else if(item == 36){
         moo->text.insert(moo->insertion_pt,buff);
-        moo->insertion_pt += strlen(buff);
+        moo->insertion_pt += (int)strlen(buff);
       //  fprintf(stderr,"point %d buff %s\n",moo->insertion_pt,buff);
     }else if(item == 33){
         glui = GLUI_Master.find_glui_by_window_id(gluiID);
@@ -343,7 +343,7 @@ int WriteToGLUIWindow(char *message)
                 moo->text=message;
                 //fprintf(stderr,"1 moo->insertion_pt %d length %lu\n",moo->insertion_pt,strlen(message));
                 insert=(int)strlen(message);
-                moo->insertion_pt += strlen(message);
+                moo->insertion_pt += (int)strlen(message);
             }else{
                 if(moo->insertion_pt == -1){
                     moo->insertion_pt=insert;
@@ -351,7 +351,7 @@ int WriteToGLUIWindow(char *message)
                }
                //fprintf(stderr,"2 moo->insertion_pt %d\n",moo->insertion_pt);
                 moo->text.insert(moo->insertion_pt,message);
-                moo->insertion_pt += strlen(message);
+                moo->insertion_pt += (int)strlen(message);
                 insert=moo->insertion_pt;
                 moo->redraw_window();
             }
@@ -371,7 +371,7 @@ static int SetInsertQ(struct QStruct *q)
 
 	if(glui)moo->insertion_pt = -1;
 	
-ErrorOut:
+//ErrorOut:
     if(q)q->launched =  -1;
 	return 0;
 }

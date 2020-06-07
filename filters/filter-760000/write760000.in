@@ -1,0 +1,6 @@
+samplerate 2000000
+cbandpass butter 8 0.2 755000 765000
+response 201
+writefilter
+exit
+

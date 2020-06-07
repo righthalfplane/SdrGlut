@@ -211,9 +211,9 @@ int processFile(char *pathname)
     
     char *p=strrchr(pathname,FILE_NAME_SEPERATOR_CHAR);
     if(p){
-        mstrncpy(fname,p,strlen(p)+1);
+        mstrncpy(fname,p,(long)(strlen(p)+1));
     }else{
-        mstrncpy(fname,pathname,strlen(pathname)+1);
+        mstrncpy(fname,pathname,(long)(strlen(pathname)+1));
     }
 
 	input=fopen(pathname,"r");
@@ -418,13 +418,13 @@ int doBatch(BatchPtr Batch,CommandPtr cp)
     }else if(!mstrcmp((char *)"cbandstop",command)){
         doBandPass(Batch,cp,1,1);
     }else if(!mstrcmp((char *)"samplerate",command)){
-        struct Poly *pl=Batch->myIcon->pl;
+        class Poly *pl=Batch->myIcon->pl;
         ++(cp->n);
         ret=doubleCommand(&value,cp);
         if(ret)goto ErrorOut;
         pl->sampleRate=value;
     }else if(!mstrcmp((char *)"frequencyNorm",command)){
-        struct Poly *pl=Batch->myIcon->pl;
+        class Poly *pl=Batch->myIcon->pl;
         ++(cp->n);
         ret=doubleCommand(&value,cp);
         if(ret)goto ErrorOut;
@@ -500,7 +500,7 @@ int doPlot(BatchPtr Batch,double value,char *label)
 }
 int doFIRRead(BatchPtr Batch,double value)
 {
-    struct Poly *pl=Batch->myIcon->pl;
+    class Poly *pl=Batch->myIcon->pl;
     double value1,value2;
     int nf=(int)value;
     char line[4096];
@@ -551,7 +551,7 @@ int doFIRRead(BatchPtr Batch,double value)
 }
 int doDft(BatchPtr Batch,double value)
 {
-    struct Poly *pl=Batch->myIcon->pl;
+    class Poly *pl=Batch->myIcon->pl;
     
     pl->dft((int)value);
     
@@ -565,7 +565,7 @@ int doBandPass(BatchPtr Batch,struct CommandInfo *cp,int flag,int cflag)
     int order;
     int ret;
     
-    struct Poly *pl=Batch->myIcon->pl;
+    class Poly *pl=Batch->myIcon->pl;
     
     pi=4.0*atan(1.0);
     
@@ -658,7 +658,7 @@ int doCHighPass(BatchPtr Batch,struct CommandInfo *cp,int flag)
     
     double pi=4.0*atan(1.0);
     
-    struct Poly *pl=Batch->myIcon->pl;
+    class Poly *pl=Batch->myIcon->pl;
     
     ++(cp->n);
     command=stringCommand(cp);
@@ -715,7 +715,7 @@ int doCLowPass(BatchPtr Batch,struct CommandInfo *cp,int flag)
     int order;
     int ret;
     
-    struct Poly *pl=Batch->myIcon->pl;
+    class Poly *pl=Batch->myIcon->pl;
     
     ++(cp->n);
     command=stringCommand(cp);
@@ -766,7 +766,7 @@ int doForce(BatchPtr Batch,struct CommandInfo *cp)
     double value;
     int ret;
 
-    struct Poly *pl=Batch->myIcon->pl;
+    class Poly *pl=Batch->myIcon->pl;
     
     
     ++(cp->n);
@@ -858,7 +858,7 @@ ErrorOut:
 }
 int doCascadeEM(BatchPtr Batch)
 {
-    struct Poly *pl=Batch->myIcon->pl;
+    class Poly *pl=Batch->myIcon->pl;
     
     pl->cascadeEM();
     
@@ -866,7 +866,7 @@ int doCascadeEM(BatchPtr Batch)
 }
 int doWriteFilter(BatchPtr Batch)
 {
-    struct Poly *pl=Batch->myIcon->pl;
+    class Poly *pl=Batch->myIcon->pl;
     
     pl->writefilter();
     
@@ -874,7 +874,7 @@ int doWriteFilter(BatchPtr Batch)
 }
 int doDiff(BatchPtr Batch)
 {
-    struct Poly *pl=Batch->myIcon->pl;
+    class Poly *pl=Batch->myIcon->pl;
     
     pl->diff();
     
@@ -882,7 +882,7 @@ int doDiff(BatchPtr Batch)
 }
 int doResponse(BatchPtr Batch,double value)
 {
-    struct Poly *pl=Batch->myIcon->pl;
+    class Poly *pl=Batch->myIcon->pl;
     
     pl->response(value);
     
@@ -891,7 +891,7 @@ int doResponse(BatchPtr Batch,double value)
 
 int doBilinear(BatchPtr Batch,double value)
 {
-    struct Poly *pl=Batch->myIcon->pl;
+    class Poly *pl=Batch->myIcon->pl;
     
     pl->bilinear(value);
     
@@ -900,7 +900,7 @@ int doBilinear(BatchPtr Batch,double value)
 
 int doForces(BatchPtr Batch,double value)
 {
-    struct Poly *pl=Batch->myIcon->pl;
+    class Poly *pl=Batch->myIcon->pl;
     
     pl->forces(Batch,value);
     
@@ -910,7 +910,7 @@ int doForces(BatchPtr Batch,double value)
 
 int doWarp(BatchPtr Batch,double value)
 {
-    struct Poly *pl=Batch->myIcon->pl;
+    class Poly *pl=Batch->myIcon->pl;
     
     pl->warp(value);
     
@@ -918,7 +918,7 @@ int doWarp(BatchPtr Batch,double value)
 }
 int doInvert(BatchPtr Batch,double value)
 {
-    struct Poly *pl=Batch->myIcon->pl;
+    class Poly *pl=Batch->myIcon->pl;
     
     pl->invert(value);
     
@@ -928,7 +928,7 @@ int doInvert(BatchPtr Batch,double value)
 
 int doBand(BatchPtr Batch,double value1,double value2,double value3)
 {
-    struct Poly *pl=Batch->myIcon->pl;
+    class Poly *pl=Batch->myIcon->pl;
     
     pl->band(value1,(int)value2,value3);
     
@@ -937,7 +937,7 @@ int doBand(BatchPtr Batch,double value1,double value2,double value3)
 
 int doMarch(BatchPtr Batch,double value1,double value2,double value3)
 {
-    struct Poly *pl=Batch->myIcon->pl;
+    class Poly *pl=Batch->myIcon->pl;
     
     pl->march(value1,value2,value3);
     
@@ -946,7 +946,7 @@ int doMarch(BatchPtr Batch,double value1,double value2,double value3)
 
 int doHigh(BatchPtr Batch,double value,double value2)
 {
-    struct Poly *pl=Batch->myIcon->pl;
+    class Poly *pl=Batch->myIcon->pl;
     
     pl->high(value,(int)value2);
     
@@ -954,7 +954,7 @@ int doHigh(BatchPtr Batch,double value,double value2)
 }
 int doTrans(BatchPtr Batch,double value1,double value2)
 {
-    struct Poly *pl=Batch->myIcon->pl;
+    class Poly *pl=Batch->myIcon->pl;
     
     pl->trans(Batch,(int)value1,(int)value2);
     
@@ -964,7 +964,7 @@ int doTrans(BatchPtr Batch,double value1,double value2)
 
 int doSweep(BatchPtr Batch,double value1,double value2,double value3,double value4,double ilog)
 {
-    struct Poly *pl=Batch->myIcon->pl;
+    class Poly *pl=Batch->myIcon->pl;
     
     pl->sweep(value1,value2,(int)value3,(int)value4,(int)ilog);
 
@@ -972,7 +972,7 @@ int doSweep(BatchPtr Batch,double value1,double value2,double value3,double valu
 }
 int doLow(BatchPtr Batch,double value,double value2)
 {
-    struct Poly *pl=Batch->myIcon->pl;
+    class Poly *pl=Batch->myIcon->pl;
     
     pl->low(value,(int)value2);
     
@@ -982,7 +982,7 @@ int doLow(BatchPtr Batch,double value,double value2)
 
 int doChev(BatchPtr Batch,double value,double value2)
 {
-    struct Poly *pl=Batch->myIcon->pl;
+    class Poly *pl=Batch->myIcon->pl;
     
     int np=(int)value;
     
@@ -992,7 +992,7 @@ int doChev(BatchPtr Batch,double value,double value2)
 }
 int doButter(BatchPtr Batch,double value,double value1)
 {
-    struct Poly *pl=Batch->myIcon->pl;
+    class Poly *pl=Batch->myIcon->pl;
     
 	int np=(int)value;
     

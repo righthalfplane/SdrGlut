@@ -21,6 +21,11 @@
 
 #include "BatchFile.h"
 
+#include "SocketDefs.h"
+
+
+
+
 
 int printInfo(void);
 
@@ -37,7 +42,7 @@ static void control_cb(int control);
 
 static void control_cb2(int control);
 
-char *ProgramVersion=(char *)"SdrGlut-596";
+char *ProgramVersion=(char *)"SdrGlut-641";
 
 extern "C" struct Scene *sceneRoot(void);
 
@@ -282,6 +287,10 @@ static void control_cb2(int control)
 	}
 }
 int main (int argc, char *argv[]) {
+    
+	SoapyNetSDR_SocketInit socket_init;
+
+    // signal(SIGPIPE, SIG_IGN);
     
     for(int n=1;n<argc;++n){
         if(processFile(argv[n]))break;

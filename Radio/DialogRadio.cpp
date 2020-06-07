@@ -22,10 +22,79 @@
 
 
 static GLUI_Checkbox *check_box;
+
 static void control_cb(int control);
+static void control_cb2(int control);
 
 extern "C" int doFFT2(double *x,double *y,long length,int direction);
 
+#define Mode_Buttons   180
+
+int Radio::dialogSend(struct Scene *scene)
+{
+    if(!scene)return 1;
+    
+    if(bb.glui){
+        bb.glui->close();
+    }
+    
+    bb.sceneLocal=scene;
+    
+    bb.glui = GLUI_Master.create_glui(rx->driveName);
+    
+    GLUI_Panel *obj_panel =  bb.glui->add_panel( "Mode" );
+
+    bb.group2 =
+    bb.glui->add_radiogroup_to_panel(obj_panel,&bb.modetype,Mode_Buttons,control_cb2);
+    
+    bb.glui->add_radiobutton_to_group( bb.group2, "Float" );
+    bb.glui->add_radiobutton_to_group( bb.group2, "Short int" );
+    bb.glui->add_radiobutton_to_group( bb.group2, "Sign char" );
+
+    obj_panel =  bb.glui->add_panel( "Tcp-Address" );
+    
+    
+    bb.edittext1 =
+    bb.glui->add_edittext_to_panel( obj_panel, "", GLUI_EDITTEXT_TEXT, bb.text1);
+    bb.edittext1->w=200;
+
+
+    obj_panel =  bb.glui->add_panel( "Commands" );
+    
+    new GLUI_Button(obj_panel, "Send", 2,control_cb2);
+    
+    new GLUI_Button(obj_panel, "Stop", 4, control_cb2);
+    
+    new GLUI_Button(obj_panel, "Close", 6, control_cb2);
+
+    bb.sub_window=glutGetWindow();
+    
+    //bb.sub_window=bb.glui->get_glut_window_id();
+    
+    bb.glui->set_main_gfx_window(bb.sub_window);
+
+    return 0;
+}
+static void control_cb2(int control)
+{
+    RadioPtr s=(RadioPtr)FindSceneRadio(glutGetWindow());
+    if(!s)return;
+    
+    sscanf(s->bb.edittext1->get_text(),"%s",s->bb.text1);
+
+    if(control == Mode_Buttons)
+    {
+        fprintf(stderr,"Mode_Buttons %d\n",s->bb.modetype);
+    }else if(control == 2){
+        (*s->rx->pStartSend)(s->rx,s->bb.text1,s->bb.modetype);
+   } else if(control == 4){
+       s->rx->controlSend = -1;
+    } else if(control == 6){
+        s->bb.glui->close();
+        s->bb.glui=NULL;
+    }
+    glutPostRedisplay();
+}
 // static int doWindow(double *x,double *y,long length,int type);
 
 int Radio::setDialogBandWidth(double bandwidth)
@@ -287,6 +356,8 @@ int Radio::dialogRadio(struct Scene *scene)
 
     dd.sub_window=glutGetWindow();
     
+    //dd.sub_window=dd.glui->get_glut_window_id();
+    
 	dd.glui->set_main_gfx_window(dd.sub_window);
 	
 	return 0;
@@ -435,6 +506,7 @@ RadioPtr FindSceneRadio(int window)
         if(w->scene->windowType == FileTypeSdrRadio){
             r=(RadioPtr)w;
             if(r->dd.sub_window == window)return r;
+            if(r->bb.sub_window == window)return r;
         }
         w=w->CNext;
     }

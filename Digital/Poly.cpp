@@ -642,8 +642,8 @@ int Poly::cresponse(double steps)
     
     complex<double> sum;
     
-    double *xnp=(double *)eMalloc(steps*sizeof(double),20016);
-    double *ynp=(double *)eMalloc(steps*sizeof(double),20017);
+    double *xnp=(double *)eMalloc((unsigned long)(steps*sizeof(double)),20016);
+    double *ynp=(double *)eMalloc((unsigned long)(steps*sizeof(double)),20017);
 
     double pi=4.0*atan(1.0);
     
@@ -698,8 +698,8 @@ int Poly::response(double steps)
 
     fprintf(stderr,"\n      Response thetaNorm %g scale %g\n",thetaNorm,scale);
     
-    double *xnp=(double *)eMalloc(steps*sizeof(double),20016);
-    double *ynp=(double *)eMalloc(steps*sizeof(double),20017);
+    double *xnp=(double *)eMalloc((unsigned long)(steps*sizeof(double)),20016);
+    double *ynp=(double *)eMalloc((unsigned long)(steps*sizeof(double)),20017);
 
     double pi=4.0*atan(1.0);
     
@@ -1240,11 +1240,11 @@ int Poly::forces(BatchPtr Batch,int nforces)
             type[n]=IC;
         }else if(!mstrcmp((char *)"delay",command)){
             ++(cp.n);
-            ret=doubleCommand(&v1,&cp);
+            ret=(int)doubleCommand(&v1,&cp);
             if(ret)goto ErrorOut;
             ++(cp.n);
-            ret=doubleCommand(&v2,&cp);
-            n1=v1;
+            ret=(int)doubleCommand(&v2,&cp);
+            n1=(int)v1;
             if(n1 >= 0 && n1 < nforces)delay[n]=v2;
             continue;
         }else if(!mstrcmp((char *)"end",command)){
@@ -1399,7 +1399,7 @@ int Poly::forcepoleszeros(int nf)
     
     int npp1=2;
     int nzp=1;
-    if(nt == IC)nzp += coef2[nf];
+    if(nt == IC)nzp += (int)coef2[nf];
     
 
     pz[nf].poles=(complex<double> *)eMalloc((np+npp1)*sizeof(complex<double>),20032);
@@ -1445,7 +1445,7 @@ int Poly::forcepoleszeros(int nf)
             
         case IC:
         {
-            int nn=coef2[nf];
+            int nn=(int)coef2[nf];
             for(int n=0;n<nn;++n){
                pz[nf].zeros[pz[nf].nz++]=complex<double>(0.0,0.0);
             }

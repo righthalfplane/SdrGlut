@@ -80,6 +80,16 @@ struct WaterFall4{
     int ysize;
 };
 
+struct DialogSendData{
+    GLUI *glui;
+    char text1[255];
+    GLUI_EditText *edittext1;
+    struct Scene *sceneLocal;
+    int sub_window;
+    GLUI_RadioGroup *group2;
+    int modetype;
+};
+
 struct DialogRadioData{
     GLUI *glui;
     char text1[255];
@@ -239,6 +249,7 @@ public:
     int mMenuSelectl(struct Scene *scene,int item);
     int KillScene (struct Scene *scene);
     int dialogRadio (struct Scene *scene);
+    int dialogSend(struct Scene *scene);
     int setFrequency(struct playData *play);
     int setFrequencyCoefficients(struct playData *rx);
     int stopPlay(struct playData4 *play);
@@ -280,6 +291,8 @@ public:
     struct playData rxs;
     
     struct DialogRadioData dd;
+    
+    struct DialogSendData bb;
     
     struct TransmitData tt;
 

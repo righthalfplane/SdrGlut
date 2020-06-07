@@ -67,7 +67,13 @@ static int testRadio(struct playData *rx);
 
 static int SetAudio(struct playData *rx,char *name,int type);
 
+static int StartSend(struct playData *rx,char *name,int type);
+
 int freeMemoryRadio(struct playData *rx);
+
+int writeStat(SOCKET toServerSocket,struct playData *rx);
+
+int rxSend(void *rxv);
 
 int RadioStart(int argc, char * argv [],struct playData *rx)
 {
@@ -78,6 +84,7 @@ int RadioStart(int argc, char * argv [],struct playData *rx)
     rx->psdrDone=sdrDone;
     rx->psdrSetMode=sdrSetMode;
     rx->pSetAudio=SetAudio;
+    rx->pStartSend=StartSend;
 
     rx->samplerate=2000000;
 	rx->deviceNumber=0;
@@ -90,6 +97,7 @@ int RadioStart(int argc, char * argv [],struct playData *rx)
     rx->audioThreads=0;
     rx->FFTcount=4096;
     rx->FFTfilter=FILTER_BLACKMANHARRIS7;
+    rx->controlSend = -1;
 
 
 	for(int n=1;n<argc;++n){
@@ -125,6 +133,235 @@ int RadioStart(int argc, char * argv [],struct playData *rx)
     
 	return 0 ;
 } /* main */
+static int StartSend(struct playData *rx,char *name,int type)
+{
+    
+    if(rx->controlSend >= 0){
+        printf("Already Running - Cannot Start New Transfer\n");
+        return 0;
+    }else{
+        printf("name %s\n",name);
+    }
+    
+    rx->send=(SOCKET)connectToServer((char *)name,&rx->Port);
+    if(rx->send == -1){
+        fprintf(stderr,"connect failed\n");
+        return 1;
+    }
+    
+    rx->dataType=type;
+    rx->controlSend = 0;
+    launchThread((void *)rx,rxSend);
+    
+    return 0;
+}
+int rxSend(void *rxv)
+{
+    
+    struct playData *rx=(struct playData *)rxv;
+    long size=2;
+    
+    rx->samplerate_save=-1;
+    rx->fc_save=-1;
+
+    int type=rx->dataType;
+    while(rx->controlSend >= 0){
+       if(rx->controlSend == 1){
+            writeStat(rx->send,rx);
+           if(type == 0){
+               double amin =  1e33;
+               double amax = -1e33;
+               for(int n=0;n<2*rx->size;++n){
+                   double v=rx->sendBuff1[n];
+                   if(v > amax)amax=v;
+                   if(v < amin)amin=v;
+               }
+               //printf("b amin %g amax %g ",amin,amax);
+               
+               if(rx->aminGlobal2 == 0.0)rx->aminGlobal2=amin;
+               rx->aminGlobal2 = 0.9*rx->aminGlobal2+0.1*amin;
+               amin=rx->aminGlobal2;
+               
+               if(rx->amaxGlobal2 == 0.0)rx->amaxGlobal2=amax;
+               rx->amaxGlobal2 = 0.9*rx->amaxGlobal2+0.1*amax;
+               amax=rx->amaxGlobal2;
+               
+               double dnom=0.0;
+               if((amax-amin) > 0){
+                   dnom=65534.0/(amax-amin);
+               }else{
+                   dnom=65534.0;
+               }
+               
+               double dmin=amin;
+               
+               double gain=0.9;
+               
+               float *data=(float *)rx->sendBuff2;
+               
+               amin =  1e33;
+               amax = -1e33;
+               
+               for(int n=0;n<2*rx->size;++n){
+                   double v;
+                   v=rx->sendBuff1[n];
+                   v=gain*((v-dmin)*dnom-32768);
+                   if(v < amin)amin=v;
+                   if(v > amax)amax=v;
+                   if(v < -32768){
+                       v = -32768;
+                   }else if(v > 32767){
+                       v=32767;
+                   }
+                   data[n]=(float)v;
+               }
+               
+               size=(long)(rx->size*sizeof(float));
+               if(writeLab(rx->send,(char *)"FLOA",size))return 1;
+               if(netWrite(rx->send,(char *)rx->sendBuff2,size))return 1;
+               if(writeLab(rx->send,(char *)"FLOA",size))return 1;
+               if(netWrite(rx->send,(char *)&rx->sendBuff2[rx->size],size))return 1;
+            }else if(type == 1){
+                double amin =  1e33;
+                double amax = -1e33;
+                for(int n=0;n<2*rx->size;++n){
+                    double v=rx->sendBuff1[n];
+                    if(v > amax)amax=v;
+                    if(v < amin)amin=v;
+                }
+                //printf("b amin %g amax %g ",amin,amax);
+                
+                if(rx->aminGlobal2 == 0.0)rx->aminGlobal2=amin;
+                rx->aminGlobal2 = 0.9*rx->aminGlobal2+0.1*amin;
+                amin=rx->aminGlobal2;
+                
+                if(rx->amaxGlobal2 == 0.0)rx->amaxGlobal2=amax;
+                rx->amaxGlobal2 = 0.9*rx->amaxGlobal2+0.1*amax;
+                amax=rx->amaxGlobal2;
+                
+                double dnom=0.0;
+                if((amax-amin) > 0){
+                    dnom=65534.0/(amax-amin);
+                }else{
+                    dnom=65534.0;
+                }
+                
+                double dmin=amin;
+                
+                double gain=0.9;
+                
+                short int *data=(short int *)rx->sendBuff2;
+                
+                amin =  1e33;
+                amax = -1e33;
+                
+                for(int n=0;n<2*rx->size;++n){
+                    double v;
+                    v=rx->sendBuff1[n];
+                    v=gain*((v-dmin)*dnom-32768);
+                    if(v < amin)amin=v;
+                    if(v > amax)amax=v;
+                    if(v < -32768){
+                        v = -32768;
+                    }else if(v > 32767){
+                        v=32767;
+                    }
+                    data[n]=(short int)v;
+                }
+                //printf(" a amin %g amax %g\n",amin,amax);
+                size=rx->size*sizeof(short int);
+                if(writeLab(rx->send,(char *)"SHOR",size))return 1;
+                if(netWrite(rx->send,(char *)rx->sendBuff2,size))return 1;
+                if(writeLab(rx->send,(char *)"SHOR",size))return 1;
+                if(netWrite(rx->send,(char *)&data[rx->size],size))return 1;
+           }else if(type == 2){
+               double amin =  1e33;
+               double amax = -1e33;
+               for(int n=0;n<2*rx->size;++n){
+                   double v=rx->sendBuff1[n];
+                   if(v > amax)amax=v;
+                   if(v < amin)amin=v;
+               }
+               //printf("b amin %g amax %g ",amin,amax);
+               
+               if(rx->aminGlobal2 == 0.0)rx->aminGlobal2=amin;
+               rx->aminGlobal2 = 0.9*rx->aminGlobal2+0.1*amin;
+               amin=rx->aminGlobal2;
+               
+               if(rx->amaxGlobal2 == 0.0)rx->amaxGlobal2=amax;
+               rx->amaxGlobal2 = 0.9*rx->amaxGlobal2+0.1*amax;
+               amax=rx->amaxGlobal2;
+               
+               double dnom=0.0;
+               if((amax-amin) > 0){
+                   dnom=255.0/(amax-amin);
+               }else{
+                   dnom=255.0;
+               }
+               
+               double dmin=amin;
+               
+               double gain=0.9;
+               
+               signed char *data=(signed char *)rx->sendBuff2;
+               
+               amin =  1e33;
+               amax = -1e33;
+               
+               for(int n=0;n<2*rx->size;++n){
+                   double v;
+                   v=rx->sendBuff1[n];
+                   v=gain*((v-dmin)*dnom-128);
+                   if(v < amin)amin=v;
+                   if(v > amax)amax=v;
+                   if(v < -128){
+                       v = -128;
+                   }else if(v > 127){
+                       v=127;
+                   }
+                   data[n]=(signed char)v;
+               }
+               //printf(" a amin %g amax %g\n",amin,amax);
+               size=rx->size*sizeof(signed char);
+               if(writeLab(rx->send,(char *)"SIGN",size))return 1;
+               if(netWrite(rx->send,(char *)rx->sendBuff2,size))return 1;
+               if(writeLab(rx->send,(char *)"SIGN",size))return 1;
+               if(netWrite(rx->send,(char *)&data[rx->size],size))return 1;
+           }
+           rx->controlSend = 0;
+        }else{
+            Sleep2(20);
+        }
+    }
+  
+
+    if(rx->send >= 0){
+        doEnd(rx->send);
+        shutdown(rx->send,2);
+        closesocket(rx->send);
+    }
+
+    return 0;
+}
+int writeStat(SOCKET toServerSocket,struct playData *rx)
+{
+    double buff[2];
+    
+    if(rx->samplerate_save == rx->samplerate && rx->fc_save == rx->fc)return 0;
+    rx->fc_save=rx->fc;
+    rx->samplerate_save=rx->samplerate;
+    
+    buff[0]=rx->fc;
+    buff[1]=rx->samplerate;
+    
+    long size=2;
+    
+    if(writeLab(toServerSocket,(char *)"STAT",size))return 1;
+    
+    if(netWrite(toServerSocket,(char *)buff,(long)(2*sizeof(double))))return 1;
+    
+    return 0;
+}
 
 static int SetAudio(struct playData *rx,char *name,int type)
 {
@@ -240,6 +477,11 @@ static int playRadio(struct playData *rx)
     printf("Device %s samplerate %.0f rx->size %d Bandwidth %.0f\n",rx->driveName,rate,rx->size,bw);
     
     size += 256;  // bug in rfspace NetSDR
+    
+    if(rx->sendBuff1)cFree((char *)rx->sendBuff1);
+    rx->sendBuff1=(float *)cMalloc(2*size*sizeof(float),18887);
+    if(rx->sendBuff2)cFree((char *)rx->sendBuff2);
+    rx->sendBuff2=(float *)cMalloc(2*size*sizeof(float),18888);
     
     for(int k=0;k<NUM_DATA_BUFF5;++k){
         if(rx->buff[k])cFree((char *)rx->buff[k]);
@@ -917,12 +1159,12 @@ static int pushBuffa(int nbuffer,struct playData *rx)
 	
     if(rx->bufftopa >= NUM_ABUFF5){
         rx->bufftopa=NUM_ABUFF5;
-        int small,ks;
-        small=1000000000;
+        int small2,ks;
+        small2=1000000000;
         ks=-1;
         for(int k=0;k<NUM_ABUFF5;++k){
-             if(rx->buffStacka[k] < small){
-             	small=rx->buffStacka[k];
+             if(rx->buffStacka[k] < small2){
+             	small2=rx->buffStacka[k];
              	ks=k;
              }
         }
@@ -961,12 +1203,12 @@ static int popBuffa(struct playData *rx)
  		goto Out;
  	}
  	
-       int small,ks;
-        small=1000000000;
+       int small2,ks;
+        small2=1000000000;
         ks=-1;
         for(int k=0;k<rx->bufftopa;++k){
-             if(rx->buffStacka[k] < small){
-             	small=rx->buffStacka[k];
+             if(rx->buffStacka[k] < small2){
+             	small2=rx->buffStacka[k];
              	ks=k;
              }
         }
@@ -1046,12 +1288,12 @@ static int popBuff(struct playData *rx,struct Filters *f)
  		goto Out;
  	}
  	
-       int small,ks;
-        small=1000000000;
+       int small2,ks;
+        small2=1000000000;
         ks=-1;
         for(int k=0;k<rx->bufftop;++k){
-             if(rx->buffStack[k] < small){
-             	small=rx->buffStack[k];
+             if(rx->buffStack[k] < small2){
+             	small2=rx->buffStack[k];
              	ks=k;
              }
         }
@@ -1226,6 +1468,13 @@ int rxBuffer(void *rxv)
  */
         	    pushBuff(rx->witchRFBuffer,rx);
                 
+                if(rx->controlSend == 0){
+                    for(int n=0;n<rx->size*2;++n){
+                       rx->sendBuff1[n]=buff[n];
+                    }
+                    rx->controlSend = 1;
+                }
+                
                 if(file){
                     printf("rx->witchRFBuffer %d rx->size %d\n",rx->witchRFBuffer,rx->size);
                     size_t ret=fwrite(buff, 2*sizeof(float), rx->size,file);
@@ -1390,14 +1639,14 @@ int testRadio(struct playData *rx)
         std::vector<std::string> names=rx->device->listAntennas( SOAPY_SDR_RX, 0);
         
         rx->antennaCount=names.size();
-        rx->antenna=(char **)cMalloc(rx->antennaCount*sizeof(char *),8833);
+        rx->antenna=(char **)cMalloc((unsigned long)(rx->antennaCount*sizeof(char *)),8833);
         for (size_t i=0;i<names.size();++i){
             rx->antenna[i]=strsave((char *)names[i].c_str(),5555);
         }
 
         names = rx->device->listGains(SOAPY_SDR_RX, 0);
         rx->gainsCount=names.size();
-        rx->gains=(char **)cMalloc(rx->gainsCount*sizeof(char *),8833);
+        rx->gains=(char **)cMalloc((unsigned long)(rx->gainsCount*sizeof(char *)),8833);
         rx->gainsMinimum=(double *)cMalloc((unsigned long)(rx->gainsCount*sizeof(double)),8891);
         rx->gainsMaximum=(double *)cMalloc((unsigned long)(rx->gainsCount*sizeof(double)),8892);
         

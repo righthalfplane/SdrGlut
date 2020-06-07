@@ -9,14 +9,7 @@
 #include <SoapySDR/Version.hpp>
 #include <SoapySDR/Modules.hpp>
 #include <cstdio>
-#include <algorithm>
 #include <iostream>
-#include <fstream>
-#include <string>
-#include <cerrno>
-#include <vector>
-#include <iostream>
-#include <iterator>
 
 int printInfo(void)
 {

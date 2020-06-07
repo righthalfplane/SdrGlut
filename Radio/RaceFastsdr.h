@@ -42,6 +42,8 @@
 
 #include "mThread.h"
 
+#include "SocketDefs.h"
+
 //#include "agc.h"
 
 #ifndef M_PI
@@ -119,6 +121,9 @@ struct playData{
     double w;
     double bw;
     
+    double samplerate_save;
+    double fc_save;
+
     
     int decodemode;
 
@@ -159,11 +164,15 @@ struct playData{
     volatile int controlProcess;
     volatile int mute;
 
-    
+    volatile int controlSend;
+    unsigned short Port;
+    float *sendBuff1;
+    float *sendBuff2;
+    SOCKET send;
     
     int al_state;
     
-    
+    int dataType;
     char **antenna;
     size_t antennaCount;
     char **gains;
@@ -208,9 +217,14 @@ struct playData{
     int (*psdrDone)(struct playData *rx);
     int (*psdrSetMode)(struct playData *rx);
     int (*pSetAudio)(struct playData *rx,char *name,int type);
-    
+    int (*pStartSend)(struct playData *rx,char *name,int type);
+
     double aminGlobal;
     double amaxGlobal;
+    
+    double aminGlobal2;
+    double amaxGlobal2;
+    
     double averageGlobal;
     
     double scaleFactor;

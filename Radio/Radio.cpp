@@ -50,6 +50,7 @@ extern "C" int DrawLine(int x1, int y1, int x2, int y2);
 #define ControlGetSelectionBox	102
 #define SdrDialog               103
 #define SdrTransmit             104
+#define SdrSend                 105
 
 ALvoid DisplayALError(unsigned char *szText, ALint errorCode);
 
@@ -304,7 +305,7 @@ void Radio::playRadio (struct playData4 *rx)
 
 Radio::~Radio()
 {
-  //  fprintf(stderr,"~Radio() \n");
+    fprintf(stderr,"~Radio() \n");
     
     rx->psdrDone(rx);
 
@@ -324,16 +325,22 @@ Radio::~Radio()
     water.data=NULL;
 
     sceneClean(scene);
-	
-    if(inDialog){
-        inDialog=0;
-        if(dd.glui){
-            glutSetWindow(dd.sub_window);
-            dd.glui->close();
-        }
-        dd.glui=NULL;
+
+    if(bb.glui){
+        glutSetWindow(bb.sub_window);
+        printf("bb.sub_window %d\n",bb.sub_window);
+        bb.glui->close();
     }
-    
+    bb.glui=NULL;
+
+    if(dd.glui){
+        glutSetWindow(dd.sub_window);
+        printf("dd.sub_window %d\n",dd.sub_window);
+        dd.glui->close();
+    }
+    dd.glui=NULL;
+
+
     if(inTransmit){
         extern int freeMemoryTransmit(struct TransmitData *rx);
         inTransmit=0;
@@ -665,6 +672,10 @@ int Radio::setFrequency(struct playData *rx)
         rx->aminGlobal=0;
         
         rx->amaxGlobal=0;
+        
+        rx->aminGlobal2=0;
+        
+        rx->amaxGlobal2=0;
         
         rx->averageGlobal=0;
         
@@ -1189,6 +1200,7 @@ int Radio::OpenWindows(struct Scene *scene)
     glutAddSubMenu("Window Filter", menu6);
     if(rx->directSampleMode)glutAddSubMenu("Direct Sample Mode", menu62);
     if(rx->biasMode!= "")glutAddSubMenu("Voltage Bias", menu63);
+    glutAddMenuEntry("Send...", SdrSend);
 
 
     glutAddMenuEntry("--------------------", -1);
@@ -1665,6 +1677,10 @@ int Radio::mMenuSelectl(struct Scene *scene,int item)
             Transmit(scene);
             return 0;
             
+        case SdrSend:
+            dialogSend(scene);
+            return 0;
+
 	case ControlGetSelectionBox:
 		return 0;
 

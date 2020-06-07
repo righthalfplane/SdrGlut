@@ -71,7 +71,7 @@ typedef unsigned short wchar_t;
 #  else
 #   pragma comment (lib, "opengl32.lib")  /* link with Microsoft OpenGL lib */
 #   pragma comment (lib, "glu32.lib")     /* link with Microsoft OpenGL Utility lib */
-#   pragma comment (lib, "glut32.lib")    /* link with Win32 GLUT lib */
+/*#   pragma comment (lib, "glut32.lib")*/    /* link with Win32 GLUT lib */
 #  endif
 # endif
 

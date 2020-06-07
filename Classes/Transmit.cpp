@@ -205,14 +205,14 @@ int Radio::Transmit(struct Scene *scene)
     std::vector<std::string> names=rx->device->listAntennas( SOAPY_SDR_TX, 0);
     
     tt.antennaCount=names.size();
-    tt.antenna=(char **)cMalloc(tt.antennaCount*sizeof(char *),8833);
+    tt.antenna=(char **)cMalloc((unsigned long)(tt.antennaCount*sizeof(char *)),8833);
     for (size_t i=0;i<names.size();++i){
         tt.antenna[i]=strsave((char *)names[i].c_str(),5555);
     }
 
     names = rx->device->listGains(SOAPY_SDR_TX, 0);
     tt.gainsCount=names.size();
-    tt.gains=(char **)cMalloc(tt.gainsCount*sizeof(char *),8833);
+    tt.gains=(char **)cMalloc((unsigned long)(tt.gainsCount*sizeof(char *)),8833);
     tt.gainsMinimum=(double *)cMalloc((unsigned long)(tt.gainsCount*sizeof(double)),8891);
     tt.gainsMaximum=(double *)cMalloc((unsigned long)(tt.gainsCount*sizeof(double)),8892);
     
