@@ -289,7 +289,7 @@ int sendMessageGlobal(char *m1,char *m2,int type)
     
 //    fprintf(stderr,"sendMessageGlobal m1 %s m2 %s type %d Root %p\n",m1,m2,type,Root);
 
-    if(!Root)return NULL;
+    if(!Root)return 1;
     
 
     w=Root;

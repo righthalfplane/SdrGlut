@@ -10,6 +10,7 @@
 #include <thread>
 #include <complex>
 #include <iostream>
+#include <cstring>
 
 using namespace std;
 

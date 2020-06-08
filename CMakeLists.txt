@@ -114,25 +114,31 @@ SET (sdrglut_headers
     CExpress/SetFrameData.h
 )
 
-link_directories(/opt/X11/lib "C:/Program Files/PothosSDR/lib" "C:/Program Files/RtAudio/lib" "freeglut-3.2.1/lib" "C:/Program Files (x86)/OpenAL 1.1 SDK/libs/Win64")
-
-add_executable(sdrglut.x ${sdrglut_sources} ${sdrglut_headers})
-
-target_include_directories(sdrglut.x PUBLIC include CExpress KdTree-routines glui-routines glui-routines/include MainSource Classes Digital Radio DrawFindPointHistory SdrFile)
 
 #network libraries
-if (WIN32)   
+if (UNIX)   
+    if (APPLE)
+        add_definitions(-Wno-deprecated)
+	    link_directories(/opt/X11/lib)
+	    add_executable(sdrglut.x ${sdrglut_sources} ${sdrglut_headers})
+	    target_include_directories(sdrglut.x PUBLIC include CExpress KdTree-routines glui-routines glui-routines/include MainSource Classes Digital Radio DrawFindPointHistory SdrFile)
+	    target_link_libraries(sdrglut.x PRIVATE  glut gl glu liquid rtaudio SoapySDR "-framework OpenAL")
+	else (APPLE)
+	    #add_definitions(-Wno-deprecated)
+	    #link_directories(/opt/X11/lib)
+	    add_executable(sdrglut.x ${sdrglut_sources} ${sdrglut_headers})
+	    target_include_directories(sdrglut.x PUBLIC include CExpress KdTree-routines glui-routines glui-routines/include MainSource Classes Digital Radio DrawFindPointHistory SdrFile)
+	    target_link_libraries(sdrglut.x PRIVATE  glut GL GLU liquid rtaudio SoapySDR openal pthread)
 
+	endif (APPLE)
+else (UNIX)
+	link_directories(/opt/X11/lib "C:/Program Files/PothosSDR/lib" "C:/Program Files/RtAudio/lib" "freeglut-3.2.1/lib" "C:/Program Files (x86)/OpenAL 1.1 SDK/libs/Win64")
+	add_executable(sdrglut.x ${sdrglut_sources} ${sdrglut_headers})
+	target_include_directories(sdrglut.x PUBLIC include CExpress KdTree-routines glui-routines glui-routines/include MainSource Classes Digital Radio DrawFindPointHistory SdrFile)
 	include_directories("C:/Program Files/RtAudio/include" "C:/Program Files/PothosSDR/include" "C:/Program Files (x86)/OpenAL 1.1 SDK/include")
 	link_directories("C:/Program Files/RtAudio/lib"  "C:/Program Files/PothosSDR/lib")
-
-
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
     add_definitions(-D_WINSOCK_DEPRECATED_NO_WARNINGS)
     target_link_libraries(sdrglut.x PRIVATE ws2_32 libliquid rtaudio SoapySDR freeglutd OpenAL32)
-else ()
 
-target_link_libraries(sdrglut.x PRIVATE  glut gl glu liquid rtaudio SoapySDR "-framework OpenAL")
-
-
-endif (WIN32)
+endif (UNIX)

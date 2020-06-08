@@ -22,7 +22,7 @@
 
 #include <liquid/liquid.h>
 
-#include <RtAudio.h>
+#include <rtaudio/RtAudio.h>
 
 // #include <unistd.h>
 

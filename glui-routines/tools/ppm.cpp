@@ -47,22 +47,22 @@ void LoadPPM(const char *FileName, unsigned char* &Color, int &Width, int &Heigh
   do{ do { s=fgetc(fp); } while (s!='\n'); } while ((c=fgetc(fp))=='#');
   ungetc(c,fp);
   size_t ret=fscanf(fp, "%d %d\n255\n", &Width, &Height);
-  if(ret < 0){
-	  
-  }
+ // if(ret < 0){
+ //	  
+ // }
 #if PPM_VERBOSE
   ret=printf("Reading %dx%d Texture [%s]. . .\n", Width, Height, FileName);
-  if(ret < 0){
-	  
-  }
+  //if(ret < 0){
+  //  
+  //}
 
 #endif
   int NumComponents = Width*Height*3;
   if (Color==NULL) Color = new unsigned char[NumComponents];
   ret=fread(Color,NumComponents,1,fp);
-  if(ret < 0){
-	  
-  }
+  //if(ret < 0){
+  //  
+  //}
   fclose(fp);
 }
 
@@ -74,9 +74,9 @@ void WritePPM(const char *FileName, unsigned char* Color, int Width, int Height)
   FILE* fp = fopen(FileName, "wb");
   if (fp==NULL) { printf("PPM ERROR (WritePPM) : unable to open %s!\n",FileName); return; }
   size_t ret=fprintf(fp, "P6\n%d %d\n255\n", Width, Height);
-  if(ret < 0){
-	  
-  }
+  //if(ret < 0){
+  //  
+  //}
 
   fwrite(Color,1,Width*Height*3,fp);
   fclose(fp);
