@@ -1190,6 +1190,7 @@ int Radio::OpenWindows(struct Scene *scene)
     glutCreateMenu(menu_selectl);
     glutAddMenuEntry("Sdr Dialog...", SdrDialog);
     glutAddMenuEntry("Transmit...", SdrTransmit);
+    glutAddMenuEntry("Send...", SdrSend);
     glutAddSubMenu("Palette", palette_menu);
     glutAddSubMenu("Mode", menu3);
     if(rx->antennaCount > 0)glutAddSubMenu("Antenna", antenna);
@@ -1200,7 +1201,6 @@ int Radio::OpenWindows(struct Scene *scene)
     glutAddSubMenu("Window Filter", menu6);
     if(rx->directSampleMode)glutAddSubMenu("Direct Sample Mode", menu62);
     if(rx->biasMode!= "")glutAddSubMenu("Voltage Bias", menu63);
-    glutAddMenuEntry("Send...", SdrSend);
 
 
     glutAddMenuEntry("--------------------", -1);
