@@ -94,6 +94,23 @@
 
 #define NUM_DATA_BUFF5 10
 
+class saveData{
+public:
+    int decodemode;
+    double samplerate;
+    double fc;
+    double f;
+ 
+    saveData()
+    {
+        f=-1;
+        fc=-1;
+        samplerate=-1;
+        decodemode=-1;
+    }
+    
+};
+
 struct playData{
     int start;
     ALCdevice *dev;
@@ -235,6 +252,12 @@ struct playData{
     
     int audioThreads;
     
+    class saveData *save;
+    
+    int demodulationFlag;
+    
+    int frequencyFlag;
+
     int end;
     
     CSMeter m_SMeter;

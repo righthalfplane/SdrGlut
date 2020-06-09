@@ -88,6 +88,8 @@ struct DialogSendData{
     int sub_window;
     GLUI_RadioGroup *group2;
     int modetype;
+    int demodulationFlag;
+    int frequencyFlag;
 };
 
 struct DialogRadioData{

@@ -51,6 +51,13 @@ int Radio::dialogSend(struct Scene *scene)
     bb.glui->add_radiobutton_to_group( bb.group2, "Short int" );
     bb.glui->add_radiobutton_to_group( bb.group2, "Sign char" );
 
+    obj_panel =  bb.glui->add_panel( "Send Information" );
+
+
+    new GLUI_Checkbox( obj_panel, "Frequency", &bb.frequencyFlag, 10, control_cb2 );
+    
+    new GLUI_Checkbox( obj_panel, "Demodulate Mode", &bb.demodulationFlag, 11, control_cb2 );
+
     obj_panel =  bb.glui->add_panel( "Tcp-Address" );
     
     
@@ -81,6 +88,10 @@ static void control_cb2(int control)
     if(!s)return;
     
     sscanf(s->bb.edittext1->get_text(),"%s",s->bb.text1);
+    
+    s->rx->demodulationFlag=s->bb.demodulationFlag;
+    
+    s->rx->frequencyFlag=s->bb.frequencyFlag;
 
     if(control == Mode_Buttons)
     {
@@ -89,6 +100,7 @@ static void control_cb2(int control)
         (*s->rx->pStartSend)(s->rx,s->bb.text1,s->bb.modetype);
    } else if(control == 4){
        s->rx->controlSend = -1;
+       fprintf(stderr,"Stop Command Send\n");
     } else if(control == 6){
         s->bb.glui->close();
         s->bb.glui=NULL;

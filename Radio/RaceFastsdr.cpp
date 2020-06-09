@@ -161,6 +161,8 @@ int rxSend(void *rxv)
     struct playData *rx=(struct playData *)rxv;
     long size=2;
     
+    rx->save=new saveData;
+    
     rx->samplerate_save=-1;
     rx->fc_save=-1;
 
@@ -340,6 +342,8 @@ int rxSend(void *rxv)
         shutdown(rx->send,2);
         closesocket(rx->send);
     }
+    
+    delete rx->save;
 
     return 0;
 }
@@ -347,18 +351,37 @@ int writeStat(SOCKET toServerSocket,struct playData *rx)
 {
     double buff[2];
     
-    if(rx->samplerate_save == rx->samplerate && rx->fc_save == rx->fc)return 0;
-    rx->fc_save=rx->fc;
-    rx->samplerate_save=rx->samplerate;
+    if((rx->save->samplerate != rx->samplerate) || (rx->save->fc != rx->fc)){
+        rx->save->fc=rx->fc;
+        rx->save->samplerate=rx->samplerate;
     
-    buff[0]=rx->fc;
-    buff[1]=rx->samplerate;
+        buff[0]=rx->fc;
+        buff[1]=rx->samplerate;
     
-    long size=2;
+        long size=(long)2*sizeof(double);
     
-    if(writeLab(toServerSocket,(char *)"STAT",size))return 1;
+        if(writeLab(toServerSocket,(char *)"STAT",size))return 1;
     
-    if(netWrite(toServerSocket,(char *)buff,(long)(2*sizeof(double))))return 1;
+        if(netWrite(toServerSocket,(char *)buff,size))return 1;
+    
+    }
+    
+    if(rx->frequencyFlag && (rx->save->f != rx->f)){
+        rx->save->f = rx->f;
+        buff[0]=rx->f;
+        long size=(long)sizeof(double);
+        if(writeLab(toServerSocket,(char *)"F   ",size))return 1;
+        if(netWrite(toServerSocket,(char *)buff,size))return 1;
+    }
+    
+    if(rx->demodulationFlag && (rx->save->decodemode != rx->decodemode)){
+        rx->save->decodemode = rx->decodemode;
+        buff[0]=rx->decodemode;
+        long size=(long)sizeof(double);
+        if(writeLab(toServerSocket,(char *)"DECO",size))return 1;
+        if(netWrite(toServerSocket,(char *)buff,size))return 1;
+
+    }
     
     return 0;
 }

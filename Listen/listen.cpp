@@ -129,6 +129,8 @@ public:
 	SOCKET waitForService(char *name);
 	
 	int setCenterFrequency(double frequency,double sampleRate);
+	
+	int setFrequency(double frequency);
 
 	SOCKET startService(char *name);
 	
@@ -459,6 +461,24 @@ int ListenSocket(void *rxv)
 		    l->netRead(l->clientSocket,(char *)buff,n);
 		    l->setCenterFrequency(buff[0],buff[1]);
 		    if(l->Debug)fprintf(stderr,"fc %g samplerate %d\n",l->fc,l->samplerate);
+	    }else if(!strcmp(buff,"F   ")){
+	        if(l->Debug){
+				fprintf(stderr,"F   \n");
+		    }
+		    double buff[2];
+		    l->netRead(l->clientSocket,(char *)buff,size);
+		    l->setFrequency(buff[0]);
+		    if(l->Debug)fprintf(stderr,"f %g \n",l->f);
+	    }else if(!strcmp(buff,"DECO")){
+	        if(l->Debug){
+				fprintf(stderr,"DECO\n");
+		    }
+		    double buff[2];
+		    l->netRead(l->clientSocket,(char *)buff,size);
+		    l->decodemode=(int)buff[0];
+		    freeFilters(&l->filter);
+		    setFilters(l,&l->filter);
+		    if(l->Debug)fprintf(stderr,"decodemode %d \n",l->decodemode);
 	    }else if(!strcmp(buff,"FLOA")){
 	        if(l->Debug){
 				fprintf(stderr,"FLOA\n");
@@ -523,10 +543,14 @@ int ListenSocket(void *rxv)
             l->ibuff=1;
             while(l->ibuff==1)Sleep2(10);            
 	    }else{
-	        fprintf(stderr,"Unknown Command (%s) %d %d %d %d Droping Connection\n",
+	        fprintf(stderr,"Unknown Command (%s) %d %d %d %d Skiping\n",
 	                buff,buff[0],buff[1],buff[2],buff[3]);
-	        l->ibuff= -1;
-	        return 1;
+	        if(size > l->buffsize){
+                if(l->output)free(l->output);
+                l->output=(complex<float> *)malloc(size*8);
+            }
+            l->Bytes += size;
+            l->netRead(l->clientSocket,(char *)l->output,size);
 	    }
 	}
 	
@@ -660,6 +684,24 @@ int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
   
     
   return 0;
+}
+int Listen::setFrequency(double frequency)
+{
+	double pi;
+
+	if(frequency == f)return 0;
+	
+	f=frequency;
+	
+	pi=4.0*atan(1.0);
+	dt=1.0/(double)samplerate;
+	sino=0;
+	coso=1;
+	w=2.0*pi*(fc - f);
+	sindt=sin(w*dt);
+	cosdt=cos(w*dt);
+	
+	return 0;
 }
 int Listen::setCenterFrequency(double frequency,double sampleRate)
 {
