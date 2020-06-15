@@ -161,6 +161,8 @@ public:
 	SoapyNetSDR_SocketInit socket_init;
 
 	int pipe;
+	
+	int binary;
 
 };
 
@@ -210,6 +212,8 @@ Listen::Listen()
     	
 	pipe=0;
 	
+	binary=0;
+	
 }
 
 Listen::~Listen()
@@ -222,6 +226,7 @@ int main(int argc,char *argv[])
 
     class Listen *l=new Listen;
     
+    int device=-2;
     
 	for(int n=1;n<argc;++n){
 	    if(!strcmp(argv[n],"-debug")){
@@ -242,22 +247,56 @@ int main(int argc,char *argv[])
             l->f=atof(argv[++n]);
         }else if(!strcmp(argv[n],"-p")){
             l->Port=(unsigned int)atof(argv[++n]);
+        }else if(!strcmp(argv[n],"-device")){
+            device=(int)atof(argv[++n]);
         }else if(!strcmp(argv[n],"-pipe")){
             l->pipe=1;
+        }else if(!strcmp(argv[n],"-binary")){
+            l->binary=1;
 		}
 	}
-    
-    
-    
-
+       
 	RtAudio dac;
-	if ( dac.getDeviceCount() < 1 ) {
-		std::cout << "\nNo audio devices found!\n";
-		exit( 0 );
+	
+	int deviceCount=dac.getDeviceCount();
+		
+	if (deviceCount  < 1 ) {
+		fprintf(stderr,"\nNo audio devices found!\n");
+		return 1;
 	}
+	
+	fprintf(stderr,"deviceCount %d default output device %d\n",deviceCount,dac.getDefaultOutputDevice());
+	
+    RtAudio::DeviceInfo info;
+    for (int i=0; i<deviceCount; i++) {
+        
+        try {
+            info=dac.getDeviceInfo(i);
+            if(info.outputChannels > 0){
+            // Print, for example, the maximum number of output channels for each device
+                fprintf(stderr,"device = %d : maximum output  channels = %d Device Name = %s\n",i,info.outputChannels,info.name.c_str());
+             }
+             
+            if(info.inputChannels > 0){
+            // Print, for example, the maximum number of output channels for each device
+                fprintf(stderr,"device = %d : maximum output  channels = %d Device Name = %s\n",i,info.inputChannels,info.name.c_str());
+            }
+
+        }
+        catch (RtAudioError &error) {
+            error.printMessage();
+            break;
+        }
+        
+    }
+
 	RtAudio::StreamParameters parameters;
-	parameters.deviceId = dac.getDefaultOutputDevice();
-	// parameters.deviceId = 7;
+	
+	if(device == -2){
+	    parameters.deviceId = dac.getDefaultOutputDevice();
+	}else{
+	    parameters.deviceId = device;
+	}
 	parameters.nChannels = 1;
 	parameters.firstChannel = 0;
 	unsigned int sampleRate = 48000;
@@ -492,6 +531,7 @@ int ListenSocket(void *rxv)
 		    }
 		    l->Bytes += size;
 		    l->netRead(l->clientSocket,(char *)l->buff1,size);
+		    if(l->binary)fwrite((char *)l->buff1,size,1,stdout);
 		    l->size=size/(2*sizeof(float));
             l->mix((float *)l->buff1,(float *)l->output);
             l->ibuff=1;
@@ -509,6 +549,7 @@ int ListenSocket(void *rxv)
             }
             l->Bytes += size;
             l->netRead(l->clientSocket,(char *)l->buff1,size);
+		    if(l->binary)fwrite((char *)l->buff1,size,1,stdout);
             l->size=size/(2*sizeof(short int));
             short int *in=(short int *)l->buff1;
             float *out=(float *)l->buff1;
@@ -532,12 +573,38 @@ int ListenSocket(void *rxv)
             }
             l->Bytes += size;
             l->netRead(l->clientSocket,(char *)l->buff1,size);
+ 		    if(l->binary)fwrite((char *)l->buff1,size,1,stdout);
             l->size=size/(2*sizeof(signed char));
             signed char *in=(signed char *)l->buff1;
             float *out=(float *)l->buff1;
             for(int n=0;n<l->size*2;++n){
                 int kk=l->size*2-1-n;
                 out[kk]=(float)(in[kk]*256.0+0.5);
+            }
+            l->mix((float *)l->buff1,(float *)l->output);
+            l->ibuff=1;
+            while(l->ibuff==1)Sleep2(10);            
+       }else if(!strcmp(buff,"USIG")){
+            if(l->Debug){
+                fprintf(stderr,"USIG\n");
+           }
+            if(size > l->buffsize){
+                if(l->output)free(l->output);
+                l->output=(complex<float> *)malloc(size*8);
+                if(l->buff1)free(l->buff1);
+                l->buff1=(complex<float> *)malloc(size*8);
+                l->buffsize=size;
+            }
+            l->Bytes += size;
+            l->netRead(l->clientSocket,(char *)l->buff1,size);
+ 		    if(l->binary)fwrite((char *)l->buff1,size,1,stdout);
+            l->size=size/(2*sizeof(unsigned char));
+            unsigned char *in=(unsigned char *)l->buff1;
+            float *out=(float *)l->buff1;
+            for(int n=0;n<l->size*2;++n){
+                int kk=l->size*2-1-n;
+                float v=in[kk];
+                out[kk]=(float)((v-128.0)*256.0+0.5);
             }
             l->mix((float *)l->buff1,(float *)l->output);
             l->ibuff=1;
@@ -587,8 +654,7 @@ int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
     
   class Listen *rx=(class Listen *)userData;
   
-  if ( status )
-    std::cout << "Stream underflow detected!" << std::endl;
+  if ( status )fprintf(stderr,"Stream underflow detected!");
     
     //int nskip=rx->size/nBufferFrames;
   

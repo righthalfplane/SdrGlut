@@ -49,7 +49,8 @@ int Radio::dialogSend(struct Scene *scene)
     
     bb.glui->add_radiobutton_to_group( bb.group2, "Float" );
     bb.glui->add_radiobutton_to_group( bb.group2, "Short int" );
-    bb.glui->add_radiobutton_to_group( bb.group2, "Sign char" );
+    bb.glui->add_radiobutton_to_group( bb.group2, "Signed char" );
+    bb.glui->add_radiobutton_to_group( bb.group2, "UnSigned char" );
 
     obj_panel =  bb.glui->add_panel( "Send Information" );
 
