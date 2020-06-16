@@ -471,6 +471,10 @@ int ListenSocket(void *rxv)
 	time_t ship;
 	char buff[256];
 	long size;
+	
+	//FILE *in=NULL;
+	
+	//if(!in)in=fopen("junk.raw","wb");
 
 	fprintf(stderr,"******************************************************\n");
 	fprintf(stderr,"**  listen 649 - COPYRIGHT 2020. Start **\n");
@@ -598,6 +602,7 @@ int ListenSocket(void *rxv)
             l->Bytes += size;
             l->netRead(l->clientSocket,(char *)l->buff1,size);
  		    if(l->binary)fwrite((char *)l->buff1,size,1,stdout);
+ 		   // if(in)fwrite((char *)l->buff1,size,1,in);
             l->size=size/(2*sizeof(unsigned char));
             unsigned char *in=(unsigned char *)l->buff1;
             float *out=(float *)l->buff1;
@@ -621,6 +626,7 @@ int ListenSocket(void *rxv)
 	    }
 	}
 	
+	//if(in)fclose(in);
 
 	l->ibuff= -1;
 

@@ -658,6 +658,7 @@ int Radio::setFrequency(struct playData *rx)
     try {
         
         if(rx->device){
+            if(rx->fc < 0.0)rx->fc=rx->f;
             rx->device->setFrequency(SOAPY_SDR_RX, 0, rx->fc);
         }
         
