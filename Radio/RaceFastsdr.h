@@ -123,11 +123,13 @@ struct playData{
    int size;
 
     ALuint source;
-    int channels;
     double samplerate;
     double bandwidth;
     int Debug;
     double gain;
+    int nreceive;
+    int ntransmit;
+    int channel;
     double fc;
     double f;
     double dt;

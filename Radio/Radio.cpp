@@ -659,7 +659,7 @@ int Radio::setFrequency(struct playData *rx)
         
         if(rx->device){
             if(rx->fc < 0.0)rx->fc=rx->f;
-            rx->device->setFrequency(SOAPY_SDR_RX, 0, rx->fc);
+            rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc);
         }
         
         setDialogFrequency(rx->f);
@@ -1298,7 +1298,7 @@ void antennaMenu(int item){
     
     //fprintf(stderr,"setAntenna '%s'\n",sdr->rx->antenna[item]);
     
-    sdr->rx->device->setAntenna(SOAPY_SDR_RX, 0, sdr->rx->antenna[item]);
+    sdr->rx->device->setAntenna(SOAPY_SDR_RX, sdr->rx->channel, sdr->rx->antenna[item]);
     
     return;
 }

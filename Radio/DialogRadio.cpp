@@ -319,7 +319,7 @@ int Radio::dialogRadio(struct Scene *scene)
     for(size_t i=0;i<rx->gainsCount;++i){
         GLUI_Panel *panel3 = new GLUI_Panel(obj_panel, rx->gains[dd.iic]);
         
-		double el =rx->device->getGain(SOAPY_SDR_RX, 0,  rx->gains[dd.iic]);;
+		double el =rx->device->getGain(SOAPY_SDR_RX, rx->channel,  rx->gains[dd.iic]);;
 		msprintf(dd.text1z,sizeof(dd.text1z),"%.0f",el);
         dd.edittext1z[dd.iic] =
         dd.glui->add_edittext_to_panel(panel3, "", GLUI_EDITTEXT_TEXT, dd.text1z );
@@ -346,7 +346,7 @@ int Radio::dialogRadio(struct Scene *scene)
     dd.gain_Index=dd.iic;
     
     GLUI_Panel *panel3 = new GLUI_Panel(obj_panel, "gain");
-    double el = rx->device->getGain(SOAPY_SDR_RX, 0);
+    double el = rx->device->getGain(SOAPY_SDR_RX, rx->channel);
     msprintf(dd.text1z,sizeof(dd.text1z),"%.0f",el);
     dd.edittext1z[dd.iic] =
     dd.glui->add_edittext_to_panel(panel3, "", GLUI_EDITTEXT_TEXT, dd.text1z );
@@ -431,7 +431,7 @@ static void control_cb(int control)
             bool automatic=s->dd.useagc;
             s->rx->gainMode=s->dd.useagc;
             
-            s->rx->device->setGainMode(SOAPY_SDR_RX, 0, automatic);
+            s->rx->device->setGainMode(SOAPY_SDR_RX, s->rx->channel, automatic);
             //if(ret)printf("useagc %d ret %d\n",s->dd.useagc,ret);
         }
     }
@@ -443,7 +443,7 @@ static void control_cb(int control)
         s->dd.edittext1z[ind]->set_text(value);
         if(s->dd.line_Index_old[ind] != (int)s->dd.line_Index[ind]){
             
-            s->rx->device->setGain(SOAPY_SDR_RX, 0, s->rx->gains[ind], s->dd.line_Index[ind]);
+            s->rx->device->setGain(SOAPY_SDR_RX, s->rx->channel, s->rx->gains[ind], s->dd.line_Index[ind]);
             //if(ret)printf("SoapySDRDevice_setGainElement ret %d\n",ret);
             s->dd.line_Index[ind]=(int)s->dd.line_Index_old[ind];
         }
@@ -455,10 +455,10 @@ static void control_cb(int control)
         msprintf(value,sizeof(value),"%0.f",s->dd.line_Index[ind]);
         s->dd.edittext1z[ind]->set_text(value);
         if(s->dd.line_Index_old[ind] != (int)s->dd.line_Index[ind]){
-            s->rx->device->setGain(SOAPY_SDR_RX, 0, s->dd.line_Index[ind]);
+            s->rx->device->setGain(SOAPY_SDR_RX, s->rx->channel, s->dd.line_Index[ind]);
            // if(ret)printf("SoapySDRDevice_setGain ret %d\n",ret);
             s->dd.line_Index_old[ind]=(int)s->dd.line_Index[ind];
-           // double el = SoapySDRDevice_getGain(s->rx->device, SOAPY_SDR_RX, 0);
+           // double el = SoapySDRDevice_getGain(s->rx->device, SOAPY_SDR_RX, s->rx->channel);
           // printf("value %s value %g el %g\n",value,s->dd.line_Index[ind],el);
 
         }

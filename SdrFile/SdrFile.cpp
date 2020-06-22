@@ -241,8 +241,6 @@ int SdrFile::LoadFile(struct Scene *scene,char *filename, int fileType)
         printf ("Not able to open input file %s.\n", filename) ;
         return 1 ;
     }
-
-    play.channels=2;
     
     mstrncpy(name,filename,sizeof(name));
     mstrncpy(windowName,filename,sizeof(windowName));
@@ -421,20 +419,20 @@ int SdrFile::setBuffers(struct playData4 *play)
     double sint,cost;
     
     for (int k = 0 ; k < play->size ; k++){
-        float r = buf1[k * play->channels];
-        float i = buf1[k * play->channels + 1];
+        float r = buf1[k * 2];
+        float i = buf1[k * 2 + 1];
         //r = 0.001*(rand() % 100);
         //i = 0.001*(rand() % 100);
         if(play->dt > 0){
-            buf2[k * play->channels] = (float)(r*play->coso - i*play->sino);
-            buf2[k * play->channels + 1] = (float)(i*play->coso + r*play->sino);
+            buf2[k * 2] = (float)(r*play->coso - i*play->sino);
+            buf2[k * 2 + 1] = (float)(i*play->coso + r*play->sino);
             sint=play->sino*play->cosdt+play->coso*play->sindt;
             cost=play->coso*play->cosdt-play->sino*play->sindt;
             play->coso=cost;
             play->sino=sint;
         }else{
-            buf2[k * play->channels] = r;
-            buf2[k * play->channels + 1] = i;
+            buf2[k * 2] = r;
+            buf2[k * 2 + 1] = i;
         }
     }
     

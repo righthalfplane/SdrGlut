@@ -86,7 +86,6 @@ struct playData4{
     int bufferState[NUM_BUFFERS];
     ALuint source;
     FILE *infile;
-    int channels;
     double samplerate;
     short int data[2*BLOCK_SIZE];
     float input[2*BLOCK_SIZE];
