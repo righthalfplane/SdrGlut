@@ -173,47 +173,62 @@ static int doRadioOpen2(SoapySDR::Kwargs deviceArgs)
     struct Scene *scene;
     int FileType;
     
+    
+    SoapySDR::Device *devicer = SoapySDR::Device::make(deviceArgs);
+    
+    int nreceive=(int)devicer->getNumChannels(SOAPY_SDR_RX);
+    
+    int ntransmit=(int)devicer->getNumChannels(SOAPY_SDR_TX);
+    
+    printf("receive channels %d transmit channels %d\n",nreceive,ntransmit);
+    
+    SoapySDR::Device::unmake(devicer);
+
     FileType=FileTypeSdrRadio;
+    
+    for(int nd=0;nd<nreceive;++nd){
+        
+        device=nd;
+        
+        list=SceneNext();
+        if(list == NULL)
+        {
+            WarningPrint("doRadioOpen : Error Allocation Scene Memory File\n",FileType);
+            return 1;
+        }
+        scene=&list->scene;
+        zerol((char *)scene,sizeof(struct Scene));
+        SceneInit(scene);
+        scene->windowType=FileTypeSdrRadio;
 
-    list=SceneNext();
-    if(list == NULL)
-    {
-        WarningPrint("doRadioOpen : Error Allocation Scene Memory File\n",FileType);
-        return 1;
+        RadioPtr w = new Radio(scene,deviceArgs);
+        
+        if(w == NULL){
+            WarningBatch((char *)"Radio of Memory");
+            return 1;
+        }
+        
+        if(w->OpenError != FALSE){
+            delete w;
+            return 0;
+        }
+        
+        w->OpenWindows(scene);
+        
+        w->LoadFile(scene,NULL,FileType);
+        
+        myAppl=(CWinPtr)w;
+        
+        AddWindowList(myAppl);
+        
+        glutSetWindow(w->lines2->window);
+        glutSetWindowTitle(w->rx->driveName);
+        
+        glutSetWindow(w->window);
+        glutSetWindowTitle(w->rx->driveName);
+        mstrncpy(w->windowName,w->rx->driveName,sizeof(w->windowName));
+        w->backGroundEvents=1;
     }
-    scene=&list->scene;
-    zerol((char *)scene,sizeof(struct Scene));
-    SceneInit(scene);
-    scene->windowType=FileTypeSdrRadio;
-
-    RadioPtr w = new Radio(scene,deviceArgs);
-    
-    if(w == NULL){
-        WarningBatch((char *)"Radio of Memory");
-        return 1;
-    }
-    
-    if(w->OpenError != FALSE){
-        delete w;
-        return 0;
-    }
-    
-    w->OpenWindows(scene);
-    
-    w->LoadFile(scene,NULL,FileType);
-    
-    myAppl=(CWinPtr)w;
-    
-    AddWindowList(myAppl);
-    
-    glutSetWindow(w->lines2->window);
-    glutSetWindowTitle(w->rx->driveName);
-    
-    glutSetWindow(w->window);
-    glutSetWindowTitle(w->rx->driveName);
-    mstrncpy(w->windowName,w->rx->driveName,sizeof(w->windowName));
-    w->backGroundEvents=1;
-    
    return 1;
 }
 

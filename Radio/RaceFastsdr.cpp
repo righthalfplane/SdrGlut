@@ -90,7 +90,6 @@ int RadioStart(int argc, char * argv [],struct playData *rx)
 	rx->deviceNumber=0;
     rx->cutOFF=-70;
     rx->cutOFFSearch=0;
-    rx->channel=0;
     rx->gain=0.25;
 	rx->fc=1.0e6;
 	rx->f=0.6e6;
@@ -129,7 +128,9 @@ int RadioStart(int argc, char * argv [],struct playData *rx)
 			// infilename = argv [n] ;
 		}
 	}
-		
+    
+    rx->channel=rx->deviceNumber;
+
     bacgroundPlay(rx);
     
 	return 0 ;
@@ -1421,55 +1422,56 @@ Out:
 static int findRadio(struct playData *rx)
 {
     
+    static SoapySDR::Device *deviceSave=NULL;
+    
     std::string argStr;
     
     rx->device = NULL;
     
     SoapySDR::Kwargs deviceArgs;
     
- 			deviceArgs = rx->deviceToOpen;
-    
-            for (SoapySDR::Kwargs::const_iterator it = deviceArgs.begin(); it != deviceArgs.end(); ++it) {
-                printf("%s=%s\n",it->first.c_str(),it->second.c_str());
-                if (it->first == "driver") {
-                    //dev->setDriver(it->second);
-                    mstrncpy(rx->driveName,(char *)it->second.c_str(),sizeof(rx->driveName));
-                } else if (it->first == "label") {
-                    mstrncpy(rx->driveName,(char *)it->second.c_str(),sizeof(rx->driveName));
-                   //dev->setName(it->second);
-                }
+    deviceArgs = rx->deviceToOpen;
+
+    for (SoapySDR::Kwargs::const_iterator it = deviceArgs.begin(); it != deviceArgs.end(); ++it) {
+        printf("%s=%s\n",it->first.c_str(),it->second.c_str());
+        if (it->first == "driver") {
+            //dev->setDriver(it->second);
+            mstrncpy(rx->driveName,(char *)it->second.c_str(),sizeof(rx->driveName));
+        } else if (it->first == "label") {
+            mstrncpy(rx->driveName,(char *)it->second.c_str(),sizeof(rx->driveName));
+            if(rx->channel == 0){
+                mstrncat(rx->driveName,(char *)" (0)",sizeof(rx->driveName));
+            }else{
+                mstrncat(rx->driveName,(char *)" (1)",sizeof(rx->driveName));
             }
-            
-            
-            rx->device = SoapySDR::Device::make(deviceArgs);
-            
-            /*
-             SoapySDRKwargs args = {};
-             SoapySDRKwargs_set(&args, "driver", "netsdr");
-             SoapySDRKwargs_set(&args, "netsdr","192.168.1.7:50000");
-             rx->device = SoapySDRDevice_make(&args);
-             */
-
-            rx->channel=1;
-            
-            testRadio(rx);
-            
-			rx->device->setSampleRate(SOAPY_SDR_RX, rx->channel, rx->samplerate);
-            
-			rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc);
-         
-            const std::vector<size_t> channels = {1};
-
-			 rx->rxStream=rx->device->setupStream(SOAPY_SDR_RX, SOAPY_SDR_CF32,channels);
-            if(rx->rxStream == NULL){
-                fprintf(stderr,"setupStream returned NULL\n");
-                return 1;
-            }
-            
-			rx->device->activateStream(rx->rxStream, 0, 0, 0);
+           //dev->setName(it->second);
+        }
+    }
     
     
+    if(rx->channel == 0){
+        rx->device = SoapySDR::Device::make(deviceArgs);
+        deviceSave=rx->device;
+    }else{
+        rx->device=deviceSave;
+    }
+    
+    testRadio(rx);
+    
+    rx->device->setSampleRate(SOAPY_SDR_RX, rx->channel, rx->samplerate);
+    
+    rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc);
+ 
+    const std::vector<size_t> channels = {(unsigned long)rx->channel};
 
+     rx->rxStream=rx->device->setupStream(SOAPY_SDR_RX, SOAPY_SDR_CF32,channels);
+    if(rx->rxStream == NULL){
+        fprintf(stderr,"setupStream returned NULL\n");
+        return 1;
+    }
+    
+    rx->device->activateStream(rx->rxStream, 0, 0, 0);
+    
     
     return 0;
     
