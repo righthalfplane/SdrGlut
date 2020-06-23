@@ -1451,41 +1451,40 @@ static int findRadio(struct playData *rx)
                 if (it->first == "driver") {
                     //dev->setDriver(it->second);
                     mstrncpy(rx->driveName,(char *)it->second.c_str(),sizeof(rx->driveName));
-                } else if (it->first == "label" || it->first == "device") {
-                    //dev->setName(it->second);
+                } else if (it->first == "label") {
+                    mstrncpy(rx->driveName,(char *)it->second.c_str(),sizeof(rx->driveName));
+                   //dev->setName(it->second);
                 }
             }
             
             
             rx->device = SoapySDR::Device::make(deviceArgs);
-
             
-/*
-            SoapySDRKwargs args = {};
-            SoapySDRKwargs_set(&args, "driver", "netsdr");
-            SoapySDRKwargs_set(&args, "netsdr","192.168.1.7:50000");
-            rx->device = SoapySDRDevice_make(&args);
-*/
+            /*
+             SoapySDRKwargs args = {};
+             SoapySDRKwargs_set(&args, "driver", "netsdr");
+             SoapySDRKwargs_set(&args, "netsdr","192.168.1.7:50000");
+             rx->device = SoapySDRDevice_make(&args);
+             */
+
+            rx->channel=1;
             
             testRadio(rx);
             
 			rx->device->setSampleRate(SOAPY_SDR_RX, rx->channel, rx->samplerate);
             
 			rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc);
-			
-        	// std::cout << "rx->samplerate " << rx->samplerate << std::endl;
-			
-            
+         
+            const std::vector<size_t> channels = {1};
 
-			 rx->rxStream=rx->device->setupStream(SOAPY_SDR_RX, SOAPY_SDR_CF32,(const std::vector<size_t>)0);
+			 rx->rxStream=rx->device->setupStream(SOAPY_SDR_RX, SOAPY_SDR_CF32,channels);
+            if(rx->rxStream == NULL){
+                fprintf(stderr,"setupStream returned NULL\n");
+                return 1;
+            }
             
 			rx->device->activateStream(rx->rxStream, 0, 0, 0);
             
-            // std::cout << "SoapySDRDevice_getStreamMTU: " << SoapySDRDevice_getStreamMTU(rx->device,rx->rxStream) << std::endl;
-            
-			//std::cout << "getGainMode: " <<SoapySDRDevice_getGainMode( rx->device,SOAPY_SDR_RX, rx->channel) << " ";
-
-			//std::cout << std::endl;
 		}
     
 }
@@ -1730,6 +1729,7 @@ int testRadio(struct playData *rx)
         //std::cout << "hardware=" << SoapySDRDevice_getHardwareKey(rx->device) << std::endl;
         
         rx->nreceive=(int)rx->device->getNumChannels(SOAPY_SDR_RX);
+        
         rx->ntransmit=(int)rx->device->getNumChannels(SOAPY_SDR_TX);
         
         printf("receive channels %d transmit channels %d\n",rx->nreceive,rx->ntransmit);

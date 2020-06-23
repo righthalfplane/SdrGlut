@@ -221,8 +221,12 @@ int doRadioOpenRA(void)
 
     std::string argStr;
     
-    SoapySDRKwargs *results = SoapySDRDevice_enumerate(NULL, &length);
-
+    std::vector<SoapySDR::Kwargs> results;
+    
+    results = SoapySDR::Device::enumerate();
+    
+    length=results.size();
+    
     device=0;
 
     if(length == 0){
@@ -232,8 +236,8 @@ int doRadioOpenRA(void)
     
     // std::cout << "results.size " << results.size() << std::endl;
     
-    SoapySDRKwargs deviceArgs;
-    
+    SoapySDR::Kwargs deviceArgs;
+
     if(glui){
         glui->close();
     }
@@ -254,15 +258,16 @@ int doRadioOpenRA(void)
 
     for(size_t k=0;k<length;++k){
         
-            deviceArgs = results[k];
-        
-            for (size_t j = 0; j < deviceArgs.size; j++){
-                if (strcmp(deviceArgs.keys[j],"driver")) {
-                } else if (strcmp(deviceArgs.vals[j],"label")) {
-                    new GLUI_Button(glui, deviceArgs.vals[j] , (int)(2+k), control_cb);
-                }
+        deviceArgs = results[k];
+        for (SoapySDR::Kwargs::const_iterator it = deviceArgs.begin(); it != deviceArgs.end(); ++it) {
+            printf("%s=%s\n",it->first.c_str(),it->second.c_str());
+            if (it->first == "driver") {
+                //dev->setDriver(it->second);
+           } else if (it->first == "label") {
+               new GLUI_Button(glui, (char *)it->second.c_str(), (int)(2+k), control_cb);
+             //dev->setName(it->second);
             }
-
+        }
     }
     
     if(length == 0){
@@ -1190,7 +1195,7 @@ int Radio::OpenWindows(struct Scene *scene)
     
     glutCreateMenu(menu_selectl);
     glutAddMenuEntry("Sdr Dialog...", SdrDialog);
-    glutAddMenuEntry("Transmit...", SdrTransmit);
+    if(rx->ntransmit)glutAddMenuEntry("Transmit...", SdrTransmit);
     glutAddMenuEntry("Send...", SdrSend);
     glutAddSubMenu("Palette", palette_menu);
     glutAddSubMenu("Mode", menu3);
