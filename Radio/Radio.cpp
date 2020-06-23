@@ -96,6 +96,149 @@ void doDirectSampleMode(int item);
 void doBiasMode(int item);
 void doFilterMenu(int item);
 
+int Radio::playRadio(struct playData *rx)
+{
+    if(rx->nreceive <= 1){
+        rx->pplayRadio(rx);
+        return 0;
+    }
+    if(!Root)return NULL;
+    
+    RadioPtr f;
+    CWinPtr w;
+
+    w=Root;
+    while(w){
+        if(w->scene->windowType == FileTypeSdrRadio){
+            f=(RadioPtr)w;
+            if(f->rx->device == rx->device && f->rx != rx){
+                f->rx->pplayRadio(f->rx);
+                rx->pplayRadio(rx);
+               return 0;
+            }
+        }
+        w=w->CNext;
+    }
+    
+    rx->pplayRadio(rx);
+
+    
+    fprintf(stderr,"Radio::playRadio error second window not found\n");
+    
+    return 0;
+}
+int Radio::stopPlay(struct playData *rx)
+{
+    if(rx->nreceive <= 1){
+        rx->pstopPlay(rx);
+        return 0;
+    }
+    
+    RadioPtr f;
+    CWinPtr w;
+    
+    w=Root;
+    while(w){
+        if(w->scene->windowType == FileTypeSdrRadio){
+            f=(RadioPtr)w;
+            if(f->rx->device == rx->device && f->rx != rx){
+                
+                if(rx->channel == 0){
+                    f->rx->pstopPlay(f->rx);
+                    rx->pstopPlay(rx);
+                }else{
+                    rx->pstopPlay(rx);
+                    f->rx->pstopPlay(f->rx);
+                }
+               return 0;
+            }
+        }
+        w=w->CNext;
+    }
+    
+    rx->pstopPlay(rx);
+    
+   // fprintf(stderr,"Radio::stopPlay error second window not found\n");
+
+    return 0;
+}
+int Radio::startPlay(struct playData *rx)
+{
+    if(rx->nreceive <= 1){
+        rx->pstartPlay(rx);
+        return 0;
+    }
+    
+    RadioPtr f;
+    CWinPtr w;
+    
+    w=Root;
+    while(w){
+        if(w->scene->windowType == FileTypeSdrRadio){
+            f=(RadioPtr)w;
+            if(f->rx->device == rx->device && f->rx != rx){
+                if(rx->channel == 0){
+                    rx->pstartPlay(rx);
+                    f->rx->pstartPlay(f->rx);
+                }else{
+                    f->rx->pstartPlay(f->rx);
+                    rx->pstartPlay(rx);
+               }
+                return 0;
+            }
+        }
+        w=w->CNext;
+    }
+
+    fprintf(stderr,"Radio::startPlay error second window not found\n");
+
+    
+    return 0;
+}
+int Radio::closeScenes()
+{
+    stopPlay(rx);
+    backGroundEvents = 0;
+    if(rx->nreceive <= 1){
+        if (FindScene(scenel))closeScene(lines->scene);
+        if (FindScene(scenel2))closeScene(lines2->scene);
+        if (FindScene(scene))closeScene(scene);
+    }
+    
+    RadioPtr f;
+    CWinPtr w;
+    
+    w=Root;
+    while(w){
+        if(w->scene->windowType == FileTypeSdrRadio){
+            f=(RadioPtr)w;
+            if(f->rx->device == rx->device && f->rx != rx){
+                if(rx->channel == 0){
+                    if (FindScene(f->scenel))closeScene(f->lines->scene);
+                    if (FindScene(f->scenel2))closeScene(f->lines2->scene);
+                    if (FindScene(f->scene))closeScene(f->scene);
+                    if (FindScene(scenel))closeScene(lines->scene);
+                    if (FindScene(scenel2))closeScene(lines2->scene);
+                    if (FindScene(scene))closeScene(scene);
+                }else{
+                    if (FindScene(scenel))closeScene(lines->scene);
+                    if (FindScene(scenel2))closeScene(lines2->scene);
+                    if (FindScene(scene))closeScene(scene);
+                    if (FindScene(f->scenel))closeScene(f->lines->scene);
+                    if (FindScene(f->scenel2))closeScene(f->lines2->scene);
+                    if (FindScene(f->scene))closeScene(f->scene);
+                }
+                return 0;
+            }
+        }
+        w=w->CNext;
+    }
+
+    
+
+    return 0;
+}
+
 Radio::Radio(struct Scene *scene,SoapySDR::Kwargs deviceArgs): CWindow(scene)
 {
     OpenError=TRUE;
@@ -1344,15 +1487,15 @@ void bandMenu(int item){
 
     //printf("item %d bandwidths %.0f\n",item,sdrOpen->rx->bandwidths[item]);
     
-    sdr->rx->pstopPlay(sdr->rx);
+    sdr->stopPlay(sdr->rx);
     
     sdr->rx->bandwidth=sdr->rx->bandwidths[item];
     
     sdr->setDialogBandWidth(sdr->rx->bandwidth);
     
-    sdr->rx->pstartPlay(sdr->rx);
+    sdr->startPlay(sdr->rx);
     
-    sdr->rx->pplayRadio(sdr->rx);
+    sdr->playRadio(sdr->rx);
 
     return;
 }
@@ -1374,15 +1517,15 @@ void sampleMenu(int item){
     double sameleRate=sdr->rx->sampleRates[item];
     //printf("item %d sampleRate %.0f\n",item,sameleRate);
  
-    sdr->rx->pstopPlay(sdr->rx);
+    sdr->stopPlay(sdr->rx);
     
     sdr->rx->samplerate=sameleRate;
     
     sdr->setDialogSampleRate(sameleRate);
 
-    sdr->rx->pstartPlay(sdr->rx);
+    sdr->startPlay(sdr->rx);
     
-    sdr->rx->pplayRadio(sdr->rx);
+    sdr->playRadio(sdr->rx);
 
     return;
 }
@@ -1718,18 +1861,10 @@ int Radio::mMenuSelectl(struct Scene *scene,int item)
 
 	case ControlClose:
 
-		try {
-			backGroundEvents = 0;
-			if (FindScene(scenel))closeScene(lines->scene);
-			if (FindScene(scenel2))closeScene(lines2->scene);
-			if (FindScene(scene))closeScene(scene);
-		}
-		catch (...)
-		{
-			fprintf(stderr, "exception while closing scenes\n");
-		}
-        break;
-            
+            RadioPtr sdr;
+            sdr=(RadioPtr)FindScene(scene);
+            sdr->closeScenes();
+           
     }
     
     //menu_select(item);

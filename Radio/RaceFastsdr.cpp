@@ -1,5 +1,6 @@
 #include "firstFile.h"
 #include <SoapySDR/Version.h>
+#include "Radio.h"
 #include "RaceFastsdr.h"
 #include "Utilities.h"
 /*
@@ -55,7 +56,7 @@ static int setBuffers(struct playData *rx, int numBuff);
 
 static int StartIt(struct playData *rx);
 
-static int bacgroundPlay(struct playData *rx);
+static int backgroundPlay(struct playData *rx);
 
 static int ProcessSound(void *rxv);
 
@@ -131,7 +132,7 @@ int RadioStart(int argc, char * argv [],struct playData *rx)
     
     rx->channel=rx->deviceNumber;
 
-    bacgroundPlay(rx);
+    backgroundPlay(rx);
     
 	return 0 ;
 } /* main */
@@ -501,7 +502,7 @@ static int SetAudio(struct playData *rx,char *name,int type)
     return 0;
 }
 
-static int bacgroundPlay(struct playData *rx)
+static int backgroundPlay(struct playData *rx)
 {
     
     rx->fOut=48000;
@@ -520,7 +521,6 @@ static int startPlay(struct playData *rx)
     rx->witchRFBuffer=0;
     
     rx->witchAudioBuffer=0;
-    
     
     rx->source=getsourceAudio(audio);
     if(rx->source== NO_MORE_SPACE){
@@ -843,7 +843,10 @@ static int stopPlay(struct playData *rx)
         
         rx->device->closeStream(rx->rxStream);
         
-        SoapySDR::Device::unmake(rx->device);
+        if(rx->channel == 0){
+            SoapySDR::Device::unmake(rx->device);
+            rx->device=NULL;
+        }
         
         rx->device=NULL;
         
@@ -912,8 +915,10 @@ int freeMemoryRadio(struct playData *rx)
 }
 static int sdrDone(struct playData *rx)
 {
+    
+    RadioPtr r=FindSdrRadioWindow(rx);
 
-    stopPlay(rx);
+    r->stopPlay(rx);
     
     for(int k=0;k<NUM_DATA_BUFF5;++k){
         if(rx->buff[k])cFree((char *)rx->buff[k]);

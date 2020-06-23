@@ -465,8 +465,7 @@ static void control_cb(int control)
     }
     else if(control == 8)
     {
-        s->rx->pstopPlay(s->rx);
-
+        s->stopPlay(s->rx);
         s->rx->scaleFactor=scaleFactor;
         s->rx->gain=gain;
         s->rx->fc=fc;
@@ -496,9 +495,9 @@ static void control_cb(int control)
             }
         }
         
-        s->rx->pstartPlay(s->rx);
+        s->startPlay(s->rx);
         
-        s->rx->pplayRadio(s->rx);
+        s->playRadio(s->rx);
         
         s->water.nline=0;
         
@@ -539,6 +538,25 @@ RadioPtr FindSdrRadioWindow(int window)
         if(w->scene->windowType == FileTypeSdrRadio){
             f=(RadioPtr)w;
             if(f->window1 == window)return f;
+        }
+        w=w->CNext;
+    }
+    
+    return NULL;
+    
+}
+RadioPtr FindSdrRadioWindow(struct playData *rx)
+{
+    RadioPtr f;
+    CWinPtr w;
+    
+    if(!Root)return NULL;
+    
+    w=Root;
+    while(w){
+        if(w->scene->windowType == FileTypeSdrRadio){
+            f=(RadioPtr)w;
+            if(f->rx == rx)return f;
         }
         w=w->CNext;
     }

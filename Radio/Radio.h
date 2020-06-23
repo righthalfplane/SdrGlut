@@ -242,6 +242,12 @@ class Radio: public CWindow{
 public:
     Radio(struct Scene *scene,SoapySDR::Kwargs deviceArgs);
     virtual ~Radio();
+    
+    int playRadio(struct playData *rx);
+    int stopPlay(struct playData *rx);
+    int startPlay(struct playData *rx);
+    int closeScenes();
+
     virtual int LoadFile (struct Scene *scene,char *name, int fileType);
     virtual int BackGroundEvents(struct Scene *scene);
     virtual int UpdateTemperatureColors(struct Scene *scene);
@@ -355,6 +361,8 @@ typedef Radio *RadioPtr;
 extern RadioPtr FindSceneRadio(int window);
 
 extern RadioPtr FindSdrRadioWindow(int window);
+
+extern RadioPtr FindSdrRadioWindow(struct playData *rx);
 
 /*
 extern int testRadio(struct playData3 *rx,SoapySDR::Kwargs deviceArgs);
