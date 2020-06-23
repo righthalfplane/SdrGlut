@@ -240,7 +240,7 @@ class Radio;
 
 class Radio: public CWindow{
 public:
-    Radio(struct Scene *scene);
+    Radio(struct Scene *scene,SoapySDR::Kwargs deviceArgs);
     virtual ~Radio();
     virtual int LoadFile (struct Scene *scene,char *name, int fileType);
     virtual int BackGroundEvents(struct Scene *scene);

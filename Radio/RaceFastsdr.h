@@ -262,6 +262,8 @@ struct playData{
 
     int end;
     
+    SoapySDR::Kwargs deviceToOpen;
+    
     CSMeter m_SMeter;
     
     std::mutex mutex;

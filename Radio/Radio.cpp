@@ -72,7 +72,7 @@ static GLUI *glui;
 
 int doRadioOpenRA(void);
 
-static int doRadioOpen2(void);
+static int doRadioOpen2(SoapySDR::Kwargs deviceArgs);
 
 static void control_cb(int control);
 
@@ -88,13 +88,15 @@ static GLUI_EditText *edittext1;
 static GLUI_EditText *edittext5;
 static char sfrequency[255]="1";
 static char ssamplerate[255]="2";
+static std::vector<SoapySDR::Kwargs> results;
+
 
 void doFFTMenu(int item);
 void doDirectSampleMode(int item);
 void doBiasMode(int item);
 void doFilterMenu(int item);
 
-Radio::Radio(struct Scene *scene): CWindow(scene)
+Radio::Radio(struct Scene *scene,SoapySDR::Kwargs deviceArgs): CWindow(scene)
 {
     OpenError=TRUE;
 
@@ -105,6 +107,8 @@ Radio::Radio(struct Scene *scene): CWindow(scene)
     zerol((char *)&pd, sizeof(pd));
     
     zerol((char *)&rxs,&rxs.end-&rxs.start);
+    
+    rxs.deviceToOpen=deviceArgs;
 
 	getPaletteByName((char *)"ps", (unsigned char *)&pd.palette);
 
@@ -163,7 +167,7 @@ Radio::Radio(struct Scene *scene): CWindow(scene)
     OpenError=FALSE;
 }
 
-static int doRadioOpen2(void)
+static int doRadioOpen2(SoapySDR::Kwargs deviceArgs)
 {
     struct SceneList *list;
     struct Scene *scene;
@@ -182,7 +186,7 @@ static int doRadioOpen2(void)
     SceneInit(scene);
     scene->windowType=FileTypeSdrRadio;
 
-    RadioPtr w = new Radio(scene);
+    RadioPtr w = new Radio(scene,deviceArgs);
     
     if(w == NULL){
         WarningBatch((char *)"Radio of Memory");
@@ -208,9 +212,8 @@ static int doRadioOpen2(void)
     glutSetWindow(w->window);
     glutSetWindowTitle(w->rx->driveName);
     mstrncpy(w->windowName,w->rx->driveName,sizeof(w->windowName));
-
-    
     w->backGroundEvents=1;
+    
    return 1;
 }
 
@@ -220,8 +223,6 @@ int doRadioOpenRA(void)
     size_t length;
 
     std::string argStr;
-    
-    std::vector<SoapySDR::Kwargs> results;
     
     results = SoapySDR::Device::enumerate();
     
@@ -248,14 +249,18 @@ int doRadioOpenRA(void)
     
     msprintf(ssamplerate,sizeof(ssamplerate),"%.0f",2000000.0);
     
+    GLUI_Panel *obj_panel =  glui->add_panel( "Parameters" );
+
     edittext1 =
-    glui->add_edittext( "Frequency:", GLUI_EDITTEXT_TEXT, sfrequency );
+    glui->add_edittext_to_panel( obj_panel,  "Frequency:", GLUI_EDITTEXT_TEXT, sfrequency );
     edittext1->w=200;
     
     edittext5 =
-    glui->add_edittext( "Sample Rate:", GLUI_EDITTEXT_TEXT, ssamplerate);
+    glui->add_edittext_to_panel( obj_panel,  "Sample Rate:", GLUI_EDITTEXT_TEXT, ssamplerate);
     edittext5->w=200;
 
+    obj_panel =  glui->add_panel( "Device" );
+    
     for(size_t k=0;k<length;++k){
         
         deviceArgs = results[k];
@@ -264,7 +269,7 @@ int doRadioOpenRA(void)
             if (it->first == "driver") {
                 //dev->setDriver(it->second);
            } else if (it->first == "label") {
-               new GLUI_Button(glui, (char *)it->second.c_str(), (int)(2+k), control_cb);
+               new GLUI_Button(obj_panel, (char *)it->second.c_str(), (int)(2+k), control_cb);
              //dev->setName(it->second);
             }
         }
@@ -291,7 +296,9 @@ static void control_cb(int control)
     
     device = control-2;
     
-    doRadioOpen2();
+    SoapySDR::Kwargs deviceArgs=results[device];
+
+    doRadioOpen2(deviceArgs);
 }
 
 int Radio::LoadFile(struct Scene *scene,char *name, int fileType)

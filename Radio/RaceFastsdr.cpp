@@ -1422,30 +1422,13 @@ static int findRadio(struct playData *rx)
 {
     
     std::string argStr;
-
-   size_t length;
-    
-    std::vector<SoapySDR::Kwargs> results;
-    
-    results = SoapySDR::Device::enumerate();
-    
-    length=results.size();
-
-    printf("\nNumber of Devices: %d Looking for Device: %d\n",(int)length,rx->deviceNumber);
-    if(length < 1)return 1;
     
     rx->device = NULL;
     
     SoapySDR::Kwargs deviceArgs;
     
-    for(unsigned int k=0;k<length;++k){
-        
-        if(k == rx->deviceNumber){
-
- 			deviceArgs = results[k];
-			
-            printf("Found device #%d:",(int)k);
-            
+ 			deviceArgs = rx->deviceToOpen;
+    
             for (SoapySDR::Kwargs::const_iterator it = deviceArgs.begin(); it != deviceArgs.end(); ++it) {
                 printf("%s=%s\n",it->first.c_str(),it->second.c_str());
                 if (it->first == "driver") {
@@ -1484,10 +1467,9 @@ static int findRadio(struct playData *rx)
             }
             
 			rx->device->activateStream(rx->rxStream, 0, 0, 0);
-            
-		}
     
-}
+    
+
     
     return 0;
     
