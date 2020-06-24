@@ -564,6 +564,8 @@ static int playRadio(struct playData *rx)
     
     // SoapySDRDevice_setSampleRate(rx->device,SOAPY_SDR_RX, rx->channel, rate);
     
+    
+    fprintf(stderr,"playRadio frequency %g\n",rx->fc);
     rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc);
     
     if(rx->bandwidth > 0){
@@ -1455,17 +1457,24 @@ static int findRadio(struct playData *rx)
     
     
     if(rx->channel == 0){
+/*
+        if(deviceArgs.count("frequency") == 0){
+            fprintf(stderr,"frequency not found\n");
+        }
+        deviceArgs["frequency"]=rx->fc;
+ */
         rx->device = SoapySDR::Device::make(deviceArgs);
+        fprintf(stderr,"device %p\n",rx->device);
         deviceSave=rx->device;
     }else{
-        rx->device=deviceSave;
-    }
+       rx->device=deviceSave;
+   }
     
     testRadio(rx);
     
     rx->device->setSampleRate(SOAPY_SDR_RX, rx->channel, rx->samplerate);
     
-    rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc);
+    //rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc);
  
     const std::vector<size_t> channels = {(unsigned long)rx->channel};
 
@@ -1476,7 +1485,9 @@ static int findRadio(struct playData *rx)
     }
     
     rx->device->activateStream(rx->rxStream, 0, 0, 0);
-    
+   
+    rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc);
+
     
     return 0;
     

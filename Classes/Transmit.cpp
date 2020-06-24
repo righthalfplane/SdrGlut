@@ -870,7 +870,6 @@ static int TransmitThread2(void *rxv)
         if(k == rx->deviceNumber){
             
             deviceArgs = results[k];
-            
             device = SoapySDR::Device::make(deviceArgs);
             break;
             

@@ -259,6 +259,7 @@ public:
     int dialogRadio (struct Scene *scene);
     int dialogSend(struct Scene *scene);
     int setFrequency(struct playData *play);
+    int setFrequencyDuo(struct playData *play);
     int setFrequencyCoefficients(struct playData *rx);
     int stopPlay(struct playData4 *play);
     void playRadio (struct playData4 *play);

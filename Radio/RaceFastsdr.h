@@ -259,6 +259,8 @@ struct playData{
     int demodulationFlag;
     
     int frequencyFlag;
+    
+    int frequencyReset;
 
     int end;
     

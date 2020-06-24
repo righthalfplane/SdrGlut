@@ -195,6 +195,34 @@ int Radio::startPlay(struct playData *rx)
     
     return 0;
 }
+int Radio::setFrequencyDuo(struct playData *rx)
+{
+    if(rx->channel == 0){
+        rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc);
+        return 0;
+    }
+
+    
+    RadioPtr f;
+    CWinPtr w;
+    
+    w=Root;
+    while(w){
+        if(w->scene->windowType == FileTypeSdrRadio){
+            f=(RadioPtr)w;
+            if(f->rx->device == rx->device && f->rx != rx){
+                rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc);
+                f->rx->frequencyReset=1;
+                return 0;
+            }
+        }
+        w=w->CNext;
+    }
+    
+    fprintf(stderr,"Radio::setFrequencyDuo error second window not found\n");
+
+    return 0;
+}
 int Radio::closeScenes()
 {
     stopPlay(rx);
@@ -733,6 +761,11 @@ int Radio::BackGroundEvents(struct Scene *scene)
 {
     if(!scene || !backGroundEvents)return 1;
     
+    if(rx->frequencyReset){
+        rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc);
+        rx->frequencyReset=0;
+    }
+    
     updateLine();
     
     return 0;
@@ -829,7 +862,8 @@ int Radio::setFrequency(struct playData *rx)
         
         if(rx->device){
             if(rx->fc < 0.0)rx->fc=rx->f;
-            rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc);
+            fprintf(stderr," Radio::setFrequency %g\n  ",rx->fc);
+            setFrequencyDuo(rx);
         }
         
         setDialogFrequency(rx->f);
@@ -853,7 +887,7 @@ int Radio::setFrequency(struct playData *rx)
         rx->m_SMeter.Reset();
         
         if(FindScene(scenel2)){
-            SetFrequencyGlobal(scenel2, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
+           SetFrequencyGlobal(scenel2, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
         }
         
         if(FindScene(scenel)){
