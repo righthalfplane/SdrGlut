@@ -181,7 +181,7 @@ int rxSend(void *rxv)
                    if(v > amax)amax=v;
                    if(v < amin)amin=v;
                }
-               printf("r amin %g amax %g ",amin,amax);
+               //printf("r amin %g amax %g ",amin,amax);
                
                if(rx->aminGlobal2 == 0.0)rx->aminGlobal2=amin;
                rx->aminGlobal2 = 0.9*rx->aminGlobal2+0.1*amin;
@@ -191,7 +191,7 @@ int rxSend(void *rxv)
                rx->amaxGlobal2 = 0.9*rx->amaxGlobal2+0.1*amax;
                amax=rx->amaxGlobal2;
                
-               printf("a amin %g amax %g ",amin,amax);
+               //printf("a amin %g amax %g ",amin,amax);
 
                double dnom=0.0;
                if((amax-amin) > 0){
@@ -226,7 +226,7 @@ int rxSend(void *rxv)
                    }
                    data[n]=(float)v;
                }
-               printf("f amin %g amax %g count %ld\n",amin,amax,count);
+               //printf("f amin %g amax %g count %ld\n",amin,amax,count);
 
                size=(long)(rx->size*sizeof(float));
                if(writeLab(rx->send,(char *)"FLOA",size))return 1;
@@ -242,7 +242,7 @@ int rxSend(void *rxv)
                     if(v < amin)amin=v;
                 }
                 
-                printf("r amin %g amax %g ",amin,amax);
+                //printf("r amin %g amax %g ",amin,amax);
                 
                 if(rx->aminGlobal2 == 0.0)rx->aminGlobal2=amin;
                 rx->aminGlobal2 = 0.9*rx->aminGlobal2+0.1*amin;
@@ -252,7 +252,7 @@ int rxSend(void *rxv)
                 rx->amaxGlobal2 = 0.9*rx->amaxGlobal2+0.1*amax;
                 amax=rx->amaxGlobal2;
                 
-                printf("a amin %g amax %g ",amin,amax);
+                //printf("a amin %g amax %g ",amin,amax);
 
                 double dnom=0.0;
                 if((amax-amin) > 0){
@@ -287,7 +287,7 @@ int rxSend(void *rxv)
                    }
                     data[n]=(short int)v;
                 }
-                printf(" f amin %g amax %g count %ld\n",amin,amax,count);
+                //printf(" f amin %g amax %g count %ld\n",amin,amax,count);
                 size=rx->size*sizeof(short int);
                 if(writeLab(rx->send,(char *)"SHOR",size))return 1;
                 if(netWrite(rx->send,(char *)rx->sendBuff2,size))return 1;
@@ -301,7 +301,7 @@ int rxSend(void *rxv)
                    if(v > amax)amax=v;
                    if(v < amin)amin=v;
                }
-               printf("r amin %g amax %g ",amin,amax);
+               //printf("r amin %g amax %g ",amin,amax);
                
                if(rx->aminGlobal2 == 0.0)rx->aminGlobal2=amin;
                rx->aminGlobal2 = 0.9*rx->aminGlobal2+0.1*amin;
@@ -311,7 +311,7 @@ int rxSend(void *rxv)
                rx->amaxGlobal2 = 0.9*rx->amaxGlobal2+0.1*amax;
                amax=rx->amaxGlobal2;
                
-               printf("a amin %g amax %g ",amin,amax);
+               //printf("a amin %g amax %g ",amin,amax);
                double dnom=0.0;
                if((amax-amin) > 0){
                    dnom=255.0/(amax-amin);
@@ -345,7 +345,7 @@ int rxSend(void *rxv)
                  }
                    data[n]=(signed char)v;
                }
-               printf(" f amin %g amax %g count %ld\n",amin,amax,count);
+               //printf(" f amin %g amax %g count %ld\n",amin,amax,count);
                size=rx->size*sizeof(signed char);
                if(writeLab(rx->send,(char *)"SIGN",size))return 1;
                if(netWrite(rx->send,(char *)rx->sendBuff2,size))return 1;
@@ -360,7 +360,7 @@ int rxSend(void *rxv)
                    if(v > amax)amax=v;
                    if(v < amin)amin=v;
                }
-               printf("r amin %g amax %g ",amin,amax);
+               //printf("r amin %g amax %g ",amin,amax);
                
                if(rx->aminGlobal2 == 0.0)rx->aminGlobal2=amin;
                rx->aminGlobal2 = 0.9*rx->aminGlobal2+0.1*amin;
@@ -370,7 +370,7 @@ int rxSend(void *rxv)
                rx->amaxGlobal2 = 0.9*rx->amaxGlobal2+0.1*amax;
                amax=rx->amaxGlobal2;
                
-               printf("a a amin %g amax %g ",amin,amax);
+               //printf("a a amin %g amax %g ",amin,amax);
 
                double dnom=0.0;
                if((amax-amin) > 0){
@@ -405,7 +405,7 @@ int rxSend(void *rxv)
                   }
                    data[n]=(unsigned char)v;
                }
-               printf("f  amin %g amax %g count %ld\n",amin,amax,count);
+               //printf("f  amin %g amax %g count %ld\n",amin,amax,count);
                size=rx->size*sizeof(unsigned char);
                if(writeLab(rx->send,(char *)"USIG",size))return 1;
                if(netWrite(rx->send,(char *)rx->sendBuff2,size))return 1;
@@ -1873,12 +1873,16 @@ int testRadio(struct playData *rx)
         if (args.size()) {
             for (SoapySDR::ArgInfoList::const_iterator args_i = args.begin(); args_i != args.end(); args_i++) {
                 SoapySDR::ArgInfo arg = (*args_i);
-                printf("key %s value %s read %s\n",arg.key.c_str(),arg.value.c_str(),rx->device->readSetting(arg.key).c_str());
+    /*
+                printf("key %s value %s read %s type %d min %g max %g step %g\n",arg.key.c_str(),arg.value.c_str(),rx->device->readSetting(arg.key).c_str(),
+                       (int)arg.type,arg.range.minimum(),arg.range.maximum(),arg.range.step());
+     */
                 if(arg.key == "direct_samp")rx->directSampleMode=1;
                 if(arg.key == "bias_tx")rx->biasMode=arg.key;
                 if(arg.key == "biasT_ctrl")rx->biasMode=arg.key;
             }
         }
+        
         printf("rx->biasMode %s\n",rx->biasMode.c_str());
         
         args = rx->device->getSettingInfo(SOAPY_SDR_RX,rx->channel);

@@ -354,6 +354,8 @@ public:
     int window1;
 
     int window2;
+    
+    SoapySDR::ArgInfoList flags;
 
 };
 

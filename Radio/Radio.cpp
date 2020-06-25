@@ -862,7 +862,7 @@ int Radio::setFrequency(struct playData *rx)
         
         if(rx->device){
             if(rx->fc < 0.0)rx->fc=rx->f;
-            fprintf(stderr," Radio::setFrequency %g\n  ",rx->fc);
+            //fprintf(stderr," Radio::setFrequency %g\n  ",rx->fc);
             setFrequencyDuo(rx);
         }
         
@@ -1392,6 +1392,26 @@ int Radio::OpenWindows(struct Scene *scene)
         glutAddMenuEntry("On", FFT_4096);
     }
     
+    int menu64=-1;
+    flags = rx->device->getSettingInfo();
+    if (flags.size()) {
+        int menu33[flags.size()];
+        for(size_t k=0;k<flags.size();++k){
+           // fprintf(stderr,"k %d %s %s\n",(int)k,flags[k].key.c_str(),flags[k].value.c_str());
+            if(flags[k].type == flags[k].BOOL){
+                menu33[k]=glutCreateMenu(doBiasMode);
+                glutAddMenuEntry("true", (int)(5000+2*k));
+                glutAddMenuEntry("false", (int)(5000+2*k+1));
+            }
+        }
+        menu64=glutCreateMenu(doBiasMode);
+        for(size_t k=0;k<flags.size();++k){
+            if(flags[k].type == flags[k].BOOL){
+                glutAddSubMenu(flags[k].key.c_str(), menu33[k]);
+            }
+        }
+   }
+    
     glutCreateMenu(menu_selectl);
     glutAddMenuEntry("Sdr Dialog...", SdrDialog);
     if(rx->ntransmit)glutAddMenuEntry("Transmit...", SdrTransmit);
@@ -1406,6 +1426,7 @@ int Radio::OpenWindows(struct Scene *scene)
     glutAddSubMenu("Window Filter", menu6);
     if(rx->directSampleMode)glutAddSubMenu("Direct Sample Mode", menu62);
     if(rx->biasMode!= "")glutAddSubMenu("Voltage Bias", menu63);
+    if(flags.size() > 0)glutAddSubMenu("Flags", menu64);
 
 
     glutAddMenuEntry("--------------------", -1);
@@ -1680,6 +1701,7 @@ void doBiasMode(int item)
     
     std::string value;
     
+    
     switch(item){
         case FFT_1024:
             value="false";
@@ -1701,9 +1723,15 @@ void doBiasMode(int item)
     
     if(!sdr)return;
     
-    SoapySDR::ArgInfo arg;
-    
-    sdr->rx->device->writeSetting(sdr->rx->biasMode,value);
+    if(item > 4999){
+        value="true";
+        if(item & 1)value="false";
+        int k=(item-5000)/2;
+        // fprintf(stderr,"doBiasMode item %d key %s value %s\n",item,sdr->flags[k].key.c_str(),value.c_str());
+        sdr->rx->device->writeSetting(sdr->flags[k].key,value);
+    }else{
+       sdr->rx->device->writeSetting(sdr->rx->biasMode,value);
+    }
     
     // sdr->rx->FFTcount=ifft;
     
