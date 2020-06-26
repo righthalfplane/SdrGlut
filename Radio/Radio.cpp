@@ -1426,7 +1426,7 @@ int Radio::OpenWindows(struct Scene *scene)
     glutAddSubMenu("Window Filter", menu6);
     if(rx->directSampleMode)glutAddSubMenu("Direct Sample Mode", menu62);
     if(rx->biasMode!= "")glutAddSubMenu("Voltage Bias", menu63);
-    if(flags.size() > 0)glutAddSubMenu("Flags", menu64);
+    if(flags.size() > 0)glutAddSubMenu("Options", menu64);
 
 
     glutAddMenuEntry("--------------------", -1);
