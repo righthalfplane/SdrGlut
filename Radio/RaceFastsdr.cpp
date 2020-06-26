@@ -1883,7 +1883,7 @@ int testRadio(struct playData *rx)
             }
         }
         
-        printf("rx->biasMode %s\n",rx->biasMode.c_str());
+        printf("rx->biasMode '%s'\n",rx->biasMode.c_str());
         
         args = rx->device->getSettingInfo(SOAPY_SDR_RX,rx->channel);
         if (args.size()) {

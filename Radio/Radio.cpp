@@ -23,6 +23,10 @@ void menu_select(int item);
 
 static void menu_selectl(int item);
 
+static void enterexit(int item);
+
+static void inuse(int item);
+
 void palette_select2(int item);
 
 void setMode(int item);
@@ -334,6 +338,8 @@ Radio::Radio(struct Scene *scene,SoapySDR::Kwargs deviceArgs): CWindow(scene)
     
     zerol((char *)lreal,FFTlength*sizeof(double));
     zerol((char *)limag,FFTlength*sizeof(double));
+    
+    flagsflag=0;
     
     OpenError=FALSE;
 }
@@ -764,6 +770,25 @@ int Radio::BackGroundEvents(struct Scene *scene)
     if(rx->frequencyReset){
         rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc);
         rx->frequencyReset=0;
+    }
+    
+    
+    if(flagsflag && (flags.size() > 0) && flagsmenu && !inuseflag){
+        for(size_t k=0;k<flags.size();++k){
+            if(flags[k].type == flags[k].BOOL){
+                glutSetMenu(flagsmenu[k]);
+                //int menu=glutGetMenu();
+                //fprintf(stderr,"k %d menu %d\n",(int)k,menu);
+                if(rx->device->readSetting(flags[k].key) == "true"){
+                    glutChangeToMenuEntry(1,"true",(int)(5000+2*k));
+                    glutChangeToMenuEntry(2,"",(int)(5000+2*k+1));
+                }else{
+                    glutChangeToMenuEntry(1,"",(int)(5000+2*k));
+                    glutChangeToMenuEntry(2,"false",(int)(5000+2*k+1));
+                }
+            }
+        }
+        flagsflag=0;
     }
     
     updateLine();
@@ -1395,22 +1420,32 @@ int Radio::OpenWindows(struct Scene *scene)
     int menu64=-1;
     flags = rx->device->getSettingInfo();
     if (flags.size()) {
-        int menu33[flags.size()];
+        flagsmenu=new int[flags.size()];
         for(size_t k=0;k<flags.size();++k){
-           // fprintf(stderr,"k %d %s %s\n",(int)k,flags[k].key.c_str(),flags[k].value.c_str());
+            fprintf(stderr,"k %d %s %s\n",(int)k,flags[k].key.c_str(),flags[k].value.c_str());
             if(flags[k].type == flags[k].BOOL){
-                menu33[k]=glutCreateMenu(doBiasMode);
-                glutAddMenuEntry("true", (int)(5000+2*k));
-                glutAddMenuEntry("false", (int)(5000+2*k+1));
+                flagsmenu[k]=glutCreateMenu(doBiasMode);
+                if(rx->device->readSetting(flags[k].key) == "true"){
+                    glutAddMenuEntry("true",(int)(5000+2*k));
+                    glutAddMenuEntry("",(int)(5000+2*k+2));
+                }else{
+                    glutAddMenuEntry("",(int)(5000+2*k));
+                    glutAddMenuEntry("false",(int)(5000+2*k+1));
+                }
             }
         }
         menu64=glutCreateMenu(doBiasMode);
         for(size_t k=0;k<flags.size();++k){
             if(flags[k].type == flags[k].BOOL){
-                glutAddSubMenu(flags[k].key.c_str(), menu33[k]);
+                glutAddSubMenu(flags[k].key.c_str(), flagsmenu[k]);
             }
         }
+        flagsflag=1;
    }
+    
+    glutEntryFunc(enterexit);
+    
+    glutMenuStateFunc(inuse);
     
     glutCreateMenu(menu_selectl);
     glutAddMenuEntry("Sdr Dialog...", SdrDialog);
@@ -1724,11 +1759,15 @@ void doBiasMode(int item)
     if(!sdr)return;
     
     if(item > 4999){
-        value="true";
-        if(item & 1)value="false";
         int k=(item-5000)/2;
-        // fprintf(stderr,"doBiasMode item %d key %s value %s\n",item,sdr->flags[k].key.c_str(),value.c_str());
+        if(item & 1){
+            value="false";
+        }else{
+            value="true";
+        }
+        fprintf(stderr,"doBiasMode item %d key %s value %s\n",item,sdr->flags[k].key.c_str(),value.c_str());
         sdr->rx->device->writeSetting(sdr->flags[k].key,value);
+        sdr->flagsflag=1;
     }else{
        sdr->rx->device->writeSetting(sdr->rx->biasMode,value);
     }
@@ -1978,7 +2017,6 @@ static void getMousel(int button, int state, int x, int y)
     }
     
     if(!sdr)return;
-    
 
     if(state == GLUT_DOWN)
     {
@@ -2105,7 +2143,47 @@ int Radio::FindPoint(struct Scene *scene,int x,int y)
 {
     return 0;
 }
+static void enterexit(int item)
+{
+    struct SceneList *list;
+    RadioPtr sdr;
+    
+    if(item == GLUT_ENTERED){
+        list=SceneFindByNumber(glutGetWindow());
+        if(!list){
+            sdr=FindSdrRadioWindow(glutGetWindow());
+        }else{
+            sdr=(RadioPtr)FindScene(&list->scene);
+        }
+        
+        if(!sdr)return;
+        
+        sdr->flagsflag=1;
+        
+       // fprintf(stderr,"enterexit item %d\n",item);
+    }
+}
+static void inuse(int item)
+{
+    struct SceneList *list;
+    RadioPtr sdr;
+    
+    list=SceneFindByNumber(glutGetWindow());
+    if(!list){
+        sdr=FindSdrRadioWindow(glutGetWindow());
+    }else{
+        sdr=(RadioPtr)FindScene(&list->scene);
+    }
+    
+    if(!sdr)return;
+    
 
+    if(item == GLUT_MENU_NOT_IN_USE){
+        sdr->inuseflag=0;
+    }else{
+        sdr->inuseflag=1;
+    }
+}
 static void menu_selectl(int item)
 {
     struct SceneList *list;

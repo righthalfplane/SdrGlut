@@ -356,6 +356,9 @@ public:
     int window2;
     
     SoapySDR::ArgInfoList flags;
+    int *flagsmenu;
+    int flagsflag;
+    int inuseflag;
 
 };
 
