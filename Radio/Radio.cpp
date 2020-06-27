@@ -201,29 +201,8 @@ int Radio::startPlay(struct playData *rx)
 }
 int Radio::setFrequencyDuo(struct playData *rx)
 {
-    if(rx->channel == 0){
-        rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc);
-        return 0;
-    }
-
     
-    RadioPtr f;
-    CWinPtr w;
-    
-    w=Root;
-    while(w){
-        if(w->scene->windowType == FileTypeSdrRadio){
-            f=(RadioPtr)w;
-            if(f->rx->device == rx->device && f->rx != rx){
-                rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc);
-                f->rx->frequencyReset=1;
-                return 0;
-            }
-        }
-        w=w->CNext;
-    }
-    
-    fprintf(stderr,"Radio::setFrequencyDuo error second window not found\n");
+    rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc);
 
     return 0;
 }
@@ -2165,6 +2144,26 @@ static void inuse(int item)
     }else{
         sdr->inuseflag=1;
     }
+    
+    RadioPtr f;
+    CWinPtr w;
+    
+    w=Root;
+    while(w){
+        if(w->scene->windowType == FileTypeSdrRadio){
+            f=(RadioPtr)w;
+            if(f->rx->device == sdr->rx->device && f->rx != sdr->rx){
+                if(item == GLUT_MENU_NOT_IN_USE){
+                    f->inuseflag=0;
+                }else{
+                    f->inuseflag=1;
+                }
+                return;
+            }
+        }
+        w=w->CNext;
+    }
+    
 }
 static void menu_selectl(int item)
 {
