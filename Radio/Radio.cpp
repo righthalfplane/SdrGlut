@@ -1422,7 +1422,7 @@ int Radio::OpenWindows(struct Scene *scene)
     if (flags.size()) {
         flagsmenu=new int[flags.size()];
         for(size_t k=0;k<flags.size();++k){
-            fprintf(stderr,"k %d %s %s\n",(int)k,flags[k].key.c_str(),flags[k].value.c_str());
+            fprintf(stderr,"k %d %s %s type %d\n",(int)k,flags[k].key.c_str(),flags[k].value.c_str(),(int)flags[k].type);
             if(flags[k].type == flags[k].BOOL){
                 flagsmenu[k]=glutCreateMenu(doBiasMode);
                 if(rx->device->readSetting(flags[k].key) == "true"){
