@@ -1563,23 +1563,17 @@ void antennaMenu(int item){
     return;
 }
 void bandMenu(int item){
-    struct SceneList *list;
     RadioPtr sdr;
     
-    list=SceneFindByNumber(glutGetWindow());
-    if(!list){
-        sdr=FindSdrRadioWindow(glutGetWindow());
-    }else{
-        sdr=(RadioPtr)FindScene(&list->scene);
-    }
+    sdr=FindSdrRadioWindow(glutGetWindow());
     
     if(!sdr)return;
 
     //printf("item %d bandwidths %.0f\n",item,sdrOpen->rx->bandwidths[item]);
     
-    sdr->stopPlay(sdr->rx);
-    
     sdr->rx->bandwidth=sdr->rx->bandwidths[item];
+
+    sdr->stopPlay(sdr->rx);
     
     sdr->setDialogBandWidth(sdr->rx->bandwidth);
     
@@ -2145,17 +2139,12 @@ int Radio::FindPoint(struct Scene *scene,int x,int y)
 }
 static void enterexit(int item)
 {
-    struct SceneList *list;
     RadioPtr sdr;
     
-    if(item == GLUT_ENTERED){
-        list=SceneFindByNumber(glutGetWindow());
-        if(!list){
-            sdr=FindSdrRadioWindow(glutGetWindow());
-        }else{
-            sdr=(RadioPtr)FindScene(&list->scene);
-        }
-        
+   if(item == GLUT_ENTERED){
+       
+        sdr=FindSdrRadioWindow(glutGetWindow());
+       
         if(!sdr)return;
         
         sdr->flagsflag=1;
@@ -2165,18 +2154,11 @@ static void enterexit(int item)
 }
 static void inuse(int item)
 {
-    struct SceneList *list;
     RadioPtr sdr;
     
-    list=SceneFindByNumber(glutGetWindow());
-    if(!list){
-        sdr=FindSdrRadioWindow(glutGetWindow());
-    }else{
-        sdr=(RadioPtr)FindScene(&list->scene);
-    }
+    sdr=FindSdrRadioWindow(glutGetWindow());
     
     if(!sdr)return;
-    
 
     if(item == GLUT_MENU_NOT_IN_USE){
         sdr->inuseflag=0;
