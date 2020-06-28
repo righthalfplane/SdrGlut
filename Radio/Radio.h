@@ -243,6 +243,7 @@ public:
     Radio(struct Scene *scene,SoapySDR::Kwargs deviceArgs);
     virtual ~Radio();
     
+    Radio *findMate(struct playData *rx);
     int playRadio(struct playData *rx);
     int stopPlay(struct playData *rx);
     int startPlay(struct playData *rx);
