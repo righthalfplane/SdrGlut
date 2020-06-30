@@ -292,6 +292,8 @@ int Radio::dialogRadio(struct Scene *scene)
 
     
     new GLUI_Button(obj_panel, "Search", 2222, control_cb);
+    
+    new GLUI_Button(obj_panel, "Write", 2223, control_cb);
 
     obj_panel =  dd.glui->add_panel( "Bandwidth + Audio Thread Count" );
 
@@ -404,6 +406,35 @@ static void control_cb(int control)
     if(control == 2222){
         s->rx->cutOFF=cutOFF;
         s->rx->cutOFFSearch=1;
+        for(int n=0;n<s->FFTlength;++n){
+            s->frequencies[n]=0;
+            s->ampitude[n] = -160;
+        }
+    } else if(control == 2223){
+        fprintf(stderr,"start write\n");
+        int ns = -1;
+        double peak=-160;
+        double bw=s->rx->bw;
+        double fStart=0;
+        for(int n=20;n<s->rx->FFTcount;++n){
+           if(s->ampitude[n] >= s->rx->cutOFF){
+               if(ns == -1)fStart=s->frequencies[n];
+              // fprintf(stderr,"n %d ns %d %g %g %g\n",n,ns,s->ampitude[n],s->rx->cutOFF,peak);
+                if(s->ampitude[n] > peak){
+                    peak=s->ampitude[n];
+                    ns=n;
+                }
+            }else{
+                if(ns >= 0){
+                    static int count;
+                    char *Mode_Names[] = {(char *)"FM",(char *)"NBFM",(char *)"AM",(char *)"NAM",(char *)"USB",(char *)"LSB",(char *)"CW"};
+                    if(s->frequencies[n] < fStart+bw)continue;
+                    WarningPrint("F%d,%0.4f,%s\n",count++,s->frequencies[ns]/1e6,Mode_Names[s->rx->decodemode]);
+                    ns=-1;
+                    peak=-160;
+                }
+            }
+        }
     } else if(control == 4){
         s->rx->gain=gain;
         s->rx->scaleFactor=scaleFactor;
@@ -411,6 +442,10 @@ static void control_cb(int control)
         {
             s->pd.sPmin=dmin;
             s->pd.sPmax=dmax;
+        }
+        for(int n=0;n<s->FFTlength;++n){
+            s->frequencies[n]=0;
+            s->ampitude[n] = -160;
         }
     }
     else if(control == 2)
@@ -430,9 +465,11 @@ static void control_cb(int control)
         if(s->rx->hasGainMode){
             bool automatic=s->dd.useagc;
             s->rx->gainMode=s->dd.useagc;
-            
             s->rx->device->setGainMode(SOAPY_SDR_RX, s->rx->channel, automatic);
-            //if(ret)printf("useagc %d ret %d\n",s->dd.useagc,ret);
+            for(int n=0;n<s->FFTlength;++n){
+                s->frequencies[n]=0;
+                s->ampitude[n] = -160;
+            }
         }
     }
     else if(control == 23  || control == 24  || control == 25  || control == 26)
@@ -442,11 +479,13 @@ static void control_cb(int control)
         msprintf(value,sizeof(value),"%0.f",s->dd.line_Index[ind]);
         s->dd.edittext1z[ind]->set_text(value);
         if(s->dd.line_Index_old[ind] != (int)s->dd.line_Index[ind]){
-            
             s->rx->device->setGain(SOAPY_SDR_RX, s->rx->channel, s->rx->gains[ind], s->dd.line_Index[ind]);
-            //if(ret)printf("SoapySDRDevice_setGainElement ret %d\n",ret);
             s->dd.line_Index[ind]=(int)s->dd.line_Index_old[ind];
-        }
+            for(int n=0;n<s->FFTlength;++n){
+                s->frequencies[n]=0;
+                s->ampitude[n] = -160;
+            }
+      }
     }
     else if(control == 50)
     {
@@ -456,11 +495,11 @@ static void control_cb(int control)
         s->dd.edittext1z[ind]->set_text(value);
         if(s->dd.line_Index_old[ind] != (int)s->dd.line_Index[ind]){
             s->rx->device->setGain(SOAPY_SDR_RX, s->rx->channel, s->dd.line_Index[ind]);
-           // if(ret)printf("SoapySDRDevice_setGain ret %d\n",ret);
             s->dd.line_Index_old[ind]=(int)s->dd.line_Index[ind];
-           // double el = SoapySDRDevice_getGain(s->rx->device, SOAPY_SDR_RX, s->rx->channel);
-          // printf("value %s value %g el %g\n",value,s->dd.line_Index[ind],el);
-
+            for(int n=0;n<s->FFTlength;++n){
+                s->frequencies[n]=0;
+                s->ampitude[n] = -160;
+            }
         }
     }
     else if(control == 8)
@@ -488,10 +527,6 @@ static void control_cb(int control)
             s->pd.sPmax=dmax;
         }
         
-        for(int n=0;n<s->FFTlength;++n){
-            s->frequencies[n]=0;
-            s->ampitude[n]=0;
-        }
         
         for(int y=0;y<s->water.ysize*2;++y){
             int ns=3*s->water.xsize*y;
@@ -508,6 +543,10 @@ static void control_cb(int control)
         
         s->water.nline=0;
         
+        for(int n=0;n<s->FFTlength;++n){
+            s->frequencies[n]=0;
+            s->ampitude[n] = -160;
+        }
     }
     
 	glutPostRedisplay();

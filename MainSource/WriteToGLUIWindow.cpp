@@ -42,14 +42,46 @@ int rxScan(void *rxv);
 
 static double lineTime=0;
 
+
 class GLUIAPI GLUI_TextBox2 : public GLUI_TextBox
 {
 public:
     virtual int mouse_down_handler( int local_x, int local_y );
+    virtual int special_handler( int key, int modifiers);
     GLUI_TextBox2( GLUI_Node *parent, bool scroll = false,
                   int id=-1, GLUI_CB cb=GLUI_CB() );
     
 };
+
+static GLUI_TextBox2 *moo;
+
+int GLUI_TextBox2::special_handler( int key, int modifiers)
+{
+//    fprintf(stderr,"key %d\n",key);
+    
+//    int ptsave=moo->insertion_pt;
+    
+    GLUI_TextBox::special_handler( key, modifiers);
+    
+/*
+    if(key == 103){
+        moo->sel_start=ptsave+1;
+        moo->sel_end=moo->insertion_pt;
+    }else if(key == 101){
+        const char *test=moo->get_text();
+        int nn=-1;
+        for(int n=moo->insertion_pt-1;n>0;--n){
+            if(test[n] == '\n'){
+                nn=n;
+                break;
+            }
+        }
+        moo->sel_start=nn+1;
+        moo->sel_end=moo->insertion_pt;
+    }
+*/
+    return false;
+}
 int GLUI_TextBox2::mouse_down_handler( int local_x, int local_y)
 {
     
@@ -70,7 +102,6 @@ GLUI_TextBox2::GLUI_TextBox2( GLUI_Node *parent,
     ;
 }
 
-static GLUI_TextBox2 *moo;
 
 int doFrequnecyFile(char *path)
 {
@@ -271,6 +302,18 @@ static void menu_select(int item)
        // fprintf(stderr,"%d %d buff %s\n",moo->sel_start,moo->sel_end,buff);
         
         sendMessageGlobal(&buff[n1],&buff[n2],M_SEND);
+        
+        moo->sel_start=moo->sel_end+1;
+        
+        for(int n=moo->sel_end+1;n<(int)strlen(test);++n){
+            if(test[n] == '\n'){
+                moo->sel_end=n;
+                break;
+            }
+        }
+        
+        moo->insertion_pt=moo->sel_end+1;
+        moo->update_and_draw_text();
     }
 }
 static void iddle(void){

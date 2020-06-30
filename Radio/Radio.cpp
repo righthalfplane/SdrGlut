@@ -191,6 +191,12 @@ int Radio::startPlay(struct playData *rx)
 int Radio::setFrequencyDuo(struct playData *rx)
 {
     rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc);
+    
+    for(int n=0;n<FFTlength;++n){
+        frequencies[n]=0;
+        ampitude[n] = -160;
+    }
+
     return 0;
 }
 int Radio::closeScenes()
@@ -606,45 +612,12 @@ int Radio::updateLine()
         Plot->xAutoMinimum=FALSE;
         Plot->xSetMaximum=rmax;
         Plot->xSetMinimum=rmin;
-        if(rx->cutOFFSearch > 0){
-            //fprintf(stderr,"length %d cutOFF %g bw %g\n",length,rx->cutOFF,rx->bw);
-            int itwas = -1;
-            int ns=0;
-            for(int k=0;k<length;++k){
-                if(range[ns]+rx->bw > range[k]){
-                    continue;
-                }
-               // fprintf(stderr,"low %g high %g\n",range[ns],range[k]);
-                double dmin = -160;
-                int nn = -1;
-                double rr=0;
-                for(int i=ns;i<k;++i){
-                    if(i >= length)break;
-                    rr=magnitude[i];
-                    // fprintf(stderr,"i %d rr %g dmin %g\n",i,rr,dmin);
-                    if(rr > dmin){
-                        dmin=rr;
-                        nn=i;
-                    }
-                }
-                ns=k;
-                if(nn > 0){
-                    char *Mode_Names[] = {(char *)"FM",(char *)"NBFM",(char *)"AM",(char *)"NAM",(char *)"USB",(char *)"LSB",(char *)"CW"};
-                    
-                    static int count;
-                    
-                    if(dmin > rx->cutOFF){
-                      // fprintf(stderr,"dmin %g range %g nn %d itwas %d\n",dmin,range[nn],nn,itwas);
-                        if(nn-itwas > 5){
-                           WarningPrint("F%d,%0.4f,%s\n",count++,range[nn]/1e6,Mode_Names[rx->decodemode]);
-                        }
-                        itwas=nn;
-                    }
-                }
+        
+        for(int k=0;k<length;++k){
+            frequencies[k]=range[k];
+            if(magnitude[k] > ampitude[k]){
+                ampitude[k]=magnitude[k];
             }
-            
-            
-            rx->cutOFFSearch=0;
         }
     }
     long ns,ne,nsub;
@@ -726,6 +699,10 @@ int Radio::BackGroundEvents(struct Scene *scene)
     
     if(rx->frequencyReset){
         rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc);
+        for(int n=0;n<FFTlength;++n){
+            frequencies[n]=0;
+            ampitude[n] = -160;
+        }
         rx->frequencyReset=0;
     }
     
@@ -776,7 +753,10 @@ int Radio::sendMessage(char *m1,char *m2,int type)
         }
         
         rx->f=ff;
-        rx->fc=ff+rx->bw;
+        
+        if(fabs(rx->fc-ff) > 0.5*rx->samplerate){
+            rx->fc=ff+rx->bw;
+        }
 
         setFrequency(rx);
         
@@ -1865,7 +1845,7 @@ int Radio::resetDemod()
     
     for(int n=0;n<myAppl->FFTlength;++n){
         myAppl->frequencies[n]=0;
-        myAppl->ampitude[n]=0;
+        myAppl->ampitude[n] = -160;
     }
     
     for(int y=0;y<myAppl->water.ysize*2;++y){
