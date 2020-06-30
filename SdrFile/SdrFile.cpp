@@ -156,7 +156,7 @@ SdrFile::SdrFile(struct Scene *scene): CWindow(scene)
     
     
 
-    if(!range || !dose || !lreal || !lreal)return;
+    if(!range || !dose || !lreal || !limag)return;
     
     zerol((char *)lreal,FFTlength*sizeof(double));
     zerol((char *)limag,FFTlength*sizeof(double));

@@ -317,9 +317,9 @@ public:
     CLines *lines2;
     struct Scene *scenel2;
     double *range;
-    double *dose;
-    double *lreal;
-    double *limag;
+    double *magnitude;
+    double *frequencies;
+    double *ampitude;
     double lineTime;
     double lineDumpInterval;
     double lineAlpha;

@@ -274,24 +274,27 @@ Radio::Radio(struct Scene *scene,SoapySDR::Kwargs deviceArgs): CWindow(scene)
     FFTlength=32768;
     
     range=NULL;
-    dose=NULL;
+    magnitude=NULL;
     
-    lreal=NULL;
-    limag=NULL;
+    frequencies=NULL;
+    ampitude=NULL;
     
 
     range=(double *)cMalloc(FFTlength*sizeof(double),9851);
-    dose=(double *)cMalloc(FFTlength*sizeof(double),9851);
+    magnitude=(double *)cMalloc(FFTlength*sizeof(double),9851);
     
-    lreal=(double *)cMalloc(FFTlength*sizeof(double),9851);
-    limag=(double *)cMalloc(FFTlength*sizeof(double),9851);
+    frequencies=(double *)cMalloc(FFTlength*sizeof(double),9851);
+    ampitude=(double *)cMalloc(FFTlength*sizeof(double),9851);
     
     
 
-    if(!range || !dose || !lreal || !lreal)return;
+    if(!range || !magnitude || !frequencies || !ampitude)return;
     
-    zerol((char *)lreal,FFTlength*sizeof(double));
-    zerol((char *)limag,FFTlength*sizeof(double));
+    zerol((char *)range,FFTlength*sizeof(double));
+    zerol((char *)magnitude,FFTlength*sizeof(double));
+    
+    zerol((char *)frequencies,FFTlength*sizeof(double));
+    zerol((char *)ampitude,FFTlength*sizeof(double));
     
     flagsflag=0;
     
@@ -470,14 +473,14 @@ Radio::~Radio()
     if(range)cFree((char *)range);
     range=NULL;
     
-    if(dose)cFree((char *)dose);
-    dose=NULL;
+    if(magnitude)cFree((char *)magnitude);
+    magnitude=NULL;
     
-    if(lreal)cFree((char *)lreal);
-    lreal=NULL;
+    if(frequencies)cFree((char *)frequencies);
+    frequencies=NULL;
     
-    if(limag)cFree((char *)limag);
-    limag=NULL;
+    if(ampitude)cFree((char *)ampitude);
+    ampitude=NULL;
         
     if(water.data)cFree((char *)water.data);
     water.data=NULL;
@@ -581,14 +584,14 @@ int Radio::updateLine()
         }
         v=(real[n]*real[n]+imag[n]*imag[n]);
         if(v > 0.0)v=10*log10(v)+5;
-        lreal[length-n-1]=(1.0-lineAlpha)*lreal[length-n-1]+v*lineAlpha;
-        v=lreal[length-n-1];
+        magnitude[length-n-1]=(1.0-lineAlpha)*magnitude[length-n-1]+v*lineAlpha;
+        v=magnitude[length-n-1];
         if(v < amin)amin=v;
         if(v > amax)amax=v;
     }
     
     if(FindScene(scenel)){
-        lines->plotPutData(scenel,range,lreal,length,0L);
+        lines->plotPutData(scenel,range,magnitude,length,0L);
         
         uGridPlotPtr Plot;
         Plot=lines->lines->Plot;
@@ -617,7 +620,7 @@ int Radio::updateLine()
                 double rr=0;
                 for(int i=ns;i<k;++i){
                     if(i >= length)break;
-                    rr=lreal[i];
+                    rr=magnitude[i];
                     // fprintf(stderr,"i %d rr %g dmin %g\n",i,rr,dmin);
                     if(rr > dmin){
                         dmin=rr;
@@ -655,7 +658,7 @@ int Radio::updateLine()
         ne=2*nsub+1;
     }
     
-    if(FindScene(scenel2))lines2->plotPutData(scenel2,&range[ns],&lreal[ns],ne,0L);
+    if(FindScene(scenel2))lines2->plotPutData(scenel2,&range[ns],&magnitude[ns],ne,0L);
 
     if(water.data == NULL)return 0;
     
@@ -670,7 +673,7 @@ int Radio::updateLine()
     
     if(water.nline >= water.ysize)water.nline=0;
     
-    FloatToImage(lreal,length,&pd,water.ic);
+    FloatToImage(magnitude,length,&pd,water.ic);
     
     int ns1=3*water.xsize*(water.ysize-water.nline-1);
     int ns2=3*water.xsize*water.ysize+3*water.xsize*(water.ysize-1-water.nline++);
@@ -734,11 +737,11 @@ int Radio::BackGroundEvents(struct Scene *scene)
                 //int menu=glutGetMenu();
                 //fprintf(stderr,"k %d menu %d\n",(int)k,menu);
                 if(rx->device->readSetting(flags[k].key) == "true"){
-                    glutChangeToMenuEntry(1,"true",(int)(5000+2*k));
-                    glutChangeToMenuEntry(2,"",(int)(5000+2*k+1));
+                    glutChangeToMenuEntry(1,"(x) true",(int)(5000+2*k));
+                    glutChangeToMenuEntry(2,"(  ) false",(int)(5000+2*k+1));
                 }else{
-                    glutChangeToMenuEntry(1,"",(int)(5000+2*k));
-                    glutChangeToMenuEntry(2,"false",(int)(5000+2*k+1));
+                    glutChangeToMenuEntry(1,"(  ) true",(int)(5000+2*k));
+                    glutChangeToMenuEntry(2,"(x) false",(int)(5000+2*k+1));
                 }
             }
         }
@@ -1381,7 +1384,7 @@ int Radio::OpenWindows(struct Scene *scene)
                 flagsmenu[k]=glutCreateMenu(doBiasMode);
                 if(rx->device->readSetting(flags[k].key) == "true"){
                     glutAddMenuEntry("true",(int)(5000+2*k));
-                    glutAddMenuEntry("",(int)(5000+2*k+2));
+                    glutAddMenuEntry("",(int)(5000+2*k+1));
                 }else{
                     glutAddMenuEntry("",(int)(5000+2*k));
                     glutAddMenuEntry("false",(int)(5000+2*k+1));
@@ -1438,7 +1441,7 @@ int Radio::OpenWindows(struct Scene *scene)
     
     lines = CLines::CLinesOpen(scenel,window);
     
-    lines->plotPutData(scenel,range,dose,rx->FFTcount,-1L);
+    lines->plotPutData(scenel,range,magnitude,rx->FFTcount,-1L);
     
     lines->sceneSource=sceneOpen;
     
@@ -1472,7 +1475,7 @@ int Radio::OpenWindows(struct Scene *scene)
     
     lines2 = CLines::CLinesOpen(scenel2,-1000);
     
-    lines2->plotPutData(scenel2,range,dose,rx->FFTcount,-1L);
+    lines2->plotPutData(scenel2,range,magnitude,rx->FFTcount,-1L);
     
     lines2->sceneSource=sceneOpen;
     
@@ -1861,8 +1864,8 @@ int Radio::resetDemod()
     RadioPtr myAppl=this;
     
     for(int n=0;n<myAppl->FFTlength;++n){
-        myAppl->lreal[n]=0;
-        myAppl->limag[n]=0;
+        myAppl->frequencies[n]=0;
+        myAppl->ampitude[n]=0;
     }
     
     for(int y=0;y<myAppl->water.ysize*2;++y){

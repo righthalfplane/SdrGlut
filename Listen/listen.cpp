@@ -705,7 +705,7 @@ int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
 
 		gain=rx->gain;
 	
-		if(gain <= 0.0)gain=1.0;
+		if(gain < 0.0)gain=1.0;
 	
 		for (size_t i=0; i<num2; i++ ) {
 			double v;

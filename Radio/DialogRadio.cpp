@@ -466,6 +466,7 @@ static void control_cb(int control)
     else if(control == 8)
     {
         s->stopPlay(s->rx);
+        
         s->rx->scaleFactor=scaleFactor;
         s->rx->gain=gain;
         s->rx->fc=fc;
@@ -475,6 +476,12 @@ static void control_cb(int control)
         s->rx->bandwidth=bandwidth;
         s->rx->audioThreads=audioThreads;
 
+        RadioPtr ff=s->findMate(s->rx);
+        if(ff){
+            ff->rx->samplerate=sameleRate;
+            ff->rx->bandwidth=bandwidth;
+        }
+        
         if(s->pd.UsePlotScales)
         {
             s->pd.sPmin=dmin;
@@ -482,8 +489,8 @@ static void control_cb(int control)
         }
         
         for(int n=0;n<s->FFTlength;++n){
-            s->lreal[n]=0;
-            s->limag[n]=0;
+            s->frequencies[n]=0;
+            s->ampitude[n]=0;
         }
         
         for(int y=0;y<s->water.ysize*2;++y){
