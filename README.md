@@ -8,7 +8,8 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.16
 
 ## Demo videos
 
-- [Sdrplay RSPDuo running in Duel Tuner mode with SdrGlut](https://youtu.be/ShLUdb3Rdvs)
+- [SDRplay RSPduo demonstrates the independent RX mode on the Raspberry Pi 4](https://youtu.be/17eJI8KIkYg)
+- [SDRplay RSPduo running in Duel Tuner mode with SdrGlut](https://youtu.be/ShLUdb3Rdvs)
 - [LimeSDR mini displays air traffic information (ADS-B) using dump1090](https://youtu.be/ZuXhtdZZ25Y)
 - [SdrGlut tracks marine traffic using gnuais.](https://youtu.be/d1VfGnIB0xI)
 - [SdrGlut decodes digital transmissions with FLdigi](https://youtu.be/8sQrpdutwgI)
