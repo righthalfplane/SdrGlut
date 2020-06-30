@@ -31,6 +31,7 @@ static void textbox_cb(GLUI_Control *control) {
 
 static int SetInsertQ(struct QStruct *q);
 
+static void menu_select(int item);
 
 int doFrequnecyFile(char *name);
 
@@ -47,6 +48,7 @@ class GLUIAPI GLUI_TextBox2 : public GLUI_TextBox
 {
 public:
     virtual int mouse_down_handler( int local_x, int local_y );
+    int  key_handler( unsigned char key,int modifiers );
     virtual int special_handler( int key, int modifiers);
     GLUI_TextBox2( GLUI_Node *parent, bool scroll = false,
                   int id=-1, GLUI_CB cb=GLUI_CB() );
@@ -55,9 +57,79 @@ public:
 
 static GLUI_TextBox2 *moo;
 
+int GLUI_TextBox2::key_handler(unsigned char key, int modifiers)
+{
+  //  fprintf(stderr,"key %d\n",key);
+    
+    const char *test=moo->get_text();
+
+    if(key == 6){
+        
+        menu_select(31);
+        
+        int ns=moo->sel_end+1;
+        
+        if(ns >= (int)(strlen(test)-1)){
+            moo->update_and_draw_text();
+            return false;
+        }
+
+        moo->sel_start=moo->sel_end+1;
+        
+        for(int n=moo->sel_end+1;n<(int)strlen(test);++n){
+            if(test[n] == '\n'){
+                moo->sel_end=n;
+                break;
+            }
+        }
+        
+        moo->insertion_pt=moo->sel_end+1;
+        moo->update_and_draw_text();
+
+        return false;
+    }else if(key == 2){
+
+        int ns=moo->sel_start-2;
+        
+        if(ns < 0){
+            ns=moo->sel_start=0;
+            moo->sel_end=(int)strlen(test);
+            for(int n=1;n<(int)strlen(test);++n){
+                if(test[n] == '\n'){
+                    moo->sel_end=n;
+                    break;
+                }
+            }
+
+        }else{
+            moo->sel_end=moo->sel_start-1;
+            
+            moo->sel_start=0;
+            
+            for(int n=ns;n>0;--n){
+                if(test[n] == '\n'){
+                    moo->sel_start=n+1;
+                    break;
+                }
+            }
+        }
+ 
+        menu_select(31);
+        
+        moo->update_and_draw_text();
+
+        return false;
+    }
+    GLUI_TextBox::key_handler( key, modifiers);
+
+    return false;
+
+}
 int GLUI_TextBox2::special_handler( int key, int modifiers)
 {
-//    fprintf(stderr,"key %d\n",key);
+//     fprintf(stderr,"key %d\n",key);
+    
+    if(key == 114)return false;
     
 //    int ptsave=moo->insertion_pt;
     
@@ -303,17 +375,6 @@ static void menu_select(int item)
         
         sendMessageGlobal(&buff[n1],&buff[n2],M_SEND);
         
-        moo->sel_start=moo->sel_end+1;
-        
-        for(int n=moo->sel_end+1;n<(int)strlen(test);++n){
-            if(test[n] == '\n'){
-                moo->sel_end=n;
-                break;
-            }
-        }
-        
-        moo->insertion_pt=moo->sel_end+1;
-        moo->update_and_draw_text();
     }
 }
 static void iddle(void){
