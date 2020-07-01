@@ -2,9 +2,11 @@
 
 SdrGlut is a simple software defined radio player. Using glut for drawing and glui for its dialogs makes it tiny compared to programs that use QT5 or wxWidgets. SdrGlut uses liquid-sdr and SoapySDR to preform the SDR calculations. The audio is handled by OpenAL and RtAudio.
 
-The Sixteenth Release is now avaliable. SdrGlut now has a send option where it uses tcp/ip to transfer the I/Q stream to other programs. Listen is an example of a program that receives the data. Listen can decode AM, FM, NBFM, USB, LSB and output the audio to the speakers or another program. SdrGlut now has digital filter design mode. It can do highpass, lowpass, bandpass and bandstop filters. Best of all - it generates a c++ program that implements and tests the filter - so there is no question about how to make it work. It adds Voltage bias for powered antennas and Direct Sample Mode for RTL devices. It adds a window that can use the transmit capable SDRs to send AM, NBFM, USB, and LSB. It has a prebuild exe for macOS, a zipped folder for Windows and a zipped folder for Ubuntu 18.04 to unpack and run from
+The Duel Tuner Release is now avaliable. This version has the Duel Tuner mode. It can independently the two channels of the SDRplay RSPduo.  Thanks to Franco for the fixes to SoapySDRplay. The MacOS version has the RSPduo version of the library included - for the other versions it needs to be built from the source to support the RSPduo. The Duel Tuner mode should work with other Soapy duel tuner devices - let me know if you have some luck.
 
-https://github.com/righthalfplane/SdrGlut/releases/tag/v1.16
+SdrGlut now has a send option where it uses tcp/ip to transfer the I/Q stream to other programs. Listen is an example of a program that receives the data. Listen can decode AM, FM, NBFM, USB, LSB and output the audio to the speakers or another program. SdrGlut now has digital filter design mode. It can do highpass, lowpass, bandpass and bandstop filters. Best of all - it generates a c++ program that implements and tests the filter - so there is no question about how to make it work. It adds Voltage bias for powered antennas and Direct Sample Mode for RTL devices. It adds a window that can use the transmit capable SDRs to send AM, NBFM, USB, and LSB. It has a prebuild exe for macOS, a zipped folder for Windows and a zipped folder for Ubuntu 18.04 to unpack and run from
+
+https://github.com/righthalfplane/SdrGlut/releases/tag/v1.17
 
 ## Demo videos
 
