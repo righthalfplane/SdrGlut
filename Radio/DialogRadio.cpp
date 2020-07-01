@@ -294,7 +294,9 @@ int Radio::dialogRadio(struct Scene *scene)
     new GLUI_Button(obj_panel, "Search", 2222, control_cb);
     
     new GLUI_Button(obj_panel, "Write", 2223, control_cb);
-
+    
+    new GLUI_Button(obj_panel, "Scan", 2224, control_cb);
+    
     obj_panel =  dd.glui->add_panel( "Bandwidth + Audio Thread Count" );
 
     dd.edittext15 =
@@ -412,6 +414,7 @@ static void control_cb(int control)
         }
     } else if(control == 2223){
         fprintf(stderr,"start write\n");
+        s->scanCount=0;
         int ns = -1;
         double peak=-160;
         double bw=s->rx->bw;
@@ -429,11 +432,19 @@ static void control_cb(int control)
                     static int count;
                     char *Mode_Names[] = {(char *)"FM",(char *)"NBFM",(char *)"AM",(char *)"NAM",(char *)"USB",(char *)"LSB",(char *)"CW"};
                     if(s->frequencies[n] < fStart+bw)continue;
+                    int nn = -s->scanCount--;
+                    s->scanFrequencies[nn]=s->frequencies[ns];
+                    if(s->scanCount < -198)s->scanCount = -198;
                     WarningPrint("F%d,%0.4f,%s\n",count++,s->frequencies[ns]/1e6,Mode_Names[s->rx->decodemode]);
                     ns=-1;
                     peak=-160;
                 }
             }
+        }
+    } else if(control == 2224){
+        s->rx->cutOFF=cutOFF;
+        if(s->scanCount != 0){
+            s->scanCount = -s->scanCount;
         }
     } else if(control == 4){
         s->rx->gain=gain;

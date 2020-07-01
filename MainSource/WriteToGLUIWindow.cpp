@@ -29,8 +29,6 @@ static void textbox_cb(GLUI_Control *control) {
     //printf("Got textbox callback\n");
 }
 
-static int SetInsertQ(struct QStruct *q);
-
 static void menu_select(int item);
 
 int doFrequnecyFile(char *name);
@@ -135,23 +133,6 @@ int GLUI_TextBox2::special_handler( int key, int modifiers)
     
     GLUI_TextBox::special_handler( key, modifiers);
     
-/*
-    if(key == 103){
-        moo->sel_start=ptsave+1;
-        moo->sel_end=moo->insertion_pt;
-    }else if(key == 101){
-        const char *test=moo->get_text();
-        int nn=-1;
-        for(int n=moo->insertion_pt-1;n>0;--n){
-            if(test[n] == '\n'){
-                nn=n;
-                break;
-            }
-        }
-        moo->sel_start=nn+1;
-        moo->sel_end=moo->insertion_pt;
-    }
-*/
     return false;
 }
 int GLUI_TextBox2::mouse_down_handler( int local_x, int local_y)
@@ -241,13 +222,15 @@ static void SaveIt(struct Scene *scene,char *name)
 
 int rxScan(void *rxv)
 {
-    static char buff[4096];
-    int n;
+     int n;
     
     const char *test=moo->get_text();
+    
+    char *buff = new char[strlen(test)+10];
+    
     int start=moo->sel_start;
     int end=moo->sel_end;
-    fprintf(stderr,"Start Scan start %d end %d\n",start,end);
+   // fprintf(stderr,"Start Scan start %d end %d\n",start,end);
     if(start > end){
         n=start;
         start=end;
@@ -260,35 +243,32 @@ int rxScan(void *rxv)
         }else{
             buff[n++]=test[k];
         }
-        if(n > 4094)break;
     }
     buff[n++]=0;
- 
+
+    sendMessageGlobal((char *)"0",(char *)"0",M_FREQUENCY_SCAN);
     
-    while(scanFlag){
-      int n1=-1;
-      int n2=-1;
-      for(int k=0;k<n;++k){
-          if(n1 == -1 && buff[k] == 0){
-            n1=k+1;
-          }else if(n1 > -1 && n2 == -1 && buff[k] == 0){
-              if(!scanFlag)return 0;
-              n2=k+1;
-              fprintf(stderr,"buff1 %s buff2 %s\n",&buff[n1],&buff[n2]);
-              sendMessageGlobal(&buff[n1],&buff[n2],M_SEND);
-              for(int i=n2;i<n;++i){
-                  if(buff[i] == 0){
-                      k=i;
-                      break;
-                  }
+    int n1=-1;
+    int n2=-1;
+    for(int k=0;k<n;++k){
+      if(n1 == -1 && buff[k] == 0){
+        n1=k+1;
+      }else if(n1 > -1 && n2 == -1 && buff[k] == 0){
+          n2=k+1;
+         // fprintf(stderr,"buff1 %s buff2 %s\n",&buff[n1],&buff[n2]);
+          sendMessageGlobal(&buff[n1],&buff[n2],M_FREQUENCY_SCAN);
+          for(int i=n2;i<n;++i){
+              if(buff[i] == 0){
+                  k=i;
+                  break;
               }
-              n1=-1;
-              n2=-1;
-              Sleep2(4000);
           }
+          n1=-1;
+          n2=-1;
       }
     }
-    
+    sendMessageGlobal((char *)"-1",(char *)"-1",M_FREQUENCY_SCAN);
+
     return 1;
 }
 static void menu_select(int item)
@@ -414,10 +394,10 @@ int WriteToGLUIWindow(char *message)
         moo->set_h(400);
         moo->set_w(610);
         
-     //   GLUI_Master.set_glutIdleFunc(iddle);
+        // GLUI_Master.set_glutIdleFunc(iddle);
 
-     //   GLUI_Panel *panel3 = new GLUI_Panel(glui, "Scan Frequencies");
-     //   new GLUI_Button(panel3, "Stop", 401, menu_select);
+        GLUI_Panel *panel3 = new GLUI_Panel(glui, "Scan Frequencies");
+        new GLUI_Button(panel3, "Stop", 401, menu_select);
 
         window=glutGetWindow();
         
@@ -426,7 +406,7 @@ int WriteToGLUIWindow(char *message)
 		glutCreateMenu(menu_select);
 		
         glutAddMenuEntry("Set Frequency", 31);
-    //    glutAddMenuEntry("Scan Frequencies", 400);
+        glutAddMenuEntry("Send Scan Frequencies", 400);
         glutAddMenuEntry("Copy", 35);
         glutAddMenuEntry("Paste", 36);
         glutAddMenuEntry("Save", 32);
@@ -441,41 +421,22 @@ int WriteToGLUIWindow(char *message)
         
 	}
         if(moo){
-            //fprintf(stderr,"point %d window %d\n",moo->insertion_pt,glutGetWindow());
             if(moo->insertion_pt == -2){
                 moo->insertion_pt = -1;
                 moo->text=message;
-                //fprintf(stderr,"1 moo->insertion_pt %d length %lu\n",moo->insertion_pt,strlen(message));
                 insert=(int)strlen(message);
-                moo->insertion_pt += (int)strlen(message);
+                moo->insertion_pt += (int)strlen(message)+1;
             }else{
                 if(moo->insertion_pt == -1){
                     moo->insertion_pt=insert;
-                    //fprintf(stderr,"3 moo->insertion_pt %d\n",moo->insertion_pt);
                }
-               //fprintf(stderr,"2 moo->insertion_pt %d\n",moo->insertion_pt);
                 moo->text.insert(moo->insertion_pt,message);
                 moo->insertion_pt += (int)strlen(message);
                 insert=moo->insertion_pt;
                 moo->redraw_window();
             }
         }
-        //if(moo)moo->text.insert(moo->insertion_pt,message);
-		/* qBackground(NULL,(int (*)(void *))SetInsertQ); */
-
-	
   
 	return 0;
 }
-static int SetInsertQ(struct QStruct *q)
-{
-	GLUI *glui;
-	
-	glui = GLUI_Master.find_glui_by_window_id(gluiID);
 
-	if(glui)moo->insertion_pt = -1;
-	
-//ErrorOut:
-    if(q)q->launched =  -1;
-	return 0;
-}

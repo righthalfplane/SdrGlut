@@ -100,6 +100,14 @@ void doDirectSampleMode(int item);
 void doBiasMode(int item);
 void doFilterMenu(int item);
 
+int Radio::fftIndex(double frequency)
+{
+    int index=(int)(0.5+rx->FFTcount*((frequency - rx->fc)+0.5*rx->samplerate)/rx->samplerate);
+    if(index >= 0 && index < rx->FFTcount-1)return index;
+    return -1;
+}
+
+
 Radio *Radio::findMate(struct playData *rx)
 {
     if(!Root)return NULL;
@@ -250,6 +258,8 @@ Radio::Radio(struct Scene *scene,SoapySDR::Kwargs deviceArgs): CWindow(scene)
 	pd.sType = 2;
     
     backGroundEvents=0;
+    
+    scanCount=0;
     
     char sdevice[10];
     
@@ -619,6 +629,25 @@ int Radio::updateLine()
                 ampitude[k]=magnitude[k];
             }
         }
+        
+        if(scanCount > 0){
+           // fprintf(stderr,"scanCount %d low %d mid %d high %d\n",scanCount,fftIndex(rx->fc-0.5*rx->samplerate),fftIndex(rx->fc),fftIndex(rx->fc+0.5*rx->samplerate-1.0*rx->samplerate/4096.0));
+            
+            for(int k=0;k<scanCount;++k){
+                int n1=fftIndex(scanFrequencies[k]-rx->bw);
+                int n2=fftIndex(scanFrequencies[k]+rx->bw);
+                if(n1 < 0 || n2 < 0)continue;
+                int ifound=0;
+                for(int m=n1;m<=n2;++m){
+                    if(magnitude[m] > rx->cutOFF){
+                        ifound=1;
+                        break;
+                    }
+                }
+                fprintf(stderr,"k %d ifound %d\n",k,ifound);
+            }
+            
+        }
     }
     long ns,ne,nsub;
     nsub=length/20;
@@ -762,7 +791,25 @@ int Radio::sendMessage(char *m1,char *m2,int type)
         
         glutSetWindow(wnd);
 
-    }
+    }else if(type == M_FREQUENCY_SCAN){
+        if(!strcmp(m1,"0")){
+            //fprintf(stderr,"Start scan\n");
+            scanCount=0;
+            return 0;
+        }else if(!strcmp(m1,"-1")){
+            //fprintf(stderr,"Stop scan scanCount %d\n",scanCount);
+           return 0;
+        }
+        //fprintf(stderr,"Radio m1 %s m2 %s type %d\n",m1,m2,type);
+        
+        int n = -scanCount;
+        scanFrequencies[n]=atof(m1);
+        //fprintf(stderr,"scanFrequency %g\n",scanFrequencies[n]);
+        --scanCount;
+        if(scanCount < -198){
+            scanCount = -198;
+        }
+   }
     
     return 0;
 }

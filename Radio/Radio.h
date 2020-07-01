@@ -284,6 +284,8 @@ public:
     
     int setFrequency(double frequency);
     
+    int fftIndex(double frequency);
+    
     int setFc(double frequency);
     
     int Transmit(struct Scene *scene);
@@ -360,6 +362,10 @@ public:
     int *flagsmenu;
     int flagsflag;
     int inuseflag;
+    
+    double scanFrequencies[200];
+    int scanCount;
+    
 
 };
 
