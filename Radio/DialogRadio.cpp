@@ -297,6 +297,13 @@ int Radio::dialogRadio(struct Scene *scene)
     
     new GLUI_Button(obj_panel, "Scan", 2224, control_cb);
     
+    msprintf(dd.text21,sizeof(dd.text21),"%g",pauseTimeDelta);
+    
+    dd.edittext21 =
+    dd.glui->add_edittext_to_panel( obj_panel,  "Pause Time:", GLUI_EDITTEXT_TEXT, dd.text21);
+    dd.edittext21->w=200;
+
+    
     obj_panel =  dd.glui->add_panel( "Bandwidth + Audio Thread Count" );
 
     dd.edittext15 =
@@ -383,6 +390,7 @@ static void control_cb(int control)
 {
 	std::string file_name;
     double f,fc,gain,lineAlpha,scaleFactor;
+    double pauseTimeDelta;
     double dmin,dmax;
     double sameleRate;
     double bandwidth;
@@ -403,6 +411,7 @@ static void control_cb(int control)
     sscanf(s->dd.edittext7->get_text(),"%lg", &dmin);
     sscanf(s->dd.edittext8->get_text(),"%lg", &dmax);
     sscanf(s->dd.edittext20->get_text(),"%lg", &cutOFF);
+    sscanf(s->dd.edittext21->get_text(),"%lg", &pauseTimeDelta);
 
     
     if(control == 2222){
@@ -442,9 +451,17 @@ static void control_cb(int control)
             }
         }
     } else if(control == 2224){
+        s->pauseTime=rtime()+s->pauseTimeDelta;
+        s->pauseChannel=0;
         s->rx->cutOFF=cutOFF;
         if(s->scanCount != 0){
             s->scanCount = -s->scanCount;
+        }
+        if(s->scanCount < 0) {
+            s->setFrequency2(s->rx);
+            fprintf(stderr,"Stop Scane\n");
+        }else{
+            fprintf(stderr,"Start Scane scanCount %d\n",s->scanCount);
         }
     } else if(control == 4){
         s->rx->gain=gain;
@@ -469,7 +486,7 @@ static void control_cb(int control)
     {
         s->rx->fc=fc;
         s->rx->f=f;
-        s->setFrequency(s->rx);
+        s->setFrequency2(s->rx);
     }
     else if(control == 7)
     {

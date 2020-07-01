@@ -261,6 +261,44 @@ Radio::Radio(struct Scene *scene,SoapySDR::Kwargs deviceArgs): CWindow(scene)
     
     scanCount=0;
     
+    lineDumpInterval=0.1;
+    lineTime=rtime()+lineDumpInterval;
+    
+    lineAlpha=0.1;
+    
+    FFTlength=32768;
+    
+    range=NULL;
+    magnitude=NULL;
+    
+    frequencies=NULL;
+    ampitude=NULL;
+    
+    
+    range=(double *)cMalloc(FFTlength*sizeof(double),9851);
+    magnitude=(double *)cMalloc(FFTlength*sizeof(double),9851);
+    
+    frequencies=(double *)cMalloc(FFTlength*sizeof(double),9851);
+    ampitude=(double *)cMalloc(FFTlength*sizeof(double),9851);
+    
+    
+    
+    if(!range || !magnitude || !frequencies || !ampitude)return;
+    
+    zerol((char *)range,FFTlength*sizeof(double));
+    zerol((char *)magnitude,FFTlength*sizeof(double));
+    
+    zerol((char *)frequencies,FFTlength*sizeof(double));
+    zerol((char *)ampitude,FFTlength*sizeof(double));
+    
+    flagsflag=0;
+    
+    pauseTimeDelta=3.0;
+    
+    pauseTime=rtime();
+    
+    pauseChannel=0;
+
     char sdevice[10];
     
     sprintf(sdevice,"%d",device);
@@ -282,37 +320,6 @@ Radio::Radio(struct Scene *scene,SoapySDR::Kwargs deviceArgs): CWindow(scene)
     
     //fprintf(stderr,"Radio::Radio\n");
     
-    lineDumpInterval=0.1;
-    lineTime=rtime()+lineDumpInterval;
-    
-    lineAlpha=0.1;
-    
-    FFTlength=32768;
-    
-    range=NULL;
-    magnitude=NULL;
-    
-    frequencies=NULL;
-    ampitude=NULL;
-    
-
-    range=(double *)cMalloc(FFTlength*sizeof(double),9851);
-    magnitude=(double *)cMalloc(FFTlength*sizeof(double),9851);
-    
-    frequencies=(double *)cMalloc(FFTlength*sizeof(double),9851);
-    ampitude=(double *)cMalloc(FFTlength*sizeof(double),9851);
-    
-    
-
-    if(!range || !magnitude || !frequencies || !ampitude)return;
-    
-    zerol((char *)range,FFTlength*sizeof(double));
-    zerol((char *)magnitude,FFTlength*sizeof(double));
-    
-    zerol((char *)frequencies,FFTlength*sizeof(double));
-    zerol((char *)ampitude,FFTlength*sizeof(double));
-    
-    flagsflag=0;
     
     OpenError=FALSE;
 }
@@ -630,25 +637,50 @@ int Radio::updateLine()
             }
         }
         
-        if(scanCount > 0){
-           // fprintf(stderr,"scanCount %d low %d mid %d high %d\n",scanCount,fftIndex(rx->fc-0.5*rx->samplerate),fftIndex(rx->fc),fftIndex(rx->fc+0.5*rx->samplerate-1.0*rx->samplerate/4096.0));
-            
+        if(scanCount > 0){            
+            int ifound=0;
             for(int k=0;k<scanCount;++k){
+                scanFound[k]=0;
                 int n1=fftIndex(scanFrequencies[k]-rx->bw);
                 int n2=fftIndex(scanFrequencies[k]+rx->bw);
                 if(n1 < 0 || n2 < 0)continue;
-                int ifound=0;
                 for(int m=n1;m<=n2;++m){
                     if(magnitude[m] > rx->cutOFF){
+                        scanFound[k]=1;
                         ifound=1;
                         break;
                     }
                 }
-                fprintf(stderr,"k %d ifound %d\n",k,ifound);
             }
-            
+            if(ifound){
+                if(scanFound[pauseChannel]){
+                    if(rtime() < pauseTime)goto FoundTime;
+                }
+                
+                pauseTime=rtime()+pauseTimeDelta;
+                if(++pauseChannel >= scanCount)pauseChannel=0;
+                for(int k=pauseChannel;k<scanCount;++k){
+                    if(scanFound[k]){
+                        pauseChannel=k;
+                        //fprintf(stderr,"Select channel %d\n",pauseChannel);
+                        rx->f=scanFrequencies[k];
+                        setFrequency3(rx);
+                        goto FoundTime;
+                    }
+                }
+                for(int k=0;k<pauseChannel;++k){
+                    if(scanFound[k]){
+                        pauseChannel=k;
+                        //fprintf(stderr,"Select channel %d\n",pauseChannel);
+                        rx->f=scanFrequencies[k];
+                        setFrequency3(rx);
+                        goto FoundTime;
+                    }
+                }
+            }
         }
     }
+FoundTime:
     long ns,ne,nsub;
     nsub=length/20;
     ns=nf-nsub;
@@ -787,7 +819,7 @@ int Radio::sendMessage(char *m1,char *m2,int type)
             rx->fc=ff+rx->bw;
         }
 
-        setFrequency(rx);
+        setFrequency2(rx);
         
         glutSetWindow(wnd);
 
@@ -803,7 +835,7 @@ int Radio::sendMessage(char *m1,char *m2,int type)
         //fprintf(stderr,"Radio m1 %s m2 %s type %d\n",m1,m2,type);
         
         int n = -scanCount;
-        scanFrequencies[n]=atof(m1);
+        scanFrequencies[n]=1.0e6*atof(m1);
         //fprintf(stderr,"scanFrequency %g\n",scanFrequencies[n]);
         --scanCount;
         if(scanCount < -198){
@@ -831,7 +863,7 @@ int Radio::SetFrequency(struct Scene *scene,double f,double bw, int message)
         rx->f=f;
         if(fabs(f-rx->fc) > 0.5*rx->samplerate){
             rx->fc=f;
-            setFrequency(rx);
+            setFrequency2(rx);
             return 0;
        }
         setFrequencyCoefficients(rx);
@@ -846,7 +878,7 @@ int Radio::SetFrequency(struct Scene *scene,double f,double bw, int message)
     
     fcount=0;
     
-    setFrequency(rx);
+    setFrequency2(rx);
     
     return 0;
 }
@@ -863,7 +895,41 @@ int Radio::setFrequencyCoefficients(struct playData *rx)
 
     return 0;
 }
-int Radio::setFrequency(struct playData *rx)
+
+int Radio::setFrequency3(struct playData *rx)
+{
+    
+    setDialogFrequency(rx->f);
+    
+    setFrequency(rx->f);
+    
+    setDialogFc(rx->fc);
+    
+    setFrequencyCoefficients(rx);
+    
+    rx->aminGlobal=0;
+    
+    rx->amaxGlobal=0;
+    
+    rx->aminGlobal2=0;
+    
+    rx->amaxGlobal2=0;
+    
+    rx->averageGlobal=0;
+    
+    rx->m_SMeter.Reset();
+    
+    if(FindScene(scenel2)){
+        SetFrequencyGlobal(scenel2, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
+    }
+    
+    if(FindScene(scenel)){
+        SetFrequencyGlobal(scenel, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
+    }
+
+    return 0;
+}
+int Radio::setFrequency2(struct playData *rx)
 {
     
     
@@ -875,33 +941,8 @@ int Radio::setFrequency(struct playData *rx)
             setFrequencyDuo(rx);
         }
         
-        setDialogFrequency(rx->f);
+        setFrequency3(rx);
         
-        setFrequency(rx->f);
-        
-        setDialogFc(rx->fc);
-        
-        setFrequencyCoefficients(rx);
-        
-        rx->aminGlobal=0;
-        
-        rx->amaxGlobal=0;
-        
-        rx->aminGlobal2=0;
-        
-        rx->amaxGlobal2=0;
-        
-        rx->averageGlobal=0;
-        
-        rx->m_SMeter.Reset();
-        
-        if(FindScene(scenel2)){
-           SetFrequencyGlobal(scenel2, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
-        }
-        
-        if(FindScene(scenel)){
-            SetFrequencyGlobal(scenel, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
-        }
     }
     catch (...)
     {
@@ -1906,7 +1947,7 @@ int Radio::resetDemod()
     
     myAppl->rx->psdrSetMode(myAppl->rx);
 
-    myAppl->setFrequency(myAppl->rx);
+    myAppl->setFrequency2(myAppl->rx);
     
    // myAppl->rx->pstopPlay(myAppl->rx);
     
@@ -2037,7 +2078,7 @@ static void getMousel(int button, int state, int x, int y)
                 if(fabs(fl-sdr->rx->fc) > 0.5*sdr->rx->samplerate){
                     sdr->rx->fc=fl;
                 }
-                sdr->setFrequency(sdr->rx);
+                sdr->setFrequency2(sdr->rx);
                 break;
             }
         }
@@ -2061,7 +2102,7 @@ static void getMousel(int button, int state, int x, int y)
                 if(fabs(fl-sdr->rx->f) > 0.5*sdr->rx->samplerate){
                     sdr->rx->f=fl;
                 }
-                sdr->setFrequency(sdr->rx);
+                sdr->setFrequency2(sdr->rx);
            }
         }
 
@@ -2084,7 +2125,7 @@ void Radio::getMouse(int button, int state, int x, int y)
         if(fabs(fl-rx->fc) > 0.5*rx->samplerate){
             rx->fc=fl;
         }
-        setFrequency(rx);
+        setFrequency2(rx);
         return;
     }else if(button == 4){
         float fl,bw;
@@ -2096,7 +2137,7 @@ void Radio::getMouse(int button, int state, int x, int y)
         if(fabs(fl-rx->fc) > 0.5*rx->samplerate){
             rx->fc=fl;
         }
-        setFrequency(rx);
+        setFrequency2(rx);
         return;
     }else if(button != 0){
         return;
@@ -2116,11 +2157,11 @@ void Radio::getMouse(int button, int state, int x, int y)
         
         fcount=0;
 
-        setFrequency(rx);
+        setFrequency2(rx);
         
         // printf("fclick %f button %d state %d x %d y %d\n",fclick,button,state,x,y);
     }else{
-        setFrequency(rx);
+        setFrequency2(rx);
     }
 }
 

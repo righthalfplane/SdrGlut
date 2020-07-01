@@ -106,6 +106,7 @@ struct DialogRadioData{
     char text7[255];
     char text8[255];
     char text20[255];
+    char text21[255];
 
     GLUI_EditText *edittext1;
     GLUI_EditText *edittext2;
@@ -119,6 +120,7 @@ struct DialogRadioData{
     GLUI_EditText *edittext7;
     GLUI_EditText *edittext8;
     GLUI_EditText *edittext20;
+    GLUI_EditText *edittext21;
 
     char text1z[255];
     GLUI_EditText *edittext1z[20];
@@ -259,7 +261,8 @@ public:
     int KillScene (struct Scene *scene);
     int dialogRadio (struct Scene *scene);
     int dialogSend(struct Scene *scene);
-    int setFrequency(struct playData *play);
+    int setFrequency2(struct playData *play);
+    int setFrequency3(struct playData *play);
     int setFrequencyDuo(struct playData *play);
     int setFrequencyCoefficients(struct playData *rx);
     int stopPlay(struct playData4 *play);
@@ -364,7 +367,11 @@ public:
     int inuseflag;
     
     double scanFrequencies[200];
+    int scanFound[200];
     int scanCount;
+    double pauseTime;
+    double pauseTimeDelta;
+    int pauseChannel;
     
 
 };
