@@ -290,6 +290,12 @@ int Radio::dialogRadio(struct Scene *scene)
     dd.glui->add_edittext_to_panel( obj_panel,  "Cut Off (db):", GLUI_EDITTEXT_TEXT, dd.text20);
     dd.edittext20->w=200;
 
+  
+    msprintf(dd.text21,sizeof(dd.text21),"%g",pauseTimeDelta);
+
+    dd.edittext21 =
+    dd.glui->add_edittext_to_panel( obj_panel,  "Pause Time:", GLUI_EDITTEXT_TEXT, dd.text21);
+    dd.edittext21->w=200;
     
     new GLUI_Button(obj_panel, "Search", 2222, control_cb);
     
@@ -297,12 +303,7 @@ int Radio::dialogRadio(struct Scene *scene)
     
     new GLUI_Button(obj_panel, "Scan", 2224, control_cb);
     
-    msprintf(dd.text21,sizeof(dd.text21),"%g",pauseTimeDelta);
     
-    dd.edittext21 =
-    dd.glui->add_edittext_to_panel( obj_panel,  "Pause Time:", GLUI_EDITTEXT_TEXT, dd.text21);
-    dd.edittext21->w=200;
-
     
     obj_panel =  dd.glui->add_panel( "Bandwidth + Audio Thread Count" );
 
