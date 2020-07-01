@@ -639,7 +639,8 @@ int Radio::updateLine()
         
         if(scanCount > 0){            
             int ifound=0;
-            for(int k=0;k<scanCount;++k){
+            for(vector<double>::size_type k=0;k<scanFrequencies.size();++k){
+           // for(int k=0;k<scanCount;++k){
                 scanFound[k]=0;
                 int n1=fftIndex(scanFrequencies[k]-rx->bw);
                 int n2=fftIndex(scanFrequencies[k]+rx->bw);
@@ -658,19 +659,19 @@ int Radio::updateLine()
                 }
                 
                 pauseTime=rtime()+pauseTimeDelta;
-                if(++pauseChannel >= scanCount)pauseChannel=0;
-                for(int k=pauseChannel;k<scanCount;++k){
+                if(++pauseChannel >= (int)scanFrequencies.size())pauseChannel=0;
+                for(vector<double>::size_type k=pauseChannel;k<scanFrequencies.size();++k){
                     if(scanFound[k]){
-                        pauseChannel=k;
+                        pauseChannel=(int)k;
                         //fprintf(stderr,"Select channel %d\n",pauseChannel);
                         rx->f=scanFrequencies[k];
                         setFrequency3(rx);
                         goto FoundTime;
                     }
                 }
-                for(int k=0;k<pauseChannel;++k){
+                for(vector<double>::size_type k=0;(int)k<pauseChannel;++k){
                     if(scanFound[k]){
-                        pauseChannel=k;
+                        pauseChannel=(int)k;
                         //fprintf(stderr,"Select channel %d\n",pauseChannel);
                         rx->f=scanFrequencies[k];
                         setFrequency3(rx);
@@ -826,6 +827,7 @@ int Radio::sendMessage(char *m1,char *m2,int type)
     }else if(type == M_FREQUENCY_SCAN){
         if(!strcmp(m1,"0")){
             //fprintf(stderr,"Start scan\n");
+            scanFrequencies.clear();
             scanCount=0;
             return 0;
         }else if(!strcmp(m1,"-1")){
@@ -833,14 +835,8 @@ int Radio::sendMessage(char *m1,char *m2,int type)
            return 0;
         }
         //fprintf(stderr,"Radio m1 %s m2 %s type %d\n",m1,m2,type);
-        
-        int n = -scanCount;
-        scanFrequencies[n]=1.0e6*atof(m1);
-        //fprintf(stderr,"scanFrequency %g\n",scanFrequencies[n]);
+        scanFrequencies.push_back(1.0e6*atof(m1));
         --scanCount;
-        if(scanCount < -198){
-            scanCount = -198;
-        }
    }
     
     return 0;

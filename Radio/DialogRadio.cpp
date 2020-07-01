@@ -423,6 +423,7 @@ static void control_cb(int control)
         }
     } else if(control == 2223){
         fprintf(stderr,"start write\n");
+        s->scanFrequencies.clear();
         s->scanCount=0;
         int ns = -1;
         double peak=-160;
@@ -441,9 +442,8 @@ static void control_cb(int control)
                     static int count;
                     char *Mode_Names[] = {(char *)"FM",(char *)"NBFM",(char *)"AM",(char *)"NAM",(char *)"USB",(char *)"LSB",(char *)"CW"};
                     if(s->frequencies[n] < fStart+bw)continue;
-                    int nn = -s->scanCount--;
-                    s->scanFrequencies[nn]=s->frequencies[ns];
-                    if(s->scanCount < -198)s->scanCount = -198;
+                    s->scanCount--;
+                    s->scanFrequencies.push_back(s->frequencies[ns]);
                     WarningPrint("F%d,%0.4f,%s\n",count++,s->frequencies[ns]/1e6,Mode_Names[s->rx->decodemode]);
                     ns=-1;
                     peak=-160;
@@ -451,6 +451,7 @@ static void control_cb(int control)
             }
         }
     } else if(control == 2224){
+        s->pauseTimeDelta=pauseTimeDelta;
         s->pauseTime=rtime()+s->pauseTimeDelta;
         s->pauseChannel=0;
         s->rx->cutOFF=cutOFF;

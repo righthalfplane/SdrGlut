@@ -18,6 +18,10 @@
 #include <cstdlib>
 #include <cstddef>
 #include <iostream>
+#include <vector>
+
+using namespace std;
+
 //#include <getopt.h>
 
 #include <stdio.h>
@@ -366,7 +370,8 @@ public:
     int flagsflag;
     int inuseflag;
     
-    double scanFrequencies[200];
+    vector<double> scanFrequencies;
+//    double scanFrequencies[200];
     int scanFound[200];
     int scanCount;
     double pauseTime;
