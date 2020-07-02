@@ -423,33 +423,17 @@ static void control_cb(int control)
             s->ampitude[n] = -160;
         }
     } else if(control == 2223){
+        
+        if(s->rx->cutOFFSearch)s->processScan(s->rx);
+        
+        s->rx->cutOFFSearch=0;
+
         fprintf(stderr,"start write\n");
-        s->scanFrequencies.clear();
-        s->scanCount=0;
-        int ns = -1;
-        double peak=-160;
-        double bw=s->rx->bw;
-        double fStart=0;
-        for(int n=20;n<s->rx->FFTcount;++n){
-           if(s->ampitude[n] >= s->rx->cutOFF){
-               if(ns == -1)fStart=s->frequencies[n];
-              // fprintf(stderr,"n %d ns %d %g %g %g\n",n,ns,s->ampitude[n],s->rx->cutOFF,peak);
-                if(s->ampitude[n] > peak){
-                    peak=s->ampitude[n];
-                    ns=n;
-                }
-            }else{
-                if(ns >= 0){
-                    static int count;
-                    char *Mode_Names[] = {(char *)"FM",(char *)"NBFM",(char *)"AM",(char *)"NAM",(char *)"USB",(char *)"LSB",(char *)"CW"};
-                    if(s->frequencies[n] < fStart+bw)continue;
-                    s->scanCount--;
-                    s->scanFrequencies.push_back(s->frequencies[ns]);
-                    WarningPrint("F%d,%0.4f,%s\n",count++,s->frequencies[ns]/1e6,Mode_Names[s->rx->decodemode]);
-                    ns=-1;
-                    peak=-160;
-                }
-            }
+        
+        for(vector<double>::size_type k=0;k<s->scanFrequencies.size();++k){
+            static int count;
+            char *Mode_Names[] = {(char *)"FM",(char *)"NBFM",(char *)"AM",(char *)"NAM",(char *)"USB",(char *)"LSB",(char *)"CW"};
+            WarningPrint("F%d,%0.4f,%s\n",count++,s->scanFrequencies[k]/1e6,Mode_Names[s->rx->decodemode]);
         }
     } else if(control == 2224){
         s->pauseTimeDelta=pauseTimeDelta;
@@ -460,11 +444,16 @@ static void control_cb(int control)
             s->scanCount = -s->scanCount;
         }
         if(s->scanCount < 0) {
-            s->setFrequency2(s->rx);
             fprintf(stderr,"Stop Scane\n");
-        }else{
-            fprintf(stderr,"Start Scane scanCount %d\n",s->scanCount);
-        }
+            s->setFrequency2(s->rx);
+       }else{
+            if(s->rx->cutOFFSearch){
+                s->rx->cutOFFSearch=0;
+                s->processScan(s->rx);
+                s->scanCount=(int)s->scanFrequencies.size();
+            }
+           fprintf(stderr,"Start Scane scanCount %d\n",s->scanCount);
+       }
     } else if(control == 4){
         s->rx->gain=gain;
         s->rx->scaleFactor=scaleFactor;

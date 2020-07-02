@@ -100,6 +100,37 @@ void doDirectSampleMode(int item);
 void doBiasMode(int item);
 void doFilterMenu(int item);
 
+int Radio::processScan(struct playData *rx)
+{
+    
+    scanFrequencies.clear();
+    scanCount=0;
+    int ns = -1;
+    double peak=-160;
+    double bw=rx->bw;
+    double fStart=0;
+    for(int n=20;n<rx->FFTcount;++n){
+        if(ampitude[n] >= rx->cutOFF){
+            if(ns == -1)fStart=frequencies[n];
+            // fprintf(stderr,"n %d ns %d %g %g %g\n",n,ns,s->ampitude[n],s->rx->cutOFF,peak);
+            if(ampitude[n] > peak){
+                peak=ampitude[n];
+                ns=n;
+            }
+        }else{
+            if(ns >= 0){
+                if(frequencies[n] < fStart+bw)continue;
+                scanCount--;
+                 scanFrequencies.push_back(frequencies[ns]);
+                ns=-1;
+                peak=-160;
+            }
+        }
+    }
+    
+    return 0;
+}
+
 int Radio::fftIndex(double frequency)
 {
     int index=(int)(0.5+rx->FFTcount*((frequency - rx->fc)+0.5*rx->samplerate)/rx->samplerate);
@@ -827,6 +858,7 @@ int Radio::sendMessage(char *m1,char *m2,int type)
     }else if(type == M_FREQUENCY_SCAN){
         if(!strcmp(m1,"0")){
             //fprintf(stderr,"Start scan\n");
+            rx->cutOFFSearch=0;
             scanFrequencies.clear();
             scanCount=0;
             return 0;

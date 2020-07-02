@@ -268,6 +268,7 @@ public:
     int setFrequency2(struct playData *play);
     int setFrequency3(struct playData *play);
     int setFrequencyDuo(struct playData *play);
+    int processScan(struct playData *play);
     int setFrequencyCoefficients(struct playData *rx);
     int stopPlay(struct playData4 *play);
     void playRadio (struct playData4 *play);
