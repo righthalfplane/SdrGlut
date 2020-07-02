@@ -357,6 +357,7 @@ static void menu_select(int item)
         
     }
 }
+/*
 static void iddle(void){
     static int nn=0;
     if(rtime() < lineTime)return;
@@ -374,6 +375,7 @@ static void iddle(void){
     }
     return;
 }
+ */
 int WriteToGLUIWindow(char *message)
 {
 	GLUI *glui;
@@ -396,8 +398,8 @@ int WriteToGLUIWindow(char *message)
         
         // GLUI_Master.set_glutIdleFunc(iddle);
 
-        GLUI_Panel *panel3 = new GLUI_Panel(glui, "Scan Frequencies");
-        new GLUI_Button(panel3, "Stop", 401, menu_select);
+        //GLUI_Panel *panel3 = new GLUI_Panel(glui, "Scan Frequencies");
+        //new GLUI_Button(panel3, "Stop", 401, menu_select);
 
         window=glutGetWindow();
         
@@ -407,6 +409,7 @@ int WriteToGLUIWindow(char *message)
 		
         glutAddMenuEntry("Set Frequency", 31);
         glutAddMenuEntry("Send Scan Frequencies", 400);
+        glutAddMenuEntry("-------------", 34);
         glutAddMenuEntry("Copy", 35);
         glutAddMenuEntry("Paste", 36);
         glutAddMenuEntry("Save", 32);
