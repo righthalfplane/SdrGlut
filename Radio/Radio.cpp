@@ -673,12 +673,13 @@ int Radio::updateLine()
             for(vector<double>::size_type k=0;k<scanFrequencies.size();++k){
            // for(int k=0;k<scanCount;++k){
                 scanFound[k]=0;
-                int n1=fftIndex(scanFrequencies[k]-rx->bw);
-                int n2=fftIndex(scanFrequencies[k]+rx->bw);
+                int n1=fftIndex(scanFrequencies[k]-0.3*rx->bw);
+                int n2=fftIndex(scanFrequencies[k]+0.3*rx->bw);
                 if(n1 < 0 || n2 < 0)continue;
                 for(int m=n1;m<=n2;++m){
                     if(magnitude[m] > rx->cutOFF){
                         scanFound[k]=1;
+   //                     fprintf(stderr,"k %d f %.4f fl %.4f fh %.4f\n",(int)k,frequencies[m]/1e6,(scanFrequencies[k]-0.3*rx->bw)/1e6,(scanFrequencies[k]+0.3*rx->bw)/1e6);
                         ifound=1;
                         break;
                     }
@@ -696,6 +697,7 @@ int Radio::updateLine()
                         pauseChannel=(int)k;
                         //fprintf(stderr,"Select channel %d\n",pauseChannel);
                         rx->f=scanFrequencies[k];
+                        //fprintf(stderr,"k %d 1 Frequency Selected %.4f\n",(int)k,scanFrequencies[k]/1e6);
                         setFrequency3(rx);
                         goto FoundTime;
                     }
@@ -705,6 +707,7 @@ int Radio::updateLine()
                         pauseChannel=(int)k;
                         //fprintf(stderr,"Select channel %d\n",pauseChannel);
                         rx->f=scanFrequencies[k];
+                        //fprintf(stderr,"k %d  2 Frequency Selected %.4f\n",(int)k,scanFrequencies[k]/1e6);
                         setFrequency3(rx);
                         goto FoundTime;
                     }
