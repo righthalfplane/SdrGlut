@@ -229,7 +229,7 @@ int Radio::startPlay(struct playData *rx)
 }
 int Radio::setFrequencyDuo(struct playData *rx)
 {
-    rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc);
+    rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc+rx->foffset);
     
     for(int n=0;n<FFTlength;++n){
         frequencies[n]=0;
@@ -794,7 +794,7 @@ int Radio::BackGroundEvents(struct Scene *scene)
     if(!scene || !backGroundEvents)return 1;
     
     if(rx->frequencyReset){
-        rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc);
+        setFrequencyDuo(rx);
         for(int n=0;n<FFTlength;++n){
             frequencies[n]=0;
             ampitude[n] = -160;
@@ -2210,7 +2210,7 @@ static void enterexit(int item)
        
         if(!sdr)return;
         
-        sdr->flagsflag=1;
+        if(!sdr->inuseflag)sdr->flagsflag=1;
         
        // fprintf(stderr,"enterexit item %d\n",item);
     }

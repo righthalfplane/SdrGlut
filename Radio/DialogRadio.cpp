@@ -214,6 +214,7 @@ int Radio::dialogRadio(struct Scene *scene)
 			
 	msprintf(dd.text1,sizeof(dd.text1),"%g",rx->f);
     msprintf(dd.text2,sizeof(dd.text2),"%g",rx->fc);
+    msprintf(dd.text22,sizeof(dd.text22),"%g",rx->foffset);
     msprintf(dd.text3,sizeof(dd.text3),"%g",rx->gain);
     msprintf(dd.text4,sizeof(dd.text4),"%g",lineAlpha);
     msprintf(dd.text5,sizeof(dd.text5),"%g",rx->samplerate);
@@ -233,6 +234,10 @@ int Radio::dialogRadio(struct Scene *scene)
     dd.edittext2 =
     dd.glui->add_edittext_to_panel( obj_panel, "Center Frequency:", GLUI_EDITTEXT_TEXT, dd.text2 );
     dd.edittext2->w=200;
+    
+    dd.edittext22 =
+    dd.glui->add_edittext_to_panel( obj_panel, "Frequency Offset:", GLUI_EDITTEXT_TEXT, dd.text22 );
+    dd.edittext22->w=200;
     
     dd.edittext5 =
     dd.glui->add_edittext_to_panel( obj_panel, "Sample Rate:", GLUI_EDITTEXT_TEXT, dd.text5);
@@ -396,6 +401,7 @@ static void control_cb(int control)
     double sameleRate;
     double bandwidth;
     double cutOFF;
+    double foffset;
     int audioThreads;
     
     RadioPtr s=(RadioPtr)FindSceneRadio(glutGetWindow());
@@ -403,6 +409,7 @@ static void control_cb(int control)
 	
     sscanf(s->dd.edittext1->get_text(),"%lg", &f);
     sscanf(s->dd.edittext2->get_text(),"%lg", &fc);
+    sscanf(s->dd.edittext22->get_text(),"%lg", &foffset);
     sscanf(s->dd.edittext3->get_text(),"%lg", &gain);
     sscanf(s->dd.edittext4->get_text(),"%lg", &lineAlpha);
     sscanf(s->dd.edittext5->get_text(),"%lg", &sameleRate);
@@ -475,6 +482,7 @@ static void control_cb(int control)
 	}
     else if(control == 5)
     {
+        s->rx->foffset=foffset;
         s->rx->fc=fc;
         s->rx->f=f;
         s->setFrequency2(s->rx);
@@ -527,6 +535,7 @@ static void control_cb(int control)
         
         s->rx->scaleFactor=scaleFactor;
         s->rx->gain=gain;
+        s->rx->foffset=foffset;
         s->rx->fc=fc;
         s->rx->f=f;
         s->lineAlpha=lineAlpha;

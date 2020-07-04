@@ -130,6 +130,7 @@ struct playData{
     int nreceive;
     int ntransmit;
     int channel;
+    double foffset;
     double fc;
     double f;
     double dt;

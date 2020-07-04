@@ -821,7 +821,7 @@ cleanup:
     if(!device->getFullDuplex(SOAPY_SDR_TX, 0)){
         extern int AudioReset(struct playData *rx);
         device->setSampleRate(SOAPY_SDR_RX, rx->channel, rx->samplerate);
-        device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc);
+        device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc+rx->foffset);
         rx->rxStream=rx->device->setupStream(SOAPY_SDR_RX, SOAPY_SDR_CF32,(const std::vector<size_t>)0);
         device->activateStream(rx->rxStream);        
         {
