@@ -229,7 +229,7 @@ int Radio::startPlay(struct playData *rx)
 }
 int Radio::setFrequencyDuo(struct playData *rx)
 {
-    rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc+rx->foffset);
+    rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc-rx->foffset);
     
     for(int n=0;n<FFTlength;++n){
         frequencies[n]=0;

@@ -566,7 +566,7 @@ static int playRadio(struct playData *rx)
     
     
     fprintf(stderr,"playRadio frequency %g\n",rx->fc);
-    rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc+rx->foffset);
+    rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc-rx->foffset);
     
     if(rx->bandwidth > 0){
         rx->device->setBandwidth( SOAPY_SDR_RX, rx->channel, rx->bandwidth);
@@ -1484,7 +1484,7 @@ static int findRadio(struct playData *rx)
     
     rx->device->activateStream(rx->rxStream, 0, 0, 0);
    
-    rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc+rx->foffset);
+    rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc-rx->foffset);
 
     
     return 0;
