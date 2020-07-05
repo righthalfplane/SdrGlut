@@ -246,6 +246,7 @@ int Radio::closeScenes()
         if (FindScene(scenel))closeScene(lines->scene);
         if (FindScene(scenel2))closeScene(lines2->scene);
         if (FindScene(scene))closeScene(scene);
+        return 0;
     }
     
     RadioPtr f=findMate(rx);

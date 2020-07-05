@@ -22,64 +22,7 @@
 
 static int TransmitThread(void *rxv);
 static int TransmitThread2(void *rxv);
-class GLUIAPI GLUI_Button2 : public GLUI_Button
-{
-public:
-    RadioPtr s;
-    virtual int mouse_down_handler( int local_x, int local_y );
-    virtual int mouse_up_handler( int local_x, int local_y, bool inside );
-    GLUI_Button2( GLUI_Node *parent, const char *name,RadioPtr s,
-                int id=-1, GLUI_CB cb=GLUI_CB() );
-    
-};
-int GLUI_Button2::mouse_down_handler( int local_x, int local_y )
- {
-     double fc,foffset;
-     
-     sscanf(s->tt.edittext2->get_text(),"%lg", &fc);
-     sscanf(s->tt.edittext1->get_text(),"%lg", &foffset);
-     
-  //  fprintf(stderr,"mouse_down_handler\n");
-    if(s->tt.doTransmit == 0){
-         s->tt.fc=fc;
-         s->tt.foffset=foffset;
-         //s->rx->pstopPlay(s->rx);
-         s->tt.doTransmit=1;
-         launchThread((void *)s,TransmitThread);
-     }
-     
-     GLUI_Button::mouse_down_handler( local_x, local_y);
-     
-     return false;
-     
- }
-int GLUI_Button2::mouse_up_handler( int local_x, int local_y, bool inside )
-{
-   //fprintf(stderr,"mouse_up_handler %d \n",s->tt.doTransmit);
-    if(s->tt.doTransmit == 1){
-        s->tt.doTransmit=0;
-        int count=0;
-        while(s->tt.doTransmit == 0){
-           Sleep2(10);
-            if(++count > 200)break;
-        }
-        //fprintf(stderr,"count2 %d %d\n",count2,s->tt.doTransmit);
-        s->tt.doTransmit=0;
-        //s->rx->pstartPlay(s->rx);
-        //s->rx->pplayRadio(s->rx);
-    }
-    
-    GLUI_Button::mouse_up_handler( local_x, local_y,inside );
 
-    return false;
-    
-}
-
-GLUI_Button2::GLUI_Button2( GLUI_Node *parent, const char *name,RadioPtr ss,
-                           int id, GLUI_CB cb) : GLUI_Button(parent,name,id,cb)
-{
-    s=ss;
-}
 
 #define Apply_Button   8
 
@@ -341,13 +284,8 @@ int Radio::Transmit(struct Scene *scene)
     tt.edittext1->w=200;
     
     obj_panel =  tt.glui->add_panel( "Controls" );
-
-    //tt.talk=new GLUI_Button2(obj_panel, "Push to Talk", this, Start_Button, control_cb);
-    //tt.talk->set_name("this is me");
     
     tt.talk=new GLUI_Button(obj_panel, "Push to Send", Stop_Button, control_cb);
-    
-    // new GLUI_Button(obj_panel, "Key", Key_Button, control_cb);
     
     new GLUI_Button(obj_panel, "Close", 2, control_cb);
     
@@ -461,7 +399,7 @@ static void control_cb(int control)
     
     RadioPtr s=(RadioPtr)FindTransmit(glutGetWindow());
     if(!s)return;
-    
+        
     sscanf(s->tt.edittext2->get_text(),"%lg", &fc);
     sscanf(s->tt.edittext1->get_text(),"%lg", &foffset);
 
@@ -490,14 +428,17 @@ static void control_cb(int control)
     }
     else if(control == Stop_Button)
     {
-       // fprintf(stderr,"Stop_Button %d\n",control);
+        fprintf(stderr,"Stop_Button %d doTransmit %d\n",control,s->tt.doTransmit);
         
         if(s->tt.doTransmit == 1){
             s->tt.doTransmit=0;
             int count=0;
             while(s->tt.doTransmit == 0){
                 Sleep2(10);
-                if(++count > 200)break;
+                if(++count > 2000){
+                    fprintf(stderr,"Stop Timed Out \n");
+                    break;
+                }
             }
             s->tt.doTransmit=0;
             s->tt.talk->set_name("Push To Send");
@@ -650,6 +591,7 @@ static int TransmitThread(void *rxv)
     SoapySDR::Device *device=rx->device;
     
     if(!device->getFullDuplex(SOAPY_SDR_TX, 0)){
+
        rx->controlRF=1;
     
        int count2=0;
@@ -659,9 +601,9 @@ static int TransmitThread(void *rxv)
        }
     
        rx->controlRF=1;
+        
+        device->deactivateStream(rx->rxStream);
 
-       device->deactivateStream(rx->rxStream);
-       device->closeStream(rx->rxStream);
 
     }
 
@@ -814,16 +756,10 @@ cleanup:
     
     if(demodAM)ampmodem_destroy(demodAM);
     
-    device->deactivateStream(txStream);
-    
-    device->closeStream(txStream);
-    
     if(!device->getFullDuplex(SOAPY_SDR_TX, 0)){
+/*
         extern int AudioReset(struct playData *rx);
-        device->setSampleRate(SOAPY_SDR_RX, rx->channel, rx->samplerate);
-        device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc-rx->foffset);
-        rx->rxStream=rx->device->setupStream(SOAPY_SDR_RX, SOAPY_SDR_CF32,(const std::vector<size_t>)0);
-        device->activateStream(rx->rxStream);        
+        device->activateStream(rx->rxStream);
         {
             extern int rxBuffer(void *rxv);
         
@@ -831,11 +767,25 @@ cleanup:
             
             launchThread((void *)rx,rxBuffer);
         }
-    }else{
+*/
+        device->deactivateStream(txStream);
         
+        device->closeStream(txStream);
+        
+        s->stopPlay(s->rx);
+
+        s->startPlay(s->rx);
+        
+        s->playRadio(s->rx);
+        
+    }else{
+        device->deactivateStream(txStream);
+        
+        device->closeStream(txStream);
+
         device->setFrequency(SOAPY_SDR_TX, 0, frequency);
         
-        device->setGain(SOAPY_SDR_TX, 0, s->tt.gainsMin);
+        device->setGain(SOAPY_SDR_TX, 0, 0.0);
     }
 
 
