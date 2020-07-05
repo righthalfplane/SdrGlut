@@ -592,15 +592,17 @@ static int TransmitThread(void *rxv)
     
     if(!device->getFullDuplex(SOAPY_SDR_TX, 0)){
 
-       rx->controlRF=1;
-    
-       int count2=0;
-       while(rx->controlRF == 1){
-           Sleep2(10);
-           if(++count2 > 200)break;
-       }
-    
-       rx->controlRF=1;
+        if(rx->controlProcess >= 0){
+            
+            rx->controlProcess = -1;
+            
+            int count=0;
+            while(rx->controlProcess == -1){
+                Sleep2(10);
+                if(++count > 200)break;
+            }
+            
+        }
         
         device->deactivateStream(rx->rxStream);
 

@@ -677,7 +677,7 @@ static int ProcessSound(void *rxv)
     
     double end=rtime();
     
-    //fprintf(stderr,"ProcessSound start\n");
+    fprintf(stderr,"ProcessSound start\n");
     
     int ibuff;
     ibuff=3;
@@ -779,20 +779,25 @@ static int ProcessSound(void *rxv)
     
     rx->controlProcess = -2;
 
-//    fprintf(stderr,"ProcessSound end\n");
+    fprintf(stderr,"ProcessSound end\n");
     
     return 0;
 }
 
 static int stopPlay(struct playData *rx)
 {
-
-    rx->controlProcess = -1;
     
-    int count=0;
-    while(rx->controlProcess == -1){
-        Sleep2(10);
-        if(++count > 200)break;
+    
+    if(rx->controlProcess >= 0){
+
+        rx->controlProcess = -1;
+        
+        int count=0;
+        while(rx->controlProcess == -1){
+            Sleep2(10);
+            if(++count > 200)break;
+        }
+        
     }
     
     rx->controlProcess = -1;
