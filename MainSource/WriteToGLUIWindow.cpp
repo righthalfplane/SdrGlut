@@ -39,7 +39,7 @@ static int insert=0;
 
 int rxScan(void *rxv);
 
-static double lineTime=0;
+//static double lineTime=0;
 
 
 class GLUIAPI GLUI_TextBox2 : public GLUI_TextBox
@@ -72,15 +72,21 @@ int GLUI_TextBox2::key_handler(unsigned char key, int modifiers)
             return false;
         }
 
-        moo->sel_start=moo->sel_end+1;
-        
+        int end=0;
         for(int n=moo->sel_end+1;n<(int)strlen(test);++n){
             if(test[n] == '\n'){
-                moo->sel_end=n;
+                end=n;
                 break;
             }
         }
         
+        fprintf(stderr,"ns %d end %d\n",ns,end);
+        
+        if(end-ns > 4){
+            moo->sel_end=end;
+            moo->sel_start=ns;
+        }
+
         moo->insertion_pt=moo->sel_end+1;
         moo->update_and_draw_text();
 
@@ -100,18 +106,26 @@ int GLUI_TextBox2::key_handler(unsigned char key, int modifiers)
             }
 
         }else{
-            moo->sel_end=moo->sel_start-1;
+            int end=moo->sel_start-1;
             
-            moo->sel_start=0;
+            int start=0;
             
             for(int n=ns;n>0;--n){
                 if(test[n] == '\n'){
-                    moo->sel_start=n+1;
+                    start=n+1;
                     break;
                 }
             }
+            
+           // fprintf(stderr,"start %d end %d\n",start,end);
+            
+            if(end-start > 4){
+                moo->sel_start=start;
+                moo->sel_end=end;
+            }
+            
         }
- 
+    
         menu_select(31);
         
         moo->update_and_draw_text();
