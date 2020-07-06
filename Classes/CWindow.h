@@ -15,6 +15,7 @@
 #define M_SAVE                  3
 #define M_SEND                  4
 #define M_FREQUENCY_SCAN        5
+#define M_SCAN                  6
 
 class CWindow{
 public:	

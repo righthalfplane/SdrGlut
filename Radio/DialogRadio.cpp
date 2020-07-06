@@ -423,6 +423,7 @@ static void control_cb(int control)
 
     
     if(control == 2222){
+        fprintf(stderr,"start Search\n");
         s->rx->cutOFF=cutOFF;
         s->rx->cutOFFSearch=1;
         for(int n=0;n<s->FFTlength;++n){
@@ -447,20 +448,7 @@ static void control_cb(int control)
         s->pauseTime=rtime()+s->pauseTimeDelta;
         s->pauseChannel=0;
         s->rx->cutOFF=cutOFF;
-        if(s->scanCount != 0){
-            s->scanCount = -s->scanCount;
-        }
-        if(s->scanCount < 0) {
-            fprintf(stderr,"Stop Scane\n");
-            s->setFrequency2(s->rx);
-       }else{
-            if(s->rx->cutOFFSearch){
-                s->rx->cutOFFSearch=0;
-                s->processScan(s->rx);
-                s->scanCount=(int)s->scanFrequencies.size();
-            }
-           fprintf(stderr,"Start Scane scanCount %d\n",s->scanCount);
-       }
+        s->controlScan(s->rx);
     } else if(control == 4){
         s->rx->gain=gain;
         s->rx->scaleFactor=scaleFactor;

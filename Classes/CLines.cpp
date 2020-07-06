@@ -421,7 +421,9 @@ static void keys2(unsigned char key, int x, int y)
         if(l->sceneSource)SetFrequencyGlobal(l->sceneSource,l->Frequency,l->BandWidth,M_MUTE);
     }else if(key == 's'){
         if(l->sceneSource)SetFrequencyGlobal(l->sceneSource,l->Frequency,l->BandWidth,M_SAVE);
-    }
+    }else if(key == ' '){
+        if(l->sceneSource)SetFrequencyGlobal(l->sceneSource,l->Frequency,l->BandWidth,M_SCAN);
+     }
    // fprintf(stderr,"Clines keys - key %d key %c lines %p\n",key,key,l);
     
 }

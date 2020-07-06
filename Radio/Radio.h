@@ -256,7 +256,7 @@ public:
     int stopPlay(struct playData *rx);
     int startPlay(struct playData *rx);
     int closeScenes();
-
+    int controlScan(struct playData *rx);
     virtual int LoadFile (struct Scene *scene,char *name, int fileType);
     virtual int BackGroundEvents(struct Scene *scene);
     virtual int UpdateTemperatureColors(struct Scene *scene);

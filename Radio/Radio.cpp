@@ -100,6 +100,26 @@ void doDirectSampleMode(int item);
 void doBiasMode(int item);
 void doFilterMenu(int item);
 
+int Radio::controlScan(struct playData *rx)
+{
+    
+    if(scanCount != 0){
+        scanCount = -scanCount;
+    }
+    if(scanCount < 0) {
+        fprintf(stderr,"Stop Scane\n");
+        setFrequency2(rx);
+    }else{
+        if(rx->cutOFFSearch){
+            rx->cutOFFSearch=0;
+            processScan(rx);
+            scanCount=(int)scanFrequencies.size();
+        }
+        fprintf(stderr,"Start Scane scanCount %d\n",scanCount);
+    }
+
+    return 0;
+}
 int Radio::processScan(struct playData *rx)
 {
     
@@ -890,7 +910,12 @@ int Radio::SetFrequency(struct Scene *scene,double f,double bw, int message)
     }else if(message == M_SAVE){
         WarningPrint("F%d,%0.4f,%s\n",count++,rx->f/1e6,Mode_Names[rx->decodemode]);
         return 0;
-    } else if(message == M_FREQUENCY){
+    }else if(message == M_SCAN){
+        if(scanCount != 0){
+            scanCount = -scanCount;
+        }
+        return 0;
+   } else if(message == M_FREQUENCY){
         
         rx->f=f;
         if(fabs(f-rx->fc) > 0.5*rx->samplerate){
@@ -2050,6 +2075,11 @@ static void keys2(unsigned char key, int x, int y)
            sdr->rx->mute = !sdr->rx->mute;
         }else if(key == 's'){
             WarningPrint("F%d,%0.4f,%s\n",count++,sdr->rx->f/1e6,Mode_Names[sdr->rx->decodemode]);
+        }else if(key == ' '){
+            if(sdr->scanCount != 0){
+                sdr->scanCount = -sdr->scanCount;
+            }
+
         }
     }
     
