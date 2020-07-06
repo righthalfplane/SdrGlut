@@ -862,7 +862,8 @@ int Radio::sendMessage(char *m1,char *m2,int type)
             return 0;
         }else if(!strcmp(m1,"-1")){
             //fprintf(stderr,"Stop scan scanCount %d\n",scanCount);
-           scanWait=0;
+            scanWait=0;
+            pauseChannel=0;
            return 0;
         }
         //fprintf(stderr,"Radio m1 %s m2 %s type %d\n",m1,m2,type);
