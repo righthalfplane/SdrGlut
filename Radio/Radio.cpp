@@ -1505,7 +1505,7 @@ int Radio::OpenWindows(struct Scene *scene)
     glutMenuStateFunc(inuse);
     
     glutCreateMenu(menu_selectl);
-    glutAddMenuEntry("Sdr Dialog...", SdrDialog);
+    glutAddMenuEntry("SDR Dialog...", SdrDialog);
     if(rx->ntransmit)glutAddMenuEntry("Transmit...", SdrTransmit);
     glutAddMenuEntry("Send...", SdrSend);
     glutAddSubMenu("Palette", palette_menu);

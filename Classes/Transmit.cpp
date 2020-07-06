@@ -145,7 +145,7 @@ int Radio::Transmit(struct Scene *scene)
     
     tt.doTransmit=0;
     
-    std::vector<std::string> names=rx->device->listAntennas( SOAPY_SDR_TX, 0);
+    std::vector<std::string> names=rx->device->listAntennas( SOAPY_SDR_TX, rx->channel);
     
     tt.antennaCount=names.size();
     tt.antenna=(char **)cMalloc((unsigned long)(tt.antennaCount*sizeof(char *)),8833);
@@ -153,7 +153,7 @@ int Radio::Transmit(struct Scene *scene)
         tt.antenna[i]=strsave((char *)names[i].c_str(),5555);
     }
 
-    names = rx->device->listGains(SOAPY_SDR_TX, 0);
+    names = rx->device->listGains(SOAPY_SDR_TX, rx->channel);
     tt.gainsCount=names.size();
     tt.gains=(char **)cMalloc((unsigned long)(tt.gainsCount*sizeof(char *)),8833);
     tt.gainsMinimum=(double *)cMalloc((unsigned long)(tt.gainsCount*sizeof(double)),8891);
@@ -164,8 +164,8 @@ int Radio::Transmit(struct Scene *scene)
         tt.gains[j]=strsave((char *)names[j].c_str(),5555);
          //printf("Gains %lu %s ",j, tt.gains[j]);
     
-        SoapySDR::Range range3=rx->device->getGainRange(SOAPY_SDR_TX, 0, tt.gains[j]);
-        //double el=SoapySDRDevice_getGainElement(rx->device, SOAPY_SDR_TX, 0, rx->gains[j]);
+        SoapySDR::Range range3=rx->device->getGainRange(SOAPY_SDR_TX, rx->channel, tt.gains[j]);
+        //double el=SoapySDRDevice_getGainElement(rx->device, SOAPY_SDR_TX, rx->channel, rx->gains[j]);
        // printf("range max %g min %g\n",range3.maximum(),range3.minimum());
         tt.gainsMinimum[j]=range3.minimum();
         tt.gainsMaximum[j]=range3.maximum();
@@ -173,23 +173,23 @@ int Radio::Transmit(struct Scene *scene)
     
     
     
-    SoapySDR::Range range=rx->device->getGainRange(SOAPY_SDR_TX, 0);
+    SoapySDR::Range range=rx->device->getGainRange(SOAPY_SDR_TX, rx->channel);
     
     //printf("range TX max %g min %g\n",range.maximum(),range.minimum());
     
     tt.gainsMin=range.minimum();
     tt.gainsMax=range.maximum();
 
-    tt.hasGainMode=rx->device->hasGainMode(SOAPY_SDR_TX, 0);
+    tt.hasGainMode=rx->device->hasGainMode(SOAPY_SDR_TX, rx->channel);
     
     //printf("hasGainMode %d\n",rx->hasGainMode);
     
     if(tt.hasGainMode){
-        tt.gainMode=rx->device->getGainMode(SOAPY_SDR_TX, 0);
+        tt.gainMode=rx->device->getGainMode(SOAPY_SDR_TX, rx->channel);
         //printf("GainMode %d\n",tt.gainMode);
     }
     
-    SoapySDR::RangeList rlist=rx->device->getFrequencyRange(SOAPY_SDR_TX, 0);
+    SoapySDR::RangeList rlist=rx->device->getFrequencyRange(SOAPY_SDR_TX, rx->channel);
     tt.frequencyCount=rlist.size();
     tt.frequencyMinimum=(double *)cMalloc((unsigned long)(tt.frequencyCount*sizeof(double)),8894);
     tt.frequencyMaximum=(double *)cMalloc((unsigned long)(tt.frequencyCount*sizeof(double)),8895);
@@ -202,16 +202,16 @@ int Radio::Transmit(struct Scene *scene)
     }
 
     
-    tt.hasDCOffset=rx->device->hasDCOffset(SOAPY_SDR_TX, 0);
+    tt.hasDCOffset=rx->device->hasDCOffset(SOAPY_SDR_TX, rx->channel);
     
    // printf("hasDCOffset %d\n",tt.hasDCOffset);
     
     if(tt.hasDCOffset){
-        tt.DCOffset=rx->device->getDCOffsetMode(SOAPY_SDR_TX, 0);
+        tt.DCOffset=rx->device->getDCOffsetMode(SOAPY_SDR_TX, rx->channel);
       //  printf("DCOffset %d\n",tt.DCOffset);
     }
     
-    std::vector<double> band=rx->device->listBandwidths(SOAPY_SDR_TX, 0);
+    std::vector<double> band=rx->device->listBandwidths(SOAPY_SDR_TX, rx->channel);
     tt.bandwidthsCount=band.size();
     tt.bandwidths=(double *)cMalloc((unsigned long)(tt.bandwidthsCount*sizeof(double)),8896);
     for (size_t j = 0; j < tt.bandwidthsCount; j++)
@@ -220,7 +220,7 @@ int Radio::Transmit(struct Scene *scene)
         tt.bandwidths[j]=band[j];
     }
 
-    std::vector<std::string> list=rx->device->getStreamFormats(SOAPY_SDR_TX, 0);
+    std::vector<std::string> list=rx->device->getStreamFormats(SOAPY_SDR_TX, rx->channel);
     tt.streamFormatCount=list.size();
     tt.streamFormat=(char **)cMalloc((unsigned long)(tt.streamFormatCount*sizeof(double)),8898);
     for (size_t j = 0; j < tt.streamFormatCount; j++)
@@ -229,7 +229,7 @@ int Radio::Transmit(struct Scene *scene)
         tt.streamFormat[j]=strsave((char *)list[j].c_str(),95695);
     }
 
-    std::vector<double> rate=rx->device->listSampleRates(SOAPY_SDR_TX, 0);
+    std::vector<double> rate=rx->device->listSampleRates(SOAPY_SDR_TX, rx->channel);
     tt.sampleRatesCount=rate.size();
     tt.sampleRates=(double *)cMalloc((unsigned long)(tt.sampleRatesCount*sizeof(double)),8890);
     for (size_t j = 0; j < rx->sampleRatesCount; j++)
@@ -239,7 +239,7 @@ int Radio::Transmit(struct Scene *scene)
     }
 
     size_t length;
-    rlist=rx->device->getSampleRateRange(SOAPY_SDR_TX, 0);
+    rlist=rx->device->getSampleRateRange(SOAPY_SDR_TX, rx->channel);
     length=rlist.size();
     for (size_t j = 0; j < length; j++)
     {
@@ -590,7 +590,7 @@ static int TransmitThread(void *rxv)
     
     SoapySDR::Device *device=rx->device;
     
-    if(!device->getFullDuplex(SOAPY_SDR_TX, 0)){
+    if(!device->getFullDuplex(SOAPY_SDR_TX, rx->channel)){
 
         if(rx->controlProcess >= 0){
             
@@ -609,7 +609,7 @@ static int TransmitThread(void *rxv)
 
     }
 
-    // fprintf(stderr,"getFullDuplex %d\n",device->getFullDuplex(SOAPY_SDR_TX, 0));
+    // fprintf(stderr,"getFullDuplex %d\n",device->getFullDuplex(SOAPY_SDR_TX,rx->channel));
     
     //const double frequency = 27.315e6;  //center frequency to 500 MHz
     double frequency = 87.6e6;  //center frequency to 500 MHz
@@ -626,18 +626,18 @@ static int TransmitThread(void *rxv)
     
     s->tt.info.device=device;
     
-    device->setSampleRate(SOAPY_SDR_TX, 0, sample_rate);
+    device->setSampleRate(SOAPY_SDR_TX, rx->channel, sample_rate);
     
     fprintf(stderr,"Sample rate: %g MHz\n",sample_rate/1e6);
     
     //Set center frequency
     
     
-    device->setFrequency(SOAPY_SDR_TX, 0, frequency);
+    device->setFrequency(SOAPY_SDR_TX, rx->channel, frequency);
     
-    device->setGain(SOAPY_SDR_TX, 0, s->tt.gain);
+    device->setGain(SOAPY_SDR_TX, rx->channel, s->tt.gain);
     
-    //  device->setAntenna(SOAPY_SDR_TX, 0, BAND1);
+    //  device->setAntenna(SOAPY_SDR_TX, rx->channel, BAND1);
     
     //Streaming Setup
     
@@ -758,7 +758,7 @@ cleanup:
     
     if(demodAM)ampmodem_destroy(demodAM);
     
-    if(!device->getFullDuplex(SOAPY_SDR_TX, 0)){
+    if(!device->getFullDuplex(SOAPY_SDR_TX, rx->channel)){
 /*
         extern int AudioReset(struct playData *rx);
         device->activateStream(rx->rxStream);
@@ -785,9 +785,9 @@ cleanup:
         
         device->closeStream(txStream);
 
-        device->setFrequency(SOAPY_SDR_TX, 0, frequency);
+        device->setFrequency(SOAPY_SDR_TX, rx->channel, frequency);
         
-        device->setGain(SOAPY_SDR_TX, 0, 0.0);
+        device->setGain(SOAPY_SDR_TX, rx->channel, 0.0);
     }
 
 
@@ -828,7 +828,7 @@ static int TransmitThread2(void *rxv)
         }
     }
     
-    // fprintf(stderr,"getFullDuplex %d\n",device->getFullDuplex(SOAPY_SDR_TX, 0));
+    // fprintf(stderr,"getFullDuplex %d\n",device->getFullDuplex(SOAPY_SDR_TX, rx->channel));
     
     //const double frequency = 27.315e6;  //center frequency to 500 MHz
     double frequency = 87.6e6;  //center frequency to 500 MHz
@@ -845,18 +845,18 @@ static int TransmitThread2(void *rxv)
     
     s->tt.info.device=device;
     
-    device->setSampleRate(SOAPY_SDR_TX, 0, sample_rate);
+    device->setSampleRate(SOAPY_SDR_TX, rx->channel, sample_rate);
     
     fprintf(stderr,"Sample rate: %g MHz\n",sample_rate/1e6);
     
     //Set center frequency
     
     
-    device->setFrequency(SOAPY_SDR_TX, 0, frequency);
+    device->setFrequency(SOAPY_SDR_TX, rx->channel, frequency);
     
-    device->setGain(SOAPY_SDR_TX, 0, s->tt.gain);
+    device->setGain(SOAPY_SDR_TX, rx->channel, s->tt.gain);
     
-    //  device->setAntenna(SOAPY_SDR_TX, 0, BAND1);
+    //  device->setAntenna(SOAPY_SDR_TX, rx->channel, BAND1);
     
     //Streaming Setup
     
