@@ -128,6 +128,9 @@ struct DialogRadioData{
     GLUI_EditText *edittext21;
     GLUI_EditText *edittext22;
 
+    GLUI_Button *search;
+    GLUI_Button *scan;
+
     char text1z[255];
     GLUI_EditText *edittext1z[20];
     GLUI_Scrollbar *line_scroll[20];
@@ -374,12 +377,12 @@ public:
     int inuseflag;
     
     vector<double> scanFrequencies;
-//    double scanFrequencies[200];
     int scanFound[200];
-    int scanCount;
     double pauseTime;
     double pauseTimeDelta;
     int pauseChannel;
+    int scanRun;
+    int scanWait;
     
 
 };

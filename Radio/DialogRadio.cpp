@@ -302,13 +302,11 @@ int Radio::dialogRadio(struct Scene *scene)
     dd.glui->add_edittext_to_panel( obj_panel,  "Pause Time:", GLUI_EDITTEXT_TEXT, dd.text21);
     dd.edittext21->w=200;
     
-    new GLUI_Button(obj_panel, "Search", 2222, control_cb);
+    dd.search= new GLUI_Button(obj_panel, "Search", 2222, control_cb);
     
     new GLUI_Button(obj_panel, "Write", 2223, control_cb);
     
-    new GLUI_Button(obj_panel, "Scan", 2224, control_cb);
-    
-    
+    dd.scan=new GLUI_Button(obj_panel, "Scan", 2224, control_cb);
     
     obj_panel =  dd.glui->add_panel( "Bandwidth + Audio Thread Count" );
 
@@ -423,20 +421,22 @@ static void control_cb(int control)
 
     
     if(control == 2222){
-        fprintf(stderr,"start Search\n");
-        s->rx->cutOFF=cutOFF;
-        s->rx->cutOFFSearch=1;
-        for(int n=0;n<s->FFTlength;++n){
-            s->frequencies[n]=0;
-            s->ampitude[n] = -160;
-        }
+        if(s->rx->cutOFFSearch == 0){
+            s->rx->cutOFF=cutOFF;
+            s->rx->cutOFFSearch=1;
+            for(int n=0;n<s->FFTlength;++n){
+                s->frequencies[n]=0;
+                s->ampitude[n] = -160;
+            }
+            s->dd.search->set_name("Stop Search");
+            fprintf(stderr,"start Search\n");
+        }else{
+            s->rx->cutOFFSearch=0;
+            s->dd.search->set_name("Search");
+            s->processScan(s->rx);
+            fprintf(stderr,"stop Search\n");
+       }
     } else if(control == 2223){
-        
-        if(s->rx->cutOFFSearch)s->processScan(s->rx);
-        
-        s->rx->cutOFFSearch=0;
-
-        fprintf(stderr,"start write\n");
         
         for(vector<double>::size_type k=0;k<s->scanFrequencies.size();++k){
             static int count;
@@ -448,18 +448,32 @@ static void control_cb(int control)
         s->pauseTime=rtime()+s->pauseTimeDelta;
         s->pauseChannel=0;
         s->rx->cutOFF=cutOFF;
-        s->controlScan(s->rx);
-    } else if(control == 4){
+        
+        if(s->scanFrequencies.size() == 0){
+            fprintf(stderr,"Cannot Scan - Need to Load or Search for frequencies\n");
+            return;
+        }
+        
+        s->scanWait=0;
+
+        if(s->scanRun == 0){
+            s->dd.scan->set_name("Stop Scan");
+            s->scanRun=1;
+            fprintf(stderr,"Start Scan scanCount %ld\n",(long)s->scanFrequencies.size());
+       }else{
+            s->scanRun=0;
+            s->dd.scan->set_name("Scan");
+            s->setFrequency2(s->rx);
+           fprintf(stderr,"Stop Scane\n");
+      }
+   
+     }else if(control == 4){
         s->rx->gain=gain;
         s->rx->scaleFactor=scaleFactor;
         if(s->pd.UsePlotScales)
         {
             s->pd.sPmin=dmin;
             s->pd.sPmax=dmax;
-        }
-        for(int n=0;n<s->FFTlength;++n){
-            s->frequencies[n]=0;
-            s->ampitude[n] = -160;
         }
     }
     else if(control == 2)
@@ -481,10 +495,6 @@ static void control_cb(int control)
             bool automatic=s->dd.useagc;
             s->rx->gainMode=s->dd.useagc;
             s->rx->device->setGainMode(SOAPY_SDR_RX, s->rx->channel, automatic);
-            for(int n=0;n<s->FFTlength;++n){
-                s->frequencies[n]=0;
-                s->ampitude[n] = -160;
-            }
         }
     }
     else if(control == 23  || control == 24  || control == 25  || control == 26)
@@ -496,10 +506,6 @@ static void control_cb(int control)
         if(s->dd.line_Index_old[ind] != (int)s->dd.line_Index[ind]){
             s->rx->device->setGain(SOAPY_SDR_RX, s->rx->channel, s->rx->gains[ind], s->dd.line_Index[ind]);
             s->dd.line_Index[ind]=(int)s->dd.line_Index_old[ind];
-            for(int n=0;n<s->FFTlength;++n){
-                s->frequencies[n]=0;
-                s->ampitude[n] = -160;
-            }
       }
     }
     else if(control == 50)
@@ -511,10 +517,6 @@ static void control_cb(int control)
         if(s->dd.line_Index_old[ind] != (int)s->dd.line_Index[ind]){
             s->rx->device->setGain(SOAPY_SDR_RX, s->rx->channel, s->dd.line_Index[ind]);
             s->dd.line_Index_old[ind]=(int)s->dd.line_Index[ind];
-            for(int n=0;n<s->FFTlength;++n){
-                s->frequencies[n]=0;
-                s->ampitude[n] = -160;
-            }
         }
     }
     else if(control == 8)
@@ -559,10 +561,6 @@ static void control_cb(int control)
         
         s->water.nline=0;
         
-        for(int n=0;n<s->FFTlength;++n){
-            s->frequencies[n]=0;
-            s->ampitude[n] = -160;
-        }
     }
     
 	glutPostRedisplay();

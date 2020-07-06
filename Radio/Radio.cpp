@@ -102,29 +102,12 @@ void doFilterMenu(int item);
 
 int Radio::controlScan(struct playData *rx)
 {
-    
-    if(scanCount != 0){
-        scanCount = -scanCount;
-    }
-    if(scanCount < 0) {
-        fprintf(stderr,"Stop Scane\n");
-        setFrequency2(rx);
-    }else{
-        if(rx->cutOFFSearch){
-            rx->cutOFFSearch=0;
-            processScan(rx);
-            scanCount=(int)scanFrequencies.size();
-        }
-        fprintf(stderr,"Start Scane scanCount %d\n",scanCount);
-    }
-
     return 0;
 }
 int Radio::processScan(struct playData *rx)
 {
     
     scanFrequencies.clear();
-    scanCount=0;
     int ns = -1;
     double peak=-160;
     double bw=rx->bw;
@@ -140,7 +123,6 @@ int Radio::processScan(struct playData *rx)
         }else{
             if(ns >= 0){
                 if(frequencies[n] < fStart+bw)continue;
-                scanCount--;
                  scanFrequencies.push_back(frequencies[ns]);
                 ns=-1;
                 peak=-160;
@@ -251,11 +233,6 @@ int Radio::setFrequencyDuo(struct playData *rx)
 {
     rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc-rx->foffset);
     
-    for(int n=0;n<FFTlength;++n){
-        frequencies[n]=0;
-        ampitude[n] = -160;
-    }
-
     return 0;
 }
 int Radio::closeScenes()
@@ -310,8 +287,10 @@ Radio::Radio(struct Scene *scene,SoapySDR::Kwargs deviceArgs): CWindow(scene)
 	pd.sType = 2;
     
     backGroundEvents=0;
+        
+    scanRun=0;
     
-    scanCount=0;
+    scanWait=0;
     
     lineDumpInterval=0.1;
     lineTime=rtime()+lineDumpInterval;
@@ -682,25 +661,25 @@ int Radio::updateLine()
         Plot->xSetMaximum=rmax;
         Plot->xSetMinimum=rmin;
         
-        for(int k=0;k<length;++k){
-            frequencies[k]=range[k];
-            if(magnitude[k] > ampitude[k]){
-                ampitude[k]=magnitude[k];
+        if(rx->cutOFFSearch){
+            for(int k=0;k<length;++k){
+                frequencies[k]=range[k];
+                if(magnitude[k] > ampitude[k]){
+                    ampitude[k]=magnitude[k];
+                }
             }
         }
         
-        if(scanCount > 0){            
+        if(scanRun == 1 && scanWait != 1){
             int ifound=0;
             for(vector<double>::size_type k=0;k<scanFrequencies.size();++k){
-           // for(int k=0;k<scanCount;++k){
-                scanFound[k]=0;
+               scanFound[k]=0;
                 int n1=fftIndex(scanFrequencies[k]-0.3*rx->bw);
                 int n2=fftIndex(scanFrequencies[k]+0.3*rx->bw);
                 if(n1 < 0 || n2 < 0)continue;
                 for(int m=n1;m<=n2;++m){
                     if(magnitude[m] > rx->cutOFF){
                         scanFound[k]=1;
-   //                     fprintf(stderr,"k %d f %.4f fl %.4f fh %.4f\n",(int)k,frequencies[m]/1e6,(scanFrequencies[k]-0.3*rx->bw)/1e6,(scanFrequencies[k]+0.3*rx->bw)/1e6);
                         ifound=1;
                         break;
                     }
@@ -816,10 +795,6 @@ int Radio::BackGroundEvents(struct Scene *scene)
     
     if(rx->frequencyReset){
         setFrequencyDuo(rx);
-        for(int n=0;n<FFTlength;++n){
-            frequencies[n]=0;
-            ampitude[n] = -160;
-        }
         rx->frequencyReset=0;
     }
     
@@ -882,17 +857,16 @@ int Radio::sendMessage(char *m1,char *m2,int type)
     }else if(type == M_FREQUENCY_SCAN){
         if(!strcmp(m1,"0")){
             //fprintf(stderr,"Start scan\n");
-            rx->cutOFFSearch=0;
             scanFrequencies.clear();
-            scanCount=0;
+            scanWait=1;
             return 0;
         }else if(!strcmp(m1,"-1")){
             //fprintf(stderr,"Stop scan scanCount %d\n",scanCount);
+           scanWait=0;
            return 0;
         }
         //fprintf(stderr,"Radio m1 %s m2 %s type %d\n",m1,m2,type);
         scanFrequencies.push_back(1.0e6*atof(m1));
-        --scanCount;
    }
     
     return 0;
@@ -911,8 +885,10 @@ int Radio::SetFrequency(struct Scene *scene,double f,double bw, int message)
         WarningPrint("F%d,%0.4f,%s\n",count++,rx->f/1e6,Mode_Names[rx->decodemode]);
         return 0;
     }else if(message == M_SCAN){
-        if(scanCount != 0){
-            scanCount = -scanCount;
+        if(scanWait == 0){
+            scanWait=1;
+        }else{
+            scanWait=0;
         }
         return 0;
    } else if(message == M_FREQUENCY){
@@ -1987,12 +1963,7 @@ int Radio::resetDemod()
 {
     
     RadioPtr myAppl=this;
-    
-    for(int n=0;n<myAppl->FFTlength;++n){
-        myAppl->frequencies[n]=0;
-        myAppl->ampitude[n] = -160;
-    }
-    
+        
     for(int y=0;y<myAppl->water.ysize*2;++y){
         int ns=3*myAppl->water.xsize*y;
         for(int n=0;n<myAppl->water.xsize;++n){
@@ -2076,10 +2047,11 @@ static void keys2(unsigned char key, int x, int y)
         }else if(key == 's'){
             WarningPrint("F%d,%0.4f,%s\n",count++,sdr->rx->f/1e6,Mode_Names[sdr->rx->decodemode]);
         }else if(key == ' '){
-            if(sdr->scanCount != 0){
-                sdr->scanCount = -sdr->scanCount;
+            if(sdr->scanWait == 0){
+                sdr->scanWait=1;
+            }else{
+                sdr->scanWait=0;
             }
-
         }
     }
     
