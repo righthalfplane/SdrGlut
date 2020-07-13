@@ -231,6 +231,7 @@ int Radio::startPlay(struct playData *rx)
 }
 int Radio::setFrequencyDuo(struct playData *rx)
 {
+    if(rx->fc < 0.5*rx->samplerate)rx->fc=0.5*rx->samplerate;
     rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc-rx->foffset);
     
     return 0;
