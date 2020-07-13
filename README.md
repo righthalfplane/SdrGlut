@@ -10,6 +10,7 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.17
 
 ## Demo videos
 
+- [The Vanishing Jet and Templet Based Vision](https://youtu.be/caeDZnL3oPg)
 - [SDRplay RSPduo demonstrates the independent RX mode on the Raspberry Pi 4](https://youtu.be/17eJI8KIkYg)
 - [SDRplay RSPduo running in Duel Tuner mode with SdrGlut](https://youtu.be/ShLUdb3Rdvs)
 - [LimeSDR mini displays air traffic information (ADS-B) using dump1090](https://youtu.be/ZuXhtdZZ25Y)
