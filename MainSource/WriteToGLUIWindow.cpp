@@ -39,8 +39,10 @@ static int insert=0;
 
 int rxScan(void *rxv);
 
-//static double lineTime=0;
+static double lineTime=0;
 
+static std::vector<std::string> modes;
+static std::vector<std::string> freq;
 
 class GLUIAPI GLUI_TextBox2 : public GLUI_TextBox
 {
@@ -233,6 +235,73 @@ static void SaveIt(struct Scene *scene,char *name)
 		}
 	}
 }
+int rxScan2(void *rxv)
+{
+    int n;
+    
+    const char *test=moo->get_text();
+
+    char *buff = new char[strlen(test)+10];
+    
+    int start=moo->sel_start;
+    int end=moo->sel_end;
+   // fprintf(stderr,"Start Scan start %d end %d\n",start,end);
+    if(start > end){
+        n=start;
+        start=end;
+        end=n;
+    }
+
+    freq.clear();
+    modes.clear();
+
+    
+    n=0;
+    for(int k=start;k<end;++k){
+        if(test[k] == ' ' || test[k] == 13){
+            continue;
+        }else if(test[k] == ',' || test[k] == 10){
+            buff[n++]=0;
+        }else{
+            buff[n++]=test[k];
+        }
+        if(n > 4094)break;
+    }
+    buff[n++]=0;
+ 
+    
+    
+      int n1=-1;
+      int n2=-1;
+      for(int k=0;k<n;++k){
+          if(n1 == -1 && buff[k] == 0){
+            n1=k+1;
+          }else if(n1 > -1 && n2 == -1 && buff[k] == 0){
+              n2=k+1;
+              freq.push_back(&buff[n1]);
+              modes.push_back(&buff[n2]);
+             // fprintf(stderr,"buff1 '%s' buff2 '%s'\n",&buff[n1],&buff[n2]);
+             // sendMessageGlobal(&buff[n1],&buff[n2],M_SEND);
+              for(int i=n2;i<n;++i){
+                  if(buff[i] == 0){
+                      k=i;
+                      break;
+                  }
+              }
+              n1=-1;
+              n2=-1;
+          }
+      }
+    
+    scanFlag=0;
+    fprintf(stderr,"Scan Frequencies\n");
+    for(std::vector<std::string>::size_type k=0;k<freq.size();++k){
+        fprintf(stderr,"freq '%s' modes '%s'\n",freq[k].c_str(),modes[k].c_str());
+        scanFlag=1;
+    }
+    
+    return 1;
+}
 
 int rxScan(void *rxv)
 {
@@ -295,10 +364,11 @@ static void menu_select(int item)
     //fprintf(stderr,"menu_select window %d\n",glutGetWindow());
 
     if(item == 400){
-        scanFlag=1;
         launchThread((void *)moo,rxScan);
     }else if(item == 401){
         scanFlag=0;
+    }else if(item == 405){
+        rxScan2((void *)moo);
     }else if(item == 32){
 		dialogSaveC(NULL,SaveIt,3,NULL);
 		return;
@@ -371,25 +441,16 @@ static void menu_select(int item)
         
     }
 }
-/*
 static void iddle(void){
-    static int nn=0;
+    static long int nn=0;
+    if(!scanFlag || modes.size() == 0 || freq.size() == 0)return;
     if(rtime() < lineTime)return;
     lineTime = rtime()+5;
-    int jj = nn % 4;
-    fprintf(stderr,"nn %d jj %d\n",nn++,jj);
-    if(jj == 0){
-        sendMessageGlobal((char *)"101.5",(char *)"FM",M_SEND);
-    }else if(jj == 1){
-        sendMessageGlobal((char *)"100.7",(char *)"FM",M_SEND);
-    }else if(jj == 2){
-        sendMessageGlobal((char *)"102.9",(char *)"FM",M_SEND);
-    }else if(jj == 3){
-        sendMessageGlobal((char *)"105.3",(char *)"FM",M_SEND);
-    }
+    long int jj = nn % freq.size();
+    fprintf(stderr,"nn %ld jj %ld %s %s\n",nn++,jj,freq[jj].c_str(),modes[jj].c_str());
+    sendMessageGlobal((char *)freq[jj].c_str(),(char *)freq[jj].c_str(),M_SEND);
     return;
 }
- */
 int WriteToGLUIWindow(char *message)
 {
 	GLUI *glui;
@@ -410,7 +471,7 @@ int WriteToGLUIWindow(char *message)
         moo->set_h(400);
         moo->set_w(610);
         
-        // GLUI_Master.set_glutIdleFunc(iddle);
+         GLUI_Master.set_glutIdleFunc(iddle);
 
         //GLUI_Panel *panel3 = new GLUI_Panel(glui, "Scan Frequencies");
         //new GLUI_Button(panel3, "Stop", 401, menu_select);
@@ -423,6 +484,8 @@ int WriteToGLUIWindow(char *message)
 		
         glutAddMenuEntry("Set Frequency", 31);
         glutAddMenuEntry("Send Scan Frequencies", 400);
+//        glutAddMenuEntry("Scan Frequencies", 405);
+//        glutAddMenuEntry("Stop Scan", 401);
         glutAddMenuEntry("-------------", 34);
         glutAddMenuEntry("Copy", 35);
         glutAddMenuEntry("Paste", 36);
