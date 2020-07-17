@@ -302,20 +302,22 @@ Radio::Radio(struct Scene *scene,SoapySDR::Kwargs deviceArgs): CWindow(scene)
     
     range=NULL;
     magnitude=NULL;
-    
+    magnitude2=NULL;
+
     frequencies=NULL;
     ampitude=NULL;
     
     
     range=(double *)cMalloc(FFTlength*sizeof(double),9851);
     magnitude=(double *)cMalloc(FFTlength*sizeof(double),9851);
-    
+    magnitude2=(double *)cMalloc(FFTlength*sizeof(double),9851);
+
     frequencies=(double *)cMalloc(FFTlength*sizeof(double),9851);
     ampitude=(double *)cMalloc(FFTlength*sizeof(double),9851);
     
     
     
-    if(!range || !magnitude || !frequencies || !ampitude)return;
+    if(!range || !magnitude || !frequencies || !ampitude || !magnitude2)return;
     
     zerol((char *)range,FFTlength*sizeof(double));
     zerol((char *)magnitude,FFTlength*sizeof(double));
@@ -531,6 +533,9 @@ Radio::~Radio()
     if(magnitude)cFree((char *)magnitude);
     magnitude=NULL;
     
+    if(magnitude2)cFree((char *)magnitude2);
+    magnitude2=NULL;
+    
     if(frequencies)cFree((char *)frequencies);
     frequencies=NULL;
     
@@ -617,9 +622,29 @@ int Radio::updateLine()
     
     doFFT2(real,imag,length,1);
     
-    amin=water.amin;
-    amax=water.amax;
+    amin =  0.0;
+    int nn=0;
+    for(int n=10;n<length-10;++n){
+        v=(real[n]*real[n]+imag[n]*imag[n]);
+        if(v > 0.0)v=10*log10(v)+5;
+        double mag=(1.0-lineAlpha)*magnitude[length-n-1]+v*lineAlpha;
+        amin +=  mag;
+        ++nn;
+     }
     
+    amin /= nn;
+    
+    double shift=-90-amin;
+    
+    if(rx->aminGlobal3 == 0.0)rx->aminGlobal3=shift;
+    rx->aminGlobal3 = 0.9*rx->aminGlobal3+0.1*shift;
+    shift=rx->aminGlobal3;
+
+    //printf("shift %g amin %g ",shift,amin);
+
+    amin =  1e33;
+    amax = -1e33;
+
     double rmin=  1e33;
     double rmax= -1e33;
     
@@ -639,14 +664,18 @@ int Radio::updateLine()
         }
         v=(real[n]*real[n]+imag[n]*imag[n]);
         if(v > 0.0)v=10*log10(v)+5;
-        magnitude[length-n-1]=(1.0-lineAlpha)*magnitude[length-n-1]+v*lineAlpha;
+        magnitude[length-n-1]=((1.0-lineAlpha)*magnitude[length-n-1]+v*lineAlpha)+shift;
         v=magnitude[length-n-1];
+        magnitude2[length-n-1]=v+rx->scaleFactor;
         if(v < amin)amin=v;
         if(v > amax)amax=v;
     }
     
+  //printf("a amin %g amax %g \n",amin,amax);
+
+    
     if(FindScene(scenel)){
-        lines->plotPutData(scenel,range,magnitude,length,0L);
+        lines->plotPutData(scenel,range,magnitude2,length,0L);
         
         uGridPlotPtr Plot;
         Plot=lines->lines->Plot;
@@ -665,8 +694,8 @@ int Radio::updateLine()
         if(rx->cutOFFSearch){
             for(int k=0;k<length;++k){
                 frequencies[k]=range[k];
-                if(magnitude[k] > ampitude[k]){
-                    ampitude[k]=magnitude[k];
+                if(magnitude2[k] > ampitude[k]){
+                    ampitude[k]=magnitude2[k];
                 }
             }
         }
@@ -679,7 +708,7 @@ int Radio::updateLine()
                 int n2=fftIndex(scanFrequencies[k]+0.3*rx->bw);
                 if(n1 < 0 || n2 < 0)continue;
                 for(int m=n1;m<=n2;++m){
-                    if(magnitude[m] > rx->cutOFF){
+                    if(magnitude2[m] > rx->cutOFF){
                         scanFound[k]=1;
                         ifound=1;
                         break;
@@ -728,7 +757,7 @@ FoundTime:
         ne=2*nsub+1;
     }
     
-    if(FindScene(scenel2))lines2->plotPutData(scenel2,&range[ns],&magnitude[ns],ne,0L);
+    if(FindScene(scenel2))lines2->plotPutData(scenel2,&range[ns],&magnitude2[ns],ne,0L);
 
     if(water.data == NULL)return 0;
     
@@ -743,7 +772,7 @@ FoundTime:
     
     if(water.nline >= water.ysize)water.nline=0;
     
-    FloatToImage(magnitude,length,&pd,water.ic);
+    FloatToImage(magnitude2,length,&pd,water.ic);
     
     int ns1=3*water.xsize*(water.ysize-water.nline-1);
     int ns2=3*water.xsize*water.ysize+3*water.xsize*(water.ysize-1-water.nline++);
@@ -949,6 +978,10 @@ int Radio::setFrequency3(struct playData *rx)
     rx->aminGlobal2=0;
     
     rx->amaxGlobal2=0;
+    
+    rx->aminGlobal3=0;
+    
+    rx->amaxGlobal3=0;
     
     rx->averageGlobal=0;
     
@@ -1544,7 +1577,7 @@ int Radio::OpenWindows(struct Scene *scene)
     
     lines = CLines::CLinesOpen(scenel,window);
     
-    lines->plotPutData(scenel,range,magnitude,rx->FFTcount,-1L);
+    lines->plotPutData(scenel,range,magnitude2,rx->FFTcount,-1L);
     
     lines->sceneSource=sceneOpen;
     
@@ -1578,7 +1611,7 @@ int Radio::OpenWindows(struct Scene *scene)
     
     lines2 = CLines::CLinesOpen(scenel2,-1000);
     
-    lines2->plotPutData(scenel2,range,magnitude,rx->FFTcount,-1L);
+    lines2->plotPutData(scenel2,range,magnitude2,rx->FFTcount,-1L);
     
     lines2->sceneSource=sceneOpen;
     

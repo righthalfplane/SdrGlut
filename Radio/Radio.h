@@ -333,6 +333,7 @@ public:
     struct Scene *scenel2;
     double *range;
     double *magnitude;
+    double *magnitude2;
     double *frequencies;
     double *ampitude;
     double lineTime;

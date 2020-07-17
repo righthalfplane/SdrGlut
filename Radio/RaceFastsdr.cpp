@@ -1587,7 +1587,7 @@ int rxBuffer(void *rxv)
                     }
                 }
 
-                double scale=pow(10.0,rx->scaleFactor/20.0);
+               // double scale=pow(10.0,rx->scaleFactor/20.0);
 /*
                 double amin=1e30;
                 double amax=-1e30;
@@ -1607,8 +1607,10 @@ int rxBuffer(void *rxv)
                 
                 for(int k=0;k<rx->FFTcount;++k){
                     if(k < rx->size){
-                        rx->real[k]=buff[2*k]*scale;
-                        rx->imag[k]=buff[2*k+1]*scale;
+                       // rx->real[k]=buff[2*k]*scale;
+                       // rx->imag[k]=buff[2*k+1]*scale;
+                        rx->real[k]=buff[2*k];
+                        rx->imag[k]=buff[2*k+1];
                     }else{
                         rx->real[k]=0;
                         rx->imag[k]=0;
