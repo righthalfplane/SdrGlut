@@ -3,7 +3,7 @@
  *  Rx3
  *
  *  Created by Dale Ranta on 2/5/14.
- *  Copyright 2014 SAIC. All rights reserved.
+ *  Copyright 2014. All rights reserved.
  *
  */
 #ifndef _Contours_h_

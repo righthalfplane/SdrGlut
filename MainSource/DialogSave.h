@@ -3,7 +3,7 @@
  *  FireBall
  *
  *  Created by Dale Ranta on 10/25/11.
- *  Copyright 2011 SAIC. All rights reserved.
+ *  Copyright 2011. All rights reserved.
  *
  */
 #ifndef __DialogSave_H__

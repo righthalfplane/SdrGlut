@@ -3,7 +3,7 @@
  *  mShowOpenGL
  *
  *  Created by Dale Ranta on 3/3/11.
- *  Copyright 2011 SAIC. All rights reserved.
+ *  Copyright 2011. All rights reserved.
  *
  */
 #ifndef __DialogRangeData__

@@ -3,7 +3,7 @@
  *  mShowOpenGL
  *
  *  Created by Dale Ranta on 2/4/11.
- *  Copyright 2011 SAIC. All rights reserved.
+ *  Copyright 2011. All rights reserved.
  *
  */
 
