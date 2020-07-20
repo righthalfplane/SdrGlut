@@ -10,6 +10,7 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.18
 
 ## Demo videos
 
+- [The HackrRF One vs. the SDRplay Rspduo at FRS Frequencies.](https://youtu.be/YTmOm55_80Q)
 - [The Improved Search and Scan Features of SdrGlut](https://youtu.be/4oTv2DinCRk)
 - [The Vanishing Jet and Templet Based Vision](https://youtu.be/caeDZnL3oPg)
 - [SDRplay RSPduo demonstrates the independent RX mode on the Raspberry Pi 4](https://youtu.be/17eJI8KIkYg)
