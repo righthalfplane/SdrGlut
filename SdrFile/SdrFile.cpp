@@ -624,7 +624,7 @@ int SdrFile::updateLine()
     
     if(play.averageGlobal == 0)play.averageGlobal=average;
     play.averageGlobal = 0.9*play.averageGlobal+0.1*average;
-    if(average < 0.05*play.averageGlobal){
+    if(average < 0.1*play.averageGlobal){
         //fprintf(stderr,"Drop out %g \n",average);
         return 0;
     }
@@ -641,9 +641,29 @@ int SdrFile::updateLine()
     
     doFFT2(real,imag,length,1);
     
-    amin=water.amin;
-    amax=water.amax;
+    amin =  0.0;
+    int nn=0;
+    for(int n=10;n<length-10;++n){
+        v=(real[n]*real[n]+imag[n]*imag[n]);
+        if(v > 0.0)v=10*log10(v)+5;
+        double mag=(1.0-lineAlpha)*limag[length-n-1]+v*lineAlpha;
+        amin +=  mag;
+        ++nn;
+    }
     
+    amin /= nn;
+    
+    double shift=-90-amin;
+    
+    if(play.aminGlobal3 == 0.0)play.aminGlobal3=shift;
+    play.aminGlobal3 = 0.9*play.aminGlobal3+0.1*shift;
+    shift=play.aminGlobal3;
+    
+    //printf("shift %g amin %g ",shift,amin);
+    
+    amin =  1e33;
+    amax = -1e33;
+
     double rmin=  1e33;
     double rmax= -1e33;
     
@@ -662,8 +682,9 @@ int SdrFile::updateLine()
         }
         v=(real[n]*real[n]+imag[n]*imag[n]);
         if(v > 0.0)v=10*log10(v)+5;
-        lreal[length-n-1]=(1.0-lineAlpha)*lreal[length-n-1]+v*lineAlpha;
-        v=lreal[length-n-1];
+        limag[length-n-1]=(1.0-lineAlpha)*limag[length-n-1]+v*lineAlpha+shift;
+        v=limag[length-n-1];
+        lreal[length-n-1]=v+play.scaleFactor;
         if(v < amin)amin=v;
         if(v > amax)amax=v;
     }

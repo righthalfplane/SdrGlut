@@ -2090,7 +2090,7 @@ static void keys2(unsigned char key, int x, int y)
         }
     }
     
-   // fprintf(stderr,"Radio keys - key %d key %c \n",key,key);
+    fprintf(stderr,"Radio keys - key %d key %c \n",key,key);
     
 }
 
