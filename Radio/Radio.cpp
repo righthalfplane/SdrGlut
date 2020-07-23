@@ -608,8 +608,8 @@ int Radio::updateLine()
    //if(rx->averageGlobal == 0)drops=0;
     if(rx->averageGlobal == 0)rx->averageGlobal=average;
     rx->averageGlobal = 0.9*rx->averageGlobal+0.1*average;
-    if(average < 0.1*rx->averageGlobal){
-       // printf("Device '%s' Drop out average %g averageGlobal %g drops %d\n",rx->driveName,average,rx->averageGlobal,++drops);
+    if(average < 0.5*rx->averageGlobal){
+        //printf("Device '%s' Drop out average %g averageGlobal %g drops %d\n",rx->driveName,average,rx->averageGlobal,++drops);
         return 0;
     }
     
@@ -690,7 +690,7 @@ int Radio::updateLine()
         Plot->xAutoMinimum=FALSE;
         Plot->xSetMaximum=rmax;
         Plot->xSetMinimum=rmin;
-        
+                
         if(rx->cutOFFSearch){
             for(int k=0;k<length;++k){
                 frequencies[k]=range[k];
@@ -716,11 +716,13 @@ int Radio::updateLine()
                 }
             }
             if(ifound){
+                rx->mute = 0;
                 if(scanFound[pauseChannel]){
                     if(rtime() < pauseTime)goto FoundTime;
                 }
                 
                 pauseTime=rtime()+pauseTimeDelta;
+                int lastChannel=pauseChannel;
                 if(++pauseChannel >= (int)scanFrequencies.size())pauseChannel=0;
                 for(vector<double>::size_type k=pauseChannel;k<scanFrequencies.size();++k){
                     if(scanFound[k]){
@@ -742,6 +744,9 @@ int Radio::updateLine()
                         goto FoundTime;
                     }
                 }
+                pauseChannel=lastChannel;
+            }else{
+                rx->mute = 1;
             }
         }
     }
@@ -779,6 +784,7 @@ FoundTime:
     
     
     // fprintf(stderr,"water length %ld\n",length);
+
 
     for(int n=2;n<length-2;++n){
         int ic;
