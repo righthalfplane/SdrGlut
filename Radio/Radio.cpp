@@ -106,7 +106,7 @@ int Radio::controlScan(struct playData *rx)
 }
 int Radio::processScan(struct playData *rx)
 {
-    
+    if(!rx)return 0;
     scanFrequencies.clear();
     int ns = -1;
     double peak=-160;
@@ -135,6 +135,7 @@ int Radio::processScan(struct playData *rx)
 
 int Radio::fftIndex(double frequency)
 {
+    if(!rx)return -1;
     int index=(int)(0.5+rx->FFTcount*((frequency - rx->fc)+0.5*rx->samplerate)/rx->samplerate);
     if(index >= 0 && index < rx->FFTcount-1)return index;
     return -1;
@@ -165,6 +166,8 @@ Radio *Radio::findMate(struct playData *rx)
 }
 int Radio::playRadio(struct playData *rx)
 {
+    if(!rx)return 0;
+
     if(rx->nreceive <= 1){
         rx->pplayRadio(rx);
         return 0;
@@ -185,6 +188,8 @@ int Radio::playRadio(struct playData *rx)
 }
 int Radio::stopPlay(struct playData *rx)
 {
+    if(!rx)return 0;
+
     if(rx->nreceive <= 1){
         rx->pstopPlay(rx);
         return 0;
@@ -208,6 +213,8 @@ int Radio::stopPlay(struct playData *rx)
 }
 int Radio::startPlay(struct playData *rx)
 {
+    if(!rx)return 0;
+    
     if(rx->nreceive <= 1){
         rx->pstartPlay(rx);
         return 0;
@@ -231,7 +238,12 @@ int Radio::startPlay(struct playData *rx)
 }
 int Radio::setFrequencyDuo(struct playData *rx)
 {
+    if(!rx)return 0;
+    
     if(rx->fc < 0.5*rx->samplerate)rx->fc=0.5*rx->samplerate;
+    
+   // fprintf(stderr,"setFrequencyDuo frequency %g channel %d\n",rx->fc,rx->channel);
+
     rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc-rx->foffset);
     
     return 0;
@@ -580,6 +592,8 @@ int Radio::updateLine()
     double *real,*imag;
     double amin,amax,v;
     
+    if(!rx)return 0;
+    
     if(rtime() < lineTime)return 0;
 
     lineTime=rtime()+lineDumpInterval;
@@ -638,7 +652,7 @@ int Radio::updateLine()
     
     if(rx->aminGlobal3 == 0.0)rx->aminGlobal3=shift;
     rx->aminGlobal3 = 0.9*rx->aminGlobal3+0.1*shift;
-    shift=rx->aminGlobal3;
+ //   shift=rx->aminGlobal3;
 
     //printf("shift %g amin %g ",shift,amin);
 
@@ -829,6 +843,8 @@ int Radio::BackGroundEvents(struct Scene *scene)
 {
     if(!scene || !backGroundEvents)return 1;
     
+    if(!rx)return 0;
+    
     if(rx->frequencyReset){
         setFrequencyDuo(rx);
         rx->frequencyReset=0;
@@ -862,6 +878,7 @@ int Radio::sendMessage(char *m1,char *m2,int type)
     char *Mode_Names[] = {(char *)"FM",(char *)"NBFM",(char *)"AM",(char *)"NAM",(char *)"USB",(char *)"LSB",(char *)"CW"};
 
     if(type == M_SEND){
+        if(!rx)return 0;
        // fprintf(stderr,"Radio m1 %s m2 %s type %d\n",m1,m2,type);
         for(unsigned int k=0;k<sizeof(Mode_Names)/sizeof(char *);++k){
             if(!strcmp(m2,Mode_Names[k]))type=k;
@@ -915,6 +932,8 @@ int Radio::SetFrequency(struct Scene *scene,double f,double bw, int message)
 
     static int count;
     
+    if(!rx)return 0;
+
     if(message == M_MUTE){
         rx->mute = !rx->mute;
         return 0;
@@ -955,6 +974,9 @@ int Radio::SetFrequency(struct Scene *scene,double f,double bw, int message)
 int Radio::setFrequencyCoefficients(struct playData *rx)
 {
     float pi;
+    
+    if(!rx)return 0;
+
     pi=4.0*atan(1.0);
     rx->dt=1.0/(double)rx->samplerate;
     rx->sino=0;
@@ -969,6 +991,8 @@ int Radio::setFrequencyCoefficients(struct playData *rx)
 int Radio::setFrequency3(struct playData *rx)
 {
     
+    if(!rx)return 0;
+
     setDialogFrequency(rx->f);
     
     setFrequency(rx->f);
@@ -1006,6 +1030,7 @@ int Radio::setFrequency3(struct playData *rx)
 int Radio::setFrequency2(struct playData *rx)
 {
     
+    if(!rx)return 0;
     
     try {
         
@@ -2189,6 +2214,7 @@ static void getMousel(int button, int state, int x, int y)
 
 void Radio::getMouse(int button, int state, int x, int y)
 {
+    if(!rx)return;
 
     if(button == 3){
         float fl,bw;

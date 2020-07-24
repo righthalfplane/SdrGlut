@@ -78,7 +78,8 @@ int rxSend(void *rxv);
 
 int RadioStart(int argc, char * argv [],struct playData *rx)
 {
-
+    if(!rx)return 0;
+    
     rx->pstopPlay=stopPlay;
     rx->pstartPlay=startPlay;
     rx->pplayRadio=playRadio;
@@ -138,7 +139,8 @@ int RadioStart(int argc, char * argv [],struct playData *rx)
 } /* main */
 static int StartSend(struct playData *rx,char *name,int type)
 {
-    
+    if(!rx)return 0;
+
     if(rx->controlSend >= 0){
         printf("Already Running - Cannot Start New Transfer\n");
         return 0;
@@ -163,6 +165,8 @@ int rxSend(void *rxv)
     
     struct playData *rx=(struct playData *)rxv;
     long size=2;
+    
+    if(!rx)return 0;
     
     rx->save=new saveData;
     
@@ -433,6 +437,8 @@ int writeStat(SOCKET toServerSocket,struct playData *rx)
 {
     double buff[2];
     
+    if(!rx)return 0;
+    
     if((rx->save->samplerate != rx->samplerate) || (rx->save->fc != rx->fc)){
         rx->save->fc=rx->fc;
         rx->save->samplerate=rx->samplerate;
@@ -470,6 +476,8 @@ int writeStat(SOCKET toServerSocket,struct playData *rx)
 
 static int SetAudio(struct playData *rx,char *name,int type)
 {
+    if(!rx)return 0;
+    
     if(type == START_AUDiO){
         if(rx->audioOutput)fclose(rx->audioOutput);
         rx->audioOutput=NULL;
@@ -504,6 +512,7 @@ static int SetAudio(struct playData *rx,char *name,int type)
 
 static int backgroundPlay(struct playData *rx)
 {
+    if(!rx)return 0;
     
     rx->fOut=48000;
     
@@ -515,6 +524,7 @@ static int backgroundPlay(struct playData *rx)
 }
 static int startPlay(struct playData *rx)
 {
+    if(!rx)return 0;
     
     rx->controlRF=0;
     
@@ -552,6 +562,8 @@ static int startPlay(struct playData *rx)
 }
 static int playRadio(struct playData *rx)
 {
+    if(!rx)return 0;
+    
     rx->controlRF =  1;
     rx->controlAudio  = -1;
     rx->controlProcess  = -1;
@@ -565,7 +577,7 @@ static int playRadio(struct playData *rx)
     // SoapySDRDevice_setSampleRate(rx->device,SOAPY_SDR_RX, rx->channel, rate);
     
     
-    fprintf(stderr,"playRadio frequency %g\n",rx->fc);
+    fprintf(stderr,"playRadio frequency %g channel %d\n",rx->fc,rx->channel);
     rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc-rx->foffset);
     
     if(rx->bandwidth > 0){
@@ -638,6 +650,8 @@ static int StartIt(struct playData *rx)
     
     //double start=rtime();
     
+    if(!rx)return 0;
+    
     for(int i=0;i<3;){
         int ibuff;
         ibuff=popBuffa(rx);
@@ -666,6 +680,8 @@ static int StartIt(struct playData *rx)
 static int ProcessSound(void *rxv)
 {
     struct playData *rx=(struct playData *)rxv;
+    
+    if(!rx)return 0;
     
     ALenum error;
     
@@ -786,7 +802,7 @@ static int ProcessSound(void *rxv)
 
 static int stopPlay(struct playData *rx)
 {
-    
+    if(!rx)return 0;
     
     if(rx->controlProcess >= 0){
 
@@ -868,6 +884,8 @@ static int stopPlay(struct playData *rx)
 
 static int sdrSetMode(struct playData *rx)
 {
+    if(!rx)return 0;
+    
     rx->controlAudio = -1;
     
     Sleep2(100);
@@ -880,6 +898,8 @@ static int sdrSetMode(struct playData *rx)
 }
 int freeMemoryRadio(struct playData *rx)
 {
+    if(!rx)return 0;
+    
     if(rx->antenna){
         for (size_t i=0;i<rx->antennaCount;++i){
             cFree((char *)rx->antenna[i]);
@@ -922,6 +942,7 @@ int freeMemoryRadio(struct playData *rx)
 }
 static int sdrDone(struct playData *rx)
 {
+    if(!rx)return 0;
     
     RadioPtr r=FindSdrRadioWindow(rx);
 
@@ -945,6 +966,8 @@ static int setBuffers(struct playData *rx, int numBuff)
 {
     ALenum error;
     ALuint buffer;
+    
+    if(!rx)return 0;
     
     buffer=getbuffAudio(audio);
     if(buffer == NO_MORE_SPACE){
@@ -990,6 +1013,8 @@ static int Process(void *rxv)
 	struct Filters f;
     
 	zerol((unsigned char *)&f,sizeof(f));
+    
+    if(!rx)return 0;
     
     f.thread=rx->threadNumber++;
 	
@@ -1050,6 +1075,8 @@ int AudioReset(struct playData *rx)
 	ALint processed;
 	ALenum error;
 
+    if(!rx)return 0;
+    
 	alSourceStopv(1, &rx->source);
 
 	alGetSourcei(rx->source, AL_SOURCE_STATE, &rx->al_state);
@@ -1098,6 +1125,8 @@ static int setFilters(struct playData *rx,struct Filters *f)
 {
     
     // double shift=rx->f-rx->fc;
+    
+    if(!rx)return 0;
     
     float As = 60.0f;
     
@@ -1168,6 +1197,8 @@ static int setFilters(struct playData *rx,struct Filters *f)
 
 static int doFilter(struct playData *rx,float *wBuff,float *aBuff,struct Filters *f)
 {
+    if(!rx)return 0;
+    
  	int ip=popBuff(rx,f);
  	if(ip < 0){
  	     return 1;
@@ -1222,6 +1253,7 @@ static int doFilter(struct playData *rx,float *wBuff,float *aBuff,struct Filters
 }
 static int doMix(struct playData *rx,float *buf,float *buf2,struct Filters *f)
 {
+    if(!rx)return 0;
     
     double scale=pow(10.0,rx->scaleFactor/20.0);
 
@@ -1267,6 +1299,8 @@ static int doMix(struct playData *rx,float *buf,float *buf2,struct Filters *f)
 static int pushBuffa(int nbuffer,struct playData *rx)
 {
 
+    if(!rx)return 0;
+    
 	rx->mutexa.lock();
     rx->bufftopa=0;
     
@@ -1303,7 +1337,8 @@ static int popBuffa(struct playData *rx)
 {
 	int ret;
 	
-	
+	if(!rx)return -1;
+    
 	rx->mutexa.lock();
     
     //fprintf(stderr,"popBuffa in %d\n",rx->bufftopa);
@@ -1351,6 +1386,8 @@ Out:
 static int pushBuff(int nbuffer,struct playData *rx)
 {
 
+    if(!rx)return 0;
+
 	rx->mutex.lock();
     
 	//fprintf(stderr,"pushBuff pushBuff %d\n",rx->bufftop);
@@ -1388,7 +1425,8 @@ static int popBuff(struct playData *rx,struct Filters *f)
 {
 	int ret;
 	
-	
+    if(!rx)return -1;
+
 	rx->mutex.lock();
 	
 	//fprintf(stderr,"popBuff bufftop %d %d in\n",rx->bufftop,f->thread);
@@ -1438,6 +1476,8 @@ static int findRadio(struct playData *rx)
     static SoapySDR::Device *deviceSave=NULL;
     
     std::string argStr;
+    
+    if(!rx)return 0;
     
     rx->device = NULL;
     
@@ -1490,6 +1530,8 @@ static int findRadio(struct playData *rx)
     
     rx->device->activateStream(rx->rxStream, 0, 0, 0);
    
+   // fprintf(stderr,"findRadio frequency %g channel %d\n",rx->fc,rx->channel);
+    
     rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc-rx->foffset);
 
     
@@ -1501,6 +1543,8 @@ int rxBuffer(void *rxv)
 
 	struct playData *rx=(struct playData *)rxv;
 	
+    if(!rx)return 0;
+
 	while(1)
 	{
 	     switch(rx->controlRF){
@@ -1647,6 +1691,7 @@ static int doAudio(float *aBuff,struct playData *rx)
 	int short *data;
 	int audioOut;
 
+    if(!rx)return 0;
 	
 	rx->mutexo.lock();
 	audioOut=rx->witchAudioBuffer;
@@ -1725,6 +1770,7 @@ static int doAudio(float *aBuff,struct playData *rx)
 }
 int testRadio(struct playData *rx)
 {
+    if(!rx)return 0;
     
     rx->getRadioAttributes=1;
     

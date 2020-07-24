@@ -612,6 +612,8 @@ RadioPtr FindSdrRadioWindow(struct playData *rx)
     
     if(!Root)return NULL;
     
+    if(!rx)return NULL;
+    
     w=Root;
     while(w){
         if(w->scene->windowType == FileTypeSdrRadio){
