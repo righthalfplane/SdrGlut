@@ -2130,7 +2130,7 @@ static void getMousel(int button, int state, int x, int y)
     struct SceneList *list;
     RadioPtr sdr;
     
-    
+
     list=SceneFindByNumber(glutGetWindow());
     if(!list){
         sdr=FindSdrRadioWindow(glutGetWindow());
@@ -2243,7 +2243,8 @@ void Radio::getMouse(int button, int state, int x, int y)
     }else if(button != 0){
         return;
     }
-    
+
+    static double fsave;
    	if(state == GLUT_DOWN)
     {
         double fclick;
@@ -2256,13 +2257,15 @@ void Radio::getMouse(int button, int state, int x, int y)
         
         fcdown=rx->fc;
         
+        fsave=rx->fc;
+        
         fcount=0;
 
         setFrequency2(rx);
         
         // printf("fclick %f button %d state %d x %d y %d\n",fclick,button,state,x,y);
     }else{
-        setFrequency2(rx);
+       if(fsave != rx->fc) setFrequency2(rx);
     }
 }
 
