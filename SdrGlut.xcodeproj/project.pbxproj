@@ -60,6 +60,7 @@
 		4686063A22028C1F0078D9F2 /* Radio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4686063822028C1F0078D9F2 /* Radio.cpp */; };
 		468D261C2238A04D005BE154 /* RecordIQ.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 468D261A2238A04D005BE154 /* RecordIQ.cpp */; };
 		469215B023EE7ADD009B2C34 /* librtaudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 469215AF23EE7ADD009B2C34 /* librtaudio.a */; };
+		4692982324CCBACF00AF1BB8 /* WriteToWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4692982224CCBACF00AF1BB8 /* WriteToWindow.cpp */; };
 		469445EF2436E12500F049C8 /* WriteToGLUIWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 469445EE2436E12500F049C8 /* WriteToGLUIWindow.cpp */; };
 		46963ED323D789A30059B4AA /* printInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46963ED223D789A30059B4AA /* printInfo.cpp */; };
 		46A5B3D6246D9F770071072C /* Poly.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46A5B3D4246D9F760071072C /* Poly.cpp */; };
@@ -180,6 +181,7 @@
 		468D261A2238A04D005BE154 /* RecordIQ.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RecordIQ.cpp; path = MainSource/RecordIQ.cpp; sourceTree = "<group>"; };
 		468D261B2238A04D005BE154 /* RecordIQ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RecordIQ.h; path = MainSource/RecordIQ.h; sourceTree = "<group>"; };
 		469215AF23EE7ADD009B2C34 /* librtaudio.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = librtaudio.a; sourceTree = "<group>"; };
+		4692982224CCBACF00AF1BB8 /* WriteToWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WriteToWindow.cpp; sourceTree = "<group>"; };
 		469445EE2436E12500F049C8 /* WriteToGLUIWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WriteToGLUIWindow.cpp; path = MainSource/WriteToGLUIWindow.cpp; sourceTree = "<group>"; };
 		46963ED223D789A30059B4AA /* printInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = printInfo.cpp; path = MainSource/printInfo.cpp; sourceTree = "<group>"; };
 		46A5B3D4246D9F760071072C /* Poly.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Poly.cpp; path = Digital/Poly.cpp; sourceTree = SOURCE_ROOT; };
@@ -313,6 +315,7 @@
 				462FB7F3220389830028D417 /* RaceFastsdr.h */,
 				4686063822028C1F0078D9F2 /* Radio.cpp */,
 				4686063722028C1F0078D9F2 /* Radio.h */,
+				4692982224CCBACF00AF1BB8 /* WriteToWindow.cpp */,
 			);
 			path = Radio;
 			sourceTree = "<group>";
@@ -571,6 +574,7 @@
 				467FE4191C2C4F9B007D260F /* glui.cpp in Sources */,
 				4686063A22028C1F0078D9F2 /* Radio.cpp in Sources */,
 				46CE01C122125F3000140F6C /* Getpalette.c in Sources */,
+				4692982324CCBACF00AF1BB8 /* WriteToWindow.cpp in Sources */,
 				4614BF382473180E006E6894 /* eMemory.cpp in Sources */,
 				46C36C52222596D90045691F /* DialogSave.cpp in Sources */,
 				46DA4763248463CE0013FD0D /* send.cpp in Sources */,

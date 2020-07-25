@@ -464,7 +464,7 @@ static void control_cb(int control)
             s->scanRun=0;
             s->dd.scan->set_name("Scan");
             s->setFrequency2(s->rx);
-           fprintf(stderr,"Stop Scane\n");
+           fprintf(stderr,"Stop Scan\n");
       }
    
      }else if(control == 4){

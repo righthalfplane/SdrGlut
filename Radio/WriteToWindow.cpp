@@ -13,6 +13,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <stdarg.h>
+#include "Radio.h"
 /* #define EXTERN  */
 
 #include "BackgroundQ.h"
@@ -31,33 +32,31 @@ static void textbox_cb(GLUI_Control *control) {
 
 static void menu_select(int item);
 
-int doFrequencyFile(char *name);
+static int doFrequencyFile(char *name);
 
 static volatile int scanFlag=0;
 
 static int insert=0;
 
-int rxScan(void *rxv);
-
-static double lineTime=0;
+static int rxScan(void *rxv);
 
 static std::vector<std::string> modes;
 static std::vector<std::string> freq;
 
-class GLUIAPI GLUI_TextBox2 : public GLUI_TextBox
+class GLUIAPI GLUI_TextBox3 : public GLUI_TextBox
 {
 public:
     virtual int mouse_down_handler( int local_x, int local_y );
     int  key_handler( unsigned char key,int modifiers );
     virtual int special_handler( int key, int modifiers);
-    GLUI_TextBox2( GLUI_Node *parent, bool scroll = false,
+    GLUI_TextBox3( GLUI_Node *parent, bool scroll = false,
                   int id=-1, GLUI_CB cb=GLUI_CB() );
     
 };
 
-static GLUI_TextBox2 *moo;
+static GLUI_TextBox3 *moo;
 
-int GLUI_TextBox2::key_handler(unsigned char key, int modifiers)
+int GLUI_TextBox3::key_handler(unsigned char key, int modifiers)
 {
   //  fprintf(stderr,"key %d\n",key);
     
@@ -139,7 +138,7 @@ int GLUI_TextBox2::key_handler(unsigned char key, int modifiers)
     return false;
 
 }
-int GLUI_TextBox2::special_handler( int key, int modifiers)
+int GLUI_TextBox3::special_handler( int key, int modifiers)
 {
 //     fprintf(stderr,"key %d\n",key);
     
@@ -151,7 +150,7 @@ int GLUI_TextBox2::special_handler( int key, int modifiers)
     
     return false;
 }
-int GLUI_TextBox2::mouse_down_handler( int local_x, int local_y)
+int GLUI_TextBox3::mouse_down_handler( int local_x, int local_y)
 {
     
     GLUI_TextBox::mouse_down_handler( local_x, local_y);
@@ -164,7 +163,7 @@ int GLUI_TextBox2::mouse_down_handler( int local_x, int local_y)
     
 }
 
-GLUI_TextBox2::GLUI_TextBox2( GLUI_Node *parent,
+GLUI_TextBox3::GLUI_TextBox3( GLUI_Node *parent,
                              bool scroll, int id,
                              GLUI_CB cb) : GLUI_TextBox(parent,scroll,id,cb)
 {
@@ -172,7 +171,7 @@ GLUI_TextBox2::GLUI_TextBox2( GLUI_Node *parent,
 }
 
 
-int doFrequencyFile(char *path)
+static int doFrequencyFile(char *path)
 {
     char buff[5120],word[20000];
     FILE *inout;
@@ -218,11 +217,7 @@ int doFrequencyFile(char *path)
 static void SaveIt(struct Scene *scene,char *name)
 {
 	FILE *out;
-	GLUI *glui;
 	
-	glui = GLUI_Master.find_glui_by_window_id(gluiID);
-	
-	if(glui){
 		if(moo){
 			const char *text=moo->get_text();
 			if(text){
@@ -233,77 +228,10 @@ static void SaveIt(struct Scene *scene,char *name)
 				}
 			}
 		}
-	}
-}
-int rxScan2(void *rxv)
-{
-    int n;
-    
-    const char *test=moo->get_text();
 
-    char *buff = new char[strlen(test)+10];
-    
-    int start=moo->sel_start;
-    int end=moo->sel_end;
-   // fprintf(stderr,"Start Scan start %d end %d\n",start,end);
-    if(start > end){
-        n=start;
-        start=end;
-        end=n;
-    }
-
-    freq.clear();
-    modes.clear();
-
-    
-    n=0;
-    for(int k=start;k<end;++k){
-        if(test[k] == ' ' || test[k] == 13){
-            continue;
-        }else if(test[k] == ',' || test[k] == 10){
-            buff[n++]=0;
-        }else{
-            buff[n++]=test[k];
-        }
-        if(n > 4094)break;
-    }
-    buff[n++]=0;
- 
-    
-    
-      int n1=-1;
-      int n2=-1;
-      for(int k=0;k<n;++k){
-          if(n1 == -1 && buff[k] == 0){
-            n1=k+1;
-          }else if(n1 > -1 && n2 == -1 && buff[k] == 0){
-              n2=k+1;
-              freq.push_back(&buff[n1]);
-              modes.push_back(&buff[n2]);
-             // fprintf(stderr,"buff1 '%s' buff2 '%s'\n",&buff[n1],&buff[n2]);
-             // sendMessageGlobal(&buff[n1],&buff[n2],M_SEND);
-              for(int i=n2;i<n;++i){
-                  if(buff[i] == 0){
-                      k=i;
-                      break;
-                  }
-              }
-              n1=-1;
-              n2=-1;
-          }
-      }
-    
-    scanFlag=0;
-    fprintf(stderr,"Scan Frequencies\n");
-    for(std::vector<std::string>::size_type k=0;k<freq.size();++k){
-        fprintf(stderr,"freq '%s' modes '%s'\n",freq[k].c_str(),modes[k].c_str());
-        scanFlag=1;
-    }
-    
-    return 1;
 }
 
-int rxScan(void *rxv)
+static int rxScan(void *rxv)
 {
      int n;
     
@@ -364,11 +292,11 @@ static void menu_select(int item)
     //fprintf(stderr,"menu_select window %d\n",glutGetWindow());
 
     if(item == 400){
-        launchThread((void *)moo,rxScan);
+        rxScan((void *)moo);
     }else if(item == 401){
         scanFlag=0;
     }else if(item == 405){
-        rxScan2((void *)moo);
+       // rxScan2((void *)moo);
     }else if(item == 32){
 		dialogSaveC(NULL,SaveIt,3,NULL);
 		return;
@@ -441,38 +369,26 @@ static void menu_select(int item)
         
     }
 }
-static void iddle(void){
-    static long int nn=0;
-    if(!scanFlag || modes.size() == 0 || freq.size() == 0)return;
-    if(rtime() < lineTime)return;
-    lineTime = rtime()+5;
-    long int jj = nn % freq.size();
-    fprintf(stderr,"nn %ld jj %ld %s %s\n",nn++,jj,freq[jj].c_str(),modes[jj].c_str());
-    sendMessageGlobal((char *)freq[jj].c_str(),(char *)freq[jj].c_str(),M_SEND);
-    return;
-}
-int WriteToGLUIWindow(char *message)
+int Radio::WriteToWindow(char *message)
 {
-	GLUI *glui;
+	GLUI *gluiw;
 
     static int window=-1;
     
 	if(!message)return 1;
 	
-	glui = GLUI_Master.find_glui_by_window_id(gluiID);
+	gluiw = GLUI_Master.find_glui_by_window_id(gluiID);
 	
-	if(!glui){
-        glui = GLUI_Master.create_glui("BatchPrint", 0);
-        if(!glui)return 1;
-        gluiID=glui->get_glut_window_id();
-        glui->set_main_gfx_window(glutGetWindow());
-        GLUI_Panel *ep = new GLUI_Panel(glui,"",true);
-        moo = new GLUI_TextBox2(ep,true,1,textbox_cb);
+	if(!gluiw){
+        gluiw = GLUI_Master.create_glui("BatchPrint", 0);
+        if(!gluiw)return 1;
+        gluiID=gluiw->get_glut_window_id();
+        gluiw->set_main_gfx_window(glutGetWindow());
+        GLUI_Panel *ep = new GLUI_Panel(gluiw,"",true);
+        moo = new GLUI_TextBox3(ep,true,1,textbox_cb);
         moo->set_h(400);
         moo->set_w(610);
         
-         GLUI_Master.set_glutIdleFunc(iddle);
-
         //GLUI_Panel *panel3 = new GLUI_Panel(glui, "Scan Frequencies");
         //new GLUI_Button(panel3, "Stop", 401, menu_select);
 

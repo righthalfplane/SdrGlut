@@ -497,7 +497,7 @@ int doRadioOpenRA(void)
         new GLUI_Button(glui, "Error Device not Found" , 2, control_cb);
     }
     
-    new GLUI_Button(glui, "Quit", 1, control_cb);
+    new GLUI_Button(glui, "Close", 1, control_cb);
 
     glui->set_main_gfx_window( glutGetWindow() );
     

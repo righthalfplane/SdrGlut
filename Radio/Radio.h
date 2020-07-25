@@ -302,6 +302,8 @@ public:
     int setFc(double frequency);
     
     int Transmit(struct Scene *scene);
+    
+    int WriteToWindow(char *message);
 
     volatile int inTransmit;
     

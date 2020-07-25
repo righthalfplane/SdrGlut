@@ -42,7 +42,7 @@ extern "C" int SaveFluencePath(struct Scene *scene,char *path);
 
 int doSdrFileOpen(char *name);
 
-int doFrequnecyFile(char *name);
+int doFrequencyFile(char *name);
 
 int dialogFileOpen(struct Scene *scene)
 {
@@ -138,7 +138,7 @@ static void control_cb(int control)
 
 		  glutSetWindow(glu);
         }else if(type == 1){
-            doFrequnecyFile((char *)file_name.c_str());
+            doFrequencyFile((char *)file_name.c_str());
         }else if(type == 2){
             processFile((char *)file_name.c_str());
         }

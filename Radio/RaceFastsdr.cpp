@@ -1542,6 +1542,8 @@ int rxBuffer(void *rxv)
 {
 
 	struct playData *rx=(struct playData *)rxv;
+    
+    int ret = -1;
 	
     if(!rx)return 0;
 
@@ -1577,7 +1579,7 @@ int rxBuffer(void *rxv)
                  
             int count=0;
                  
-            int ret = -1;
+            ret = -1;
                  
             while(rx->controlRF == 2){
 				int flags=0;
@@ -1648,16 +1650,17 @@ int rxBuffer(void *rxv)
                 }
 */
                 //printf("amin %g amax %g witch %d count %d\n",amin,amax,rx->witchRFBuffer,count);
-                
-                for(int k=0;k<rx->FFTcount;++k){
-                    if(k < rx->size){
-                       // rx->real[k]=buff[2*k]*scale;
-                       // rx->imag[k]=buff[2*k+1]*scale;
-                        rx->real[k]=buff[2*k];
-                        rx->imag[k]=buff[2*k+1];
-                    }else{
-                        rx->real[k]=0;
-                        rx->imag[k]=0;
+                if(ret != -1){
+                    for(int k=0;k<rx->FFTcount;++k){
+                        if(k < rx->size){
+                           // rx->real[k]=buff[2*k]*scale;
+                           // rx->imag[k]=buff[2*k+1]*scale;
+                            rx->real[k]=buff[2*k];
+                            rx->imag[k]=buff[2*k+1];
+                        }else{
+                            rx->real[k]=0;
+                            rx->imag[k]=0;
+                        }
                     }
                 }
              	++rx->witchRFBuffer;
