@@ -441,7 +441,12 @@ static void control_cb(int control)
         for(vector<double>::size_type k=0;k<s->scanFrequencies.size();++k){
             static int count;
             char *Mode_Names[] = {(char *)"FM",(char *)"NBFM",(char *)"AM",(char *)"NAM",(char *)"USB",(char *)"LSB",(char *)"CW"};
-            WarningPrint("F%d,%0.4f,%s\n",count++,s->scanFrequencies[k]/1e6,Mode_Names[s->rx->decodemode]);
+            
+            char buff[256];
+            msprintf(buff,sizeof(buff),"F%d,%0.4f,%s\n",count++,s->scanFrequencies[k]/1e6,Mode_Names[s->rx->decodemode]);
+            s->WriteToWindow(buff);
+
+           // WarningPrint("F%d,%0.4f,%s\n",count++,s->scanFrequencies[k]/1e6,Mode_Names[s->rx->decodemode]);
         }
     } else if(control == 2224){
         s->pauseTimeDelta=pauseTimeDelta;

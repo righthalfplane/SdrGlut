@@ -953,7 +953,10 @@ int Radio::SetFrequency(struct Scene *scene,double f,double bw, int message)
         rx->mute = !rx->mute;
         return 0;
     }else if(message == M_SAVE){
-        WarningPrint("F%d,%0.4f,%s\n",count++,rx->f/1e6,Mode_Names[rx->decodemode]);
+        char buff[256];
+        msprintf(buff,sizeof(buff),"F%d,%0.4f,%s\n",count++,rx->f/1e6,Mode_Names[rx->decodemode]);
+        WriteToWindow(buff);
+        //WarningPrint("F%d,%0.4f,%s\n",count++,rx->f/1e6,Mode_Names[rx->decodemode]);
         return 0;
     }else if(message == M_SCAN){
         if(scanWait == 0){
@@ -1589,10 +1592,10 @@ int Radio::OpenWindows(struct Scene *scene)
     glutCreateMenu(menu_selectl);
     
     glutAddMenuEntry("Scan Frequency File...", SdrReadFile);
-    glutAddMenuEntry("--------------------", -1);
     glutAddMenuEntry("SDR Dialog...", SdrDialog);
     if(rx->ntransmit)glutAddMenuEntry("Transmit...", SdrTransmit);
     glutAddMenuEntry("Send...", SdrSend);
+    glutAddMenuEntry("--------------------", -1);
     glutAddSubMenu("Palette", palette_menu);
     glutAddSubMenu("Mode", menu3);
     if(rx->antennaCount > 0)glutAddSubMenu("Antenna", antenna);
@@ -2134,7 +2137,11 @@ static void keys2(unsigned char key, int x, int y)
         if(key == 'm'){
            sdr->rx->mute = !sdr->rx->mute;
         }else if(key == 's'){
-            WarningPrint("F%d,%0.4f,%s\n",count++,sdr->rx->f/1e6,Mode_Names[sdr->rx->decodemode]);
+            char buff[256];
+            msprintf(buff,sizeof(buff),"F%d,%0.4f,%s\n",count++,sdr->rx->f/1e6,Mode_Names[sdr->rx->decodemode]);
+            sdr->WriteToWindow(buff);
+
+           // WarningPrint("F%d,%0.4f,%s\n",count++,sdr->rx->f/1e6,Mode_Names[sdr->rx->decodemode]);
         }else if(key == ' '){
             if(sdr->scanWait == 0){
                 sdr->scanWait=1;
