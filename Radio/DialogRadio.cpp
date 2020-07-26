@@ -302,11 +302,19 @@ int Radio::dialogRadio(struct Scene *scene)
     dd.glui->add_edittext_to_panel( obj_panel,  "Pause Time:", GLUI_EDITTEXT_TEXT, dd.text21);
     dd.edittext21->w=200;
     
-    dd.search= new GLUI_Button(obj_panel, "Search", 2222, control_cb);
+    if(rx->cutOFFSearch == 0){
+        dd.search= new GLUI_Button(obj_panel, "Search", 2222, control_cb);
+    }else{
+        dd.search= new GLUI_Button(obj_panel, "Stop Search", 2222, control_cb);
+    }
     
     new GLUI_Button(obj_panel, "Write", 2223, control_cb);
     
-    dd.scan=new GLUI_Button(obj_panel, "Scan", 2224, control_cb);
+    if(scanRun){
+        dd.scan=new GLUI_Button(obj_panel, "Stop Scan", 2224, control_cb);
+    }else{
+        dd.scan=new GLUI_Button(obj_panel, "Scan", 2224, control_cb);
+    }
     
     obj_panel =  dd.glui->add_panel( "Bandwidth + Audio Thread Count" );
 
@@ -464,9 +472,11 @@ static void control_cb(int control)
         if(s->scanRun == 0){
             s->dd.scan->set_name("Stop Scan");
             s->scanRun=1;
+            s->rx->muteScan=0;
             fprintf(stderr,"Start Scan scanCount %ld\n",(long)s->scanFrequencies.size());
        }else{
             s->scanRun=0;
+            s->rx->muteScan=0;
             s->dd.scan->set_name("Scan");
             s->setFrequency2(s->rx);
            fprintf(stderr,"Stop Scan\n");

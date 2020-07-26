@@ -1749,12 +1749,14 @@ static int doAudio(float *aBuff,struct playData *rx)
 	dmin=amin;
     //amin=1e30;
    // amax=-1e30;
+    
+    int mute=rx->mute+rx->muteScan;
 
 	for(int k=0;k<BLOCK_SIZE5;++k){
 		double v;
         v=buff[k];
 		v=gain*((v-dmin)*dnom-32768);
-        if(rx->mute)v=0.0;
+        if(mute)v=0.0;
         if(v < -32765){
             v = -32765;
         }else if(v > 32765){

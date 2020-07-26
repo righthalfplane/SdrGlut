@@ -183,6 +183,7 @@ struct playData{
     volatile int controlAudio;
     volatile int controlProcess;
     volatile int mute;
+    volatile int muteScan;
 
     volatile int controlSend;
     unsigned short Port;

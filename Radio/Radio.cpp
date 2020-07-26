@@ -732,7 +732,7 @@ int Radio::updateLine()
                 }
             }
             if(ifound){
-                rx->mute = 0;
+                rx->muteScan = 0;
                 if(scanFound[pauseChannel]){
                     if(rtime() < pauseTime)goto FoundTime;
                 }
@@ -762,7 +762,7 @@ int Radio::updateLine()
                 }
                 pauseChannel=lastChannel;
             }else{
-                rx->mute = 1;
+                rx->muteScan = 1;
             }
         }
     }
