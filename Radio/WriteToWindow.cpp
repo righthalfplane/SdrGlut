@@ -37,8 +37,6 @@ static int rxScan(GLUI_TextBox3 *moo);
 static std::vector<std::string> modes;
 static std::vector<std::string> freq;
 
-extern int getFrequencyData(char **list);
-
 int GLUI_TextBox3::key_handler(unsigned char key, int modifiers)
 {
   //  fprintf(stderr,"key %d\n",key);
@@ -172,20 +170,22 @@ GLUI_TextBox3::GLUI_TextBox3( GLUI_Node *parent,
 
 int Radio::doFrequencyFile(char *path)
 {
-    char word[20000];
-    int k,itWas,c;
-    char *buff;
-    long length;
+    char buff[5120],word[20000];
+    FILE *inout;
+    int n,m,k,itWas,c;
     
-    if(getFrequencyData(&buff))return 1;
-
-    length=(long)strlen(buff);
+    if(!path)return 1;
     
-    fprintf(stderr,"File length %ld\n",length);
+    if((inout=fopen(path,"rb")) == NULL){
+        sprintf(buff,"doFrequencyFile Cannot open file : %s to read%c\n",path,0);
+        fprintf(stderr,"%s",buff);
+        return 1;
+    }
     
     itWas = -7777;
     k=0;
-        for(long n=0;n<length;++n){
+    while((m=(int)fread(buff,1,5120,inout)) > 0){
+        for(n=0;n<m;++n){
             c=buff[n];
             if(c == '\n' || c == '\r' || (k >= 19998)){
                 if((c == '\n') && (itWas == '\r')){
@@ -195,19 +195,21 @@ int Radio::doFrequencyFile(char *path)
                 word[k++]='\0';
                 WriteToWindow(word);
                 k=0;
-            }else{
+            }else if(c != '\t' && c != ' '){
                 word[k++]=buff[n];
             }
             itWas = c;
         }
-    
+    }
     if(k != 0){
         word[k++]='\n';
         word[k++]='\0';
-        WriteToWindow(word);
+        WriteToGLUIWindow(word);
     }
-    return 0;
-}
+    
+    if(inout)fclose(inout);
+    
+    return 0;}
 static void SaveIt(struct Scene *scene,char *name)
 {
 	FILE *out;
@@ -372,6 +374,7 @@ static void menu_select(int item)
         }
         n=0;
         for(int k=start;k<end;++k){
+            if(test[k] == '\n')break;
             buff[n++]=test[k];
             if(n > 254)break;
         }

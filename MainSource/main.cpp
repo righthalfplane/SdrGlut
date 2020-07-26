@@ -23,10 +23,6 @@
 
 #include "SocketDefs.h"
 
-
-
-
-
 int printInfo(void);
 
 char ApplicationDirectory[2048];
@@ -42,7 +38,7 @@ static void control_cb(int control);
 
 static void control_cb2(int control);
 
-char *ProgramVersion=(char *)"SdrGlut-718";
+char *ProgramVersion=(char *)"SdrGlut-719";
 
 extern "C" struct Scene *sceneRoot(void);
 
@@ -231,6 +227,7 @@ static void control_cb(int control)
 		if(glui)glui->close();
 		glui=NULL;
     }else if(control == 5){
+        dialogFunctionPtr=NULL;
         dialogFileOpen((struct Scene *)NULL);
     }else if(control == 8){
         doRadioOpenRA();

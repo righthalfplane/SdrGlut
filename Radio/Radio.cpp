@@ -103,6 +103,7 @@ void doDirectSampleMode(int item);
 void doBiasMode(int item);
 void doFilterMenu(int item);
 
+
 int Radio::controlScan(struct playData *rx)
 {
     return 0;
@@ -329,8 +330,6 @@ Radio::Radio(struct Scene *scene,SoapySDR::Kwargs deviceArgs): CWindow(scene)
 
     frequencies=(double *)cMalloc(FFTlength*sizeof(double),9851);
     ampitude=(double *)cMalloc(FFTlength*sizeof(double),9851);
-    
-    getMoo = 0;
     
     if(!range || !magnitude || !frequencies || !ampitude || !magnitude2)return;
     
@@ -852,19 +851,6 @@ int Radio::BackGroundEvents(struct Scene *scene)
         setFrequencyDuo(rx);
         rx->frequencyReset=0;
     }
-    
-    if(getMoo == 2){
-        extern int killFrequencyData();
-        getMoo = 0;
-        killFrequencyData();
-    }
-    
-    if(getMoo == 1){
-        if(!doFrequencyFile((char *)NULL)){
-            getMoo = 2;
-        }
-    }
-    
     
     if(flagsflag && (flags.size() > 0) && flagsmenu && !inuseflag){
         for(size_t k=0;k<flags.size();++k){
@@ -2083,8 +2069,8 @@ int Radio::mMenuSelectl(struct Scene *scene,int item)
 	{
             
         case SdrReadFile:
+            dialogFunctionPtr=this;
             dialogFileOpen((struct Scene *)NULL);
-            getMoo=1;
             return 0;
 
         case SdrDialog:

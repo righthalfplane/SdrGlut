@@ -404,8 +404,6 @@ public:
     GLUI_TextBox3 *moo;
 
     int gluiID;
-
-    int getMoo;
     
     int mooWindow;
     

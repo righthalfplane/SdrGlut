@@ -44,6 +44,8 @@ int doSdrFileOpen(char *name);
 
 int doFrequencyFile(char *name);
 
+RadioPtr dialogFunctionPtr=NULL;
+
 int dialogFileOpen(struct Scene *scene)
 {
 
@@ -136,7 +138,11 @@ static void control_cb(int control)
         if(type == 0){
             doSdrFileOpen((char *)file_name.c_str());
         }else if(type == 1){
-            doFrequencyFile((char *)file_name.c_str());
+            if(dialogFunctionPtr){
+                dialogFunctionPtr->doFrequencyFile((char *)file_name.c_str());
+            }else{
+                doFrequencyFile((char *)file_name.c_str());
+            }
         }else if(type == 2){
             processFile((char *)file_name.c_str());
         }

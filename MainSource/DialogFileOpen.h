@@ -9,8 +9,8 @@
 #ifndef __DialogFileOpen__
 #define __DialogFileOpen__
 #include "Scene.h"
-
+#include "Radio.h"
 int dialogFileOpen(struct Scene *scene);
-
+extern RadioPtr dialogFunctionPtr;
 
 #endif
