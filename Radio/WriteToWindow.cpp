@@ -24,7 +24,6 @@
 
 extern "C" int WriteToGLUIWindow(char *message);
 
-static int gluiID = -1;
 
 static void textbox_cb(GLUI_Control *control) {
     //printf("Got textbox callback\n");
@@ -32,34 +31,27 @@ static void textbox_cb(GLUI_Control *control) {
 
 static void menu_select(int item);
 
-static int doFrequencyFile(char *name);
 
-static volatile int scanFlag=0;
-
-static int insert=0;
-
-static int rxScan(void *rxv);
+static int rxScan(GLUI_TextBox3 *moo);
 
 static std::vector<std::string> modes;
 static std::vector<std::string> freq;
 
-class GLUIAPI GLUI_TextBox3 : public GLUI_TextBox
-{
-public:
-    virtual int mouse_down_handler( int local_x, int local_y );
-    int  key_handler( unsigned char key,int modifiers );
-    virtual int special_handler( int key, int modifiers);
-    GLUI_TextBox3( GLUI_Node *parent, bool scroll = false,
-                  int id=-1, GLUI_CB cb=GLUI_CB() );
-    
-};
-
-static GLUI_TextBox3 *moo;
+extern int getFrequencyData(char **list);
 
 int GLUI_TextBox3::key_handler(unsigned char key, int modifiers)
 {
   //  fprintf(stderr,"key %d\n",key);
     
+    int win1=glutGetWindow();
+    RadioPtr s=(RadioPtr)FindSceneRadio(win1);
+    if(!s){
+        fprintf(stderr,"menu_select RadioPtr NOT Found win1 %d\n",win1);
+        return 1;
+    }
+    
+    GLUI_TextBox3 *moo=s->moo;
+
     const char *test=moo->get_text();
 
     if(key == 6){
@@ -152,12 +144,19 @@ int GLUI_TextBox3::special_handler( int key, int modifiers)
 }
 int GLUI_TextBox3::mouse_down_handler( int local_x, int local_y)
 {
-    
     GLUI_TextBox::mouse_down_handler( local_x, local_y);
     
    // fprintf(stderr,"a mouse_down_handler insertion_pt %d\n",insertion_pt);
     
-    insert=insertion_pt;
+    int win1=glutGetWindow();
+    RadioPtr s=(RadioPtr)FindSceneRadio(win1);
+    if(!s){
+        fprintf(stderr,"menu_select RadioPtr NOT Found win1 %d\n",win1);
+        return 1;
+    }
+    
+
+    s->insert=insertion_pt;
 
     return false;
     
@@ -171,24 +170,22 @@ GLUI_TextBox3::GLUI_TextBox3( GLUI_Node *parent,
 }
 
 
-static int doFrequencyFile(char *path)
+int Radio::doFrequencyFile(char *path)
 {
-    char buff[5120],word[20000];
-    FILE *inout;
-    int n,m,k,itWas,c;
-
-    if(!path)return 1;
+    char word[20000];
+    int k,itWas,c;
+    char *buff;
+    long length;
     
-    if((inout=fopen(path,"rb")) == NULL){
-        sprintf(buff,"doFrequencyFile Cannot open file : %s to read%c\n",path,0);
-        fprintf(stderr,"%s",buff);
-        return 1;
-    }
+    if(getFrequencyData(&buff))return 1;
 
+    length=(long)strlen(buff);
+    
+    fprintf(stderr,"File length %ld\n",length);
+    
     itWas = -7777;
     k=0;
-    while((m=(int)fread(buff,1,5120,inout)) > 0){
-        for(n=0;n<m;++n){
+        for(long n=0;n<length;++n){
             c=buff[n];
             if(c == '\n' || c == '\r' || (k >= 19998)){
                 if((c == '\n') && (itWas == '\r')){
@@ -196,30 +193,34 @@ static int doFrequencyFile(char *path)
                 }
                 word[k++]='\n';
                 word[k++]='\0';
-                WriteToGLUIWindow(word);
+                WriteToWindow(word);
                 k=0;
             }else{
                 word[k++]=buff[n];
             }
             itWas = c;
         }
-    }
+    
     if(k != 0){
         word[k++]='\n';
         word[k++]='\0';
-        WriteToGLUIWindow(word);
+        WriteToWindow(word);
     }
-
-    if(inout)fclose(inout);
-    
     return 0;
 }
 static void SaveIt(struct Scene *scene,char *name)
 {
 	FILE *out;
-	
-		if(moo){
-			const char *text=moo->get_text();
+    
+    int win1=glutGetWindow();
+    RadioPtr s=(RadioPtr)FindSceneRadio(win1);
+    if(!s){
+        fprintf(stderr,"SaveIt RadioPtr NOT Found win1 %d\n",win1);
+        return;
+    }
+
+		if(s->moo){
+			const char *text=s->moo->get_text();
 			if(text){
 				out=fopen(name,"w");
 				if(out){
@@ -231,16 +232,23 @@ static void SaveIt(struct Scene *scene,char *name)
 
 }
 
-static int rxScan(void *rxv)
+static int rxScan(GLUI_TextBox3 *moo)
 {
      int n;
     
-    const char *test=moo->get_text();
+    int win1=glutGetWindow();
+    RadioPtr s=(RadioPtr)FindSceneRadio(win1);
+    if(!s){
+        fprintf(stderr,"rxScan RadioPtr NOT Found win1 %d\n",win1);
+        return 1;
+    }
+
+    const char *test=s->moo->get_text();
     
     char *buff = new char[strlen(test)+10];
     
-    int start=moo->sel_start;
-    int end=moo->sel_end;
+    int start=s->moo->sel_start;
+    int end=s->moo->sel_end;
    // fprintf(stderr,"Start Scan start %d end %d\n",start,end);
     if(start > end){
         n=start;
@@ -257,7 +265,8 @@ static int rxScan(void *rxv)
     }
     buff[n++]=0;
 
-    sendMessageGlobal((char *)"0",(char *)"0",M_FREQUENCY_SCAN);
+    s->scanFrequencies.clear();
+    s->scanWait=1;
     
     int n1=-1;
     int n2=-1;
@@ -267,7 +276,8 @@ static int rxScan(void *rxv)
       }else if(n1 > -1 && n2 == -1 && buff[k] == 0){
           n2=k+1;
          // fprintf(stderr,"buff1 %s buff2 %s\n",&buff[n1],&buff[n2]);
-          sendMessageGlobal(&buff[n1],&buff[n2],M_FREQUENCY_SCAN);
+          // sendMessageGlobal(&buff[n1],&buff[n2],M_FREQUENCY_SCAN);
+          s->scanFrequencies.push_back(1.0e6*atof(&buff[n1]));
           for(int i=n2;i<n;++i){
               if(buff[i] == 0){
                   k=i;
@@ -278,8 +288,10 @@ static int rxScan(void *rxv)
           n2=-1;
       }
     }
-    sendMessageGlobal((char *)"-1",(char *)"-1",M_FREQUENCY_SCAN);
-
+    
+    s->scanWait=0;
+    s->pauseChannel=0;
+    
     return 1;
 }
 static void menu_select(int item)
@@ -288,22 +300,39 @@ static void menu_select(int item)
 	GLUI *glui;
     int n;
     
+    int win1=glutGetWindow();
+    RadioPtr s=(RadioPtr)FindSceneRadio(win1);
+    if(!s){
+        fprintf(stderr,"menu_select RadioPtr NOT Found win1 %d\n",win1);
+        GLUI *gluiw;
+        gluiw = GLUI_Master.find_glui_by_window_id(win1);
+        if(gluiw){
+            gluiw->close();
+        }
+        
+        s->moo=NULL;
+        
+        s->gluiID = -1;
+
+        return;
+    }
+
     
     //fprintf(stderr,"menu_select window %d\n",glutGetWindow());
 
     if(item == 400){
-        rxScan((void *)moo);
-    }else if(item == 401){
-        scanFlag=0;
+        rxScan(s->moo);
+   // }else if(item == 401){
+   //     scanFlag=0;
     }else if(item == 405){
        // rxScan2((void *)moo);
     }else if(item == 32){
 		dialogSaveC(NULL,SaveIt,3,NULL);
 		return;
     }else if(item == 35){
-        const char *test=moo->get_text();
-        int start=moo->sel_start;
-        int end=moo->sel_end;
+        const char *test=s->moo->get_text();
+        int start=s->moo->sel_start;
+        int end=s->moo->sel_end;
         if(start > end){
             n=start;
             start=end;
@@ -316,26 +345,26 @@ static void menu_select(int item)
         }
         buff[n++]=0;
     }else if(item == 36){
-        moo->text.insert(moo->insertion_pt,buff);
-        moo->insertion_pt += (int)strlen(buff);
+        s->moo->text.insert(s->moo->insertion_pt,buff);
+        s->moo->insertion_pt += (int)strlen(buff);
       //  fprintf(stderr,"point %d buff %s\n",moo->insertion_pt,buff);
     }else if(item == 33){
-        glui = GLUI_Master.find_glui_by_window_id(gluiID);
+        glui = GLUI_Master.find_glui_by_window_id(s->gluiID);
 
 		if(glui){
 			glui->close();
 		}
 		
-		moo=NULL;
+		s->moo=NULL;
 		
-		gluiID = -1;
+		s->gluiID = -1;
     }else if(item == 31){
         int n;
         
-        const char *test=moo->get_text();
+        const char *test=s->moo->get_text();
         
-        int start=moo->sel_start;
-        int end=moo->sel_end;
+        int start=s->moo->sel_start;
+        int end=s->moo->sel_end;
         if(start > end){
             n=start;
             start=end;
@@ -365,10 +394,11 @@ static void menu_select(int item)
 
        // fprintf(stderr,"%d %d buff %s\n",moo->sel_start,moo->sel_end,buff);
         
-        sendMessageGlobal(&buff[n1],&buff[n2],M_SEND);
+        s->sendMessage(&buff[n1],&buff[n2],M_SEND);
         
     }
 }
+
 int Radio::WriteToWindow(char *message)
 {
 	GLUI *gluiw;
@@ -380,7 +410,7 @@ int Radio::WriteToWindow(char *message)
 	gluiw = GLUI_Master.find_glui_by_window_id(gluiID);
 	
 	if(!gluiw){
-        gluiw = GLUI_Master.create_glui("BatchPrint", 0);
+        gluiw = GLUI_Master.create_glui(rx->driveName, 0);
         if(!gluiw)return 1;
         gluiID=gluiw->get_glut_window_id();
         gluiw->set_main_gfx_window(glutGetWindow());
@@ -410,6 +440,12 @@ int Radio::WriteToWindow(char *message)
         glutAddMenuEntry("Close", 33);
 
 		glutAttachMenu(GLUT_RIGHT_BUTTON);
+        
+        mooWindow=glutGetWindow();
+        
+        fprintf(stderr,"gluiID %d dd.sub_window %d\n",gluiID,dd.sub_window);
+
+        gluiw->set_main_gfx_window(dd.sub_window );
 
 		glutSetWindow(window);
         

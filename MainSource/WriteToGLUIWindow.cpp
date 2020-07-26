@@ -37,6 +37,8 @@ static volatile int scanFlag=0;
 
 static int insert=0;
 
+static int fileRead=0;
+
 int rxScan(void *rxv);
 
 static double lineTime=0;
@@ -170,7 +172,42 @@ GLUI_TextBox2::GLUI_TextBox2( GLUI_Node *parent,
 {
     ;
 }
+int getFrequencyData(char **list)
+{
+    //fprintf(stderr,"getFrequencyData moo %p fileRead %d\n",moo,fileRead);
+    
+    if(!fileRead)return 1;
+    
+    fileRead=0;
+    
+    *list=NULL;
+    
+    if(moo){
+        const char *text=moo->get_text();
+        if(!text)return 1;
+        long length=(long)(strlen(text));
+        //fprintf(stderr,"getFrequencyData text %p length %ld\n",text,length);
+        *list=(char *)cMalloc(length+10,2222);
+        if(!(*list))return 1;
+        for(long n=0;n<length;++n){
+            (*list)[n]=text[n];
+        }
+        (*list)[length]=0;
+        
+        
+        return 0;
 
+    }
+    
+
+    return 1;
+}
+
+int killFrequencyData()
+{
+    menu_select(33);
+    return 0;
+}
 
 int doFrequencyFile(char *path)
 {
@@ -212,6 +249,9 @@ int doFrequencyFile(char *path)
     }
 
     if(inout)fclose(inout);
+    
+    fileRead=1;
+    
     
     return 0;
 }

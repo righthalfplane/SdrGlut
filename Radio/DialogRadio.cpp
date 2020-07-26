@@ -579,6 +579,7 @@ RadioPtr FindSceneRadio(int window)
             r=(RadioPtr)w;
             if(r->dd.sub_window == window)return r;
             if(r->bb.sub_window == window)return r;
+            if(r->mooWindow == window)return r;
         }
         w=w->CNext;
     }

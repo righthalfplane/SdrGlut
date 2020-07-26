@@ -11,6 +11,8 @@
 
 #include "mThread.h"
 
+#include "DialogFileOpen.h"
+
 #include <math.h>
 
 #include <GL/glui.h>
@@ -55,6 +57,7 @@ extern "C" int DrawLine(int x1, int y1, int x2, int y2);
 #define SdrDialog               103
 #define SdrTransmit             104
 #define SdrSend                 105
+#define SdrReadFile             106
 
 ALvoid DisplayALError(unsigned char *szText, ALint errorCode);
 
@@ -327,7 +330,7 @@ Radio::Radio(struct Scene *scene,SoapySDR::Kwargs deviceArgs): CWindow(scene)
     frequencies=(double *)cMalloc(FFTlength*sizeof(double),9851);
     ampitude=(double *)cMalloc(FFTlength*sizeof(double),9851);
     
-    
+    getMoo = 0;
     
     if(!range || !magnitude || !frequencies || !ampitude || !magnitude2)return;
     
@@ -848,6 +851,18 @@ int Radio::BackGroundEvents(struct Scene *scene)
     if(rx->frequencyReset){
         setFrequencyDuo(rx);
         rx->frequencyReset=0;
+    }
+    
+    if(getMoo == 2){
+        extern int killFrequencyData();
+        getMoo = 0;
+        killFrequencyData();
+    }
+    
+    if(getMoo == 1){
+        if(!doFrequencyFile((char *)NULL)){
+            getMoo = 2;
+        }
     }
     
     
@@ -1572,6 +1587,9 @@ int Radio::OpenWindows(struct Scene *scene)
     glutMenuStateFunc(inuse);
     
     glutCreateMenu(menu_selectl);
+    
+    glutAddMenuEntry("Scan Frequency File...", SdrReadFile);
+    glutAddMenuEntry("--------------------", -1);
     glutAddMenuEntry("SDR Dialog...", SdrDialog);
     if(rx->ntransmit)glutAddMenuEntry("Transmit...", SdrTransmit);
     glutAddMenuEntry("Send...", SdrSend);
@@ -2060,6 +2078,11 @@ int Radio::mMenuSelectl(struct Scene *scene,int item)
     
 	switch (item)
 	{
+            
+        case SdrReadFile:
+            dialogFileOpen((struct Scene *)NULL);
+            getMoo=1;
+            return 0;
 
         case SdrDialog:
             dialogRadio(scene);

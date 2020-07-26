@@ -50,6 +50,18 @@ using namespace std;
 #include "paletteDraw.h"
 #include "DialogSave.h"
 
+
+class GLUIAPI GLUI_TextBox3 : public GLUI_TextBox
+{
+public:
+    virtual int mouse_down_handler( int local_x, int local_y );
+    int  key_handler( unsigned char key,int modifiers );
+    virtual int special_handler( int key, int modifiers);
+    GLUI_TextBox3( GLUI_Node *parent, bool scroll = false,
+                  int id=-1, GLUI_CB cb=GLUI_CB() );
+    
+};
+
 struct playData4{
     int samplerate;
     int Debug;
@@ -304,7 +316,9 @@ public:
     int Transmit(struct Scene *scene);
     
     int WriteToWindow(char *message);
-
+    
+    int doFrequencyFile(char *path);
+    
     volatile int inTransmit;
     
     volatile int inDialog;
@@ -387,7 +401,17 @@ public:
     int scanRun;
     int scanWait;
     
+    GLUI_TextBox3 *moo;
 
+    int gluiID;
+
+    int getMoo;
+    
+    int mooWindow;
+    
+    int insert;
+
+    
 };
 
 typedef Radio *RadioPtr;

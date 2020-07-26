@@ -131,19 +131,20 @@ static void control_cb(int control)
         
         // fprintf(stderr,"Name %s %p len %lu\n",(char *)file_name.c_str(),file_name.c_str(),strlen((char *)file_name.c_str()));
         
+        int glu = glutGetWindow();
+        int gluiID=glui->get_glut_window_id();
         if(type == 0){
-		  int glu = glutGetWindow();
-
-          doSdrFileOpen((char *)file_name.c_str());
-
-		  glutSetWindow(glu);
+            doSdrFileOpen((char *)file_name.c_str());
         }else if(type == 1){
             doFrequencyFile((char *)file_name.c_str());
         }else if(type == 2){
             processFile((char *)file_name.c_str());
         }
+        glui = GLUI_Master.find_glui_by_window_id(gluiID);
+        glutSetWindow(glu);
         glui->close();
 		glui=NULL;
+        fprintf(stderr,"close this window\n");
 	}
 	else if(control == 10)
 	{
