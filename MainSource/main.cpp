@@ -38,7 +38,7 @@ static void control_cb(int control);
 
 static void control_cb2(int control);
 
-char *ProgramVersion=(char *)"SdrGlut-720";
+char *ProgramVersion=(char *)"SdrGlut-721";
 
 extern "C" struct Scene *sceneRoot(void);
 

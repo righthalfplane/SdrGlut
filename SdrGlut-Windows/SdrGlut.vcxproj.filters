@@ -256,7 +256,6 @@
       <Filter>MainSource</Filter>
     </ClInclude>
     <ClInclude Include="resource.h" />
-    <ClInclude Include="..\Classes\Transmit.h" />
     <ClInclude Include="..\Digital\BatchFile.h">
       <Filter>Digital</Filter>
     </ClInclude>
@@ -264,6 +263,9 @@
       <Filter>Digital</Filter>
     </ClInclude>
     <ClInclude Include="..\Radio\SocketDefs.h">
+      <Filter>Radio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Transmit.h">
       <Filter>Radio</Filter>
     </ClInclude>
   </ItemGroup>
@@ -464,7 +466,6 @@
     <ClCompile Include="..\MainSource\printInfo.cpp">
       <Filter>MainSource</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Transmit.cpp" />
     <ClCompile Include="..\MainSource\WriteToGLUIWindow.cpp">
       <Filter>MainSource</Filter>
     </ClCompile>
@@ -481,6 +482,12 @@
       <Filter>MainSource</Filter>
     </ClCompile>
     <ClCompile Include="..\Radio\send.cpp">
+      <Filter>Radio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Radio\WriteToWindow.cpp">
+      <Filter>Radio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Transmit.cpp">
       <Filter>Radio</Filter>
     </ClCompile>
   </ItemGroup>

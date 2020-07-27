@@ -381,6 +381,7 @@
     <ClCompile Include="..\Radio\send.cpp" />
     <ClCompile Include="..\Radio\smeter.cpp" />
     <ClCompile Include="..\Classes\CWindow.cpp" />
+    <ClCompile Include="..\Radio\WriteToWindow.cpp" />
     <ClCompile Include="..\SdrFile\DialogSdrFile.cpp" />
     <ClCompile Include="..\SdrFile\SdrFile.cpp" />
     <ClCompile Include="File8-Windows.c" />
