@@ -10,6 +10,7 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.18
 
 ## Demo videos
 
+- [SdrGlut uses 4 software defined radios to scan 5 different frequency ranges](https://youtu.be/XA8q5nJEWpc)
 - [The SDRplay RSPduo vs. a RFSPACE NetSDR+ at FRS Frequencies](https://youtu.be/Bda-XdaxeW4)
 - [The SDRplay RSPduo vs. a RTL-Stick at FRS Frequencies](https://youtu.be/hi_dumxZ9s0)
 - [The HackrRF One vs. the SDRplay RSPduo at FRS Frequencies.](https://youtu.be/YTmOm55_80Q)
