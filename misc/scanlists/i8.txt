@@ -1,14 +1,25 @@
-Various FRequencies
+VariousFRequencies
 
-Air Frequencies
+Cops
 
+1,160.7083,NBFM
+2,161.5640,NBFM
+3,160.7100,NBFM
+4,160.3780,NBFM
+5,160.3800,NBFM
+6,161.5660,NBFM
+
+
+AirFrequencies
+
+F0,119.6042,AM
 F2,120.6980,AM
 F0,125.1042,AM
 F0,128.6042,AM
 
 F1,125.4480,AM
 
-CB Channels
+CBChannels
 
 1,26.965,AM
 2,26.975,AM
@@ -28,7 +39,7 @@ CB Channels
 16,27.155,AM
 17,27.165,AM
 18,27.175,AM
-19,27.185,AM	
+19,27.185,AM
 20,27.205,AM
 21,27.215,AM
 22,27.225,AM
@@ -116,22 +127,27 @@ FRS
 
 
 
-			
-MURS Frequencies
+
+MURSFrequencies
+
+
+
 
 1,151.820,NBFM
-2,151.880,NBFM       
+2,151.880,NBFM
 3,151.940,NBFM
 4,154.570,NBFM
 5,154.600,NBFM
-		
-	
-			
-			
-		
-			
-Some Cop Frequencies	
-		
+
+
+
+
+
+
+SomeCopFrequencies
+
+F0,855.2620,NBFM
+F0,855.9120,NBFM
 F5,854.9620,NBFM
 F6,854.7340,NBFM
 F1,854.3600,NBFM

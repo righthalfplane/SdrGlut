@@ -44,6 +44,8 @@ static double lineTime=0;
 static std::vector<std::string> modes;
 static std::vector<std::string> freq;
 
+extern char buffc[8192];
+
 class GLUIAPI GLUI_TextBox2 : public GLUI_TextBox
 {
 public:
@@ -355,7 +357,6 @@ int rxScan(void *rxv)
 }
 static void menu_select(int item)
 {
-    static char buff[4096];
 	GLUI *glui;
     int n;
     
@@ -382,13 +383,13 @@ static void menu_select(int item)
         }
         n=0;
         for(int k=start;k<end;++k){
-            buff[n++]=test[k];
+            buffc[n++]=test[k];
             if(n > 4094)break;
         }
-        buff[n++]=0;
+        buffc[n++]=0;
     }else if(item == 36){
-        moo->text.insert(moo->insertion_pt,buff);
-        moo->insertion_pt += (int)strlen(buff);
+        moo->text.insert(moo->insertion_pt,buffc);
+        moo->insertion_pt += (int)strlen(buffc);
       //  fprintf(stderr,"point %d buff %s\n",moo->insertion_pt,buff);
     }else if(item == 33){
         glui = GLUI_Master.find_glui_by_window_id(gluiID);
@@ -401,6 +402,7 @@ static void menu_select(int item)
 		
 		gluiID = -1;
     }else if(item == 31){
+        char buff[4098];
         int n;
         
         const char *test=moo->get_text();

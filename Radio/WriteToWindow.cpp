@@ -37,6 +37,10 @@ static int rxScan(GLUI_TextBox3 *moo);
 static std::vector<std::string> modes;
 static std::vector<std::string> freq;
 
+static int gluiID;
+
+char buffc[8192];
+
 int GLUI_TextBox3::key_handler(unsigned char key, int modifiers)
 {
   //  fprintf(stderr,"key %d\n",key);
@@ -209,18 +213,18 @@ int Radio::doFrequencyFile(char *path)
     
     if(inout)fclose(inout);
     
-    return 0;}
+    return 0;
+    
+}
 static void SaveIt(struct Scene *scene,char *name)
 {
 	FILE *out;
-    
-    int win1=glutGetWindow();
-    RadioPtr s=(RadioPtr)FindSceneRadio(win1);
+
+    RadioPtr s=(RadioPtr)FindSceneRadio(gluiID);
     if(!s){
-        fprintf(stderr,"SaveIt RadioPtr NOT Found win1 %d\n",win1);
+        fprintf(stderr,"SaveIt RadioPtr NOT Found win1 %d\n",gluiID);
         return;
     }
-
 		if(s->moo){
 			const char *text=s->moo->get_text();
 			if(text){
@@ -298,7 +302,6 @@ static int rxScan(GLUI_TextBox3 *moo)
 }
 static void menu_select(int item)
 {
-    static char buff[4096];
 	GLUI *glui;
     int n;
     
@@ -329,6 +332,7 @@ static void menu_select(int item)
     }else if(item == 405){
        // rxScan2((void *)moo);
     }else if(item == 32){
+        gluiID=win1;
 		dialogSaveC(NULL,SaveIt,3,NULL);
 		return;
     }else if(item == 35){
@@ -342,13 +346,13 @@ static void menu_select(int item)
         }
         n=0;
         for(int k=start;k<end;++k){
-            buff[n++]=test[k];
-            if(n > 4094)break;
+            buffc[n++]=test[k];
+            if(n > 8192)break;
         }
-        buff[n++]=0;
+        buffc[n++]=0;
     }else if(item == 36){
-        s->moo->text.insert(s->moo->insertion_pt,buff);
-        s->moo->insertion_pt += (int)strlen(buff);
+        s->moo->text.insert(s->moo->insertion_pt,buffc);
+        s->moo->insertion_pt += (int)strlen(buffc);
       //  fprintf(stderr,"point %d buff %s\n",moo->insertion_pt,buff);
     }else if(item == 33){
         glui = GLUI_Master.find_glui_by_window_id(s->gluiID);
@@ -361,6 +365,7 @@ static void menu_select(int item)
 		
 		s->gluiID = -1;
     }else if(item == 31){
+        char buff[4096];
         int n;
         
         const char *test=s->moo->get_text();
