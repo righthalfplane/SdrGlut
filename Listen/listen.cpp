@@ -386,6 +386,7 @@ static int setFilters(class Listen *rx,struct Filters2 *f)
         iflag=0;
     } else if(rx->decodemode == MODE_NBFM){
         rx->bw=12500.0;
+        rx->bw=15000.0;
     }else if(rx->decodemode == MODE_FM){
         rx->bw=200000.0;
     }else if(rx->decodemode == MODE_USB){   // Above 10 MHZ

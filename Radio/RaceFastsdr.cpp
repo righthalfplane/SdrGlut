@@ -975,13 +975,16 @@ static int setBuffers(struct playData *rx, int numBuff)
         return 1;
     }
 
-    if(rx->audioOutput){
+    if(rx->audioOutput && !rx->muteScan){
         size_t ret=fwrite(rx->buffa[numBuff % NUM_ABUFF5], 2, 4800,rx->audioOutput);
         if(ret == 0){
             ;
         }
     }
     
+    int mute=rx->mute+rx->muteScan;
+    if(mute)zerol((unsigned char *)rx->buffa[numBuff % NUM_ABUFF5],(long)(4800*sizeof(short)));
+
     alBufferData(buffer,
                  AL_FORMAT_MONO16,
                  rx->buffa[numBuff % NUM_ABUFF5],
@@ -1146,7 +1149,7 @@ static int setFilters(struct playData *rx,struct Filters *f)
         iflag=0;
     } else if(rx->decodemode == MODE_NBFM){
         rx->bw=12500.0;
-        rx->bw=20000.0;
+        rx->bw=15000.0;
     }else if(rx->decodemode == MODE_FM){
         rx->bw=200000.0;
     }else if(rx->decodemode == MODE_USB){   // Above 10 MHZ
@@ -1750,13 +1753,11 @@ static int doAudio(float *aBuff,struct playData *rx)
     //amin=1e30;
    // amax=-1e30;
     
-    int mute=rx->mute+rx->muteScan;
 
 	for(int k=0;k<BLOCK_SIZE5;++k){
 		double v;
         v=buff[k];
 		v=gain*((v-dmin)*dnom-32768);
-        if(mute)v=0.0;
         if(v < -32765){
             v = -32765;
         }else if(v > 32765){
