@@ -1723,15 +1723,21 @@ static int doAudio(float *aBuff,struct playData *rx)
     
     double amin=1e30;
     double amax=-1e30;
-    
+    double average=0;
 	for (int i=0; i<BLOCK_SIZE5; i++ ) {
 		double v;
         v=buff[i];
+        average += v;
 		if(v < amin)amin=v;
 		if(v > amax)amax=v;
 	}
-
-	//fprintf(stderr,"doAudio amin %f amax %f \n",amin,amax);
+    
+    average /= BLOCK_SIZE5;
+    
+    amin -= average;
+    amax -= average;
+    
+	//fprintf(stderr,"doAudio amin %f amax %f average %f\n",amin,amax,average);
 
     if(rx->aminGlobal == 0.0)rx->aminGlobal=amin;
     rx->aminGlobal = 0.9*rx->aminGlobal+0.1*amin;
@@ -1757,7 +1763,7 @@ static int doAudio(float *aBuff,struct playData *rx)
 	for(int k=0;k<BLOCK_SIZE5;++k){
 		double v;
         v=buff[k];
-		v=gain*((v-dmin)*dnom-32768);
+		v=gain*((v-average)*dnom);
         if(v < -32765){
             v = -32765;
         }else if(v > 32765){
