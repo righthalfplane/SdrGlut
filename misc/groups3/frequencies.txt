@@ -1,0 +1,10 @@
+
+./rx.py --args 'rtl' -N 'LNA:47' -S 2500000 -x 2 -f 853.4375e6 -q 0 -U  -T trunk06.tsv 2> junk.txt
+./rx.py --args 'rtl' -N 'LNA:47' -S 2500000 -x 2 -f 771.48125e6 -x 2 -U -T trunk05.tsv 2> junk.txttry
+./rx.py --args 'rtl' -N 'LNA:47' -S 2500000 -x 2 -f 771.48125e6 -x 2 -U 2> junk.txttry
+
+
+
+sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
+sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.8 2
+

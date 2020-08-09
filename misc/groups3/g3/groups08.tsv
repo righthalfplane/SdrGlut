@@ -1,0 +1,292 @@
+208	Northern Dispatch 1 
+272	Northern Dispatch 2 
+432	Tac 1 
+528	Tac 2 
+592	Tac 3 
+688	Tac 4 
+752	Tac 5 
+848	Tac 6 
+912	Tac 7 
+1008	City Tac 1 
+1072	City Tac 2 (Gangs) 
+1104	City Tac 3 (Gangs) 
+1296	Southern Dispatch 1 
+1360	Southern Dispatch 2 
+1456	Eastern Dispatch 1 
+1520	Eastern Dispatch 2 
+1616	Western Dispatch 1 
+1680	Western Dispatch 2 
+1776	Central Dispatch 1 
+1840	Central Dispatch 2 
+1936	Northeast Dispatch 1 
+2000	Northeast Dispatch 2 
+2096	Southeast Dispatch 1 
+2160	Southeast Dispatch 2 
+2256	Mid-City Dispatch 1 
+2320	Mid-City Dispatch 2 
+2416	North City West Dispatch 1 (Future Use) 
+2480	North City West Dispatch 2 
+2576	SWAT 1 
+2608	SWAT 2 
+2736	Narcotics 1 
+2800	Narcotics 2 
+2896	Narcotics 3 
+3056	Police Patch 
+3216	CHP Calling 
+3280	SDSO Calling 
+3344	Other Calling 
+3376	Border Patrol Calling 
+3408	Border 1 
+3440	Border 2 
+3472	Border 3 
+3568	Internal Affairs 1 
+3600	Internal Affairs 2 
+3696	Criminal Intelligence Unit 
+3792	SIU 1 
+3824	SIU 2 
+3888	Air Tac 1 (A.B.L.E.) 
+3920	Air Tac 2 
+3984	Training (Police Academy) 
+4016	Training (Police Academy) 
+4048	Training (Police Academy) 
+4080	Narcotics Task Force 
+4176	Vice 1 
+4208	Vice 2 
+4272	Emergency Negotiating Team 
+4336	Gang Task Force 1 
+4368	Gang Task Force 2 
+4432	Robbery 1 
+4464	Robbery 2 
+4496	Inquiry 2 
+4560	Parking Enforcement Tac 1 
+4592	Parking Enforcement Tac 2 
+4624	Parking Enforcement Tac 3 
+13040	Parking Enforcement Dispatch 
+15568	Events Tac 1 
+15600	Events Tac 2 
+15632	Events Tac 3 
+15664	Events Tac 4 
+15696	Events Tac 5 
+15728	Events Tac 6 
+15760	Events Tac 7 
+15888	Event Dispatch 1 
+15920	Event Dispatch 2 
+46416	Inquiry (Encrypted) 
+46576	Northern Tac (Encrypted) 
+46608	Northeast Tac (Encrypted) 
+46640	Eastern Tac (Encrypted) 
+46672	Southeast Tac (Encrypted) 
+46704	Central Tac (Encrypted) 
+46736	Western Tac (Encrypted) 
+46768	Southern Tac (Encrypted) 
+46800	Mid City Tac (Encrypted) 
+46832	Northwest Tac (Encrypted) 
+48144	Investigations Tac Calling 
+48176	INV Tac 1 
+48208	INV Tac 2 
+48240	INV Tac 3 
+48272	INV Tac 4 
+48304	INV Tac 5 
+48336	INV Tac 6 
+48368	INV Tac 7 
+48400	INV Tac 8 
+48432	INV Tac 9 
+48464	INV Tac 10 
+48496	INV Tac 11 
+48528	INV Tac 12 
+48560	INV Tac 13 
+49200	Gang Task Force 3D 
+49232	Gang Task Force 4D 
+49264	Gang Task Force 5D 
+49296	Gang Task Force 6D 
+49360	Narcotics 4D 
+49392	Narcotics 5D 
+49424	Narcotics 6D 
+49456	Narcotics 7D 
+49488	Narcotics 8D 
+4688	Dispatch Simulcast 
+5168	Administration 
+5008	Dispatch 
+5232	System Status Controller (ALS Medic Dispatch) 
+8208	BLS Medic Dispatch 
+7472	Command 7E - Medical Command 
+7408	Tac 7F - Medical Primary Tac 
+7568	Tac 7G - Medical Secondary Tac 
+6512	Command 7H - Traffic Accidents & Grass Command 
+6448	Tac 7I - Traffic Accidents & Grass Primary Tac 
+6608	Tac 7J - Traffic Accidents & Grass Secondary Tac 
+5648	Tac 7K 
+5808	Tac 7L 
+5552	Tac 7M 
+8432	Tac 7N 
+5136	Fire Emergency 
+6832	Command 8A - South Bay 
+6768	Tac 8B - South Bay 
+6928	Tac 8C - South Bay 
+7792	Command 8D - West of I-805 & South of I-8 
+7728	Tac 8E - West of I-805 & South of I-8 
+7888	Tac 8F - West of I-805 & South of I-8 
+7152	Command 8G - E of I-805 & S of I-8 
+7088	Tac 8H - E of I-805 & S of I-8 
+7248	Tac 8I - E of I-805 & S of I-8 
+5712	Tac 8J - Battalion 1 Training 
+7312	Tac 8K - Battalion 2 Training 
+7632	Tac 8L - Battalion 4 Training 
+7952	Tac 8M - Battalion 6 Training 
+6352	Rapid Intervention Crew 8N 
+5968	Command 9A - North of I-8 (+Poway) 
+5872	Tac 9B - North of I-8 (+Poway) 
+6032	Tac 9C - North of I-8 (+Poway) 
+5328	Command 9D - Metro Command 
+5392	Tac 9E - Metro Primary Tac 
+8272	Tac 9F - Metro Secondary Tac 
+5488	Command 9G - Citywide & San Pasqual Command 
+6128	Tac 9H - Citywide & San Pasqual Primary Tac 
+8528	Tac 9I - Citywide & San Pasqual Secondary Tac 
+6992	Tac 9J - Battalion 3 Training 
+8592	Tac 9K - Battalion 5 Training 
+8688	Tac 9L - Battalion 7 Training 
+8752	Tac 9M 
+8112	Tac 9N 
+9360	Rural-Metro General Dispatch 
+9424	Rural-Metro General Tac 1 
+9456	Rural-Metro General Tac 2 
+9488	Rural-Metro General Tac 3 
+9520	Rural-Metro General Tac 4 
+25872	Scripps Memorial Hospital Chula Vista 
+25936	Scripps Hospital La Jolla 
+26064	Palomar Hospital 
+25680	UCSD Hospital 
+25808	Mercy Hospital 
+25744	Sharp Hospital 
+26000	Grossmont Hospital 
+8816	Battalion 1 Training 
+8848	Battalion 2 Training 
+8880	Battalion 3 Training 
+8912	Battalion 4 Training 
+8944	Battalion 5 Training 
+8976	Battalion 6 Training 
+9008	Battalion 7 Training 
+9040	Open Channel 
+9072	NTC Training 
+9104	NTC Training 
+9136	Special Events 
+9168	Special Events 
+9200	Special Events 
+9232	Special Events 
+4752	Dispatch 1 
+19280	Dispatch 2 
+19312	Dispatch 3 
+19344	Inquiry 
+19408	Tac 1 
+19472	Tac 2 
+19536	Tac 3 
+19600	Tac 4 
+19664	Tac 5 
+19728	Tac 6 
+19792	Tac 7 
+19824	Tac 8  
+19856	River Command 
+19920	River Tac 
+19984	Admin 
+20080	Dispatch 2 Tac 
+20112	Dispatch 3 Tac 
+20176	Special 1 
+20208	Special 2 
+20272	Junior Guards Ops 
+20304	Junior Guards Tac 
+20336	Training 1 
+20368	Training 2 
+20816	Tactical 1 - Tecolote Cyn, Marian Bear, Mission Vly Preserve, Rose Cyn 
+20496	Tactical 2 - Penasquitos, Black Mtn, Otay Valley 
+20528	Tactical 3 - Mission Trails, Cowles Mtn 
+20624	Tactical 4 - Mission Bay Park, Shoreline Parks 
+20720	Tactical 5 - Balboa Park, Chollas Lake 
+25104	Park Rangers - Reservoir Lakes 
+25168	Park Rangers 
+9392	Adult Protective Services 
+11536	DYN Regroup for Lost or Stolen Radios 
+16144	Communications & Electronics 1 
+16176	Communications & Electronics 2 
+16208	Communications & Electronics 3 
+16240	Communications & Electronics 4 
+20752	Parks Beach Maintenance 
+20784	Mount Hope Cemetery 
+20912	Station 38 Calling - Dispatch for Misc Public Works Depts 
+20944	Public Works After Hours City Dispatch - Station 38 (Evenings, Nights, Weekends) 
+20976	Water Dispatch 
+21104	Water 
+21136	Water 
+21168	Water 
+21200	Water 
+21232	Water 
+21264	Water 
+21296	Water 
+21328	Water 
+21392	Water 
+21488	Water 
+21520	Water 
+22416	Radio Shop 
+22480	Public Works 
+23184	Public Works 
+23216	Maintenance 
+23472	Maintenance 
+23504	Public Works 
+23536	Public Works - Storm Water 
+23760	Wastewater - South Bay Water Reclamation Plant 
+23856	Water 1E 
+24080	Water 2D 
+24144	Public Works Maintenance 2B 
+24368	Public Works Maintenance 2C 
+24624	Water - Alvarado Water Treatment Plant 
+27216	Building Inspection A 
+27312	Building Inspection B 
+27344	Building Inspection C 
+27408	Building Inspection D 
+27536	Code Enforcement 1A 
+27568	Code Enforcement 1B 
+27600	Code Enforcement 1C 
+27664	Code Enforcement 1D 
+28016	Public Works 
+28048	Public Works 
+32656	Land Fill 1 (Miramar Landfill) 
+32688	Land Fill 2 (Miramar Landfill) 
+33136	SDCCU Stadium Security 
+9808	Police Administration 
+9968	Police Dispatch 
+10000	Transportation A 
+10032	Transportation A (84 passenger Buses) 
+10128	Transportation C (48 Passenger Buses) 
+10192	Transportation D (48 Passenger Wheelchair Buses) 
+10352	Transportation 
+10416	Maintenance 
+10480	Security 
+10672	Transportation - Info 
+10864	Transportation EMERGENCY 
+11056	Safety and Training 
+11152	Maintenance 
+11248	Police Tac 1 
+11344	Police Tac 2 
+12528	Police Dispatch 1 
+12560	Police Dispatch 2 
+12624	Police Tactical 1 
+12656	Police Tactical 2 
+12688	Police Tactical 3 
+2960	Mutual Aid 10 (Fire 7O) 
+2992	Mutual Aid 20 (Fire 8O) 
+3024	Mutual Aid 30 (Fire 9O) 
+	
+	
+49520	Narcotics Task Force 2D 
+49648	SWAT 2D 
+49712	Criminal Intelligence Unit 2D (Encrypted) 
+49776	Robbery 3D 
+49808	Robbery 4D 
+49872	Vice 3D 
+49968	Vice 4D 
+49984	INV Tac 14D 
+50000	INV Tac 15D 
+50032	INV Tac 16D 
+50064	INV Tac 17D 
+50096	INV Tac 18D 
+50256	INV Tac 23D 

@@ -1,0 +1,2 @@
+"Sysname"	"Control Channel List"	"Offset"	"NAC"	"Modulation"	"TGID Tags File"	"Whitelist"	"Blacklist"	"Center Frequency"
+"P25 SYSTEM"	"771.48125"	"0"	"0x370"	"cqpsk"	"groups05.tsv"	""	""	""

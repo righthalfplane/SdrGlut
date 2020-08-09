@@ -1,0 +1,9 @@
+
+rx.py --args 'rtl' -N 'LNA:47' -S 2500000 -x 2 -f 853.4375e6 -q 0 -U -T trunk06.tsv
+rx.py --args 'rtl' -N 'LNA:47' -S 2500000 -x 2 -f 771.48125e6 -x 2 -U -T trunk05.tsv
+rx.py --args 'rtl' -N 'LNA:47' -S 2500000 -x 2 -f 855.6875e6 -q 0 -U -T trunk08.tsv
+rx.py --args 'soapy=0,driver=sdrplay' -S 2500000 -x 2 -f 853.4375e6 -q 0 -U -T trunk06.tsv
+rx.py --args 'hackrf' -N 'RF:14,IF:32,BB:50' -S 2500000 -x 2 -f 853.4375e6 -q 0 -U -T trunk06.tsv
+rx.py --args 'soapy=0,driver=lime' -N 'LNA:47' -S 2500000 -x 2 -f 853.4375e6 -q 0 -U -T trunk06.tsv
+rx.py --args 'soapy=0,driver=sdrplay' -N 'IFGR:20,RFGR:9' -S 2500000 -x 2 -f 853.4375e6 -q 0 -U -T trunk06.tsv
+

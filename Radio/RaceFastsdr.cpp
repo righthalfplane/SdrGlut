@@ -1740,11 +1740,11 @@ static int doAudio(float *aBuff,struct playData *rx)
 	//fprintf(stderr,"doAudio amin %f amax %f average %f\n",amin,amax,average);
 
     if(rx->aminGlobal == 0.0)rx->aminGlobal=amin;
-    rx->aminGlobal = 0.9*rx->aminGlobal+0.1*amin;
+    rx->aminGlobal = 0.8*rx->aminGlobal+0.2*amin;
     amin=rx->aminGlobal;
     
     if(rx->amaxGlobal == 0.0)rx->amaxGlobal=amax;
-    rx->amaxGlobal = 0.9*rx->amaxGlobal+0.1*amax;
+    rx->amaxGlobal = 0.8*rx->amaxGlobal+0.2*amax;
     amax=rx->amaxGlobal;
 
    // fprintf(stderr,"amax %g amaxg %g amin %g aming %g\n",amax,rx->amaxGlobal,amin,rx->aminGlobal);

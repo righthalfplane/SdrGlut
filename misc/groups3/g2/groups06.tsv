@@ -1,0 +1,441 @@
+9	American Medical Response - Command 14M (San Diego County) 				
+15	American Medical Response - Dispatch 14N (San Diego County) 				
+17	AirCare Intl Ground Transport Division 				
+19	American Medical Response - Tactical 14O (San Diego County) 				
+1731	Mercy Medical Transportation BLS 1 				
+1733	Mercy Medical Transportation BLS 2 				
+1735	Mercy Medical Transportation BLS Tactical 				
+1737	Mercy Medical Transportation ALS 1 				
+1739	Mercy Medical Transportation ALS 2 				
+1741	Mercy Medical Transportation ALS Tactical 				
+1743	Mercy Medical Transportation Supervisors 				
+2067	AMR Interfacility Transport 1 				
+2068	AMR Interfacility Transport 2 				
+2775	Pacific Ambulance Dispatch North 				
+2776	Pacific Ambulance North Tactical 				
+2777	Pacific Ambulance South Dispatch 				
+2778	Pacific Ambulance South Tactical 				
+2779	Pacific Ambulance East Dispatch 				
+2780	Pacific Ambulance East Tactical 				
+2886	American Medical Response - Imperial County Dispatch (formerly GCA DISP) 				
+2887	American Medical Response - Imperial County Tac 1 (formerly GCA TAC 1) 				
+2888	American Medical Response - Imperial County Tac 2 (formerly GCA TAC 2) 				
+2417	El Cajon Tac 1 South 				
+2441	El Cajon Tac 2 South 				
+2635	El Cajon Tac 3 South 				
+2636	El Cajon Tac 4 South 				
+2430	El Cajon Dispatch East (Resident) 				
+2416	El Cajon Tac 1 East (Resident) 				
+2431	El Cajon Tac 2 East (Resident) 				
+2633	Resident Tac 3 				
+2634	Resident Tac 4 				
+2421	Oceanside Tac 1 				
+2422	Temecula Dispatch (Future) 				
+2423	Temecula Tac 1 				
+2424	Border Command 				
+2425	Border Tac 2 				
+2426	Administration 				
+2427	Temecula Tac 2 				
+2428	Commercial Unit 				
+2429	Investigations Special Unit 				
+2432	Delegation Protection 				
+2433	Delegation Protection Tac 1 				
+2434	Delegation Protection Tac 2 				
+2435	Delegation Protection Tac 3 				
+2436	Delegation Protection Ops 1 				
+2437	Delegation Protection Ops 2 				
+2438	Delegation Protection Ops 3 				
+2439	Border Tac 1 				
+2440	Border Dispatch (Future) 				
+2469	El Centro Dispatch (Future) 				
+2470	El Centro Tactical 				
+2637	San Diego Tac 3 				
+2638	San Diego Tac 4 				
+2639	Oceanside Tac 3 				
+2740	Oceanside Tac 4 				
+2741	Temecula Tac 3 				
+2742	Temecula Tac 4 				
+1269	Irrigation North 				
+1271	Irrigation South 				
+1919	Construction 1 				
+1920	Construction 2 				
+1931	Metro 				
+2226	San Diego Command 				
+2227	North Coast 				
+2228	North Inland 				
+2229	South Coast 				
+2230	South Inland 				
+2231	Mountains 				
+2232	Desert Area 				
+2233	Special KM 				
+2234	Surveying 				
+2235	San Diego North 				
+2236	San Diego South 				
+2237	San Diego East 				
+2238	San Diego Mountains 				
+2239	Imperial County 				
+2240	Coronado Bay Bridge 				
+2241	Flagging North 				
+2242	Flagging South 				
+2243	Flagging Mountains 				
+2244	Flagging Imperial County 				
+2245	TMC Command (Traffic Management Center) 				
+2246	Traffic Operations 				
+2247	Systems 				
+2248	Auxilliary Lane 				
+2249	Traffic Management Center 				
+2250	Emergency Revert Channel 				
+2251	PRIORITY 				
+2252	Administration 				
+2253	District 11 Shop 				
+2254	New Technologies 				
+223	City Call 				
+225	City Tac 1 				
+227	City Tac 2 				
+229	City Tac 3 				
+231	City Tac 4 				
+233	Public Works 1 				
+235	Public Works 2 				
+237	Recreations 				
+239	Parks 				
+243	Community Development 				
+245	Schools Tac 2 				
+247	Schools Call 				
+249	Schools Tac 1 				
+2222	Police Dispatch 1 				
+2223	Police Tac 1 				
+2224	Police Tac 2 				
+2225	Police Tac 3 				
+2262	Police Dispatch 2 				
+2263	Police Inquiry 				
+2264	Police Admin 				
+2265	Police Traffic 				
+2266	Police Investigations 1 				
+2267	Police Investigations 2 				
+2268	Police SWAT 1 				
+2269	Police SWAT 2 				
+2270	Police Hostage Negotiation Team 				
+2271	Animal Control Dispatch 				
+727	"Dispatch 1A (""Heartland"") "				
+723	Zone 1B 				
+729	Command 1C - Medical Command 				
+51	Tac 1D 				
+53	Tac 1E 				
+725	Command 1F 				
+731	Tac 1G 				
+69	Tac 1H 				
+71	Command 1I 				
+57	Tac 1J 				
+59	Tac 1K 				
+75	Command 1L 				
+77	Tac 1M 				
+55	Tac 1N - Gillespie Field Incidents 				
+1351	Tac 1O 				
+1333	Admin 2A 				
+1335	Zone 2B 				
+1339	Command 2C - Medical Command 				
+63	Tac 2D - Structure Incidents (Barona/Campo/Santa Ysabel Reservations) 				
+65	Tac 2E - Structure Incidents (Barona/Campo/Santa Ysabel Reservations) 				
+1337	Command 2F - Structure Incidents (Barona/Campo/Santa Ysabel Reservations) 				
+1341	Tac 2G - Structure Incidents (Alpine/Viejas/Sycuan) 				
+67	Tac 2H - Structure Incidents (Alpine/Viejas/Sycuan) 				
+1355	Command 2I - Structure Incidents (Alpine/Viejas/Sycuan) 				
+1357	Tac 2J - Wildland Response 				
+81	Tac 2K - Wildland Response 				
+1359	Command 2L - Wildland Response 				
+61	Tac 2M - Wildland Response 				
+73	Tac 2N - Wildland Response 				
+79	Tac 2O 				
+1353	Central Fire Emergency (1P/2P) 				
+29	Viejas Fire Admin 				
+305	Heartland Fire and Rescue Admin 				
+447	Alpine Admin 				
+449	Heartland Fire Chiefs 				
+461	Disaster 				
+463	East County Admin 				
+467	Heartland Admin 				
+469	Lemon Grove Admin 				
+471	Lakeside Admin 				
+475	San Miguel Admin 				
+477	Santee Admin 				
+733	San Miguel Fire Tac 				
+1279	La Mesa Administration 				
+1273	Citywide 				
+2293	Police Dispatch 1 				
+2294	Police Dispatch 2 				
+2295	Police Tac 1 				
+2296	Police Tac 2 				
+2297	Police Tac 3 				
+2298	Police Detectives 				
+2299	Police RSVP (Volunteers) 				
+2300	Police Special Response Team 				
+2700	Public Works Dispatch 				
+2701	Public Works Parks 				
+2703	Public Works Street Maintenance Dispatch 				
+583	City Tac 1 				
+585	City Tac 2 				
+587	City Tac 3 				
+589	City Tac 4 				
+591	Administration 				
+595	Citywide 				
+597	City Command 				
+611	Pu1521	D	MSTCMD1	Hazmat Command 1 	Emergency Ops 
+1523	Hazmat Tac 1 				
+1525	Hazmat Tac 2 				
+1527	Hazmat Tac 3 				
+1529	Hazmat Tac 4 				
+1803	Airport Authority Maintenance 				
+1807	Airport Authority Maintenance 				
+2848	Harbor Police Dispatch 1 (Harbor Area) 				
+2849	Harbor Police Dispatch 2 (Airport Area) 				
+2850	Harbor Police Tac 1 				
+2851	Harbor Police Tac 2 				
+2852	Harbor Police Tac 3 				
+2853	Harbor Police Tac 4 				
+2854	Airport Authority Dispatch 1 				
+2855	Airport Authority Dispatch 2 				
+2856	Airport Authority AIR 1 				
+2857	Airport Authority AIR 2 				
+2858	Airport Authority AIR Encrypted 				
+2859	Airport Authority AVSEC 1 				
+2860	Airport Authority EAVSEC2E 				
+2861	Airport Authority - Airport Traffic Officer 1 				
+2862	Airport Authority - Airport Traffic Officer 2 				
+2872	Port District Security 				
+191	Medical Examiner Dispatch Callsign Omega 				
+1769	Coroner 2 				
+1771	Coroner 3 				
+1932	Medical Examiner 1 				
+13	BLS Reserve 2 				
+149	BLS Alvarado 				
+151	EMS Area 1 				
+153	EMS Area 2 				
+155	EMS Area 3 				
+157	EMS Area 4 				
+159	EMS Area 5 				
+161	EMS Area 6 				
+205	Transport	Hospital 			
+217	Transport	Hospital 			
+275	EMS Base 1 				
+277	EMS Base 2 				
+323	BLS Kaiser San Diego 				
+397	ALS	Hospital 			
+399	ALS	Hospital 			
+401	ALS	Hospital 			
+403	ALS	Hospital 			
+405	ALS	Hospital 			
+439	Transport	Hospital 			
+517	BLS	Hospital 			
+525	BLS	Hospital 			
+527	BLS	Hospital 			
+529	BLS	Hospital 			
+531	BLS	Hospital 			
+533	BLS	Hospital 			
+537	BLS	Hospital 			
+539	BLS	Hospital 			
+541	BLS	Hospital 			
+555	Transport	Hospital 			
+639	Medical Group Call 				
+655	Transport	Hospital 			
+685	Transport	Hospital 			
+687	BLS	Hospital 			
+689	Transport	Hospital 			
+749	Transport	Hospital 			
+755	Transport	Hospital 			
+759	Transport	Hospital 			
+767	ALS	Hospital 			
+771	BLS	Hospital 			
+891	Transport - UCSD Thornton 				
+897	Transport - Veterans 				
+919	ALS - Grossmont 				
+927	ALS - Scripps Chula Vista 				
+649	10A Dispatch 				
+255	10B Command 				
+645	10C Fire Tac - Battalion 1/7 				
+651	10D Fire Tac - Battalion 1/7 				
+259	10E Command 				
+647	10F Fire Tac - Battalion 5/8 				
+257	10G Fire Tac - Battalion 5/8 				
+261	10H Command 				
+265	10I Fire Tac - Incident 				
+263	10J Fire Tac - Incident 				
+143	10K Command 				
+145	10L Fire Tac - Incident 				
+339	10M Fire Tac - Incident 				
+341	10N Fire Tac 				
+39	11A Travel (Countywide) 				
+41	11B Command 				
+43	11C Fire Tac - Battalion 2/6 				
+45	11D Fire Tac - Battalion 2/6 				
+47	11E Command 				
+49	11F Fire Tac - Battalion 3/4 				
+95	11G Fire Tac - Battalion 3/4 				
+97	11H Command 				
+99	11I Fire Tac - Incident 				
+105	11J Fire Tac - Incident 				
+107	11K Command 				
+109	11L Fire Tac - Incident 				
+111	11M Fire Tac - Incident 				
+133	11N Fire Tac 				
+1365	Emergency 10P/11P (Emergency Button) 				
+253	Fire Prevention Officers 				
+1089	Inland Fire Chiefs 				
+1329	San Diego Rural Fire Admin 				
+1747	Deer Springs Fire Department Tactical 				
+1767	Valley Center Tac 				
+2362	Valley Center Fire Tactical 				
+2624	Ocotillo Fire Administration 				
+2625	Ocotillo Fire Training 				
+2640	San Diego Rural Fire Chiefs 				
+1091	Oceanside 				
+1093	Escondido 				
+1095	El Cajon 				
+1097	North San Diego 				
+1099	South Bay 				
+1101	Boys Girls Athletics 				
+1103	Rosecrans 				
+1105	Askew 				
+1107	East San Diego 				
+1109	Fallbrook 				
+1111	Edgemoor Skilled Nursing Facility 				
+1113	EMS 				
+1115	Hospital Administration 				
+1117	Health Group Call 				
+1373	Health DOC  				
+1375	Health Tac 1 				
+1377	Health Tac 2 				
+1379	Health Tac 3 				
+1381	Health Tac 4  				
+2846	Department of Environmental Health 1 				
+2847	Department of Environmental Health 2 				
+609	Incident Command 1 				
+613	Incident Command 2 				
+615	Incident Command 3 				
+617	Incident Command 4 				
+619	Incident Command 5 				
+621	Incident Command 6 				
+623	Incident Command 7 				
+389	Incident Command 8 				
+391	Incident Command 9 				
+393	Incident Command 10 				
+395	Incident Command 11 				
+565	Blue 1 				
+201	Blue 2 				
+559	East Command 				
+431	East Tac 1 				
+433	East Tac 2 				
+435	East Tac 3 				
+437	East Tac 4 				
+561	North Command 				
+667	North Tac 1 				
+669	North Tac 2 				
+671	North Tac 3 				
+673	North Tac 4 				
+563	South Command 				
+873	South Tac 1 				
+875	South Tac 2 				
+877	South Tac 3 				
+879	South Tac 4 				
+1914	Task Force Ops 1 				
+2326	Task Force Ops 2 				
+1915	Task Force Ops 3 				
+2327	Task Force Ops 4 				
+1916	Task Force Ops 5 				
+2328	Task Force Ops 6 				
+1917	Task Force Ops 7 				
+2329	Task Force Ops 8 				
+2108	Secure 2108 				
+2109	Secure 2109 				
+2110	Secure 1 				
+2121	Secure 3 				
+2137	Secure 2137 				
+2161	Secure 2 				
+2201	Secure 7 				
+2202	Secure 2202 				
+2125	North Coast Dispatch (Encinitas) 				
+2180	20 Tac 1 (North Coast) 				
+2141	20 Tac 2 (North Coast) 				
+1933	20 Tac 3 (North Coast) 				
+2190	Vista Dispatch 				
+2182	30 Tac 1 (Vista/Fallbrook) 				
+2142	30 Tac 2 (Vista/Fallbrook) 				
+1934	30 Tac 3 (Vista/Fallbrook) 				
+2159	Poway Dispatch 				
+2181	40 Tac 1 (Poway/Ramona) 				
+2143	40 Tac 2 (Poway/Ramona) 				
+1936	40 Tac 3 (Poway/Ramona) 				
+2169	Santee Dispatch 				
+2183	50 Tac 1 (Santee/Lakeside/Alpine) 				
+2144	50 Tac 2 (Santee/Lakeside/Alpine) 				
+1937	50 Tac 3 (Santee/Lakeside/Alpine) 				
+2153	Rancho San Diego Dispatch 				
+2184	60 Tac 1 (Lemon Grove/Spring Valley) 				
+2145	60 Tac 2 (Lemon Grove/Spring Valley) 				
+1938	60 Tac 3 (Lemon Grove/Spring Valley) 				
+2066	Imperial Beach Dispatch 				
+2185	70 Tac 1 (Imperial Beach/Bonita) 				
+2146	70 Tac 2 (Imperial Beach/Bonita) 				
+1939	70 Tac 3 (Imperial Beach/Bonita) 				
+2160	Rural Dispatch 				
+2186	80 Tac 1 (Rural) 				
+2147	80 Tac 2 (Rural) 				
+1940	80 Tac 3 (Rural) 				
+2167	San Marcos Dispatch 				
+2187	90 Tac 1 (San Marcos/Escondido) 				
+2148	90 Tac 2 (San Marcos/Escondido) 				
+1935	90 Tac 3 (San Marcos/Escondido) 				
+2140	Inquiry 				
+1905	ASTREA Air Tac 				
+2061	Administration 				
+2107	Court Services Bureau - South Court Services Dispatch 				
+2157	Court Services Bureau - North Court Services Dispatch 				
+2158	Court Services Bureau - North Tac 1 				
+2361	Court Services Tactical 				
+1859	Special Investigations Division 6 				
+1860	Special Investigations Division 7 				
+2048	Arson/Bomb Unit 				
+2101	Criminal Intelligence Detail 1 				
+2104	Criminal Intelligence Detail 2 				
+2105	Criminal Intelligence Detail 3 				
+2106	Criminal Intelligence Detail 4 				
+2127	Special Enforcement Detail 1 				
+2128	Special Enforcement Detail 2 				
+2129	Hostage Negotiation Team 				
+2130	Special Investigations Division Intelligence 				
+2131	Homicide 1 				
+2132	Homicide 2 				
+2150	Special Enforcement Detail 3 				
+2154	Narcotics 1 				
+2155	Narcotics 2 				
+2156	Narcotics 3 				
+2162	Special Investigations Division 1 				
+2163	Special Investigations Division 2 				
+2172	Special Investigations Division 3 				
+2173	Special Investigations Division 4 				
+2174	Special Investigations Division 5 				
+2189	Commander's Net 				
+2204	Court Services Bureau South Tac 1 				
+2255	Emergency Communications Center Training 1 				
+2256	Emergency Communications Center Training 2 				
+2257	Emergency Communications Center Training 3 				
+2258	Emergency Communications Center Training 4 				
+2282	Internal Affairs 1 				
+2283	Internal Affairs 2 				
+2360	Risk Management Unit 				
+2367	Fire Prevention 				
+2671	Off Road Enforcement Team 1 				
+2672	Search & Rescue 1 				
+241	Jail Call 				
+273	San Diego Central Jail Intake 				
+2087	Command North 				
+2118	Command South 				
+2119	Command East 				
+2120	Tac East 				
+2122	Tac North 				
+2123	Tac South 				
+2188	Detentions Transport 				
+2673	Search & Rescue 2 				
+2674	Search & Rescue 3 				
+2675	Search & Rescue 4 				
+2676	Search & Rescue 5 				
+2677	Search & Rescue 6 				
