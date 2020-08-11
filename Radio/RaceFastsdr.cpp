@@ -180,19 +180,27 @@ int rxSend(void *rxv)
            if(type == 0){
                double amin =  1e33;
                double amax = -1e33;
+               double average=0;
                for(int n=0;n<2*rx->size;++n){
                    double v=rx->sendBuff1[n];
+                   average += v;
                    if(v > amax)amax=v;
                    if(v < amin)amin=v;
                }
                //printf("r amin %g amax %g ",amin,amax);
                
+               average /= 2*rx->size;
+               
+               amax -= average;
+               
+               amax -= average;
+               
                if(rx->aminGlobal2 == 0.0)rx->aminGlobal2=amin;
-               rx->aminGlobal2 = 0.9*rx->aminGlobal2+0.1*amin;
+               rx->aminGlobal2 = 0.8*rx->aminGlobal2+0.2*amin;
                amin=rx->aminGlobal2;
                
                if(rx->amaxGlobal2 == 0.0)rx->amaxGlobal2=amax;
-               rx->amaxGlobal2 = 0.9*rx->amaxGlobal2+0.1*amax;
+               rx->amaxGlobal2 = 0.8*rx->amaxGlobal2+0.2*amax;
                amax=rx->amaxGlobal2;
                
                //printf("a amin %g amax %g ",amin,amax);
@@ -203,8 +211,6 @@ int rxSend(void *rxv)
                }else{
                    dnom=65534.0;
                }
-               
-               double dmin=amin;
                
                double gain=0.9;
                
@@ -218,7 +224,7 @@ int rxSend(void *rxv)
                for(int n=0;n<2*rx->size;++n){
                    double v;
                    v=rx->sendBuff1[n];
-                   v=gain*((v-dmin)*dnom-32768);
+                   v=gain*((v-average)*dnom);
                    if(v < amin)amin=v;
                    if(v > amax)amax=v;
                    if(v < -32768){
@@ -240,32 +246,37 @@ int rxSend(void *rxv)
             }else if(type == 1){
                 double amin =  1e33;
                 double amax = -1e33;
+                double average=0;
                 for(int n=0;n<2*rx->size;++n){
                     double v=rx->sendBuff1[n];
+                    average += v;
                     if(v > amax)amax=v;
                     if(v < amin)amin=v;
                 }
-                
                 //printf("r amin %g amax %g ",amin,amax);
                 
+                average /= 2*rx->size;
+                
+                amax -= average;
+                
+                amax -= average;
+                
                 if(rx->aminGlobal2 == 0.0)rx->aminGlobal2=amin;
-                rx->aminGlobal2 = 0.9*rx->aminGlobal2+0.1*amin;
+                rx->aminGlobal2 = 0.8*rx->aminGlobal2+0.2*amin;
                 amin=rx->aminGlobal2;
                 
                 if(rx->amaxGlobal2 == 0.0)rx->amaxGlobal2=amax;
-                rx->amaxGlobal2 = 0.9*rx->amaxGlobal2+0.1*amax;
+                rx->amaxGlobal2 = 0.8*rx->amaxGlobal2+0.2*amax;
                 amax=rx->amaxGlobal2;
                 
                 //printf("a amin %g amax %g ",amin,amax);
-
+                
                 double dnom=0.0;
                 if((amax-amin) > 0){
                     dnom=65534.0/(amax-amin);
                 }else{
                     dnom=65534.0;
                 }
-                
-                double dmin=amin;
                 
                 double gain=0.9;
                 
@@ -279,7 +290,7 @@ int rxSend(void *rxv)
                 for(int n=0;n<2*rx->size;++n){
                     double v;
                     v=rx->sendBuff1[n];
-                    v=gain*((v-dmin)*dnom-32768);
+                    v=gain*((v-average)*dnom);
                     if(v < amin)amin=v;
                     if(v > amax)amax=v;
                     if(v < -32768){
@@ -291,7 +302,7 @@ int rxSend(void *rxv)
                    }
                     data[n]=(short int)v;
                 }
-                //printf(" f amin %g amax %g count %ld\n",amin,amax,count);
+               // printf(" f amin %g amax %g count %ld\n",amin,amax,count);
                 size=rx->size*sizeof(short int);
                 if(writeLab(rx->send,(char *)"SHOR",size))return 1;
                 if(netWrite(rx->send,(char *)rx->sendBuff2,size))return 1;
@@ -300,21 +311,29 @@ int rxSend(void *rxv)
            }else if(type == 2){
                double amin =  1e33;
                double amax = -1e33;
+               double average=0;
                for(int n=0;n<2*rx->size;++n){
                    double v=rx->sendBuff1[n];
+                   average += v;
                    if(v > amax)amax=v;
                    if(v < amin)amin=v;
                }
                //printf("r amin %g amax %g ",amin,amax);
                
+               average /= 2*rx->size;
+               
+               amax -= average;
+               
+               amax -= average;
+               
                if(rx->aminGlobal2 == 0.0)rx->aminGlobal2=amin;
-               rx->aminGlobal2 = 0.9*rx->aminGlobal2+0.1*amin;
+               rx->aminGlobal2 = 0.8*rx->aminGlobal2+0.2*amin;
                amin=rx->aminGlobal2;
                
                if(rx->amaxGlobal2 == 0.0)rx->amaxGlobal2=amax;
-               rx->amaxGlobal2 = 0.9*rx->amaxGlobal2+0.1*amax;
+               rx->amaxGlobal2 = 0.8*rx->amaxGlobal2+0.2*amax;
                amax=rx->amaxGlobal2;
-               
+
                //printf("a amin %g amax %g ",amin,amax);
                double dnom=0.0;
                if((amax-amin) > 0){
@@ -322,8 +341,6 @@ int rxSend(void *rxv)
                }else{
                    dnom=255.0;
                }
-               
-               double dmin=amin;
                
                double gain=0.9;
                
@@ -337,7 +354,7 @@ int rxSend(void *rxv)
                for(int n=0;n<2*rx->size;++n){
                    double v;
                    v=rx->sendBuff1[n];
-                   v=gain*((v-dmin)*dnom-128);
+                   v=gain*((v-average)*dnom);
                    if(v < amin)amin=v;
                    if(v > amax)amax=v;
                    if(v < -128){
@@ -359,21 +376,28 @@ int rxSend(void *rxv)
            }else if(type == 3){
                double amin =  1e33;
                double amax = -1e33;
+               double average=0;
                for(int n=0;n<2*rx->size;++n){
                    double v=rx->sendBuff1[n];
+                   average += v;
                    if(v > amax)amax=v;
                    if(v < amin)amin=v;
                }
                //printf("r amin %g amax %g ",amin,amax);
                
+               average /= 2*rx->size;
+               
+               amax -= average;
+               
+               amax -= average;
+               
                if(rx->aminGlobal2 == 0.0)rx->aminGlobal2=amin;
-               rx->aminGlobal2 = 0.9*rx->aminGlobal2+0.1*amin;
+               rx->aminGlobal2 = 0.8*rx->aminGlobal2+0.2*amin;
                amin=rx->aminGlobal2;
                
                if(rx->amaxGlobal2 == 0.0)rx->amaxGlobal2=amax;
-               rx->amaxGlobal2 = 0.9*rx->amaxGlobal2+0.1*amax;
+               rx->amaxGlobal2 = 0.8*rx->amaxGlobal2+0.2*amax;
                amax=rx->amaxGlobal2;
-               
                //printf("a a amin %g amax %g ",amin,amax);
 
                double dnom=0.0;
@@ -382,9 +406,7 @@ int rxSend(void *rxv)
                }else{
                    dnom=255.0;
                }
-               
-               double dmin=amin;
-               
+                              
                double gain=0.9;
                
                unsigned char *data=(unsigned char *)rx->sendBuff2;
@@ -392,12 +414,13 @@ int rxSend(void *rxv)
                amin =  1e33;
                amax = -1e33;
                
+               
                long int count=0;
                
                for(int n=0;n<2*rx->size;++n){
                    double v;
                    v=rx->sendBuff1[n];
-                   v=gain*((v-dmin)*dnom);
+                   v=gain*((v-average)*dnom+141.0);
                    if(v < amin)amin=v;
                    if(v > amax)amax=v;
                    if(v < 0){
@@ -409,7 +432,7 @@ int rxSend(void *rxv)
                   }
                    data[n]=(unsigned char)v;
                }
-               //printf("f  amin %g amax %g count %ld\n",amin,amax,count);
+              // printf("f  amin %g amax %g count %ld\n",amin,amax,count);
                size=rx->size*sizeof(unsigned char);
                if(writeLab(rx->send,(char *)"USIG",size))return 1;
                if(netWrite(rx->send,(char *)rx->sendBuff2,size))return 1;
