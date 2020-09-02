@@ -1045,8 +1045,9 @@ int SendData(struct Info *info,unsigned int frames,short *bufin)
      
      */
     
+
     msresamp_rrrf_execute(info->iqSampler, (float *)buf, frames, (float *)buf2, &num);  // decimate
-    
+
     if(info->modetype == Mode_AM){
         info->am->modulate(buf2,num,r2);
     }else if(info->modetype == Mode_NBFM){
@@ -1054,7 +1055,12 @@ int SendData(struct Info *info,unsigned int frames,short *bufin)
     }else{
         ampmodem_modulate_block(info->demodAM,buf2, num, (liquid_float_complex *)r2);
     }
-
+    
+/*
+    info->am->modulate(buf,frames,r2);
+    
+    msresamp_crcf_execute(info->iqSampler2, (liquid_float_complex *)r2, frames, (liquid_float_complex *)buf2, &num2);
+*/
     
     msresamp_crcf_execute(info->iqSampler2, (liquid_float_complex *)r2, num, (liquid_float_complex *)buf2, &num2);
     

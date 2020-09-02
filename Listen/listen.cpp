@@ -196,7 +196,7 @@ Listen::Listen()
     aminGlobal=0.0;
     amaxGlobal=0.0;
     
-    gain=0.25;
+    gain=0.5;
     
     decodemode = MODE_AM;
 
@@ -386,7 +386,7 @@ static int setFilters(class Listen *rx,struct Filters2 *f)
         iflag=0;
     } else if(rx->decodemode == MODE_NBFM){
         rx->bw=12500.0;
-        rx->bw=15000.0;
+      //  rx->bw=15000.0;
     }else if(rx->decodemode == MODE_FM){
         rx->bw=200000.0;
     }else if(rx->decodemode == MODE_USB){   // Above 10 MHZ
@@ -478,7 +478,7 @@ int ListenSocket(void *rxv)
 	//if(!in)in=fopen("junk.raw","wb");
 
 	fprintf(stderr,"******************************************************\n");
-	fprintf(stderr,"**  listen 649 - COPYRIGHT 2020. Start **\n");
+	fprintf(stderr,"**  listen 727 - COPYRIGHT 2020. Start **\n");
 	fprintf(stderr,"******************************************************\n");
 
 	start=time(&ship);
@@ -703,6 +703,7 @@ int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
 	
 		double amin=1e30;
 		double amax=-1e30;
+		double average=0;
 
 		gain=rx->gain;
 	
@@ -711,17 +712,24 @@ int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
 		for (size_t i=0; i<num2; i++ ) {
 			double v;
 			v=buf1[i];
+			average += v;
 			if(v < amin)amin=v;
 			if(v > amax)amax=v;
+			
 		}
 
+		average /= num2;
+		
+		amin -= average;
+		
+		amax -= average;
 	
 		if(rx->aminGlobal == 0.0)rx->aminGlobal=amin;
-		rx->aminGlobal = 0.9*rx->aminGlobal+0.1*amin;
+		rx->aminGlobal = 0.8*rx->aminGlobal+0.2*amin;
 		amin=rx->aminGlobal;
 	
 		if(rx->amaxGlobal == 0.0)rx->amaxGlobal=amax;
-		rx->amaxGlobal = 0.9*rx->amaxGlobal+0.1*amax;
+		rx->amaxGlobal = 0.8*rx->amaxGlobal+0.2*amax;
 		amax=rx->amaxGlobal;
 
 
@@ -738,7 +746,7 @@ int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
 			unsigned  char *c=(unsigned char *)&vv;
 			double v;
 			v=buf1[k];
-			v=gain*((v-dmin)*dnom-32768);
+			v=gain*((v-average)*dnom);
 			if(rx->pipe){
 				buffer[k]=0;
 				vv=(short int)v;
@@ -753,7 +761,7 @@ int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
 		for ( i=0; i<nBufferFrames; i++ ) {
 		  buffer[i] = 0;
 		}
-  }
+  	}
   
     
   return 0;
