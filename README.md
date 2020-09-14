@@ -10,6 +10,7 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.19
 
 ## Demo videos
 
+- [Mail scatter on the street and sidewalk](https://youtu.be/V2LRiLIExjI)
 - [A UFO flys over San Diego](https://youtu.be/O054bYnZmFw)
 - [SdrGlut uses 4 software defined radios to scan 5 different frequency ranges](https://youtu.be/XA8q5nJEWpc)
 - [The SDRplay RSPduo vs. a RFSPACE NetSDR+ at FRS Frequencies](https://youtu.be/Bda-XdaxeW4)
