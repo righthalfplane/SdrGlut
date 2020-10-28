@@ -2,23 +2,20 @@
 
 SdrGlut is a simple software defined radio player. Using glut for drawing and glui for its dialogs makes it tiny compared to programs that use QT5 or wxWidgets. SdrGlut uses liquid-sdr and SoapySDR to preform the SDR calculations. The audio is handled by OpenAL and RtAudio.
 
-This is the Improved Scaning release. The last week was spent improving the Scan options. See video for details. The Duel Tuner mode works with SDRplay RSPduo and the LimeSDR and it should work with other Soapy duel tuner devices. The transmit mode now works on Windows.  
+This is the Improved Scaning release. The last week was spent improving the Scan options. See video for details. The Duel Tuner mode works with SDRplay RSPduo and the LimeSDR and it should work with other Soapy duel tuner devices. 
 
 SdrGlut now has a send option where it uses tcp/ip to transfer the I/Q stream to other programs. Listen is an example of a program that receives the data. Listen can decode AM, FM, NBFM, USB, LSB and output the audio to the speakers or another program. SdrGlut now has digital filter design mode. It can do highpass, lowpass, bandpass and bandstop filters. Best of all - it generates a c++ program that implements and tests the filter - so there is no question about how to make it work. It adds Voltage bias for powered antennas and Direct Sample Mode for RTL devices. It adds a window that can use the transmit capable SDRs as a signal generator for testing AM, NBFM, USB, and LSB devices. It has a prebuild exe for macOS, a zipped folder for Windows and a zipped folder for Ubuntu 18.04 to unpack and run from
 
 https://github.com/righthalfplane/SdrGlut/releases/tag/v1.19
 
 ## Demo videos
-
-- [The Ghosts that I have seen](https://youtu.be/yusmsRdVW1Q)
-- [Mail scatter on the street and sidewalk](https://youtu.be/V2LRiLIExjI)
-- [A UFO flys over San Diego](https://youtu.be/O054bYnZmFw)
 - [SdrGlut uses 4 software defined radios to scan 5 different frequency ranges](https://youtu.be/XA8q5nJEWpc)
+- [SdrGlut Simultaneously Running Five SDRs](https://www.youtube.com/watch?v=BmUNrAn1Llk)
+- [SdrGlut vs CubicSDR on the Raspberry pi 4 with a Lime Mini SDR](https://www.youtube.com/watch?v=C18bGxbXNsA)
 - [The SDRplay RSPduo vs. a RFSPACE NetSDR+ at FRS Frequencies](https://youtu.be/Bda-XdaxeW4)
 - [The SDRplay RSPduo vs. a RTL-Stick at FRS Frequencies](https://youtu.be/hi_dumxZ9s0)
 - [The HackrRF One vs. the SDRplay RSPduo at FRS Frequencies.](https://youtu.be/YTmOm55_80Q)
 - [The Improved Search and Scan Features of SdrGlut](https://youtu.be/4oTv2DinCRk)
-- [The Vanishing Jet and Templet Based Vision](https://youtu.be/caeDZnL3oPg)
 - [SDRplay RSPduo demonstrates the independent RX mode on the Raspberry Pi 4](https://youtu.be/17eJI8KIkYg)
 - [SDRplay RSPduo running in Duel Tuner mode with SdrGlut](https://youtu.be/ShLUdb3Rdvs)
 - [LimeSDR mini displays air traffic information (ADS-B) using dump1090](https://youtu.be/ZuXhtdZZ25Y)
@@ -79,12 +76,15 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.19
 - [SDRPlay RSP2 vs a HackRF One using SdrGlut at FRS frequencies](https://www.youtube.com/watch?v=42uEKTncpbQ)
 - [Corbra 38WXST vs Radio Shack TRC-236](https://www.youtube.com/watch?v=O9MQbf1ArQk)
 - [Corbra 38WXST using three different antennas](https://www.youtube.com/watch?v=JDmxGQFwX-Y)
-- [SdrGlut Simultaneously Running Five SDRs](https://www.youtube.com/watch?v=BmUNrAn1Llk)
 - [Raspberry PI 4 using SdrGlut to control the NetSDR](https://www.youtube.com/watch?v=jV-LxQS_acY)
-- [SdrGlut vs CubicSDR on the Raspberry pi 4 with a Lime Mini SDR](https://www.youtube.com/watch?v=C18bGxbXNsA)
 - [SdrPlay RSP2 vs a simple RTL stick using SdrGlut at FRS frequencies](https://www.youtube.com/watch?v=eiuTO5yIR7w)
 - [SdrPlay RSP2 vs a LimeSDR Mini using SdrGlut at FRS frequencies](https://www.youtube.com/watch?v=PEfrJ4ZuN9g)
 - [Lime Mini vs a RTL stick using SdrGlut at FRS frequencies](https://www.youtube.com/watch?v=pDqNCe6GxnA)
+- [The Ghosts that I have seen](https://youtu.be/yusmsRdVW1Q)
+- [Mail scatter on the street and sidewalk](https://youtu.be/V2LRiLIExjI)
+- [A UFO flys over San Diego](https://youtu.be/O054bYnZmFw)
+- [The Vanishing Jet and Templet Based Vision](https://youtu.be/caeDZnL3oPg)
+
 
 
 ## Installation of RtAudio
