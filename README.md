@@ -9,14 +9,14 @@ SdrGlut now has a send option where it uses tcp/ip to transfer the I/Q stream to
 https://github.com/righthalfplane/SdrGlut/releases/tag/v1.19
 
 ## Demo videos
+- [SDRplay RSPduo demonstrates the independent RX mode on the Raspberry Pi 4](https://youtu.be/17eJI8KIkYg)
+- [SdrGlut vs CubicSDR on the Raspberry pi 4 with a Lime Mini SDR](https://www.youtube.com/watch?v=C18bGxbXNsA)
 - [SdrGlut uses 4 software defined radios to scan 5 different frequency ranges](https://youtu.be/XA8q5nJEWpc)
 - [SdrGlut Simultaneously Running Five SDRs](https://www.youtube.com/watch?v=BmUNrAn1Llk)
-- [SdrGlut vs CubicSDR on the Raspberry pi 4 with a Lime Mini SDR](https://www.youtube.com/watch?v=C18bGxbXNsA)
 - [The SDRplay RSPduo vs. a RFSPACE NetSDR+ at FRS Frequencies](https://youtu.be/Bda-XdaxeW4)
 - [The SDRplay RSPduo vs. a RTL-Stick at FRS Frequencies](https://youtu.be/hi_dumxZ9s0)
 - [The HackrRF One vs. the SDRplay RSPduo at FRS Frequencies.](https://youtu.be/YTmOm55_80Q)
 - [The Improved Search and Scan Features of SdrGlut](https://youtu.be/4oTv2DinCRk)
-- [SDRplay RSPduo demonstrates the independent RX mode on the Raspberry Pi 4](https://youtu.be/17eJI8KIkYg)
 - [SDRplay RSPduo running in Duel Tuner mode with SdrGlut](https://youtu.be/ShLUdb3Rdvs)
 - [LimeSDR mini displays air traffic information (ADS-B) using dump1090](https://youtu.be/ZuXhtdZZ25Y)
 - [SdrGlut tracks marine traffic using gnuais.](https://youtu.be/d1VfGnIB0xI)
