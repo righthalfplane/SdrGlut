@@ -11,6 +11,7 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.19
 ## Demo videos
 - [SDRplay RSPduo demonstrates the independent RX mode on the Raspberry Pi 4](https://youtu.be/17eJI8KIkYg)
 - [SdrGlut vs CubicSDR on the Raspberry pi 4 with a Lime Mini SDR](https://www.youtube.com/watch?v=C18bGxbXNsA)
+- [Raspberry PI 4 using SdrGlut to control the NetSDR](https://www.youtube.com/watch?v=jV-LxQS_acY)
 - [SdrGlut uses 4 software defined radios to scan 5 different frequency ranges](https://youtu.be/XA8q5nJEWpc)
 - [SdrGlut Simultaneously Running Five SDRs](https://www.youtube.com/watch?v=BmUNrAn1Llk)
 - [The SDRplay RSPduo vs. a RFSPACE NetSDR+ at FRS Frequencies](https://youtu.be/Bda-XdaxeW4)
@@ -76,7 +77,6 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.19
 - [SDRPlay RSP2 vs a HackRF One using SdrGlut at FRS frequencies](https://www.youtube.com/watch?v=42uEKTncpbQ)
 - [Corbra 38WXST vs Radio Shack TRC-236](https://www.youtube.com/watch?v=O9MQbf1ArQk)
 - [Corbra 38WXST using three different antennas](https://www.youtube.com/watch?v=JDmxGQFwX-Y)
-- [Raspberry PI 4 using SdrGlut to control the NetSDR](https://www.youtube.com/watch?v=jV-LxQS_acY)
 - [SdrPlay RSP2 vs a simple RTL stick using SdrGlut at FRS frequencies](https://www.youtube.com/watch?v=eiuTO5yIR7w)
 - [SdrPlay RSP2 vs a LimeSDR Mini using SdrGlut at FRS frequencies](https://www.youtube.com/watch?v=PEfrJ4ZuN9g)
 - [Lime Mini vs a RTL stick using SdrGlut at FRS frequencies](https://www.youtube.com/watch?v=pDqNCe6GxnA)
