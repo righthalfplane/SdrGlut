@@ -9,6 +9,7 @@ SdrGlut now has a send option where it uses tcp/ip to transfer the I/Q stream to
 https://github.com/righthalfplane/SdrGlut/releases/tag/v1.19
 
 ## Demo videos
+- [Installing RtAudio on the Raspberry pi(https://youtu.be/YKyYXtv4aGw)
 - [SDRplay RSPduo demonstrates the independent RX mode on the Raspberry Pi 4](https://youtu.be/17eJI8KIkYg)
 - [SdrGlut vs CubicSDR on the Raspberry pi 4 with a Lime Mini SDR](https://www.youtube.com/watch?v=C18bGxbXNsA)
 - [Raspberry PI 4 using SdrGlut to control the NetSDR](https://www.youtube.com/watch?v=jV-LxQS_acY)
@@ -95,6 +96,7 @@ Video of RtAudio installation on:
 - [MacOS](https://youtu.be/HlnC5K5qQ98)
 - [Windows 10](https://youtu.be/DyYIKiu2zVI)
 - [Ubuntu18.04](https://youtu.be/mOGWG1K52wA)
+- [Raspberry pi](https://youtu.be/YKyYXtv4aGw)
 
 ## Installation of libliquid
 
