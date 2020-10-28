@@ -9,7 +9,10 @@ SdrGlut now has a send option where it uses tcp/ip to transfer the I/Q stream to
 https://github.com/righthalfplane/SdrGlut/releases/tag/v1.19
 
 ## Demo videos
-- [Installing RtAudio on the Raspberry pi](https://youtu.be/YKyYXtv4aGw)
+- [How to Install RtAudio on the Raspberry pi](https://youtu.be/YKyYXtv4aGw)
+- [How to Install RtAudio on MacOS](https://youtu.be/HlnC5K5qQ98)
+- [How to Install RtAudio on Windows 10](https://youtu.be/DyYIKiu2zVI)
+- [How to Install RtAudio on Ubuntu18.04](https://youtu.be/mOGWG1K52wA)
 - [SDRplay RSPduo demonstrates the independent RX mode on the Raspberry Pi 4](https://youtu.be/17eJI8KIkYg)
 - [SdrGlut vs CubicSDR on the Raspberry pi 4 with a Lime Mini SDR](https://www.youtube.com/watch?v=C18bGxbXNsA)
 - [Raspberry PI 4 using SdrGlut to control the NetSDR](https://www.youtube.com/watch?v=jV-LxQS_acY)
@@ -39,9 +42,6 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.19
 - [Using a LimeSDR Mini as a signal source with SdrGlut](https://youtu.be/0jWvTtuV94Y)
 - [HackRf One vs. a Sdrplay RSP2 using SdrGlut at CB Frequencies](https://youtu.be/0dzZtHT1u2M)
 - [Using a HackRF One as a signal source.](https://youtu.be/17qGxFdgvMY)
-- [How to Install RtAudio on MacOS](https://youtu.be/HlnC5K5qQ98)
-- [How to install RtAudio on Windows 10](https://youtu.be/DyYIKiu2zVI)
-- [Installing RtAudio on Ubuntu18.04](https://youtu.be/mOGWG1K52wA)
 - [SdrGlut exploring Single Side Band on 80 meters](https://youtu.be/Up48SK5BGSw)
 - [Cobra 148 GTL ST AM vs USB at CB frequencies](https://youtu.be/40ih6kHTxSA)
 - [SDRPlay RSP2 vs Grundig Satellit-750 at CB Frequencies](https://youtu.be/s3AlTwK_APg)
