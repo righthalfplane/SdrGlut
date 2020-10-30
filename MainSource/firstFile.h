@@ -15,7 +15,7 @@
 #define _CRT_SECURE_NO_DEPRECATE 1
 #endif
 
-#if LIQUID_VERSION_NUMBER >= 1003001
+#if LIQUID_VERSION_NUMBER >= 1003001 || __arm__
 #define LIQUID_VERSION_4 1
 #endif
 

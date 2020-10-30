@@ -1959,10 +1959,10 @@ int testRadio(struct playData *rx)
         if (args.size()) {
             for (SoapySDR::ArgInfoList::const_iterator args_i = args.begin(); args_i != args.end(); args_i++) {
                 SoapySDR::ArgInfo arg = (*args_i);
-/*
+
                 printf("key %s value %s read %s type %d min %g max %g step %g\n",arg.key.c_str(),arg.value.c_str(),rx->device->readSetting(arg.key).c_str(),
                        (int)arg.type,arg.range.minimum(),arg.range.maximum(),arg.range.step());
-*/
+
                 if(arg.key == "direct_samp")rx->directSampleMode=1;
                 if(arg.key == "bias_tx")rx->biasMode=arg.key;
                 if(arg.key == "biasT_ctrl")rx->biasMode=arg.key;
