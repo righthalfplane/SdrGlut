@@ -18,9 +18,6 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.19
 - [Raspberry PI 4 using SdrGlut to control the NetSDR](https://www.youtube.com/watch?v=jV-LxQS_acY)
 - [SdrGlut uses 4 software defined radios to scan 5 different frequency ranges](https://youtu.be/XA8q5nJEWpc)
 - [SdrGlut Simultaneously Running Five SDRs](https://www.youtube.com/watch?v=BmUNrAn1Llk)
-- [The SDRplay RSPduo vs. a RFSPACE NetSDR+ at FRS Frequencies](https://youtu.be/Bda-XdaxeW4)
-- [The SDRplay RSPduo vs. a RTL-Stick at FRS Frequencies](https://youtu.be/hi_dumxZ9s0)
-- [The HackrRF One vs. the SDRplay RSPduo at FRS Frequencies.](https://youtu.be/YTmOm55_80Q)
 - [The Improved Search and Scan Features of SdrGlut](https://youtu.be/4oTv2DinCRk)
 - [SDRplay RSPduo running in Duel Tuner mode with SdrGlut](https://youtu.be/ShLUdb3Rdvs)
 - [LimeSDR mini displays air traffic information (ADS-B) using dump1090](https://youtu.be/ZuXhtdZZ25Y)
@@ -30,7 +27,6 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.19
 - [Designing Digital Filters using SdrGlut - Part 1](https://youtu.be/MM7lI3RyWxg)
 - [SdrGlut scans SDRs to look for and save stations for playback](https://youtu.be/HGv9suKBJU8)
 - [SdrGlut Looks at signals around 450MHZ - What Are They ?](https://youtu.be/zt7G_6yNRcE)
-- [DISCON the Ultimate computer system of 1982](https://youtu.be/a3yK93VcKm4)
 - [SdrGlut captures GPS data for playback and analysis.](https://youtu.be/gAJw4ciOgQY)
 - [Installing  gnss-sdr a software radio for processing satellite signal data](https://youtu.be/qfOcMfVFw3k)
 - [SdrGlut uses SoapyRemote to play a remote Software Defined Radio](https://youtu.be/Z6yNH2zKDRo)
@@ -40,7 +36,6 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.19
 - [Using gnuradio-companion to capture over the air ATSC video with the LimeSDR Mini](https://youtu.be/guPmP1VPqKk)
 - [Using gnuradio-companion to capture over the air ATSC video](https://youtu.be/jQGk9dORKrc)
 - [Using a LimeSDR Mini as a signal source with SdrGlut](https://youtu.be/0jWvTtuV94Y)
-- [HackRf One vs. a Sdrplay RSP2 using SdrGlut at CB Frequencies](https://youtu.be/0dzZtHT1u2M)
 - [Using a HackRF One as a signal source.](https://youtu.be/17qGxFdgvMY)
 - [SdrGlut exploring Single Side Band on 80 meters](https://youtu.be/Up48SK5BGSw)
 - [Cobra 148 GTL ST AM vs USB at CB frequencies](https://youtu.be/40ih6kHTxSA)
@@ -52,6 +47,10 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.19
 - [SdrGlut a Software Defined Radio player - Test drive #1](https://www.youtube.com/watch?v=zxgcRjTahcA)
 - [SdrGlut a Software Defined Radio controller - Test drive #2](https://youtu.be/VRcvR2V-WFU)
 - [SdrGlut a Software Defined Radio controller - Test drive #3](https://youtu.be/K3jH6BMdKkQ)
+- [The SDRplay RSPduo vs. a RFSPACE NetSDR+ at FRS Frequencies](https://youtu.be/Bda-XdaxeW4)
+- [The SDRplay RSPduo vs. a RTL-Stick at FRS Frequencies](https://youtu.be/hi_dumxZ9s0)
+- [HackRf One vs. a Sdrplay RSP2 using SdrGlut at CB Frequencies](https://youtu.be/0dzZtHT1u2M)
+- [The HackrRF One vs. the SDRplay RSPduo at FRS Frequencies.](https://youtu.be/YTmOm55_80Q)
 - [SdrPlay RSP2 vs NetSDR+ using SdrGlut Part 1. ](https://youtu.be/LdIaFVuAICw)
 - [SdrPlay RSP2 vs NetSDR+ using SdrGlut Part 2. ](https://youtu.be/1QJromJ76Lo)
 - [SdrPlay RSP2 vs NetSDR+ using SdrGlut Part 3. ](https://youtu.be/NXLYYvLQN_k)
@@ -85,6 +84,8 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.19
 - [Mail scatter on the street and sidewalk](https://youtu.be/V2LRiLIExjI)
 - [A UFO flys over San Diego](https://youtu.be/O054bYnZmFw)
 - [The Vanishing Jet and Templet Based Vision](https://youtu.be/caeDZnL3oPg)
+- [DISCON the Ultimate computer system of 1982](https://youtu.be/a3yK93VcKm4)
+
 
 
 
