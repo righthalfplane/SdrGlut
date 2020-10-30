@@ -9,6 +9,7 @@ SdrGlut now has a send option where it uses tcp/ip to transfer the I/Q stream to
 https://github.com/righthalfplane/SdrGlut/releases/tag/v1.19
 
 ## Demo videos
+- [How to Install SdrGlut (A software defined radio) on the Raspberry PI](https://youtu.be/xD9_6c3OisM)
 - [How to Install RtAudio on the Raspberry pi](https://youtu.be/YKyYXtv4aGw)
 - [How to Install RtAudio on MacOS](https://youtu.be/HlnC5K5qQ98)
 - [How to Install RtAudio on Windows 10](https://youtu.be/DyYIKiu2zVI)
