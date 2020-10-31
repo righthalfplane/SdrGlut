@@ -30,8 +30,6 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.19
 - [Viewing Over-The-Air Digital Broadcasts with a Digital Converter Box](https://youtu.be/ZJWdiFJ4HQ4)
 - [Using SdrGlut to capture local TV stations with a SdrPlay RSP2](https://youtu.be/HwxXSgmRJbI)
 - [Using SdrGlut to capture local TV stations with a LimeSDR Mini](https://youtu.be/x3yyEteT6qY)
-- [Using gnuradio-companion to capture over the air ATSC video with the LimeSDR Mini](https://youtu.be/guPmP1VPqKk)
-- [Using gnuradio-companion to capture over the air ATSC video](https://youtu.be/jQGk9dORKrc)
 - [Using a LimeSDR Mini as a signal source with SdrGlut](https://youtu.be/0jWvTtuV94Y)
 - [Using a HackRF One as a signal source.](https://youtu.be/17qGxFdgvMY)
 - [SdrGlut exploring Single Side Band on 80 meters](https://youtu.be/Up48SK5BGSw)
@@ -41,8 +39,6 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.19
 - [SdrGlut a Software Defined Radio controller - Test drive #2](https://youtu.be/VRcvR2V-WFU)
 - [SdrGlut a Software Defined Radio controller - Test drive #3](https://youtu.be/K3jH6BMdKkQ)
 - [LimeSDR Mini using SdrGlut on Several Systems](https://youtu.be/yhxqu5VcO3w)
-- [LimeSDR Mini using CubicSDR 0.2.5 on Several Systems](https://youtu.be/zCTIK82YW9w)
-- [A Power Meter for CubicSDR 0.2.5](https://youtu.be/07vbIeXHukI)
 - [SdrPlay RSP2 vs NetSDR+ using SdrGlut Part 1. ](https://youtu.be/LdIaFVuAICw)
 - [SdrPlay RSP2 vs NetSDR+ using SdrGlut Part 2. ](https://youtu.be/1QJromJ76Lo)
 - [SdrPlay RSP2 vs NetSDR+ using SdrGlut Part 3. ](https://youtu.be/NXLYYvLQN_k)
@@ -86,6 +82,10 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.19
 - [How to Install RtAudio on MacOS](https://youtu.be/HlnC5K5qQ98)
 - [How to Install RtAudio on Windows 10](https://youtu.be/DyYIKiu2zVI)
 - [How to Install RtAudio on Ubuntu18.04](https://youtu.be/mOGWG1K52wA)
+- [Using gnuradio-companion to capture over the air ATSC video with the LimeSDR Mini](https://youtu.be/guPmP1VPqKk)
+- [Using gnuradio-companion to capture over the air ATSC video](https://youtu.be/jQGk9dORKrc)
+- [LimeSDR Mini using CubicSDR 0.2.5 on Several Systems](https://youtu.be/zCTIK82YW9w)
+- [A Power Meter for CubicSDR 0.2.5](https://youtu.be/07vbIeXHukI)
 
 
 
