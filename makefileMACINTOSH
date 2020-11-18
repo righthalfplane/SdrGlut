@@ -1,9 +1,13 @@
 
 
 
-CFLAGS = -DNO_FORTRAN  -O0 -g -I/usr/X11R6/include  -I./DrawFindPointHistory -I./MainSource -I./KdTree-routines -I./glui-routines/include -I./CExpress -Wall 
+#CFLAGS = -DNO_FORTRAN  -O2 -g -Wno-deprecated-declarations -I/usr/X11R6/include  -I./DrawFindPointHistory -I./MainSource -I./KdTree-routines -I./glui-routines/include -I./CExpress -Wall 
 
-CXXFLAGS = -std=c++11 -O0 -g -DNO_FORTRAN  -I./Digital -I./glui-routines/include  -I/usr/X11R6/include  -I./DrawFindPointHistory  -I./MainSource -I./KdTree-routines -I./SdrFile -I./Radio -I./CExpress -I./Classes -I./SdrGlut -Wall 
+#CXXFLAGS = -std=c++11 -O2 -g -DNO_FORTRAN -Wno-deprecated-declarations -I./Digital -I./glui-routines/include  -I/usr/X11R6/include  -I./DrawFindPointHistory  -I./MainSource -I./KdTree-routines -I./SdrFile -I./Radio -I./CExpress -I./Classes -I./SdrGlut -Wall 
+
+CFLAGS = -DNO_FORTRAN  -O2  -Wno-deprecated-declarations -I/usr/X11R6/include  -I./DrawFindPointHistory -I./MainSource -I./KdTree-routines -I./glui-routines/include -I./CExpress
+
+CXXFLAGS = -std=c++11 -O2 -DNO_FORTRAN -Wno-deprecated-declarations -I./Digital -I./glui-routines/include  -I/usr/X11R6/include  -I./DrawFindPointHistory  -I./MainSource -I./KdTree-routines -I./SdrFile -I./Radio -I./CExpress -I./Classes -I./SdrGlut
 
 
 CFILES= ./MainSource/Geom.c \

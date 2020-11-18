@@ -123,7 +123,7 @@ static void control_cb(int control)
         //fprintf(stderr,"flip check box %d\n",control);
     }else if(control >= dd->numradio && control <   2*dd->numradio){
         unsigned long freq,samp;
-        char name[256];
+        char name[512];
         int n=control-dd->numradio;
         RadioPtr sdr=dd->rd[n].r;
         fprintf(stderr,"press button %d\n",n);

@@ -1,13 +1,13 @@
 
 
 
-CFLAGS = -O3 -DNO_FORTRAN -pthread -I/usr/local/hdf-64/include -I/usr/X11R6/include  -I./DrawFindPointHistory -I./MainSource -I./KdTree-routines -I./glui-routines/include -I./CExpress -I./FMRadio -I./Radio -Wall 
+CFLAGS = -O3 -DNO_FORTRAN -pthread -I/usr/local/hdf-64/include -I/usr/X11R6/include  -I./DrawFindPointHistory -I./MainSource -I./KdTree-routines -I./glui-routines/include -I./CExpress -I./FMRadio -I./Radio
 
-CXXFLAGS = -O3 -std=gnu++11 -DNO_FORTRAN  -I./Digital -pthread -I./glui-routines/include -I/usr/local/hdf-64/include -I/usr/X11R6/include  -I./DrawFindPointHistory  -I ./SdrFile -I./MainSource -I./KdTree-routines -I./glui-routines/include -I./CExpress -I./Classes -I./SdrGlut -I./FMRadio  -I./Radio -Wall 
+CXXFLAGS = -O3 -std=gnu++11 -DNO_FORTRAN  -I./Digital -pthread -I./glui-routines/include -I/usr/local/hdf-64/include -I/usr/X11R6/include  -I./DrawFindPointHistory  -I ./SdrFile -I./MainSource -I./KdTree-routines -I./glui-routines/include -I./CExpress -I./Classes -I./SdrGlut -I./FMRadio  -I./Radio
 
-#CFLAGS = -g -I/usr/local/hdf-64/include -I/usr/X11R6/include  -I./DrawFindPointHistory -I./MainSource -I./KdTree-routines -I./glui-routines/include -I./CExpress -Wall 
+#CFLAGS = -g -I/usr/local/hdf-64/include -I/usr/X11R6/include  -I./DrawFindPointHistory -I./MainSource -I./KdTree-routines -I./glui-routines/include -I./CExpress 
 
-#CXXFLAGS = -g -I./glui-routines/include -I/usr/local/hdf-64/include -I/usr/X11R6/include  -I./DrawFindPointHistory  -I./MainSource -I./KdTree-routines -I./glui-routines/include -I./CExpress  -I./Classes -Wall 
+#CXXFLAGS = -g -I./glui-routines/include -I/usr/local/hdf-64/include -I/usr/X11R6/include  -I./DrawFindPointHistory  -I./MainSource -I./KdTree-routines -I./glui-routines/include -I./CExpress  -I./Classes
 
 
 CFILES= ./MainSource/Geom.c \

@@ -177,7 +177,7 @@ int Radio::playRadio(struct playData *rx)
         return 0;
     }
     
-    if(!Root)return NULL;
+    if(!Root)return 1;
     
     RadioPtr f=findMate(rx);
     if(f){
@@ -2513,9 +2513,6 @@ int doWindow(double *x,double *y,long length,int type)
             
             break;
             
-#if LIQUID_VERSION_NUMBER >= 1003002
-#define WINDOWS_LONG_NAMES 1
-#endif
 
             
         case FILTER_HANN:
