@@ -19,7 +19,7 @@
 
 #include <sys/time.h>
 
-
+/*
 #ifdef __APPLE__
 #include <OpenAL/al.h>
 #include <OpenAL/alc.h>
@@ -27,6 +27,7 @@
 #include <AL/alut.h>
 #include <AL/al.h>
 #endif
+*/
 
 #include <time.h>
 
@@ -52,9 +53,9 @@
 
 
 /*
-g++ -O2 -std=c++11 -Wno-deprecated -o raceFMsdr raceFMsdr.cpp mThread.cpp agc.cpp -lrtaudio -pthread -framework OpenAL -lSoapySDR -lliquid -Wall
+g++ -O2 -std=c++11 -Wno-deprecated -o raceFMsdr raceFMsdr.cpp mThread.cpp agc.cpp -lrtaudio -lSoapySDR -lliquid -Wall
 
-g++ -O2  -std=c++11 -Wno-deprecated -o raceFMsdr raceFMsdr.cpp mThread.cpp agc.cpp  -lrtaudio -lopenal -lSoapySDR -lliquid -lpthread -Wall
+g++ -O2  -std=c++11 -Wno-deprecated -o raceFMsdr raceFMsdr.cpp mThread.cpp agc.cpp  -lrtaudio -lSoapySDR -lliquid -Wall
 
 ./raceFMsdr -fc 1e6 -f 0.6e6 -gain 1
 
@@ -87,11 +88,11 @@ g++ -O2  -std=c++11 -Wno-deprecated -o raceFMsdr raceFMsdr.cpp mThread.cpp agc.c
 #define NUM_DATA_BUFF 10
 
 struct playData{
-    ALCdevice *dev;
-    ALCcontext *ctx;
-    ALuint buffers[NUM_BUFFERS];
+  //  ALCdevice *dev;
+  //  ALCcontext *ctx;
+  //  ALuint buffers[NUM_BUFFERS];
     int bufferState[NUM_BUFFERS];
-    ALuint source;
+  //  ALuint source;
     int channels;
     int samplerate;
 	int Debug;
@@ -174,7 +175,7 @@ struct Filters{
 
 
 
-ALvoid DisplayALError(unsigned char *szText, ALint errorCode);
+//ALvoid DisplayALError(unsigned char *szText, ALint errorCode);
 
 int zerol(unsigned char *s,unsigned long n);
 
@@ -228,6 +229,7 @@ int main (int argc, char * argv [])
 
 	zerol((unsigned char *)&rx,sizeof(rx));
 	
+	rx.samplerate=2000000;
 	rx.deviceNumber=0;
 	rx.gain=0.5;
 	rx.fc=1.0e6;
@@ -251,6 +253,8 @@ int main (int argc, char * argv [])
 	         rx.f=atof(argv[++n]);
 	    }else if(!strcmp(argv[n],"-device")){
 	         rx.deviceNumber=atoi(argv[++n]);
+	    }else if(!strcmp(argv[n],"-samplerate")){
+            rx.samplerate=atof(argv[++n]);
 	    }else{
 			// infilename = argv [n] ;
 		}
@@ -262,25 +266,6 @@ int main (int argc, char * argv [])
 	pthread_mutex_init(&rx.mutexo,NULL);
 		
 	rx.channels=2;
-	
-	
-	rx.samplerate=2000000;
-	
-	//rx.samplerate=4000000;
-	
-	//rx.samplerate=6000000;
-	
-	//rx.samplerate=8000000;
-	
-	//rx.samplerate=10000000;
-	
-	//rx.samplerate=20000000;
-	
-	//rx.samplerate=30000000;
-		  
-	//rx.samplerate=40000000;
-	  
-	//rx.samplerate=42000000;
 	
     rx.fOut=48000;
     
@@ -471,7 +456,7 @@ int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
 
 int StartIt(struct playData *rx)
 {
-	ALenum error;
+//	ALenum error;
 
 	for(int i=0;i<4;){
 		int ibuff;
@@ -483,20 +468,21 @@ int StartIt(struct playData *rx)
 			}
 		}
    	}
+/*
  	alSourcePlay(rx->source);
 	if ((error = alGetError()) != AL_NO_ERROR) 
 	{ 
 		DisplayALError((unsigned char *)"doAudio alSourcePlay : ", error); 
 	} 
-       
+*/
 	return 0;
 }
 
 int playRadio(struct playData *rx)
 {
-    ALenum error;
+ //   ALenum error;
     
-    ALint processed;
+ //   ALint processed;
 
 
         double rate=rx->device->getSampleRate(SOAPY_SDR_RX, 0);
@@ -593,7 +579,7 @@ int playRadio(struct playData *rx)
         
         
         
-        StartIt(rx);
+       // StartIt(rx);
 /*  
 	double start=rtime();
   	for(int i=0;i<100;){
@@ -612,7 +598,7 @@ int playRadio(struct playData *rx)
     
     exit(1);
 */   
-        
+    /*
       	int ibuff;
         ibuff=3;
 
@@ -678,31 +664,31 @@ int playRadio(struct playData *rx)
 	Sleep2(100);
        
 	return 0;
+	*/
 }
 
 
 int setBuffers(struct playData *rx, int numBuff)
 {
-    ALenum error;
-    ALuint buffer;
+ //   ALenum error;
+//   ALuint buffer;
     
-    buffer=99999999;
+    //buffer=99999999;
 	for(int m=0;m<NUM_BUFFERS;++m){
 	    if(rx->bufferState[m] == 0){
-	         buffer=rx->buffers[m];
+	        // buffer=rx->buffers[m];
 	         rx->bufferState[m]=1;
 	         break;
 	    }
 	}
-	
+/*
 	if(buffer ==  99999999){
 	    fprintf(stderr,"setBuffers out of audio buffers\n");
 		return 1;
 	}
 
 	fprintf(stderr,"start buffer %d\n",buffer);
-	
-	
+*/	
 
 
     {
@@ -720,7 +706,7 @@ int setBuffers(struct playData *rx, int numBuff)
  
     }
 
-
+/*
     alBufferData(buffer,
                  AL_FORMAT_MONO16,
                  rx->buffa[numBuff % NUM_ABUFF],
@@ -739,7 +725,7 @@ int setBuffers(struct playData *rx, int numBuff)
         return 1;
     }
     
-
+*/
 	return 0;
 }
 
@@ -801,6 +787,7 @@ int Process(void *rxv)
 
 	return 0;
 }
+#ifdef jumkoo11
 int doAudioOLD(float *aBuff,struct playData *rx)
 {
 	int short *data;
@@ -895,7 +882,7 @@ int AudioReset(struct playData *rx)
 
     return 0;
 }
-
+#endif
 int doFilter(struct playData *rx,float *wBuff,float *aBuff,struct Filters *f)
 {
  	int ip=popBuff(rx);
@@ -1331,14 +1318,14 @@ int setFilters(struct playData *rx,struct Filters *f)
 
 static int initPlay(struct playData *rx)
 {
-    ALenum error;
+//    ALenum error;
     
 	rx->doWhat=0;
 	
     rx->witch=0;
     
     rx->audioOut=0;
-
+/*
     // Initialization 
     //rx->dev = alcOpenDevice("USB Headset Analog Stereo"); // select the "preferred dev" 
     rx->dev = alcOpenDevice(INPUT1); // select the "preferred dev" 
@@ -1360,7 +1347,7 @@ static int initPlay(struct playData *rx)
         DisplayALError((unsigned char *)"alGenSources 1 : ", error); 
         return 1; 
     } 
-    
+*/
     if(rx->fc != rx->f){
     	float pi;
     	pi=4.0*atan(1.0);
@@ -1399,7 +1386,7 @@ static int stopPlay(struct playData *rx)
     rx->doWhat=1;
     
     Sleep2(100);
-
+/*
 	if(rx->ctx){
     	rx->ctx = alcGetCurrentContext(); 
     	if(rx->dev){
@@ -1409,7 +1396,7 @@ static int stopPlay(struct playData *rx)
     		alcCloseDevice(rx->dev);
     	}
     }
-
+*/
     if(rx->device){
         rx->device->deactivateStream(rx->rxStream, 0, 0);
     
@@ -1455,11 +1442,12 @@ int zerol(unsigned char *s,unsigned long n)
 	
 	return 0;
 }
-
+/*
 ALvoid DisplayALError(unsigned char *szText, ALint errorcode)
 {
 	printf("%s%s\n", szText, alGetString(errorcode));
 }
+*/
 int testRadio(struct playData *rx,SoapySDR::Kwargs deviceArgs)
 {
 
