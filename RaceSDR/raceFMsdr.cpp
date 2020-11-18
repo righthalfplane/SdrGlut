@@ -1,4 +1,3 @@
-#include <SoapySDR/ConverterRegistry.hpp>
 #include <SoapySDR/Version.hpp>
 #include <SoapySDR/Modules.hpp>
 #include <SoapySDR/Registry.hpp>
@@ -33,8 +32,6 @@
 
 #include "mThread.h"
 
-#include "agc.h"
-
 #include <RtAudio.h>
 
 #include <cstdio>
@@ -42,20 +39,18 @@
 
 
 
-#define MODE_AM   0
-#define MODE_FM   1
-#define MODE_NBFM 2
-
-#define INPUT1 NULL
-//#define INPUT1 "Built-in Audio Digital Stereo (IEC958)"
-//#define INPUT1 "GF108 High Definition Audio Controller Digital Stereo (HDMI)"
-//#define INPUT1 "USB Headset Analog Stereo"
-
+#define MODE_FM   0
+#define MODE_NBFM 1
+#define MODE_AM   2
+#define MODE_NAM  3
+#define MODE_USB  4
+#define MODE_LSB  5
+#define MODE_CW   6
 
 /*
-g++ -O2 -std=c++11 -Wno-deprecated -o raceFMsdr raceFMsdr.cpp mThread.cpp agc.cpp -lrtaudio -lSoapySDR -lliquid -Wall
+g++ -O2 -std=c++11 -Wno-deprecated -o raceFMsdr raceFMsdr.cpp mThread.cpp -lrtaudio -lSoapySDR -lliquid -lpthread -Wall
 
-g++ -O2  -std=c++11 -Wno-deprecated -o raceFMsdr raceFMsdr.cpp mThread.cpp agc.cpp  -lrtaudio -lSoapySDR -lliquid -Wall
+g++ -O2  -std=c++11 -Wno-deprecated -o raceFMsdr raceFMsdr.cpp mThread.cpp  -lrtaudio -lSoapySDR -lliquid -lpthread -Wall
 
 ./raceFMsdr -fc 1e6 -f 0.6e6 -gain 1
 
@@ -105,7 +100,7 @@ struct playData{
 	float sindt;
 	float cosdt;
 	float w;
-	
+	double bw;
 	int decodemode;
 
 	SoapySDR::Stream *rxStream;
@@ -133,15 +128,6 @@ struct playData{
     
     int size; 
     
-    CAgc m_Agc;
-    
-    int AgcSlope;
-    int AgcThresh;
-    int AgcManualGain;
-    bool AgcOn;
-    bool AgcHangOn;
-    int AgcDecay;
-    
     
     unsigned int deviceNumber;
     
@@ -157,7 +143,6 @@ struct playData{
 
  	int al_state;
  	
- 	agc_rrrf agc;
 
 };
 
@@ -167,10 +152,9 @@ struct Filters{
 	freqdem demod;
 	msresamp_crcf iqSampler;
 	msresamp_rrrf iqSampler2;
-	iirfilt_crcf dcFilter;
-	iirfilt_crcf lowpass;
 	nco_crcf fShift;
 	int thread;	
+	double amHistory;
 };
 
 
@@ -245,6 +229,10 @@ int main (int argc, char * argv [])
 		   rx.decodemode = MODE_FM;
 	    }else if(!strcmp(argv[n],"-nbfm")){
 		   rx.decodemode = MODE_NBFM;
+        }else if(!strcmp(argv[n],"-usb")){
+            rx.decodemode = MODE_USB;
+        }else if(!strcmp(argv[n],"-lsb")){
+            rx.decodemode = MODE_LSB;
 	    }else if(!strcmp(argv[n],"-gain")){
 	         rx.gain=atof(argv[++n]);
 	    }else if(!strcmp(argv[n],"-fc")){
@@ -598,97 +586,20 @@ int playRadio(struct playData *rx)
     
     exit(1);
 */   
-    /*
-      	int ibuff;
-        ibuff=3;
 
-        for (size_t i = 0; i < 200;)
-        {
-        	Sleep2(2);
-        	{
-        	    processed=0;
-        	     
-          		alGetSourcei(rx->source, AL_BUFFERS_PROCESSED, &processed);
-    
-    			if(processed){
-
-					++i;
-					ALuint fbuff[NUM_BUFFERS];
-					alSourceUnqueueBuffers(rx->source, processed, fbuff);
-					if ((error = alGetError()) != AL_NO_ERROR) 
-					{ 
-						DisplayALError((unsigned char *)"alSourceUnqueueBuffers : ", error); 
-					} 
-
-					for(int k=0;k<processed;++k){
-						for(int m=0;m<NUM_BUFFERS;++m){
-							if(rx->buffers[m] == fbuff[k]){
-								rx->bufferState[m]=0;
-								fprintf(stderr,"Buffer %d freed processed %d ibuff %d\n",rx->buffers[m],processed,ibuff);
-				
-							}
-						}
-
-					}
-
-					while((ibuff=popBuffa(rx)) < 0)Sleep2(2);
-
-
-					if(setBuffers(rx, ibuff)){
-							;
-					 }
-  
-      			
-          	     }else{
-					alGetSourcei(rx->source, AL_SOURCE_STATE, &rx->al_state);
-					if(rx->al_state != AL_PLAYING && rx->al_state != AL_INITIAL){
-						if(rx->al_state == AL_STOPPED){
-							AudioReset(rx);
-						}else{
-							printf("al state %d %x\n",rx->al_state,rx->al_state);
-						}
-					}
-					if(rx->al_state == AL_INITIAL){
-						StartIt(rx);
-					}
-          	     }
-        	     
-        	}
-        		
-       }
-
-        rx->doWhat=0;
-        
-        rx->frame=-1;
-
-	Sleep2(100);
-       
-	return 0;
-	*/
 }
 
 
 int setBuffers(struct playData *rx, int numBuff)
 {
- //   ALenum error;
-//   ALuint buffer;
     
-    //buffer=99999999;
-	for(int m=0;m<NUM_BUFFERS;++m){
+ 	for(int m=0;m<NUM_BUFFERS;++m){
 	    if(rx->bufferState[m] == 0){
 	        // buffer=rx->buffers[m];
 	         rx->bufferState[m]=1;
 	         break;
 	    }
 	}
-/*
-	if(buffer ==  99999999){
-	    fprintf(stderr,"setBuffers out of audio buffers\n");
-		return 1;
-	}
-
-	fprintf(stderr,"start buffer %d\n",buffer);
-*/	
 
 
     {
@@ -706,26 +617,6 @@ int setBuffers(struct playData *rx, int numBuff)
  
     }
 
-/*
-    alBufferData(buffer,
-                 AL_FORMAT_MONO16,
-                 rx->buffa[numBuff % NUM_ABUFF],
-                 4800  * sizeof(short),
-                 48000);
-    
-    if ((error = alGetError()) != AL_NO_ERROR){
-        DisplayALError((unsigned char *)"alBufferData 1 : ", error);
-        return 1;
-    }
-    
-    alSourceQueueBuffers(rx->source, 1, &buffer);
-    
-    if ((error = alGetError()) != AL_NO_ERROR){
-        DisplayALError((unsigned char *)"alSourceQueueBuffers 1 : ", error);
-        return 1;
-    }
-    
-*/
 	return 0;
 }
 
@@ -775,9 +666,6 @@ int Process(void *rxv)
 	
 	if (f.iqSampler2)msresamp_rrrf_destroy(f.iqSampler2);
 	
-	if(f.lowpass)iirfilt_crcf_destroy(f.lowpass);
-	
-    if(f.dcFilter)iirfilt_crcf_destroy(f.dcFilter);
 	
     if(f.fShift)nco_crcf_destroy(f.fShift);
     
@@ -787,102 +675,7 @@ int Process(void *rxv)
 
 	return 0;
 }
-#ifdef jumkoo11
-int doAudioOLD(float *aBuff,struct playData *rx)
-{
-	int short *data;
-	int audioOut;
 
-	
-	pthread_mutex_lock(&rx->mutexo);
-	audioOut=rx->audioOut;
-	//fprintf(stderr,"audioOut %d\n",audioOut);
-	data=rx->buffa[rx->audioOut++ % NUM_ABUFF];
-	pthread_mutex_unlock(&rx->mutexo);
-	
-
-	double amin=1e30;
-	double amax=-1e30;
-		
-	float *buff=aBuff;
-
-	
-	double gain;
-	
-	gain=rx->gain;
-	
-	if(gain <= 0.0)gain=1.0;
-	
-	for (int i=0; i<BLOCK_SIZE; i++) {
-	    double v;
-        agc_rrrf_execute(rx->agc, buff[i], &buff[i]);
-		v=gain*buff[i]*2000;
- 		data[i]=(short int)v;
- 		if(v < amin)amin=v;
-		if(v > amax)amax=v;
-  }
-
-	fprintf(stderr,"doAudio size %d amin %f amax %f audioOut %d\n",BLOCK_SIZE,amin,amax,audioOut);		
-		
-	pushBuffa(audioOut,rx);
-
-
-	return 0;
-}
-int AudioReset(struct playData *rx)
-{
-    ALenum error;
-    
-    alDeleteBuffers(NUM_BUFFERS, rx->buffers);
-    alSourceStopv(1, &rx->source);
-    alDeleteSources(1, &rx->source);
-
-    if(rx->ctx){
-        rx->ctx = alcGetCurrentContext();
-        if(rx->dev){
-            rx->dev = alcGetContextsDevice(rx->ctx);
-            alcMakeContextCurrent(NULL);
-            alcDestroyContext(rx->ctx);
-            alcCloseDevice(rx->dev);
-        }
-    }
-
-    // Initialization
-   // rx->dev = alcOpenDevice("USB Headset Analog Stereo"); // select the "preferred dev"
-
-   rx->dev = alcOpenDevice(INPUT1); // select the "preferred dev"
-
-    
-    if (rx->dev){
-        rx->ctx = alcCreateContext(rx->dev,NULL);
-        alcMakeContextCurrent(rx->ctx);
-    }
-    
-    alGetError();
-    alGenBuffers(NUM_BUFFERS, rx->buffers);
-    if ((error = alGetError()) != AL_NO_ERROR){
-        DisplayALError((unsigned char *)"alGenBuffers :", error);
-        return 1;
-    }
-    
-    alGenSources(1, &rx->source);
-    if ((error = alGetError()) != AL_NO_ERROR){
-        DisplayALError((unsigned char *)"alGenSources 1 : ", error);
-        return 1;
-    }
-    
-    rx->frame=0;
-    
-	for(int k=0;k<NUM_BUFFERS;++k){
-		rx->bufferState[k]=0;
-	}
- 
-    
-    printf("AudioReset \n");
-
-    return 0;
-}
-#endif
 int doFilter(struct playData *rx,float *wBuff,float *aBuff,struct Filters *f)
 {
  	int ip=popBuff(rx);
@@ -954,28 +747,30 @@ int doFilter(struct playData *rx,float *wBuff,float *aBuff,struct Filters *f)
     
     msresamp_crcf_execute(f->iqSampler, (liquid_float_complex *)buf2, rx->size, (liquid_float_complex *)buf, &num);  // decimate
         
-    if(rx->decodemode != MODE_AM){
-		freqdem_demodulate_block(f->demod, (liquid_float_complex *)buf, (int)num, (float *)buf2);
-        msresamp_rrrf_execute(f->iqSampler2, (float *)buf2, num, (float *)buf, &num2);  // interpolate
-	}else{
- 	   ampmodem_demodulate_block(f->demodAM,  (liquid_float_complex *)buf, (int)num, (float *)buf2);
-       msresamp_rrrf_execute(f->iqSampler2, (float *)buf2, num, (float *)buf, &num2);  // interpolate    
-    }
-	//iirfilt_crcf_execute_block(f->dcFilter, (liquid_float_complex *)buf, num, (liquid_float_complex *)buf);
-	
-	//iirfilt_crcf_execute_block(f->lowpass, (liquid_float_complex *)buf, num2, (liquid_float_complex *)buf);
+    if(rx->decodemode < MODE_AM){
 
-	//fprintf(stderr,"doFilter witch %d end num %d Ratio %f size %d num2 %d \n",witch,num,rx->Ratio,rx->size,num2);
-	 	 
-/* 
-		for(int k = 0;k < 8;++k){
-		   printf(" %f ",buf[k]);
-		}
-		
-		printf("\n");
-	 
-*/	 
-	 
+		freqdem_demodulate_block(f->demod, (liquid_float_complex *)buf, (int)num, (float *)buf2);
+
+        msresamp_rrrf_execute(f->iqSampler2, (float *)buf2, num, (float *)buf, &num2);  // interpolate
+
+        //printf("2 rx->size %d num %u num2 %u\n",rx->size,num,num2);
+
+    }else if(rx->decodemode < MODE_USB){
+        #define DC_ALPHA 0.99    //ALPHA for DC removal filter ~20Hz Fcut with 15625Hz Sample Rate
+
+        for(unsigned int n=0;n<num;++n){
+            double mag=sqrt(buf[2*n]*buf[2*n]+buf[2*n+1]*buf[2*n+1]);
+            double z0=mag + (f->amHistory * DC_ALPHA);
+            buf2[n]=(float)(z0-f->amHistory);
+            f->amHistory=z0;
+        }
+        msresamp_rrrf_execute(f->iqSampler2, (float *)buf2, num, (float *)buf, &num2);  // interpolate
+    }else{
+        ampmodem_demodulate_block(f->demodAM,  (liquid_float_complex *)buf, (int)num, (float *)buf2);
+        msresamp_rrrf_execute(f->iqSampler2, (float *)buf2, num, (float *)buf, &num2);  // interpolate
+   }
+
+        
 	return 0;
 }
 
@@ -1270,49 +1065,68 @@ int rxBuffer(void *rxv)
 int setFilters(struct playData *rx,struct Filters *f)
 {
 
-	float shift=rx->f-rx->fc;
-
+    // double shift=rx->f-rx->fc;
+    
+    if(!rx)return 0;
+    
     float As = 60.0f;
     
-    float ratio=rx->fOut / rx->samplerate;
+    float ratio=(float)(rx->fOut / rx->samplerate);
+    
+    liquid_ampmodem_type mode=LIQUID_AMPMODEM_DSB;
+    
+    int iflag=0;
     
     if(rx->decodemode == MODE_AM){
-    	//rx->Ratio = rx->fOut / rx->samplerate;
-        rx->Ratio = 10000.0/ rx->samplerate;   
-        ratio=4800.0/1000.0; 
+        rx->bw=10000.0;
+        mode=LIQUID_AMPMODEM_DSB;
+        iflag=0;
+    } else if(rx->decodemode == MODE_NAM){
+        rx->bw=5000.0;
+        mode=LIQUID_AMPMODEM_DSB;
+        iflag=0;
     } else if(rx->decodemode == MODE_NBFM){
-        rx->Ratio = 12500.0/ rx->samplerate;   
-        ratio=4800.0/1250.0; 
-	}else{
-        rx->Ratio = 200000.0/ rx->samplerate;
-        ratio=4800.0/20000.0; 
-	}
-	
-   // f->demodAM = ampmodem_create(0.5, 0.0, LIQUID_AMPMODEM_DSB, 0);
+        rx->bw=12500.0;
+    }else if(rx->decodemode == MODE_FM){
+        rx->bw=200000.0;
+    }else if(rx->decodemode == MODE_USB){   // Above 10 MHZ
+        rx->bw=6000.0;
+        mode=LIQUID_AMPMODEM_USB;
+        iflag=1;
+    }else if(rx->decodemode == MODE_LSB){  // Below 10 MHZ
+        rx->bw=6000.0;
+        mode=LIQUID_AMPMODEM_LSB;
+        iflag=1;
+    }else if(rx->decodemode == MODE_CW){  // Below 10 MHZ
+        rx->bw=3000.0;
+        mode=LIQUID_AMPMODEM_LSB;
+        iflag=1;
+    }
     
-    f->demodAM = ampmodem_create(0.5, LIQUID_AMPMODEM_DSB, 0);
+    rx->Ratio = (float)(rx->bw/ rx->samplerate);
+    ratio= (float)(48000.0/rx->bw);
     
-	f->demod=freqdem_create(0.5);
+    f->demod=freqdem_create(0.5);
+    
+#ifdef LIQUID_VERSION_4
+    f->demodAM = ampmodem_create(0.5, 0.0, mode, iflag);
+ #else
+    f->demodAM = ampmodem_create(0.5, mode, iflag);
+#endif
 
     f->iqSampler  = msresamp_crcf_create(rx->Ratio, As);
     
     f->iqSampler2 = msresamp_rrrf_create(ratio, As);
     
-	//msresamp_crcf_print(f->iqSampler);
-	
-    //rx->lowpass = iirfilt_crcf_create_lowpass(6,0.04);
-    //f->lowpass = iirfilt_crcf_create_lowpass(6,0.0625); // +- 3000 HZ
-    f->lowpass = iirfilt_crcf_create_lowpass(6,0.104);    // +- 5000 HZ
+    //msresamp_crcf_print(f->iqSampler);
     
-    
-    f->dcFilter = iirfilt_crcf_create_dc_blocker(0.0005f);
     
     f->fShift = nco_crcf_create(LIQUID_NCO);
     
-    nco_crcf_set_frequency(f->fShift, (2.0 * M_PI) * (((double) abs(shift)) / ((double) rx->samplerate)));
+    f->amHistory=0;
     
-	return 0;
-	
+    return 0;
+    	
 }
 
 
@@ -1325,29 +1139,6 @@ static int initPlay(struct playData *rx)
     rx->witch=0;
     
     rx->audioOut=0;
-/*
-    // Initialization 
-    //rx->dev = alcOpenDevice("USB Headset Analog Stereo"); // select the "preferred dev" 
-    rx->dev = alcOpenDevice(INPUT1); // select the "preferred dev" 
-
-    if (rx->dev){ 
-        rx->ctx = alcCreateContext(rx->dev,NULL); 
-        alcMakeContextCurrent(rx->ctx);  
-    } 
-
-    alGetError();
-    alGenBuffers(NUM_BUFFERS, rx->buffers); 
-    if ((error = alGetError()) != AL_NO_ERROR){ 
-        DisplayALError((unsigned char *)"alGenBuffers :", error); 
-        return 1; 
-    } 
-   
-    alGenSources(1, &rx->source); 
-    if ((error = alGetError()) != AL_NO_ERROR){ 
-        DisplayALError((unsigned char *)"alGenSources 1 : ", error); 
-        return 1; 
-    } 
-*/
     if(rx->fc != rx->f){
     	float pi;
     	pi=4.0*atan(1.0);
@@ -1360,22 +1151,6 @@ static int initPlay(struct playData *rx)
     	printf("fc %f f %f dt %g samplerate %d\n",rx->fc,rx->f,rx->dt,rx->samplerate);
     }
     
-    rx->AgcSlope=0;
-    rx->AgcThresh=-100;
-    rx->AgcManualGain=30;
-    rx->AgcDecay=200;
-    rx->AgcOn=true;
-    rx->AgcHangOn=false;
-    
-    rx->m_Agc.SetParameters(rx->AgcOn, rx->AgcHangOn, rx->AgcThresh,
-                        rx->AgcManualGain, rx->AgcSlope, rx->AgcDecay, 48000);
-    
-    rx->m_Agc.agcGain=1.0;
-    
-    rx->agc = agc_rrrf_create();
-    
-    agc_rrrf_set_bandwidth(rx->agc, 0.25);
-
     
 	return 0;
 }
@@ -1386,17 +1161,7 @@ static int stopPlay(struct playData *rx)
     rx->doWhat=1;
     
     Sleep2(100);
-/*
-	if(rx->ctx){
-    	rx->ctx = alcGetCurrentContext(); 
-    	if(rx->dev){
-    		rx->dev = alcGetContextsDevice(rx->ctx);
-    		alcMakeContextCurrent(NULL); 
-    		alcDestroyContext(rx->ctx); 
-    		alcCloseDevice(rx->dev);
-    	}
-    }
-*/
+    
     if(rx->device){
         rx->device->deactivateStream(rx->rxStream, 0, 0);
     
@@ -1405,7 +1170,6 @@ static int stopPlay(struct playData *rx)
         SoapySDR::Device::unmake(rx->device);
     }
 
-    if(rx->agc)agc_rrrf_destroy(rx->agc);
     
 	return 0;
 }
@@ -1442,12 +1206,7 @@ int zerol(unsigned char *s,unsigned long n)
 	
 	return 0;
 }
-/*
-ALvoid DisplayALError(unsigned char *szText, ALint errorcode)
-{
-	printf("%s%s\n", szText, alGetString(errorcode));
-}
-*/
+
 int testRadio(struct playData *rx,SoapySDR::Kwargs deviceArgs)
 {
 
@@ -1655,12 +1414,7 @@ int doAudio(float *aBuff,struct playData *rx)
 
 	
 	double dmin,dnom,gain;
-/*
-
-	for (int i=0; i<BLOCK_SIZE; i++) {
-        agc_rrrf_execute(rx->agc, buff[i], &buff[i]);
-    }
-*/
+	
 	gain=rx->gain;
 	
 	if(gain <= 0.0)gain=1.0;
@@ -1669,12 +1423,7 @@ int doAudio(float *aBuff,struct playData *rx)
 	
 	for (int i=0; i<BLOCK_SIZE; i++ ) {
 		double v;
-		if(rx->decodemode == MODE_AM){
-    	    v=gain*sqrt(buff[i*2]*buff[i*2]+buff[i*2+1]*buff[i*2+1]);
-		    v=gain*buff[i];
-		}else{
-		    v=gain*buff[i];
-		}
+		v=gain*buff[i];
 		if(v < amin)amin=v;
 		if(v > amax)amax=v;
 	}
@@ -1689,37 +1438,10 @@ int doAudio(float *aBuff,struct playData *rx)
 
 	for(int k=0;k<BLOCK_SIZE;++k){
 		double v;
-		if(rx->decodemode == MODE_AM){
-    	    v=gain*sqrt(buff[k*2]*buff[k*2]+buff[k*2+1]*buff[k*2+1]);
-		    v=gain*buff[k];
-		}else{
-		    v=gain*buff[k];
-		}
+		v=gain*buff[k];
 		v=(v-dmin)*dnom-32000;
 		data[k]=(short int)v;
-	}
-	
- 
-    
-/*
-	double amin=1e30;
-	double amax=-1e30;
-  	
-	rx->m_Agc.ProcessData(BLOCK_SIZE, (float *)buff, (float *)buff );
- 	
-	for(int k=0;k<BLOCK_SIZE;++k){
-		//double v=100*sqrt(buff[k*2]*buff[k*2]+buff[k*2+1]*buff[k*2+1]);
-		double v=100*buff[k];
-		if(v < amin)amin=v;
-		if(v > amax)amax=v;
-		data[k]=(short int)v;
-	}
- 	
- 	printf("1 frame %d size %d amin %f amax %f audioOut %d agcGain %f\n",rx->frame,BLOCK_SIZE,amin,amax,audioOut,rx->m_Agc.agcGain);
-
-*/
-	
-	
+	}	
 
 	pushBuffa(audioOut,rx);
 
