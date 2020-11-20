@@ -8,6 +8,7 @@
 
 #include <liquid/liquid.h>
 
+#include <csignal>
 #include <iostream>
 
 #include <stdio.h>
@@ -48,7 +49,7 @@
 #define MODE_CW   6
 
 /*
-g++ -O2 -std=c++11 -Wno-deprecated -o raceFMsdr raceFMsdr.cpp mThread.cpp -lrtaudio -lSoapySDR -lliquid -lpthread -Wall
+g++ -O2 -std=c++11 -Wno-deprecated -o raceFMsdr raceFMsdr.cpp mThread.cpp cMalloc.c -lrtaudio -lSoapySDR -lliquid -lpthread
 
 g++ -O2  -std=c++11 -Wno-deprecated -o raceFMsdr raceFMsdr.cpp mThread.cpp  -lrtaudio -lSoapySDR -lliquid -lpthread -Wall
 
@@ -128,6 +129,10 @@ struct playData{
     
     int size; 
     
+    int antennaCount;
+    char **antenna;
+    char *antennaUse;
+    int channel;
     
     unsigned int deviceNumber;
     
@@ -142,6 +147,10 @@ struct playData{
    	volatile int thread; 
 
  	int al_state;
+ 	
+ 	std::string set[20];
+ 	std::string value[20];
+ 	int setcount;
  	
 
 };
@@ -160,6 +169,11 @@ struct Filters{
 
 
 //ALvoid DisplayALError(unsigned char *szText, ALint errorCode);
+
+void *cMalloc(unsigned long r, int tag);
+
+char *strsave(char *s,int tag);
+
 
 int zerol(unsigned char *s,unsigned long n);
 
@@ -207,6 +221,15 @@ int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
 
 int printInfo(void);
 
+volatile int threadexit; 
+
+int audiodevice;
+
+void signalHandler( int signum ) {
+	//fprintf(stderr,"signum %d\n",signum);
+	threadexit=1;
+}
+
 int main (int argc, char * argv [])
 {	
 	struct playData rx;
@@ -215,11 +238,17 @@ int main (int argc, char * argv [])
 	
 	rx.samplerate=2000000;
 	rx.deviceNumber=0;
+	audiodevice=0;
+	threadexit=0;
 	rx.gain=0.5;
 	rx.fc=1.0e6;
 	rx.f=0.6e6;
-
+    rx.antennaUse=NULL;
+    rx.channel=0;
+    rx.setcount=0;
 	
+	signal(SIGINT, signalHandler);  
+
 	for(int n=1;n<argc;++n){
 	    if(!strcmp(argv[n],"-debug")){
 		   rx.Debug = 1;
@@ -241,8 +270,15 @@ int main (int argc, char * argv [])
 	         rx.f=atof(argv[++n]);
 	    }else if(!strcmp(argv[n],"-device")){
 	         rx.deviceNumber=atoi(argv[++n]);
+	    }else if(!strcmp(argv[n],"-audiodevice")){
+	         audiodevice=atoi(argv[++n]);
 	    }else if(!strcmp(argv[n],"-samplerate")){
             rx.samplerate=atof(argv[++n]);
+	    }else if(!strcmp(argv[n],"-antenna")){
+            rx.antennaUse=strsave(argv[++n],9870);
+	    }else if(!strcmp(argv[n],"-set")){
+	     rx.set[rx.setcount]=argv[++n];
+	     rx.value[rx.setcount++]=argv[++n];
 	    }else{
 			// infilename = argv [n] ;
 		}
@@ -288,12 +324,12 @@ int main (int argc, char * argv [])
             info=dac.getDeviceInfo(i);
             if(info.outputChannels > 0){
             // Print, for example, the maximum number of output channels for each device
-                fprintf(stderr,"device = %d : maximum output  channels = %d Device Name = %s\n",i,info.outputChannels,info.name.c_str());
+                fprintf(stderr,"audio device = %d : output  channels = %d Device Name = %s\n",i,info.outputChannels,info.name.c_str());
              }
              
             if(info.inputChannels > 0){
             // Print, for example, the maximum number of output channels for each device
-                fprintf(stderr,"device = %d : maximum output  channels = %d Device Name = %s\n",i,info.inputChannels,info.name.c_str());
+                fprintf(stderr,"audio device = %d : input   channels = %d Device Name = %s\n",i,info.inputChannels,info.name.c_str());
             }
 
         }
@@ -311,7 +347,7 @@ int main (int argc, char * argv [])
 	
 	RtAudio::StreamParameters parameters;
 	parameters.deviceId = dac.getDefaultOutputDevice();
-	// parameters.deviceId = 7;
+	parameters.deviceId = audiodevice;
 	parameters.nChannels = 2;
 	parameters.firstChannel = 0;
 	unsigned int sampleRate = 48000;
@@ -537,7 +573,7 @@ int playRadio(struct playData *rx)
         
         
 	double start=rtime();
-  	for(int i=0;i<2000;++i){
+  	while(!threadexit){
   		Sleep2(5);
   		
 		//int ibuff;
@@ -946,6 +982,15 @@ int findRadio(struct playData *rx)
     
     SoapySDR::Kwargs deviceArgs;
     
+    
+    for(unsigned int k=0;k<results.size();++k){
+			std::cout << "SDR device = " << k << "  ";
+			deviceArgs = results[k];
+			for (SoapySDR::Kwargs::const_iterator it = deviceArgs.begin(); it != deviceArgs.end(); ++it) {
+				if (it->first == "label")std::cout << "  " << it->first << " = " << it->second << std::endl;
+			}
+    }
+    
     for(unsigned int k=0;k<results.size();++k){
     
     	if(k == rx->deviceNumber){
@@ -954,9 +999,8 @@ int findRadio(struct playData *rx)
 		
 			std::cout << std::endl;
 	
-			std::cout << "*****  device : " << k << " *****" << std::endl;
+			std::cout << "*****   device = " << k << " selected *****" << std::endl;
 	
-			std::cout << std::endl;
 	
 			for (SoapySDR::Kwargs::const_iterator it = deviceArgs.begin(); it != deviceArgs.end(); ++it) {
 				std::cout << "  " << it->first << " = " << it->second << std::endl;
@@ -969,13 +1013,70 @@ int findRadio(struct playData *rx)
 		
 			// testRadio(rx,deviceArgs);
 			
-			rx->device = SoapySDR::Device::make(deviceArgs);
+			std::cout << std::endl;
 
-            rx->device->setAntenna(SOAPY_SDR_RX, 0, "LNAW");
-            
-			rx->device->setSampleRate(SOAPY_SDR_RX, 0, rx->samplerate);
 			
-			rx->device->setFrequency(SOAPY_SDR_RX, 0, rx->fc);
+			rx->device = SoapySDR::Device::make(deviceArgs);
+			
+			std::cout << std::endl;
+			
+			        //query device info
+        	std::vector<std::string> names = rx->device->listAntennas(SOAPY_SDR_RX,  rx->channel);
+        	std::cout << "Rx antennas: " << std::endl;
+        
+        	for (std::vector<std::string>::const_iterator ii = names.begin(); ii != names.end(); ++ii){
+            
+           		 std::cout << (*ii) << std::endl;
+            
+        	}
+			        
+        	rx->antennaCount=names.size();
+        	rx->antenna=(char **)cMalloc((unsigned long)(rx->antennaCount*sizeof(char *)),8833);
+        	for (size_t i=0;i<names.size();++i){
+            	rx->antenna[i]=strsave((char *)names[i].c_str(),5555);
+        	}
+
+			
+			
+			std::cout << std::endl;
+        	std::cout << "Setting Info: " << std::endl;
+			
+        	SoapySDR::ArgInfoList args = rx->device->getSettingInfo();
+        	if (args.size()) {
+            	for (SoapySDR::ArgInfoList::const_iterator args_i = args.begin(); args_i != args.end(); args_i++) {
+                	SoapySDR::ArgInfo arg = (*args_i);
+
+                	printf("key %s value %s read %s type %d min %g max %g step %g\n",arg.key.c_str(),arg.value.c_str(),rx->device->readSetting(arg.key).c_str(),
+                       	(int)arg.type,arg.range.minimum(),arg.range.maximum(),arg.range.step());
+
+            	}
+        	}
+			std::cout << std::endl;
+			
+			
+			
+		
+            if(rx->antennaUse){
+            	fprintf(stderr,"Use antenna \"%s\"\n",rx->antennaUse);
+            	rx->device->setAntenna(SOAPY_SDR_RX, rx->channel, rx->antennaUse);
+            }
+            
+            
+            
+            if(rx->setcount){          
+             	fprintf(stderr,"setcount %d\n",rx->setcount);
+           		for(int k=0;k<rx->setcount;++k){
+              		fprintf(stderr,"%s %s\n",rx->set[k].c_str(),rx->value[k].c_str());
+               		rx->device->writeSetting(rx->set[k],rx->value[k]);
+                }
+            }
+                
+                
+                
+            
+			rx->device->setSampleRate(SOAPY_SDR_RX, rx->channel, rx->samplerate);
+			
+			rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc);
 			
         	std::cout << "rx->samplerate " << rx->samplerate << std::endl;
 			
@@ -983,7 +1084,7 @@ int findRadio(struct playData *rx)
 
 			rx->device->activateStream(rx->rxStream, 0, 0, 0); 
 
-			std::cout << "getGainMode: " << rx->device->getGainMode(SOAPY_SDR_RX, 0) << " ";
+			std::cout << "getGainMode: " << rx->device->getGainMode(SOAPY_SDR_RX, rx->channel) << " ";
 
 			std::cout << std::endl;
 			
@@ -1356,6 +1457,19 @@ int testRadio(struct playData *rx,SoapySDR::Kwargs deviceArgs)
            
         }
         
+        SoapySDR::ArgInfoList args = rx->device->getSettingInfo();
+        if (args.size()) {
+            for (SoapySDR::ArgInfoList::const_iterator args_i = args.begin(); args_i != args.end(); args_i++) {
+                SoapySDR::ArgInfo arg = (*args_i);
+
+                printf("key %s value %s read %s type %d min %g max %g step %g\n",arg.key.c_str(),arg.value.c_str(),rx->device->readSetting(arg.key).c_str(),
+                       (int)arg.type,arg.range.minimum(),arg.range.maximum(),arg.range.step());
+
+            }
+        }
+      
+        
+        
         rx->device->setSampleRate(SOAPY_SDR_RX, 0, rx->samplerate);
         
         rx->device->setFrequency(SOAPY_SDR_RX, 0, rx->fc);
@@ -1447,4 +1561,32 @@ int doAudio(float *aBuff,struct playData *rx)
 
 
 	return 0;
+}
+int mstrncpy(char *out,char *in,long n)
+{
+	if(!out || !in || (n <= 0))return 1;
+	
+	while(n-- > 0){
+	    if(*in == 0){
+			*out = 0;
+			break;
+	    }else{
+			*out++ = *in++;
+	    }
+	}
+	
+	return 0;
+}
+char *strsave(char *s,int tag)
+{
+	long length;
+	char *p;
+	
+	if(!s)return NULL;
+	
+	length=(long)strlen(s)+1;
+	
+	if((p=(char *)cMalloc(length+1,tag)) != NULL)
+		mstrncpy(p,s,length);
+	return(p);
 }
