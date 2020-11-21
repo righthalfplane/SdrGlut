@@ -46,6 +46,8 @@ using namespace std;
 
 //Race -fc 103.0e6 -f 103.7e6 -fm -gain 1
 
+//Race -fc 101.1e6 -f 101.5e6 -fm -gain 1
+
 #define MODE_FM   0
 #define MODE_NBFM 1
 #define MODE_AM   2
@@ -347,7 +349,7 @@ int main(int argc,char *argv[])
 	parameters.firstChannel = 0;
 	unsigned int sampleRate = 48000;
 	//unsigned int bufferFrames = 4096;
-	unsigned int bufferFrames = 4800/2;
+	unsigned int bufferFrames = 2400;
 
 
 	try {
@@ -539,7 +541,8 @@ static int setFilters(class Listen *rx,struct Filters2 *f)
         mode=LIQUID_AMPMODEM_DSB;
         iflag=0;
     }
-    rx->Ratio = (float)(rx->bw/ rx->samplerate);
+    rx->Ratio = (float)(rx->bw/ (rx->samplerate));
+    
     ratio= (float)(48000.0/rx->bw);
 
     
@@ -832,7 +835,7 @@ int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
 			msresamp_rrrf_execute(rx->filter.iqSampler2, (float *)buf2, num, (float *)buf1, &num2);  // interpolate
 		}
 
-		//fprintf(stderr,"2 rx->size %d num %u num2 %u\n",play->size,num,num2);
+		fprintf(stderr,"2 rx->size %d num %u num2 %u\n",rx->size,num,num2);
 
 		double dmin,dnom,gain;
 	
@@ -1348,6 +1351,7 @@ int findRadio(class Listen *rx)
 			std::cout << std::endl;
 			
 			
+           // 	rx->device->setAntenna(SOAPY_SDR_RX, rx->channel, "Tuner 1 50 ohm");
 			
 		
             if(rx->antennaUse){
