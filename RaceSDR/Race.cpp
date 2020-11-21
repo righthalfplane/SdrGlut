@@ -36,9 +36,11 @@
 
 using namespace std;
 
+// Not debugged - but its slow only 3e6 SPS works on am
+
 //g++ -O2 -o Race Race.cpp mThread.cpp  cMalloc.c -lliquid -lrtaudio -lpthread -lSoapySDR
 
-//Race -fc 1e6 -f 0.76e6 -gain 1
+//Race -fc 1e6 -f 0.76e6 -am -gain 1
 
 //Race -fc 162.0e6 -f 162.4e6 -nbfm -gain 1
 
@@ -292,7 +294,9 @@ int main(int argc,char *argv[])
 	    }else if(!strcmp(argv[n],"-device")){
 	         l->deviceNumber=atoi(argv[++n]);
         }else if(!strcmp(argv[n],"-pipe")){
-            l->pipe=1;
+            l->pipe=1;         
+ 	    }else if(!strcmp(argv[n],"-samplerate")){
+            l->samplerate=atof(argv[++n]);           
         }else if(!strcmp(argv[n],"-binary")){
             l->binary=1;
 		}
