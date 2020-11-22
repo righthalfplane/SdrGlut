@@ -33,6 +33,9 @@
 
 // #include <unistd.h>
 
+#include <cstdio>
+#include <iostream>
+
 
 using namespace std;
 
@@ -46,7 +49,7 @@ using namespace std;
 
 //Race -fc 103.0e6 -f 103.7e6 -fm -gain 1
 
-//Race -fc 101.1e6 -f 101.5e6 -fm -gain 1
+//Race -fc 101.0e6 -f 101.5e6 -fm -gain 1
 
 #define MODE_FM   0
 #define MODE_NBFM 1
@@ -71,6 +74,7 @@ char *strsave(char *s,int tag);
 
 int findRadio(class Listen *rx);
 
+FILE *file;
 
 struct SoapyNetSDR_SocketInit
 {
@@ -125,6 +129,8 @@ public:
     int samplerate;
     double aminGlobal;
     double amaxGlobal;
+    double aminGlobal2;
+    double amaxGlobal2;
 	double bw;
 	long ncommand;
 	
@@ -221,6 +227,16 @@ static int freeFilters(struct Filters2 *f);
 
 static int setFilters(class Listen *rx,struct Filters2 *f);
 
+static int stopPlay(class Listen *rx);
+
+volatile int threadexit; 
+
+void signalHandler( int signum ) {
+	//fprintf(stderr,"signum %d\n",signum);
+	threadexit=1;
+}
+
+
 Listen::Listen()
 {
 	ncommand=0;
@@ -235,6 +251,9 @@ Listen::Listen()
     fOut=48000;
     aminGlobal=0.0;
     amaxGlobal=0.0;
+    
+	aminGlobal2=0.0;
+    amaxGlobal2=0.0;
     
     gain=0.5;
     
@@ -272,6 +291,10 @@ int main(int argc,char *argv[])
     
     int audiodevice=-2;
     
+    threadexit=0;
+
+    signal(SIGINT, signalHandler);  
+    
 	for(int n=1;n<argc;++n){
 	    if(!strcmp(argv[n],"-debug")){
 		   l->Debug = 1;
@@ -287,8 +310,12 @@ int main(int argc,char *argv[])
             l->decodemode = MODE_LSB;
 	    }else if(!strcmp(argv[n],"-gain")){
 	         l->gain=(float)atof(argv[++n]);
+	    }else if(!strcmp(argv[n],"-fc")){
+	         l->fc=atof(argv[++n]);
         }else if(!strcmp(argv[n],"-f")){
             l->f=atof(argv[++n]);
+        }else if(!strcmp(argv[n],"-file")){
+            file=fopen(argv[++n],"wb");  
         }else if(!strcmp(argv[n],"-p")){
             l->Port=(unsigned int)atof(argv[++n]);
         }else if(!strcmp(argv[n],"-audiodevice")){
@@ -303,7 +330,7 @@ int main(int argc,char *argv[])
             l->binary=1;
 		}
 	}
-       
+              
 	RtAudio dac;
 	
 	int deviceCount=dac.getDeviceCount();
@@ -362,7 +389,7 @@ int main(int argc,char *argv[])
 		exit( 0 );
 	}
     	
-    	
+	
     if(findRadio(l) || l->device == NULL){
 	    fprintf(stderr,"Error Opening SDR\n");
 		return 1;
@@ -370,7 +397,7 @@ int main(int argc,char *argv[])
 
     l->ibuff=-2;
 	launchThread((void *)l,rxBuffer);   	
-    	
+
 /*
 	SOCKET ret = l->waitForService(argv[1]);
 	if(ret < 0){
@@ -379,10 +406,11 @@ int main(int argc,char *argv[])
 
 	l->ibuff=-2;
 	launchThread((void *)l,ListenSocket);
+
 */
 
 
-	while(l->ibuff != -1){
+	while(threadexit != 1){
 		Sleep2(10);
 	}
 
@@ -396,10 +424,31 @@ int main(int argc,char *argv[])
   	
   	if ( dac.isStreamOpen() ) dac.closeStream();
 
-
+	stopPlay(l);
 
     delete l;
+    
+    if(file)fclose(file);
+    file=NULL;
 
+	return 0;
+}
+
+static int stopPlay(class Listen *rx)
+{
+
+    
+    Sleep2(100);
+    
+    if(rx->device){
+        rx->device->deactivateStream(rx->rxStream, 0, 0);
+    
+        rx->device->closeStream(rx->rxStream);
+    
+        SoapySDR::Device::unmake(rx->device);
+    }
+
+    
 	return 0;
 }
 int rxBuffer(void *rxv)
@@ -412,7 +461,7 @@ int rxBuffer(void *rxv)
 	rx->setCenterFrequency(rx->fc,rx->samplerate);
 	
 	rx->buff1=(complex<float> *)cMalloc(rx->size*8,5646);
-	rx->buffsize=rx->size;
+	rx->buffsize=rx->size*8;
 	
 	rx->output=(complex<float> *)cMalloc(rx->size*8,4567);
 
@@ -469,6 +518,74 @@ int rxBuffer(void *rxv)
 				}
             }
 	        if(doWhat == 2){
+               float *buff=(float *)rx->buff1;
+               double amin =  1e33;
+               double amax = -1e33;
+               double average=0;
+               for(int n=0;n<2*rx->size;++n){
+                   double v=buff[n];
+                   average += v;
+                   if(v > amax)amax=v;
+                   if(v < amin)amin=v;
+               }
+               //printf("r amin %g amax %g ",amin,amax);
+               
+               average /= 2*rx->size;
+               
+               amax -= average;
+               
+               amax -= average;
+               
+               if(rx->aminGlobal2 == 0.0)rx->aminGlobal2=amin;
+               rx->aminGlobal2 = 0.8*rx->aminGlobal2+0.2*amin;
+               amin=rx->aminGlobal2;
+               
+               if(rx->amaxGlobal2 == 0.0)rx->amaxGlobal2=amax;
+               rx->amaxGlobal2 = 0.8*rx->amaxGlobal2+0.2*amax;
+               amax=rx->amaxGlobal2;
+               
+               //printf("a amin %g amax %g ",amin,amax);
+
+               double dnom=0.0;
+               if((amax-amin) > 0){
+                   dnom=65534.0/(amax-amin);
+               }else{
+                   dnom=65534.0;
+               }
+               
+               double gain=0.9;
+               
+             //  float *data=(float *)rx->sendBuff2;
+               
+               amin =  1e33;
+               amax = -1e33;
+               
+               long int count=0;
+
+               for(int n=0;n<2*rx->size;++n){
+                   double v;
+                   v=buff[n];
+                   v=gain*((v-average)*dnom);
+                   if(v < amin)amin=v;
+                   if(v > amax)amax=v;
+                   if(v < -32768){
+                       v = -32768;
+                       ++count;
+                   }else if(v > 32767){
+                       v=32767;
+                       ++count;
+                   }
+                   buff[n]=v;
+               }
+             //  printf("f amin %g amax %g count %ld\n",amin,amax,count);
+	        
+                if(file){
+             //       printf("write rx->size %d\n",rx->size);
+                    size_t ret=fwrite(rx->buff1, 2*sizeof(float), rx->size,file);
+                    if(ret == 0){
+                        ;
+                    } 
+                }       
 	            rx->mix((float *)rx->buff1,(float *)rx->output);
 	           // fprintf(stderr,"rxBuffer wait\n");
             	rx->ibuff=1;
@@ -579,18 +696,18 @@ int Listen::mix(float *buf1,float *buf2)
     double sint,cost;
     
     for (int k = 0 ; k < size ; k++){
-        float r = buf1[k * channels];
-        float i = buf1[k * channels + 1];
+        float r = buf1[k * 2];
+        float i = buf1[k * 2 + 1];
         if(dt > 0){
-            buf2[k * channels] = (float)(r*coso - i*sino);
-            buf2[k * channels + 1] = (float)(i*coso + r*sino);
+            buf2[k * 2] = (float)(r*coso - i*sino);
+            buf2[k * 2 + 1] = (float)(i*coso + r*sino);
             sint=sino*cosdt+coso*sindt;
             cost=coso*cosdt-sino*sindt;
             coso=cost;
             sino=sint;
         }else{
-            buf2[k * channels] = r;
-            buf2[k * channels + 1] = i;
+            buf2[k * 2] = r;
+            buf2[k * 2 + 1] = i;
         }
     }
     
@@ -616,7 +733,7 @@ int ListenSocket(void *rxv)
 	//if(!in)in=fopen("junk.raw","wb");
 
 	fprintf(stderr,"******************************************************\n");
-	fprintf(stderr,"**  listen 727 - COPYRIGHT 2020. Start **\n");
+	fprintf(stderr,"**  listen 746 - COPYRIGHT 2020. Start **\n");
 	fprintf(stderr,"******************************************************\n");
 
 	start=time(&ship);
@@ -774,7 +891,7 @@ int ListenSocket(void *rxv)
     fprintf(stderr,"%ld Seconds To Receive %ld Bytes (%ld Bytes/s)\n",
                  (long)total,l->Bytes,(long)(l->Bytes/total));
 	fprintf(stderr,"******************************************************\n");
-	fprintf(stderr,"**  listen 649 - COPYRIGHT 2020. Done  **\n");
+	fprintf(stderr,"**  listen 746 - COPYRIGHT 2020. Done  **\n");
 	fprintf(stderr,"******************************************************\n");
 
     return 1;
@@ -835,7 +952,7 @@ int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
 			msresamp_rrrf_execute(rx->filter.iqSampler2, (float *)buf2, num, (float *)buf1, &num2);  // interpolate
 		}
 
-		fprintf(stderr,"2 rx->size %d num %u num2 %u\n",rx->size,num,num2);
+		//fprintf(stderr,"2 rx->size %d num %u num2 %u\n",rx->size,num,num2);
 
 		double dmin,dnom,gain;
 	
@@ -855,12 +972,17 @@ int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
 			if(v > amax)amax=v;
 			
 		}
+		
+				//fprintf(stderr,"1 amin %f amax %f\n",amin,amax);
+
 
 		average /= num2;
 		
 		amin -= average;
 		
 		amax -= average;
+		
+				//fprintf(stderr,"2 amin %f amax %f\n",amin,amax);
 	
 		if(rx->aminGlobal == 0.0)rx->aminGlobal=amin;
 		rx->aminGlobal = 0.8*rx->aminGlobal+0.2*amin;
@@ -870,6 +992,7 @@ int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
 		rx->amaxGlobal = 0.8*rx->amaxGlobal+0.2*amax;
 		amax=rx->amaxGlobal;
 
+				//fprintf(stderr,"3 amin %f amax %f\n",amin,amax);
 
 		if((amax-amin) > 0){
 			dnom=65535.0/(amax-amin);
@@ -878,6 +1001,11 @@ int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
 		}
 	
 		dmin=amin;
+		
+		amin=1e30;
+		amax=-1e30;
+	
+		
 		//int short *data=filter.data;
 		for(size_t k=0;k<num2;++k){
 			short int vv;
@@ -885,6 +1013,8 @@ int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
 			double v;
 			v=buf1[k];
 			v=gain*((v-average)*dnom);
+			if(v < amin)amin=v;
+			if(v > amax)amax=v;
 			if(rx->pipe){
 				buffer[k]=0;
 				vv=(short int)v;
@@ -894,6 +1024,7 @@ int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
 				buffer[k]=(short int)v;
 			}
 		}
+	//	fprintf(stderr,"4 amin %f amax %f\n",amin,amax);
    	   rx->ibuff=-2;
    	   //fprintf(stderr,"Buffer OK\n");
 	}else{
