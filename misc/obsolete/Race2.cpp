@@ -43,13 +43,13 @@ using namespace std;
 
 //g++ -O2 -o Race Race.cpp mThread.cpp  cMalloc.c -lliquid -lrtaudio -lpthread -lSoapySDR
 
-//Race -fc 1e6 -f 0.76e6 -am -gain 1
+// ./Race -fc 1e6 -f 0.76e6 -am -gain 1
 
-//Race -fc 162.0e6 -f 162.4e6 -nbfm -gain 1
+// ./Race -fc 162.0e6 -f 162.4e6 -nbfm -gain 1
 
-//Race -fc 103.0e6 -f 103.7e6 -fm -gain 1
+// ./Race -fc 103.0e6 -f 103.7e6 -fm -gain 1
 
-//Race -fc 101.0e6 -f 101.5e6 -fm -gain 1
+// ./Race -fc 101.0e6 -f 101.5e6 -fm -gain 1
 
 #define MODE_FM   0
 #define MODE_NBFM 1
@@ -124,6 +124,7 @@ public:
     volatile int ibuff;
 	complex<float> *output;
 	complex<float> *buff1;
+	short int *sbuff;
 	float Ratio;
 	double fOut;
     int samplerate;
@@ -212,7 +213,7 @@ public:
 
 static int copyl(char *p1,char *p2,long n);
 
-static int zerol(char *p,long n);
+static int zerol(char *p,int n);
 
 int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
          double streamTime, RtAudioStreamStatus status, void *userData );
@@ -461,10 +462,10 @@ int rxBuffer(void *rxv)
 	rx->setCenterFrequency(rx->fc,rx->samplerate);
 	
 	rx->buff1=(complex<float> *)cMalloc(rx->size*8,5646);
-	rx->buffsize=rx->size*8;
-	
 	rx->output=(complex<float> *)cMalloc(rx->size*8,4567);
+	rx->sbuff=(short int *)cMalloc(rx->size*8,45697);
 
+	rx->buffsize=rx->size*8;
 
 	int doWhat=2;
 
@@ -518,78 +519,16 @@ int rxBuffer(void *rxv)
 				}
             }
 	        if(doWhat == 2){
-               float *buff=(float *)rx->buff1;
-               double amin =  1e33;
-               double amax = -1e33;
-               double average=0;
-               for(int n=0;n<2*rx->size;++n){
-                   double v=buff[n];
-                   average += v;
-                   if(v > amax)amax=v;
-                   if(v < amin)amin=v;
-               }
-               //printf("r amin %g amax %g ",amin,amax);
-               
-               average /= 2*rx->size;
-               
-               amax -= average;
-               
-               amax -= average;
-               
-               if(rx->aminGlobal2 == 0.0)rx->aminGlobal2=amin;
-               rx->aminGlobal2 = 0.8*rx->aminGlobal2+0.2*amin;
-               amin=rx->aminGlobal2;
-               
-               if(rx->amaxGlobal2 == 0.0)rx->amaxGlobal2=amax;
-               rx->amaxGlobal2 = 0.8*rx->amaxGlobal2+0.2*amax;
-               amax=rx->amaxGlobal2;
-               
-               //printf("a amin %g amax %g ",amin,amax);
-
-               double dnom=0.0;
-               if((amax-amin) > 0){
-                   dnom=65534.0/(amax-amin);
-               }else{
-                   dnom=65534.0;
-               }
-               
-               double gain=0.9;
-               
-             //  float *data=(float *)rx->sendBuff2;
-               
-               amin =  1e33;
-               amax = -1e33;
-               
-               long int count=0;
-
-               for(int n=0;n<2*rx->size;++n){
-                   double v;
-                   v=buff[n];
-                   v=gain*((v-average)*dnom);
-                   if(v < amin)amin=v;
-                   if(v > amax)amax=v;
-                   if(v < -32768){
-                       v = -32768;
-                       ++count;
-                   }else if(v > 32767){
-                       v=32767;
-                       ++count;
-                   }
-                   buff[n]=v;
-               }
-             //  printf("f amin %g amax %g count %ld\n",amin,amax,count);
 	        
                 if(file){
-             //       printf("write rx->size %d\n",rx->size);
                     size_t ret=fwrite(rx->buff1, 2*sizeof(float), rx->size,file);
                     if(ret == 0){
                         ;
                     } 
-                }       
+                }    
 	            rx->mix((float *)rx->buff1,(float *)rx->output);
-	           // fprintf(stderr,"rxBuffer wait\n");
+	            
             	rx->ibuff=1;
-            	while(rx->ibuff==1)Sleep2(10);
 	        }
 	        break;
 		     
@@ -690,30 +629,139 @@ static int setFilters(class Listen *rx,struct Filters2 *f)
     
 }
 
-int Listen::mix(float *buf1,float *buf2)
+int Listen::mix(float *buf11,float *buf22)
 {
 
     double sint,cost;
     
     for (int k = 0 ; k < size ; k++){
-        float r = buf1[k * 2];
-        float i = buf1[k * 2 + 1];
+        float r = buf11[k * 2];
+        float i = buf11[k * 2 + 1];
         if(dt > 0){
-            buf2[k * 2] = (float)(r*coso - i*sino);
-            buf2[k * 2 + 1] = (float)(i*coso + r*sino);
+            buf22[k * 2] = (float)(r*coso - i*sino);
+            buf22[k * 2 + 1] = (float)(i*coso + r*sino);
             sint=sino*cosdt+coso*sindt;
             cost=coso*cosdt-sino*sindt;
             coso=cost;
             sino=sint;
         }else{
-            buf2[k * 2] = r;
-            buf2[k * 2 + 1] = i;
+            buf22[k * 2] = r;
+            buf22[k * 2 + 1] = i;
         }
     }
     
     double rr=sqrt(coso*coso+sino*sino);
     coso /= rr;
     sino /= rr;
+    
+    
+    class Listen *rx=this;
+    
+ 		unsigned int num;
+		unsigned int num2;
+	
+		num=0;
+		num2=0;
+		
+		float *buf1=(float *)rx->buff1;
+		float *buf2=(float *)rx->output;
+	
+		msresamp_crcf_execute(rx->filter.iqSampler, (liquid_float_complex *)buf2, rx->size, (liquid_float_complex *)buf1, &num);  // decimate
+	
+		if(rx->decodemode < MODE_AM){
+			freqdem_demodulate_block(rx->filter.demod, (liquid_float_complex *)buf1, (int)num, (float *)buf2);
+			msresamp_rrrf_execute(rx->filter.iqSampler2, (float *)buf2, num, (float *)buf1, &num2);  // interpolate
+			//fprintf(stderr,"2 rx->size %d num %u num2 %u\n",rx->size,num,num2);
+		}else if(rx->decodemode < MODE_USB){
+	#define DC_ALPHA 0.99
+		
+			for(unsigned int n=0;n<num;++n){
+				double mag=sqrt(buf1[2*n]*buf1[2*n]+buf1[2*n+1]*buf1[2*n+1]);
+				double z0=mag + (rx->filter.amHistory * DC_ALPHA);
+				buf2[n]=(float)(z0-rx->filter.amHistory);
+				rx->filter.amHistory=z0;
+			}
+			msresamp_rrrf_execute(rx->filter.iqSampler2, (float *)buf2, num, (float *)buf1, &num2);  // interpolate
+		}else{
+			ampmodem_demodulate_block(rx->filter.demodAM,  (liquid_float_complex *)buf1, (int)num, (float *)buf2);
+			msresamp_rrrf_execute(rx->filter.iqSampler2, (float *)buf2, num, (float *)buf1, &num2);  // interpolate
+		}
+
+		//fprintf(stderr,"2 rx->size %d num %u num2 %u\n",rx->size,num,num2);
+
+		double dmin,dnom,gain;
+	
+		double amin=1e30;
+		double amax=-1e30;
+		double average=0;
+
+		gain=rx->gain;
+	
+		if(gain < 0.0)gain=1.0;
+	
+		for (size_t i=0; i<num2; i++ ) {
+			double v;
+			v=buf1[i];
+			average += v;
+			if(v < amin)amin=v;
+			if(v > amax)amax=v;
+			
+		}
+		
+				//fprintf(stderr,"1 amin %f amax %f\n",amin,amax);
+
+
+		average /= num2;
+		
+		amin -= average;
+		
+		amax -= average;
+		
+				//fprintf(stderr,"2 amin %f amax %f\n",amin,amax);
+	
+		if(rx->aminGlobal == 0.0)rx->aminGlobal=amin;
+		rx->aminGlobal = 0.8*rx->aminGlobal+0.2*amin;
+		amin=rx->aminGlobal;
+	
+		if(rx->amaxGlobal == 0.0)rx->amaxGlobal=amax;
+		rx->amaxGlobal = 0.8*rx->amaxGlobal+0.2*amax;
+		amax=rx->amaxGlobal;
+
+				//fprintf(stderr,"3 amin %f amax %f\n",amin,amax);
+
+		if((amax-amin) > 0){
+			dnom=65535.0/(amax-amin);
+		}else{
+			dnom=65535.0;
+		}
+	
+		dmin=amin;
+		
+		amin=1e30;
+		amax=-1e30;
+	
+		while(rx->ibuff==1)Sleep2(10);
+
+		//int short *data=filter.data;
+		for(size_t k=0;k<num2;++k){
+			short int vv;
+			unsigned  char *c=(unsigned char *)&vv;
+			double v;
+			v=buf1[k];
+			v=gain*((v-average)*dnom);
+			if(v < amin)amin=v;
+			if(v > amax)amax=v;
+			if(rx->pipe){
+				sbuff[k]=0;
+				vv=(short int)v;
+				fputc(c[0],stdout);
+				fputc(c[1],stdout);
+			}else{
+				sbuff[k]=(short int)v;
+			}
+		}
+   
+    
     
 	return 0;
 }
@@ -921,110 +969,9 @@ int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
     //int nskip=rx->size/nBufferFrames;
   
 	if (rx->ibuff >= 0){
-	
-		unsigned int num;
-		unsigned int num2;
-	
-		num=0;
-		num2=0;
-		
-		float *buf1=(float *)rx->buff1;
-		float *buf2=(float *)rx->output;
-	
-		msresamp_crcf_execute(rx->filter.iqSampler, (liquid_float_complex *)buf2, rx->size, (liquid_float_complex *)buf1, &num);  // decimate
-	
-		if(rx->decodemode < MODE_AM){
-			freqdem_demodulate_block(rx->filter.demod, (liquid_float_complex *)buf1, (int)num, (float *)buf2);
-			msresamp_rrrf_execute(rx->filter.iqSampler2, (float *)buf2, num, (float *)buf1, &num2);  // interpolate
-			//fprintf(stderr,"2 rx->size %d num %u num2 %u\n",rx->size,num,num2);
-		}else if(rx->decodemode < MODE_USB){
-	#define DC_ALPHA 0.99
-		
-			for(unsigned int n=0;n<num;++n){
-				double mag=sqrt(buf1[2*n]*buf1[2*n]+buf1[2*n+1]*buf1[2*n+1]);
-				double z0=mag + (rx->filter.amHistory * DC_ALPHA);
-				buf2[n]=(float)(z0-rx->filter.amHistory);
-				rx->filter.amHistory=z0;
-			}
-			msresamp_rrrf_execute(rx->filter.iqSampler2, (float *)buf2, num, (float *)buf1, &num2);  // interpolate
-		}else{
-			ampmodem_demodulate_block(rx->filter.demodAM,  (liquid_float_complex *)buf1, (int)num, (float *)buf2);
-			msresamp_rrrf_execute(rx->filter.iqSampler2, (float *)buf2, num, (float *)buf1, &num2);  // interpolate
-		}
-
-		//fprintf(stderr,"2 rx->size %d num %u num2 %u\n",rx->size,num,num2);
-
-		double dmin,dnom,gain;
-	
-		double amin=1e30;
-		double amax=-1e30;
-		double average=0;
-
-		gain=rx->gain;
-	
-		if(gain < 0.0)gain=1.0;
-	
-		for (size_t i=0; i<num2; i++ ) {
-			double v;
-			v=buf1[i];
-			average += v;
-			if(v < amin)amin=v;
-			if(v > amax)amax=v;
-			
-		}
-		
-				//fprintf(stderr,"1 amin %f amax %f\n",amin,amax);
-
-
-		average /= num2;
-		
-		amin -= average;
-		
-		amax -= average;
-		
-				//fprintf(stderr,"2 amin %f amax %f\n",amin,amax);
-	
-		if(rx->aminGlobal == 0.0)rx->aminGlobal=amin;
-		rx->aminGlobal = 0.8*rx->aminGlobal+0.2*amin;
-		amin=rx->aminGlobal;
-	
-		if(rx->amaxGlobal == 0.0)rx->amaxGlobal=amax;
-		rx->amaxGlobal = 0.8*rx->amaxGlobal+0.2*amax;
-		amax=rx->amaxGlobal;
-
-				//fprintf(stderr,"3 amin %f amax %f\n",amin,amax);
-
-		if((amax-amin) > 0){
-			dnom=65535.0/(amax-amin);
-		}else{
-			dnom=65535.0;
-		}
-	
-		dmin=amin;
-		
-		amin=1e30;
-		amax=-1e30;
-	
-		
-		//int short *data=filter.data;
-		for(size_t k=0;k<num2;++k){
-			short int vv;
-			unsigned  char *c=(unsigned char *)&vv;
-			double v;
-			v=buf1[k];
-			v=gain*((v-average)*dnom);
-			if(v < amin)amin=v;
-			if(v > amax)amax=v;
-			if(rx->pipe){
-				buffer[k]=0;
-				vv=(short int)v;
-				fputc(c[0],stdout);
-				fputc(c[1],stdout);
-			}else{
-				buffer[k]=(short int)v;
-			}
-		}
-	//	fprintf(stderr,"4 amin %f amax %f\n",amin,amax);
+		for ( i=0; i<nBufferFrames; i++ ) {
+		  	buffer[i] = rx->sbuff[i];
+		}	
    	   rx->ibuff=-2;
    	   //fprintf(stderr,"Buffer OK\n");
 	}else{
@@ -1240,7 +1187,7 @@ SOCKET Listen::createService(unsigned short *Port)
 
 	buf_size=32768;
 */
-	zerol((char *)&serverSocketAddr,sizeof(serverSocketAddr));
+	zerol((char *)&serverSocketAddr,(int)sizeof(serverSocketAddr));
 	serverSocketAddr.sin_port=htons((unsigned short)0);
 	serverSocketAddr.sin_port=htons(*Port);
 	serverSocketAddr.sin_family=AF_INET;
@@ -1275,7 +1222,7 @@ int Listen::getPortAndName(char *in,unsigned int *hostAddr,unsigned short *Port)
 
 	if(!in || !Port)return 1;
 
-	zerol((char *)&serverSocketAddr,sizeof(serverSocketAddr));
+	zerol((char *)&serverSocketAddr,(int)sizeof(serverSocketAddr));
 
 	strcpy(out,in);
 	if((np=strrchr(out,':'))){
@@ -1304,7 +1251,7 @@ int Listen::getPortAndName(char *in,unsigned int *hostAddr,unsigned short *Port)
 
 	return 0;
 }
-static int zerol(char *p,long n)
+static int zerol(char *p,int n)
 {
 	if(!p)return 1;
 	while(n-- > 0)*p++ = 0;

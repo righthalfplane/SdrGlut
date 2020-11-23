@@ -349,6 +349,7 @@ int main (int argc, char * argv [])
 	parameters.deviceId = dac.getDefaultOutputDevice();
 	parameters.deviceId = audiodevice;
 	parameters.nChannels = 2;
+	parameters.nChannels = 1;
 	parameters.firstChannel = 0;
 	unsigned int sampleRate = 48000;
 	unsigned int bufferFrames = 4096; // 256 sample frames
@@ -459,16 +460,16 @@ int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
         */
  		    //if(v < amin)amin=v;
 		    //if(v > amax)amax=v;
-			for ( j=0; j<2; j++ ) {
+			//for ( j=0; j<2; j++ ) {
 			  	buffer[n++] = v;
-			}
+			//}
 		}
 	}else{
   
 	for ( i=0; i<nBufferFrames; i++ ) {
-		for ( j=0; j<2; j++ ) {
+		//for ( j=0; j<2; j++ ) {
 		  *buffer++ = 0;
-		}
+		//}
 	}
   }
   
