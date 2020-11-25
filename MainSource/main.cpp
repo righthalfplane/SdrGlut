@@ -38,7 +38,7 @@ static void control_cb(int control);
 
 static void control_cb2(int control);
 
-char *ProgramVersion=(char *)"SdrGlut-751";
+char *ProgramVersion=(char *)"SdrGlut-754";
 
 extern "C" struct Scene *sceneRoot(void);
 
@@ -287,6 +287,8 @@ int main (int argc, char *argv[]) {
     
 	SoapyNetSDR_SocketInit socket_init;
 
+    fprintf(stderr,"LIQUID_VERSION_NUMBER %d\n",LIQUID_VERSION_NUMBER);
+    
     // signal(SIGPIPE, SIG_IGN);
     
     for(int n=1;n<argc;++n){

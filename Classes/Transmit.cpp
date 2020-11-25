@@ -252,9 +252,12 @@ int Radio::Transmit(struct Scene *scene)
     
     tt.foffset=0;
     
+    tt.transmitSampleRate=0.4e6;
+    
     msprintf(tt.text1,sizeof(tt.text1),"%g",tt.foffset);
     msprintf(tt.text2,sizeof(tt.text2),"%g",rx->f);
-    
+    msprintf(tt.text3,sizeof(tt.text3),"%g",tt.transmitSampleRate);
+
     tt.glui = GLUI_Master.create_glui(rx->driveName);
     
     GLUI_Panel *obj_panel =  tt.glui->add_panel( "Mode" );
@@ -282,6 +285,10 @@ int Radio::Transmit(struct Scene *scene)
     tt.edittext1 =
     tt.glui->add_edittext_to_panel(obj_panel, "Offset Frequency:", GLUI_EDITTEXT_TEXT, tt.text1 );
     tt.edittext1->w=200;
+    
+    tt.edittext3 =
+    tt.glui->add_edittext_to_panel(obj_panel, "Transmit Sample Rate:", GLUI_EDITTEXT_TEXT, tt.text3);
+    tt.edittext3->w=200;
     
     obj_panel =  tt.glui->add_panel( "Controls" );
     
@@ -395,13 +402,16 @@ static void control_cb(int control)
     int audioThreads;
      */
     
-    double fc,foffset;
+    double fc,foffset,transmitSampleRate;
     
     RadioPtr s=(RadioPtr)FindTransmit(glutGetWindow());
     if(!s)return;
         
     sscanf(s->tt.edittext2->get_text(),"%lg", &fc);
     sscanf(s->tt.edittext1->get_text(),"%lg", &foffset);
+    sscanf(s->tt.edittext3->get_text(),"%lg", &transmitSampleRate);
+
+    
 
         if(control == Mode_Buttons)
     {
@@ -448,6 +458,7 @@ static void control_cb(int control)
         if(s->tt.doTransmit == 0){
             s->tt.fc=fc;
             s->tt.foffset=foffset;
+            s->tt.transmitSampleRate=transmitSampleRate;
             s->tt.doTransmit=1;
             launchThread((void *)s,TransmitThread);
             s->tt.talk->set_name("Push To Stop");
@@ -613,7 +624,7 @@ static int TransmitThread(void *rxv)
     
     //const double frequency = 27.315e6;  //center frequency to 500 MHz
     double frequency = 87.6e6;  //center frequency to 500 MHz
-    const double sample_rate = 2e6;    //sample rate to 5 MHz
+    double sample_rate = 2e6;    //sample rate to 5 MHz
     float As = 60.0f;
     
     std::vector<size_t> channels;
@@ -622,7 +633,9 @@ static int TransmitThread(void *rxv)
     
     frequency = s->tt.fc+s->tt.foffset;
     
-    fprintf(stderr,"frequency %g Offset %g \n",s->tt.fc,s->tt.foffset);
+    sample_rate=s->tt.transmitSampleRate;
+    
+    fprintf(stderr,"frequency %g Offset %g sample_rate %g\n",s->tt.fc,s->tt.foffset,sample_rate);
     
     s->tt.info.device=device;
     
@@ -1064,20 +1077,33 @@ int SendData(struct Info *info,unsigned int frames,short *bufin)
     
     msresamp_crcf_execute(info->iqSampler2, (liquid_float_complex *)r2, num, (liquid_float_complex *)buf2, &num2);
     
+    float *out=buf2;
+    
     std::vector<void *> buffs(2);
     
     int flags(0);
 
-    buffs[0] = buf2;
+    buffs[0] = out;
     
-    int ret = info->device->writeStream(info->txStream,  &buffs[0], num2, flags);
-    if(ret < 0){
-        std::cerr << "writeStream " << SoapySDR::errToStr(ret) << std::endl;
-        return 0;
+    unsigned int tosend;
+    
+    tosend=num2;
+    
+    while(1){
+        int ret = info->device->writeStream(info->txStream,  &buffs[0], tosend, flags);
+        if(ret < 0){
+            std::cerr << "writeStream " << SoapySDR::errToStr(ret) << std::endl;
+            return 0;
+        }
+        
+        if(ret == (int)tosend)break;
+        out += 2*ret;
+        tosend -= ret;
+        if(tosend <= 0){
+            cout << "error: samples sent: " << tosend << "/" << num2 << endl;
+            break;
+        }
     }
-    if (ret != (int)num2)
-        cout << "error: samples sent: " << ret << "/" << num2 << endl;
-    
     return 0;
 }
 EXTERN CWinPtr Root;

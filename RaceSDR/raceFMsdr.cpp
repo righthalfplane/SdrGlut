@@ -285,6 +285,8 @@ int main (int argc, char * argv [])
 	}
 	
 	
+	
+	
 	pthread_mutex_init(&rx.mutex,NULL);
 	pthread_mutex_init(&rx.mutexa,NULL);
 	pthread_mutex_init(&rx.mutexo,NULL);
@@ -299,6 +301,8 @@ int main (int argc, char * argv [])
 	    fprintf(stderr,"Error Opening SDR\n");
 		return 1;
 	}
+	
+	rx.doWhat = 0;
 	
 	launchThread((void *)&rx,rxBuffer);   	
 	
@@ -561,11 +565,15 @@ int playRadio(struct playData *rx)
         
         rx->frame=0;
         
+        
+    
+        
        // launchThread((void *)rx,Process);   	
 
        // launchThread((void *)rx,Process); 
           	
-        launchThread((void *)rx,Process);   
+        launchThread((void *)rx,Process);   	        
+        
 
 	
 		Sleep2(100);
@@ -575,7 +583,7 @@ int playRadio(struct playData *rx)
         
 	double start=rtime();
   	while(!threadexit){
-  		Sleep2(5);
+  		Sleep2(50);
   		
 		//int ibuff;
 		//ibuff=popBuffa(rx);
@@ -595,14 +603,9 @@ int playRadio(struct playData *rx)
     rx->frame=-1;
 
 	Sleep2(100);
-  
+
     return 0;
-   
-        
-        
-        
-        
-        
+  
         
        // StartIt(rx);
 /*  

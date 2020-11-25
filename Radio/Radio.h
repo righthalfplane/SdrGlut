@@ -244,6 +244,7 @@ struct TransmitData{
     
     volatile double fc;
     double foffset;
+    double transmitSampleRate;
     double gain;
     char text1z[255];
     GLUI_EditText *edittext1z[20];
