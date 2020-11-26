@@ -115,7 +115,8 @@ can to be turned on or off as needed. The LIQUID_VERSION_NUMBER logic works corr
 
 This is what I did to get SdrGlut running on a fresh install of Ubuntu 18.04.3
 
-```bash
+```
+bash
 sudo apt-get update
 sudo apt-get upgrade
 sudo apt-get install build-essential
