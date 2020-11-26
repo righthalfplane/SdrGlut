@@ -101,7 +101,7 @@ Video of RtAudio installation on:
 - [Ubuntu18.04](https://youtu.be/mOGWG1K52wA)
 - [Raspberry pi](https://youtu.be/YKyYXtv4aGw)
 
-## Installation of libliquid
+## Problems With libliquid
 
 There are recent versions of libliquid that have the same version number and need different function calls. In MainSource/firstFile.h the defines -
 
