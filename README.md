@@ -103,11 +103,13 @@ Video of RtAudio installation on:
 
 ## Installation of libliquid
 
-There are several recent versions of libliquid. The call to ampmodem_create differs. If a complier error occurs, switch the line that is commented out. It occurs in two places.
+There are recent versions of libliquid that have the same version number and need different function calls. In MainSource/firstFile.h the defines -
 
-```
-      f->demodAM = ampmodem_create(0.5, mode, iflag);
-  //  f->demodAM = ampmodem_create(0.5, 0.0, mode, iflag);
+#define LIQUID_VERSION_4 1
+
+#define WINDOWS_LONG_NAMES 1
+
+can to be turned on or off as needed. The LIQUID_VERSION_NUMBER logic works correctly about 80 percent of the time.
 ```
   
 ## Installation steps on Ubuntu 18.04
