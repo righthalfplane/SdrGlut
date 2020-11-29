@@ -736,7 +736,7 @@ static int TransmitThread(void *rxv)
     
     std::vector<void *> buffs(2);
     
-    unsigned int bufferFrames = 512;
+    unsigned int bufferFrames = 2040;
     
     try {
         s->tt.audio->openStream( NULL, &s->tt.Params, RTAUDIO_SINT16, samples, &bufferFrames, &input, (void *)&s->tt.info );
@@ -1083,13 +1083,24 @@ int SendData(struct Info *info,unsigned int frames,short *bufin)
     
     int flags(0);
 
-    buffs[0] = out;
     
     unsigned int tosend;
     
     tosend=num2;
-    
+/*
+    {
+        static FILE *out2;
+        if(out2 == NULL){
+            out2=fopen("data1a.raw","wb");
+        }
+        
+        if(out2){
+            fwrite(out,8,tosend,out2);
+        }
+    }
+*/
     while(1){
+        buffs[0] = out;
         int ret = info->device->writeStream(info->txStream,  &buffs[0], tosend, flags);
         if(ret < 0){
             std::cerr << "writeStream " << SoapySDR::errToStr(ret) << std::endl;
