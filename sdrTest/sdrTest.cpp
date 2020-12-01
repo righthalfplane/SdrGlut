@@ -19,7 +19,7 @@
 
 #include <sys/time.h>
 
-/*
+
 #ifdef __APPLE__
 #include <OpenAL/al.h>
 #include <OpenAL/alc.h>
@@ -27,7 +27,7 @@
 #include <AL/alut.h>
 #include <AL/al.h>
 #endif
-*/
+
 
 #include <time.h>
 
@@ -49,27 +49,27 @@
 #define MODE_CW   6
 
 /*
-g++ -O2 -std=c++11 -Wno-deprecated -o raceFMsdr raceFMsdr.cpp mThread.cpp cMalloc.c -lrtaudio -lSoapySDR -lliquid -lpthread
+g++ -O2 -std=c++11 -Wno-deprecated -o sdrTest sdrTest.cpp mThread.cpp cMalloc.c -lrtaudio -lSoapySDR -lliquid -lpthread -framework OpenAL
 
-g++ -O2  -std=c++11 -Wno-deprecated -o raceFMsdr raceFMsdr.cpp mThread.cpp  -lrtaudio -lSoapySDR -lliquid -lpthread -Wall
+g++ -O2  -std=c++11 -Wno-deprecated -o sdrTest sdrTest.cpp mThread.cpp  -lrtaudio -lSoapySDR -lliquid -lpthread -lopenal
 
-./raceFMsdr -fc 1e6 -f 0.6e6 -gain 1
+./sdrTest -fc 1e6 -f 0.6e6 -gain 1
 
-./raceFMsdr -fc 1e6 -f 0.76e6 -gain 1
+./sdrTest -fc 1e6 -f 0.76e6 -gain 1
 
-./raceFMsdr -fc 1e6 -f 1.17e6 -gain 1
+./sdrTest -fc 1e6 -f 1.17e6 -gain 1
 
-./raceFMsdr -fc 10.1e6 -f 10.0e6 -gain 1
+./sdrTest -fc 10.1e6 -f 10.0e6 -gain 1
 
-./raceFMsdr -fc 27.1e6 -f 27.185e6 -gain 1
+./sdrTest -fc 27.1e6 -f 27.185e6 -gain 1
 
-./raceFMsdr -fc 101.1e6 -f 101.5e6 -fm -gain 1
+./sdrTest -fc 101.1e6 -f 101.5e6 -fm -gain 1
 
-./raceFMsdr -fc 103.0e6 -f 103.7e6 -fm -gain 1
+./sdrTest -fc 103.0e6 -f 103.7e6 -fm -gain 1
 
-./raceFMsdr -fc 162.0e6 -f 162.4e6 -nbfm -gain 1
+./sdrTest -fc 162.0e6 -f 162.4e6 -nbfm -gain 1
 
-./raceFMsdr -fc 9.36e6 -f 9.35e6
+./sdrTest -fc 9.36e6 -f 9.35e6
 
 */
 
@@ -225,6 +225,9 @@ volatile int threadexit;
 
 int audiodevice;
 
+static void list_audio_devices(const ALCchar *devices);
+static void list_audio(void);
+
 void signalHandler( int signum ) {
 	//fprintf(stderr,"signum %d\n",signum);
 	threadexit=1;
@@ -345,6 +348,8 @@ int main (int argc, char * argv [])
     }
     
 	fprintf(stderr,"\n");
+	
+	list_audio();
 	
 	printInfo();
 	
@@ -1594,3 +1599,33 @@ char *strsave(char *s,int tag)
 		mstrncpy(p,s,length);
 	return(p);
 }
+static void list_audio()
+{
+
+    ALboolean enumeration;
+    
+    enumeration = alcIsExtensionPresent(NULL, "ALC_ENUMERATION_EXT");
+    if (enumeration == AL_FALSE){
+        printf("enumeration not supported\n");
+    }else{
+        list_audio_devices(alcGetString(NULL, ALC_DEVICE_SPECIFIER));
+    }
+
+}
+static void list_audio_devices(const ALCchar *devices)
+{
+    const ALCchar *device = devices, *next = devices + 1;
+    size_t len = 0;
+
+    fprintf(stdout, "OpenAL Devices list:\n");
+    fprintf(stdout, "----------\n");
+
+    while (device && *device != '\0' && next && *next != '\0') {
+        fprintf(stdout, "%s\n", device);
+        len = strlen(device);
+        device += (len + 1);
+        next += (len + 2);
+    }
+    fprintf(stdout, "----------\n\n");
+}
+
