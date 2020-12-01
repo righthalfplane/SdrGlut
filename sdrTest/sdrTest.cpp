@@ -1609,6 +1609,7 @@ static void list_audio()
         printf("enumeration not supported\n");
     }else{
         list_audio_devices(alcGetString(NULL, ALC_DEVICE_SPECIFIER));
+        list_audio_devices(alcGetString(NULL, ALC_CAPTURE_DEFAULT_DEVICE_SPECIFIER));
     }
 
 }
