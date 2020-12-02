@@ -51,7 +51,7 @@
 /*
 g++ -O2 -std=c++11 -Wno-deprecated -o sdrTest sdrTest.cpp mThread.cpp cMalloc.c -lrtaudio -lSoapySDR -lliquid -lpthread -framework OpenAL
 
-g++ -O2  -std=c++11 -Wno-deprecated -o sdrTest sdrTest.cpp mThread.cpp  -lrtaudio -lSoapySDR -lliquid -lpthread -lopenal
+g++ -O2 -std=c++11 -Wno-deprecated -o sdrTest sdrTest.cpp mThread.cpp cMalloc.c -lrtaudio -lSoapySDR -lliquid -lpthread -lopenal
 
 ./sdrTest -fc 1e6 -f 0.6e6 -gain 1
 
