@@ -322,7 +322,7 @@ int main (int argc, char * argv [])
 	}
 	
 	
-	fprintf(stderr,"\nAudio device Count %d default output device %d\n",deviceCount,dac.getDefaultOutputDevice());
+	fprintf(stderr,"\nAudio device Count %d default output device %d audiodevice %d\n",deviceCount,dac.getDefaultOutputDevice(),audiodevice);
 	
     RtAudio::DeviceInfo info;
     for (int i=0; i<deviceCount; i++) {
@@ -331,12 +331,12 @@ int main (int argc, char * argv [])
             info=dac.getDeviceInfo(i);
             if(info.outputChannels > 0){
             // Print, for example, the maximum number of output channels for each device
-                fprintf(stderr,"audio device = %d : output  channels = %d Device Name = %s\n",i,info.outputChannels,info.name.c_str());
+                fprintf(stderr,"audio device = %d : output  channels = %d Device Name = %s sampleRates = %d\n",i,info.outputChannels,info.name.c_str(),info.sampleRates[0]);
              }
              
             if(info.inputChannels > 0){
             // Print, for example, the maximum number of output channels for each device
-                fprintf(stderr,"audio device = %d : input   channels = %d Device Name = %s\n",i,info.inputChannels,info.name.c_str());
+                fprintf(stderr,"audio device = %d : input   channels = %d Device Name = %s sampleRates = %d\n",i,info.inputChannels,info.name.c_str(),info.sampleRates[0]);
             }
 
         }
@@ -360,7 +360,8 @@ int main (int argc, char * argv [])
 	parameters.nChannels = 2;
 	parameters.nChannels = 1;
 	parameters.firstChannel = 0;
-	unsigned int sampleRate = 48000;
+	//unsigned int sampleRate = 48000;
+	unsigned int sampleRate =   44100;
 	unsigned int bufferFrames = 4096; // 256 sample frames
 
 

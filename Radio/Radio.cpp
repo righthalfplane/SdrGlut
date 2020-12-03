@@ -1549,9 +1549,11 @@ int Radio::OpenWindows(struct Scene *scene)
     flags = rx->device->getSettingInfo();
     if (flags.size()) {
         flagsmenu=new int[flags.size()];
+        int count=0;
         for(size_t k=0;k<flags.size();++k){
             fprintf(stderr,"k %d %s %s type %d\n",(int)k,flags[k].key.c_str(),flags[k].value.c_str(),(int)flags[k].type);
             if(flags[k].type == flags[k].BOOL){
+                ++count;
                 flagsmenu[k]=glutCreateMenu(doBiasMode);
                 if(rx->device->readSetting(flags[k].key) == "true"){
                     glutAddMenuEntry("true",(int)(5000+2*k));
@@ -1562,13 +1564,15 @@ int Radio::OpenWindows(struct Scene *scene)
                 }
             }
         }
-        menu64=glutCreateMenu(doBiasMode);
-        for(size_t k=0;k<flags.size();++k){
-            if(flags[k].type == flags[k].BOOL){
-                glutAddSubMenu(flags[k].key.c_str(), flagsmenu[k]);
+        if(count > 0){
+            menu64=glutCreateMenu(doBiasMode);
+            for(size_t k=0;k<flags.size();++k){
+                if(flags[k].type == flags[k].BOOL){
+                    glutAddSubMenu(flags[k].key.c_str(), flagsmenu[k]);
+                }
             }
+            flagsflag=1;
         }
-        flagsflag=1;
    }
     
     glutEntryFunc(enterexit);
