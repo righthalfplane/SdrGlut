@@ -283,6 +283,7 @@ int main (int argc, char * argv [])
 	     rx.set[rx.setcount]=argv[++n];
 	     rx.value[rx.setcount++]=argv[++n];
 	    }else{
+	    	fprintf(stderr,"Unknown Command = \"%s\"\n",argv[n]);
 			// infilename = argv [n] ;
 		}
 	}
@@ -1543,11 +1544,9 @@ int doAudio(float *aBuff,struct playData *rx)
 	
 	if(gain <= 0.0)gain=1.0;
 	
-	gain = 1.0/gain;
-	
 	for (int i=0; i<BLOCK_SIZE; i++ ) {
 		double v;
-		v=gain*buff[i];
+		v=buff[i];
 		if(v < amin)amin=v;
 		if(v > amax)amax=v;
 	}
