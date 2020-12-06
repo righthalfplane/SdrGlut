@@ -55,7 +55,7 @@ g++ -O2 -std=c++11 -Wno-deprecated -o sdrTest sdrTest.cpp mThread.cpp cMalloc.c 
 
 ./sdrTest -fc 1e6 -f 0.6e6 -gain 1
 
-./sdrTest -fc 1e6 -f 0.76e6 -gain 1
+./sdrTest -fc 1e6 -f 0.76e6 -am -gain 1
 
 ./sdrTest -fc 1e6 -f 1.17e6 -gain 1
 
@@ -332,13 +332,27 @@ int main (int argc, char * argv [])
             info=dac.getDeviceInfo(i);
             if(info.outputChannels > 0){
             // Print, for example, the maximum number of output channels for each device
-                fprintf(stderr,"audio device = %d : output  channels = %d Device Name = %s sampleRates = %d\n",i,info.outputChannels,info.name.c_str(),info.sampleRates[0]);
+                fprintf(stderr,"audio device = %d : output  channels = %d Device Name = %s",i,info.outputChannels,info.name.c_str());
+                if(info.sampleRates.size()){
+                    fprintf(stderr," sampleRates = ");
+                    for (int ii = 0; ii < info.sampleRates.size(); ++ii){
+                 		fprintf(stderr," %d ",info.sampleRates[ii]);
+                   }
+				}
+                fprintf(stderr,"\n");
              }
              
             if(info.inputChannels > 0){
             // Print, for example, the maximum number of output channels for each device
-                fprintf(stderr,"audio device = %d : input   channels = %d Device Name = %s sampleRates = %d\n",i,info.inputChannels,info.name.c_str(),info.sampleRates[0]);
-            }
+                fprintf(stderr,"audio device = %d : input   channels = %d Device Name = %s",i,info.inputChannels,info.name.c_str());
+                 if(info.sampleRates.size()){
+                    fprintf(stderr," sampleRates = ");
+                    for (int ii = 0; ii < info.sampleRates.size(); ++ii){
+                 		fprintf(stderr," %d ",info.sampleRates[ii]);
+                   }
+				}
+                fprintf(stderr,"\n");
+           }
 
         }
         catch (RtAudioError &error) {
@@ -1083,8 +1097,38 @@ int findRadio(struct playData *rx)
             }
                 
                 
-                
+        	SoapySDR::Range range=rx->device->getGainRange(SOAPY_SDR_RX, rx->channel);
+        
+            fprintf(stderr,"Gain range RX min %g max %g \n",range.minimum(),range.maximum());
+   
+            SoapySDR::RangeList rlist=rx->device->getFrequencyRange(SOAPY_SDR_RX, rx->channel);
             
+        	for (size_t j = 0; j < rlist.size(); j++)
+        	{
+         	    fprintf(stderr,"FrequencyRange min %g max %g \n",rlist[j].minimum(),rlist[j].maximum());
+        	}
+
+        	std::vector<double> band=rx->device->listBandwidths(SOAPY_SDR_RX, rx->channel);
+        	if(band.size()){
+                 fprintf(stderr,"\nBandwidth MHZ ");
+      		}
+			for (size_t j = 0; j <band.size(); j++)
+        	{
+               fprintf(stderr," %.2f ",band[j]/1.0e6);
+         	}
+            fprintf(stderr,"\n\n");
+
+			std::vector<double> rate=rx->device->listSampleRates(SOAPY_SDR_RX, rx->channel);
+        	if(rate.size()){
+                 fprintf(stderr,"SampleRates MHZ ");
+      		}
+			for (size_t j = 0; j < rate.size(); j++)
+        	{
+           		fprintf(stderr," %.2f ",rate[j]/1.0e6);
+         	}
+            fprintf(stderr,"\n\n");
+
+
 			rx->device->setSampleRate(SOAPY_SDR_RX, rx->channel, rx->samplerate);
 			
 			rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc);
