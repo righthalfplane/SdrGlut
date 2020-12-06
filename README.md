@@ -9,6 +9,7 @@ SdrGlut now has a send option where it uses tcp/ip to transfer the I/Q stream to
 https://github.com/righthalfplane/SdrGlut/releases/tag/v1.20
 
 ## Demo videos
+- [sdrTest is a test program for software defined radios.](https://youtu.be/hxxhsxCiPlY)
 - [SoapyRemote generates distortion in the signal when sending.](https://youtu.be/_F1SvWRZwxg)
 - [Sdrglut vs Gqrx on the raspberry Pi 4 (a speed comparison)](https://youtu.be/_UA0gFtRorI)
 - [OpenGL speed tests of the Raspberry PI-4](https://youtu.be/pGWB5a5rb-s)
