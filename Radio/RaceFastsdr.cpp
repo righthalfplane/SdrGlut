@@ -1983,7 +1983,7 @@ int testRadio(struct playData *rx)
         if (args.size()) {
             for (SoapySDR::ArgInfoList::const_iterator args_i = args.begin(); args_i != args.end(); args_i++) {
                 SoapySDR::ArgInfo arg = (*args_i);
-                printf("stream key %s value %s read %s\n",arg.key.c_str(),arg.value.c_str(),rx->device->readSetting(arg.key).c_str());
+                printf("stream key %s value %s \n",arg.key.c_str(),arg.value.c_str());
             }
         }
         
