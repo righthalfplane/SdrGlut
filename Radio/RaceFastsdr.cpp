@@ -1279,7 +1279,7 @@ static int doFilter(struct playData *rx,float *wBuff,float *aBuff,struct Filters
 static int doMix(struct playData *rx,float *buf,float *buf2,struct Filters *f)
 {
     if(!rx)return 0;
-    
+
     double scale=pow(10.0,rx->scaleFactor/20.0);
 
     double sint,cost;
@@ -1305,7 +1305,7 @@ static int doMix(struct playData *rx,float *buf,float *buf2,struct Filters *f)
     double r=sqrt(rx->coso*rx->coso+rx->sino*rx->sino);
     rx->coso /= r;
     rx->sino /= r;
-    
+
     /*
      float shift=rx->fc-rx->f;
      
@@ -1316,7 +1316,7 @@ static int doMix(struct playData *rx,float *buf,float *buf2,struct Filters *f)
      } else {
      nco_crcf_mix_block_down(f->fShift, (liquid_float_complex *)buf, (liquid_float_complex *)buf2,rx->size);
      }
-     */
+    */
     
     return 0;
     
@@ -1833,7 +1833,6 @@ int testRadio(struct playData *rx)
         {
             printf("Channel %s: %s\n",(*ii).first.c_str(),(*ii).second.c_str());
         }
-        
 
         std::vector<std::string> names=rx->device->listAntennas( SOAPY_SDR_RX, rx->channel);
         

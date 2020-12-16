@@ -16,6 +16,7 @@
 		46266832239D9E8D002CCCF4 /* mThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46266831239D9E8D002CCCF4 /* mThread.cpp */; };
 		4626888B223360BE0074B5DF /* audiolib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46268889223360BD0074B5DF /* audiolib.cpp */; };
 		4629CAAA23DD4E040059898D /* libglut.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4629CAA923DD4E040059898D /* libglut.3.dylib */; };
+		4634C63C258684E100973620 /* dialogTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4634C63B258684E100973620 /* dialogTime.cpp */; };
 		46371C8A1D12F31B002D3788 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46371C891D12F31B002D3788 /* OpenAL.framework */; };
 		46371C8C1D12F32A002D3788 /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46371C8B1D12F32A002D3788 /* OpenCL.framework */; };
 		46371C8E1D12F337002D3788 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46371C8D1D12F337002D3788 /* OpenGL.framework */; };
@@ -121,6 +122,7 @@
 		4629CAA923DD4E040059898D /* libglut.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libglut.3.dylib; sourceTree = "<group>"; };
 		462DC5462428FBE70032466B /* firstFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = firstFile.h; path = MainSource/firstFile.h; sourceTree = "<group>"; };
 		462FB7F3220389830028D417 /* RaceFastsdr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RaceFastsdr.h; sourceTree = "<group>"; };
+		4634C63B258684E100973620 /* dialogTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = dialogTime.cpp; path = MainSource/dialogTime.cpp; sourceTree = "<group>"; };
 		46371C891D12F31B002D3788 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = ../../../../../../System/Library/Frameworks/OpenAL.framework; sourceTree = "<group>"; };
 		46371C8B1D12F32A002D3788 /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = ../../../../../../System/Library/Frameworks/OpenCL.framework; sourceTree = "<group>"; };
 		46371C8D1D12F337002D3788 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = ../../../../../../System/Library/Frameworks/OpenGL.framework; sourceTree = "<group>"; };
@@ -428,6 +430,7 @@
 		46E13ACF1C2C47BC007FF424 /* MainSource */ = {
 			isa = PBXGroup;
 			children = (
+				4634C63B258684E100973620 /* dialogTime.cpp */,
 				4612027E2428655000A80820 /* ulibTypes.h */,
 				462DC5462428FBE70032466B /* firstFile.h */,
 				46CE01BE22125E9100140F6C /* mThread.h */,
@@ -557,6 +560,7 @@
 				467FE40B1C2C4F9B007D260F /* glui_panel.cpp in Sources */,
 				467FE3FC1C2C4F9B007D260F /* algebra3.cpp in Sources */,
 				469445EF2436E12500F049C8 /* WriteToGLUIWindow.cpp in Sources */,
+				4634C63C258684E100973620 /* dialogTime.cpp in Sources */,
 				46E13AD11C2C48AF007FF424 /* main.cpp in Sources */,
 				46543CC2246D9D77000DDD71 /* BatchFile.cpp in Sources */,
 				467FE3FD1C2C4F9B007D260F /* glui_add_controls.cpp in Sources */,

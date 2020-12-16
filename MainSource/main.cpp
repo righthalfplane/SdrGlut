@@ -38,7 +38,7 @@ static void control_cb(int control);
 
 static void control_cb2(int control);
 
-char *ProgramVersion=(char *)"SdrGlut-763";
+char *ProgramVersion=(char *)"SdrGlut-764";
 
 extern "C" struct Scene *sceneRoot(void);
 
@@ -211,6 +211,8 @@ int dialogStart(void)
     new GLUI_Button(glui, "Files", 5, control_cb);
 
     new GLUI_Button(glui, "Radio", 8, control_cb);
+    
+    new GLUI_Button(glui, "Time", 9, control_cb);
 
 	new GLUI_Button(glui, "Quit", 4, control_cb);
 	
@@ -231,6 +233,9 @@ static void control_cb(int control)
         dialogFileOpen((struct Scene *)NULL);
     }else if(control == 8){
         doRadioOpenRA();
+    }else if(control == 9){
+       int dialogTime(void);
+        dialogTime();
     } else if(control == 1)
 	{
 		
