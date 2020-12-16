@@ -490,6 +490,9 @@
     <ClCompile Include="..\Classes\Transmit.cpp">
       <Filter>Radio</Filter>
     </ClCompile>
+    <ClCompile Include="..\MainSource\dialogTime.cpp">
+      <Filter>MainSource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SdrGlut.rc" />
