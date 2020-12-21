@@ -96,16 +96,7 @@ int Radio::dialogTime()
     printf("tm_year %d ",record1.tm_year);
     printf("tm_zone %s\n",record1.tm_zone);
     printf("mktime[0] %ld\n",mktime(&record1));
-    
-    printf("rs.start[1] %ld\n",rs.start[1]);
-    printf("tm_sec %d ",record2.tm_sec);
-    printf("tm_min %d ",record2.tm_min);
-    printf("tm_hour %d ",record2.tm_hour);
-    printf("tm_mday %d ",record2.tm_mday);
-    printf("tm_mon %d ",record2.tm_mon);
-    printf("tm_year %d ",record2.tm_year);
-    printf("tm_zone %s\n",record2.tm_zone);
-    printf("mktime[1] %ld\n",mktime(&record2));
+
 */
     
     
@@ -343,12 +334,6 @@ int Radio::dialogTime()
     
     // glui->set_main_gfx_window( glutGetWindow() );
     
-    //printf("%s %s %s %s %s\n",edit[0]->get_text(),edit[3]->get_text(),edit[6]->get_text(),edit[9]->get_text(),edit[12]->get_text());
-    
-    //printf("%s %s %s %s %s\n",edit[1]->get_text(),edit[4]->get_text(),edit[7]->get_text(),edit[10]->get_text(),edit[13]->get_text());
-    
-    //printf("%s %s %s %s %s\n",edit[2]->get_text(),edit[5]->get_text(),edit[8]->get_text(),edit[11]->get_text(),edit[14]->get_text());
-    
     return 0;
 }
 static int getValues()
@@ -375,25 +360,17 @@ static int getValues()
     
     sscanf(edit[1]->get_text(),"%d", &record1.tm_mon);
     sscanf(edit[4]->get_text(),"%d", &record1.tm_mday);
-    //printf("record1.tm_mon %d\n",record1.tm_mon);
     record1.tm_mon = record1.tm_mon-1;
-    //printf("record1.tm_mon %d\n",record1.tm_mon);
     sscanf(edit[7]->get_text(),"%d", &record1.tm_year);
-    //printf("record1.tm_year %d\n",record1.tm_year);
     record1.tm_year = record1.tm_year-1900;
-    //printf("record1.tm_year %d\n",record1.tm_year);
     sscanf(edit[10]->get_text(),"%d", &record1.tm_hour);
     sscanf(edit[13]->get_text(),"%d", &record1.tm_min);
     
     sscanf(edit[2]->get_text(),"%d", &record2.tm_mon);
     sscanf(edit[5]->get_text(),"%d", &record2.tm_mday);
-    //printf("record2.tm_mon %d\n",record2.tm_mon);
     record2.tm_mon = record2.tm_mon-1;
-    //printf("record2.tm_mon %d\n",record2.tm_mon);
     sscanf(edit[8]->get_text(),"%d", &record2.tm_year);
-    //printf("record2.tm_year %d\n",record2.tm_year);
     record2.tm_year = record2.tm_year-1900;
-    //printf("record2.tm_year %d\n",record2.tm_year);
     sscanf(edit[11]->get_text(),"%d", &record2.tm_hour);
     sscanf(edit[14]->get_text(),"%d", &record2.tm_min);
     
@@ -405,53 +382,12 @@ static int getValues()
     sscanf(edit[22]->get_text(),"%d", &record3.tm_hour);
     sscanf(edit[23]->get_text(),"%d", &record3.tm_min);
 
+    sdr->rs.start[0]=mktime(&record1);
     
-/*
-    printf("tm_sec %d ",record1.tm_sec);
-    printf("tm_min %d ",record1.tm_min);
-    printf("tm_hour %d ",record1.tm_hour);
-    printf("tm_mday %d ",record1.tm_mday);
-    printf("tm_mon %d ",record1.tm_mon);
-    printf("tm_year %d ",record1.tm_year);
-    printf("tm_zone %s\n",record1.tm_zone);
+    sdr->rs.start[1]=mktime(&record2);
     
-    printf("tm_sec %d ",record2.tm_sec);
-    printf("tm_min %d ",record2.tm_min);
-    printf("tm_hour %d ",record2.tm_hour);
-    printf("tm_mday %d ",record2.tm_mday);
-    printf("tm_mon %d ",record2.tm_mon);
-    printf("tm_year %d ",record2.tm_year);
-    printf("tm_zone %s\n",record2.tm_zone);
-*/
-    
-    //sdr->rs.start[0]=mktime(&record1);
-    
-    //sdr->rs.start[1]=mktime(&record2);
-    
-    sdr->rs.start[0]=timelocal(&record1);
-    
-    sdr->rs.start[1]=timelocal(&record2);
-    
-    sdr->rs.start[2]=timelocal(&record3);
+    sdr->rs.start[2]=mktime(&record3);
 
-/*
-    printf("tm_sec %d ",record1.tm_sec);
-    printf("tm_min %d ",record1.tm_min);
-    printf("tm_hour %d ",record1.tm_hour);
-    printf("tm_mday %d ",record1.tm_mday);
-    printf("tm_mon %d ",record1.tm_mon);
-    printf("tm_year %d ",record1.tm_year);
-    printf("tm_zone %s\n",record1.tm_zone);
-    
-    printf("tm_sec %d ",record2.tm_sec);
-    printf("tm_min %d ",record2.tm_min);
-    printf("tm_hour %d ",record2.tm_hour);
-    printf("tm_mday %d ",record2.tm_mday);
-    printf("tm_mon %d ",record2.tm_mon);
-    printf("tm_year %d ",record2.tm_year);
-    printf("tm_zone %s\n",record2.tm_zone);
-    
-*/
     printf("start[0] %ld start[1] %ld start[2] %ld\n",sdr->rs.start[0],sdr->rs.start[1],sdr->rs.start[2]);
 
     sscanf(edit[16]->get_text(),"%ld", &sdr->rs.stop[0]);
