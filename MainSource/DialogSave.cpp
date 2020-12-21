@@ -105,7 +105,9 @@ int dialogSave(struct Scene *scene)
 	edittext1b =
 	glui->add_edittext_to_panel(obj_panel, "Name :", GLUI_EDITTEXT_TEXT, tpointer );
 	edittext1b->w=280;
-	
+    
+    //printf("Save 1 edittext1b %p\n",edittext1b);
+
 	glui->add_column(true);
 	
 	new GLUI_Button(glui, "New", 3, control_cb); 
@@ -216,9 +218,10 @@ static void control_cb(int control)
 	}
 	else if(control == 4)
 	{
-		/* WarningPrint("Save %s\n",edittext1b->get_text()); */
-		glui->close();
+		//printf("Save 2 callBack %p sceneLocal %p edittext1b %p\n",callBack,sceneLocal,edittext1b);
 		if(callBack)(*callBack)(sceneLocal,(char *)edittext1b->get_text());
+        //printf("Save 3 callBack %p sceneLocal %p edittext1b %p\n",callBack,sceneLocal,edittext1b);
+        glui->close();
 		glui=NULL;
 		fb=NULL;
 	}

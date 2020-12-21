@@ -284,7 +284,74 @@ int Radio::closeScenes()
     
     return 0;
 }
+int Radio::doSoundRecord()
+{
+    struct RecordSoundStruct *s=&rs;
+    time_t now;
+    int nSound;
+    
+    nSound=sizeof(s->on)/sizeof(int);
+    
+    for(int k=0;k<nSound;++k){
+        if(!s->on[k])continue;
+        time(&now);
+        if(s->state[k]){
+            //fprintf(stderr,"end %ld now %ld\n",(s->start[k]+s->stop[k]) , now);
+            if((s->start[k]+s->stop[k]) < now){
+                fprintf(stderr,"Close 3 Mode %s File %s\n",s->mode[k],s->FilePath[k]);
+                s->state[k]=0;
+                if(rx->audioOutput)fclose(rx->audioOutput);
+                rx->audioOutput=NULL;
+                break;
+            }else{
+                for(int kk=0;kk<nSound;++kk){
+                    if(!s->on[kk] || kk == k)continue;
+                    if(s->start[kk] > s->start[k] && s->start[kk] < now && (s->start[kk]+s->stop[kk]) >= now){
+                        fprintf(stderr,"Close 2 Mode %s File %s\n",s->mode[k],s->FilePath[k]);
+                        if(rx->audioOutput)fclose(rx->audioOutput);
+                        s->state[k]=0;
+                        char buff1[256],buff2[256];
+                        sprintf(buff1,"%lf",s->frequency[kk]/1.0e6);
+                        sprintf(buff2,"%s",s->mode[kk]);
+                        sendMessageGlobal(&buff1[0],&buff2[0],M_SEND);
+                        fprintf(stderr,"Open 2 Mode %s File %s\n",s->mode[kk],s->FilePath[kk]);
+                        rx->audioOutput=fopen(s->FilePath[kk],"wb");
+                        if(!rx->audioOutput){
+                            fprintf(stderr,"Error Opening %s To Write\n",s->FilePath[kk]);
+                        }else{
+                            s->state[kk]=1;
+                        }
+                        return 0;
+                    }
+                }
+                return 0;
+            }
+        }
+    }
+    
+    for(int k=0;k<nSound;++k){
+        if(!s->on[k])continue;
+        time(&now);
+        if(s->start[k] <= now && (s->start[k]+s->stop[k]) >= now){
+            if(rx->audioOutput)fclose(rx->audioOutput);
+            fprintf(stderr,"Open 1 Mode %s File %s\n",s->mode[k],s->FilePath[k]);
+            char buff1[256],buff2[256];
+            sprintf(buff1,"%lf",s->frequency[k]/1.0e6);
+            sprintf(buff2,"%s",s->mode[k]);
+            sendMessageGlobal(&buff1[0],&buff2[0],M_SEND);
+            rx->audioOutput=fopen(s->FilePath[k],"wb");
+            if(!rx->audioOutput){
+                fprintf(stderr,"Error Opening %s To Write\n",s->FilePath[k]);
+            }else{
+                s->state[k]=1;
+            }
+            return 0;
+        }
 
+    }
+
+    return 0;
+}
 Radio::Radio(struct Scene *scene,SoapySDR::Kwargs deviceArgs): CWindow(scene)
 {
     OpenError=TRUE;
@@ -295,6 +362,20 @@ Radio::Radio(struct Scene *scene,SoapySDR::Kwargs deviceArgs): CWindow(scene)
 
     zerol((char *)&pd, sizeof(pd));
     
+    zerol((char *)&rs, sizeof(rs));
+    
+    mstrncpy(rs.FilePath[0],(char *)"sound01.raw",sizeof(rs.FilePath[0]));
+    mstrncpy(rs.FilePath[1],(char *)"sound02.raw",sizeof(rs.FilePath[1]));
+    mstrncpy(rs.FilePath[2],(char *)"sound03.raw",sizeof(rs.FilePath[2]));
+    mstrncpy(rs.FilePath[3],(char *)"sound04.raw",sizeof(rs.FilePath[3]));
+    mstrncpy(rs.FilePath[4],(char *)"sound05.raw",sizeof(rs.FilePath[4]));
+
+    for(int k=0;k<5;++k){
+        time(&rs.start[k]);
+        mstrncpy(rs.mode[k],(char *)"FM",sizeof(rs.mode[k]));
+
+    }
+
     zerol((char *)&rxs,&rxs.end-&rxs.start);
     
     rxs.deviceToOpen=deviceArgs;
@@ -871,6 +952,8 @@ int Radio::BackGroundEvents(struct Scene *scene)
     }
     
     updateLine();
+    
+    doSoundRecord();
     
     return 0;
 }
@@ -1828,7 +1911,9 @@ void AudioSave(struct Scene *scene,char *name)
     
     if(!sdr)return;
 
-    sdr->rx->pSetAudio(sdr->rx,name,START_AUDiO);
+   // sdr->rx->pSetAudio(sdr->rx,name,START_AUDiO);
+    
+    mstrncpy(scene->FilePathIQ,name,sizeof(*scene->FilePathIQ));
     
     return;
 }
@@ -2002,7 +2087,8 @@ void doAudio(int item)
 
     switch(item){
         case START_AUDiO:
-            dialogSaveC(sdr->scene, AudioSave,0,NULL);
+           // dialogSaveC(sdr->scene, AudioSave,0,NULL);
+            sdr->dialogTime();
             break;
         case STOP_AUDiO:
             sdr->rx->pSetAudio(sdr->rx,NULL,START_AUDiO);

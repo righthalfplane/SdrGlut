@@ -8,10 +8,14 @@
 
 #include <stdio.h>
 
+#include "Radio.h"
+
 #include <time.h>       /* time_t, struct tm, difftime, time, mktime */
 
 
 #include "firstFile.h"
+
+
 #include <cstdio>
 #include <cstdlib>
 
@@ -29,72 +33,33 @@ static GLUI *glui;
 static void control_cb(int control);
 
 
-static char text1[255]="1";
-static char text2[255]="2";
-static char text3[255]="2";
-static char text4[255]="2";
-static char text5[255]="2";
+static GLUI_EditText *edit[26];
 
-static GLUI_EditText *edittext1;
-static GLUI_EditText *edittext2;
-static GLUI_EditText *edittext3;
-static GLUI_EditText *edittext4;
-static GLUI_EditText *edittext5;
+static char tex[26][255];
 
 
-static char text1a[255]="1";
-static char text2a[255]="2";
-static char text3a[255]="2";
-static char text4a[255]="2";
-static char text5a[255]="2";
+static struct tm today;
+static struct tm record1;
+static struct tm record2;
+static struct tm record3;
 
-static GLUI_EditText *edittext1a;
-static GLUI_EditText *edittext2a;
-static GLUI_EditText *edittext3a;
-static GLUI_EditText *edittext4a;
-static GLUI_EditText *edittext5a;
+static time_t record1time;
+static time_t record2time;
+static time_t record3time;
 
+static RadioPtr sdr;
 
-static char tex1[255]="1";
-static char tex2[255]="2";
-static char tex3[255]="2";
-static char tex4[255]="2";
-static char tex5[255]="2";
+static int nlast;
 
-static GLUI_EditText *edittex1;
-static GLUI_EditText *edittex2;
-static GLUI_EditText *edittex3;
-static GLUI_EditText *edittex4;
-static GLUI_EditText *edittex5;
+static GLUI_EditText *filePath[3];
+static GLUI_EditText *mode[3];
+static GLUI_EditText *frequency[3];
 
+static char freq[3][255];
 
-static char tex1a[255]="1";
-static char tex2a[255]="2";
-static char tex3a[255]="2";
-static char tex4a[255]="2";
-static char tex5a[255]="2";
+static int on[3];
 
-static GLUI_EditText *edittex1a;
-static GLUI_EditText *edittex2a;
-static GLUI_EditText *edittex3a;
-static GLUI_EditText *edittex4a;
-static GLUI_EditText *edittex5a;
-
-struct tm dvr  =  {0,58,7,14,9,2015-1900,0,0,1};
-struct tm real =  {0,13,7,20,0,2016-1900,0,0,0};
-
-static char sec[255]="0";
-static GLUI_EditText *editsec;
-
-
-struct tm today;
-struct tm offset =  {0,58,7,14,9,2015-1900};
-
-
-double secondsOffSet=0;
-
-
-int dialogTime()
+int Radio::dialogTime()
 {
     time_t now;
     
@@ -103,234 +68,456 @@ int dialogTime()
         glui->close();
     }
     
+    sdr=this;
     
+    record1time=rs.stop[0]/60;
+    record2time=rs.stop[1]/60;
+    record3time=rs.stop[2]/60;
+
+    on[0]=rs.on[0];
+    on[1]=rs.on[1];
+    on[2]=rs.on[2];
+
     time(&now);  /* get current time; same as: now = time(NULL)  */
     
     today = *localtime(&now);
+    
+    record1 = *localtime(&rs.start[0]);
+    record2 = *localtime(&rs.start[1]);
+    record3 = *localtime(&rs.start[2]);
 
+/*
+    printf("rs.start[0] %ld\n",rs.start[0]);
+    printf("tm_sec %d ",record1.tm_sec);
+    printf("tm_min %d ",record1.tm_min);
+    printf("tm_hour %d ",record1.tm_hour);
+    printf("tm_mday %d ",record1.tm_mday);
+    printf("tm_mon %d ",record1.tm_mon);
+    printf("tm_year %d ",record1.tm_year);
+    printf("tm_zone %s\n",record1.tm_zone);
+    printf("mktime[0] %ld\n",mktime(&record1));
+    
+    printf("rs.start[1] %ld\n",rs.start[1]);
+    printf("tm_sec %d ",record2.tm_sec);
+    printf("tm_min %d ",record2.tm_min);
+    printf("tm_hour %d ",record2.tm_hour);
+    printf("tm_mday %d ",record2.tm_mday);
+    printf("tm_mon %d ",record2.tm_mon);
+    printf("tm_year %d ",record2.tm_year);
+    printf("tm_zone %s\n",record2.tm_zone);
+    printf("mktime[1] %ld\n",mktime(&record2));
+*/
+    
+    
     glui = GLUI_Master.create_glui( "Time Dialog" );
     
     GLUI_Panel *obj_panel =  glui->add_panel( "month" );
     
-    msprintf(text2,sizeof(text2),"%d",dvr.tm_mon+1);
-    edittext2 =
-    glui->add_edittext_to_panel(obj_panel, "Old:", GLUI_EDITTEXT_TEXT, text2 );
-    edittext2->w=80;
+    msprintf(tex[0],sizeof(tex[0]),"%d",today.tm_mon+1);
+    edit[0] =
+    glui->add_edittext_to_panel(obj_panel, "Today:", GLUI_EDITTEXT_TEXT, tex[0] );
+    edit[0]->w=80;
     
-    msprintf(text2a,sizeof(text2a),"%d",real.tm_mon+1);
-    edittext2a =
-    glui->add_edittext_to_panel(obj_panel, "New:", GLUI_EDITTEXT_TEXT, text2a );
-    edittext2a->w=80;
+    msprintf(tex[1],sizeof(tex[1]),"%d",record1.tm_mon+1);
+    edit[1] =
+    glui->add_edittext_to_panel(obj_panel, "Record1:", GLUI_EDITTEXT_TEXT, tex[1] );
+    edit[1]->w=80;
     
-    msprintf(tex2,sizeof(tex2),"%d",today.tm_mon+1);
-    edittex2 =
-    glui->add_edittext_to_panel(obj_panel, "Today:", GLUI_EDITTEXT_TEXT, tex2 );
-    edittex2->w=80;
+    msprintf(tex[2],sizeof(tex[2]),"%d",record2.tm_mon+1);
+    edit[2] =
+    glui->add_edittext_to_panel(obj_panel, "Record2:", GLUI_EDITTEXT_TEXT, tex[2] );
+    edit[2]->w=80;
     
-    msprintf(tex2a,sizeof(tex2a),"%d",offset.tm_mon+1);
-    edittex2a =
-    glui->add_edittext_to_panel(obj_panel, "Calc:", GLUI_EDITTEXT_TEXT, tex2a );
-    edittex2a->w=80;
+    msprintf(tex[19],sizeof(tex[19]),"%d",record3.tm_mon+1);
+    edit[19] =
+    glui->add_edittext_to_panel(obj_panel, "Record3:", GLUI_EDITTEXT_TEXT, tex[19] );
+    edit[19]->w=80;
     
+
     glui->add_column(true);
     
     obj_panel =  glui->add_panel( "day" );
+    
+    
+    msprintf(tex[3],sizeof(tex[3]),"%d",today.tm_mday);
+    edit[3] =
+    glui->add_edittext_to_panel(obj_panel, "Today:", GLUI_EDITTEXT_TEXT, tex[3] );
+    edit[3]->w=80;
+    
+    msprintf(tex[4],sizeof(tex[4]),"%d",record1.tm_mday);
+    edit[4] =
+    glui->add_edittext_to_panel(obj_panel, "Record1:", GLUI_EDITTEXT_TEXT, tex[4] );
+    edit[4]->w=80;
+    
+    msprintf(tex[5],sizeof(tex[5]),"%d",record2.tm_mday);
+    edit[5] =
+    glui->add_edittext_to_panel(obj_panel, "Record2:", GLUI_EDITTEXT_TEXT, tex[5] );
+    edit[5]->w=80;
+    
+    msprintf(tex[20],sizeof(tex[20]),"%d",record2.tm_mday);
+    edit[20] =
+    glui->add_edittext_to_panel(obj_panel, "Record3:", GLUI_EDITTEXT_TEXT, tex[20] );
+    edit[20]->w=80;
+    
 
-    msprintf(text1,sizeof(text1),"%d",dvr.tm_mday);
-    edittext1 =
-    glui->add_edittext_to_panel(obj_panel, "Old:", GLUI_EDITTEXT_TEXT, text1 );
-    edittext1->w=80;
-    
-    
-    msprintf(text1a,sizeof(text1a),"%d",real.tm_mday);
-    edittext1a =
-    glui->add_edittext_to_panel(obj_panel, "New:", GLUI_EDITTEXT_TEXT, text1a );
-    edittext1a->w=80;
-    
-    
-    
-    msprintf(tex1,sizeof(tex1),"%d",today.tm_mday);
-    edittex1 =
-    glui->add_edittext_to_panel(obj_panel, "Today:", GLUI_EDITTEXT_TEXT, tex1 );
-    edittex1->w=80;
-    
-    
-    msprintf(tex1a,sizeof(tex1a),"%d",offset.tm_mday);
-    edittex1a =
-    glui->add_edittext_to_panel(obj_panel, "Calc:", GLUI_EDITTEXT_TEXT, tex1a );
-    edittex1a->w=80;
-    
-    
-    
     glui->add_column(true);
-    
-    
-    
     
     obj_panel =  glui->add_panel( "year" );
     
     
-    msprintf(text3,sizeof(text3),"%d",dvr.tm_year+1900);
-    edittext3 =
-    glui->add_edittext_to_panel(obj_panel, "Old:", GLUI_EDITTEXT_TEXT, text3 );
-    edittext3->w=80;
+    msprintf(tex[6],sizeof(tex[6]),"%d",today.tm_year+1900);
+    edit[6] =
+    glui->add_edittext_to_panel(obj_panel, "Today:", GLUI_EDITTEXT_TEXT, tex[6] );
+    edit[6]->w=80;
     
-    msprintf(text3a,sizeof(text3a),"%d",real.tm_year+1900);
-    edittext3a =
-    glui->add_edittext_to_panel(obj_panel, "New:", GLUI_EDITTEXT_TEXT, text3a );
-    edittext3a->w=80;
+    msprintf(tex[7],sizeof(tex[7]),"%d",record1.tm_year+1900);
+    edit[7] =
+    glui->add_edittext_to_panel(obj_panel, "Record1:", GLUI_EDITTEXT_TEXT, tex[7] );
+    edit[7]->w=80;
+    
+    msprintf(tex[8],sizeof(tex[8]),"%d",record2.tm_year+1900);
+    edit[8] =
+    glui->add_edittext_to_panel(obj_panel, "Record2:", GLUI_EDITTEXT_TEXT, tex[8] );
+    edit[8]->w=80;
     
     
-    msprintf(tex3,sizeof(tex3),"%d",today.tm_year+1900);
-    edittex3 =
-    glui->add_edittext_to_panel(obj_panel, "Today:", GLUI_EDITTEXT_TEXT, tex3 );
-    edittex3->w=80;
-    
-    msprintf(tex3a,sizeof(tex3a),"%d",offset.tm_year+1900);
-    edittex3a =
-    glui->add_edittext_to_panel(obj_panel, "Calc:", GLUI_EDITTEXT_TEXT, tex3a );
-    edittex3a->w=80;
+    msprintf(tex[21],sizeof(tex[21]),"%d",record3.tm_year+1900);
+    edit[21] =
+    glui->add_edittext_to_panel(obj_panel, "Record3:", GLUI_EDITTEXT_TEXT, tex[21] );
+    edit[21]->w=80;
     
     
     glui->add_column(true);
     
     obj_panel =  glui->add_panel( "hour" );
     
-    msprintf(text4,sizeof(text4),"%d",dvr.tm_hour);
-    edittext4 =
-    glui->add_edittext_to_panel(obj_panel, "Old:", GLUI_EDITTEXT_TEXT, text4);
-    edittext4->w=80;
     
-    msprintf(text4a,sizeof(text4a),"%d",real.tm_hour);
-    edittext4a =
-    glui->add_edittext_to_panel(obj_panel, "New:", GLUI_EDITTEXT_TEXT, text4a );
-    edittext4a->w=80;
+    msprintf(tex[9],sizeof(tex[9]),"%d",today.tm_hour);
+    edit[9] =
+    glui->add_edittext_to_panel(obj_panel, "Today:", GLUI_EDITTEXT_TEXT, tex[9]);
+    edit[9]->w=80;
     
-    
-    msprintf(tex4,sizeof(text4),"%d",today.tm_hour);
-    edittex4 =
-    glui->add_edittext_to_panel(obj_panel, "Today:", GLUI_EDITTEXT_TEXT, tex4);
-    edittex4->w=80;
-    
-    msprintf(tex4a,sizeof(tex4a),"%d",offset.tm_hour);
-    edittex4a =
-    glui->add_edittext_to_panel(obj_panel, "Calc:", GLUI_EDITTEXT_TEXT, tex4a );
-    edittex4a->w=80;
+    msprintf(tex[10],sizeof(tex[10]),"%d",record1.tm_hour);
+    edit[10] =
+    glui->add_edittext_to_panel(obj_panel, "Record1:", GLUI_EDITTEXT_TEXT, tex[10]);
+    edit[10]->w=80;
     
     
+    msprintf(tex[11],sizeof(tex[11]),"%d",record2.tm_hour);
+    edit[11] =
+    glui->add_edittext_to_panel(obj_panel, "Record2:", GLUI_EDITTEXT_TEXT, tex[11]);
+    edit[11]->w=80;
     
-
+    msprintf(tex[22],sizeof(tex[22]),"%d",record3.tm_hour);
+    edit[22] =
+    glui->add_edittext_to_panel(obj_panel, "Record3:", GLUI_EDITTEXT_TEXT, tex[22]);
+    edit[22]->w=80;
     
     glui->add_column(true);
     
     obj_panel =  glui->add_panel( "minute" );
     
-    msprintf(text5,sizeof(text5),"%d",dvr.tm_min);
-    edittext5 =
-    glui->add_edittext_to_panel(obj_panel, "Old:", GLUI_EDITTEXT_TEXT, text5);
-    edittext5->w=80;
+    msprintf(tex[12],sizeof(tex[12]),"%d",today.tm_min);
+    edit[12] =
+    glui->add_edittext_to_panel(obj_panel, "Today:", GLUI_EDITTEXT_TEXT, tex[12]);
+    edit[12]->w=80;
     
-    msprintf(text5a,sizeof(text5a),"%d",real.tm_min);
-    edittext5a =
-    glui->add_edittext_to_panel(obj_panel, "New:", GLUI_EDITTEXT_TEXT, text5a );
-    edittext5a->w=80;
+    msprintf(tex[13],sizeof(tex[13]),"%d",record1.tm_min);
+    edit[13] =
+    glui->add_edittext_to_panel(obj_panel, "Record1:", GLUI_EDITTEXT_TEXT, tex[13]);
+    edit[13]->w=80;
     
-    msprintf(tex5,sizeof(tex5),"%d",today.tm_min);
-    edittex5 =
-    glui->add_edittext_to_panel(obj_panel, "Today:", GLUI_EDITTEXT_TEXT, tex5);
-    edittex5->w=80;
+    msprintf(tex[14],sizeof(tex[14]),"%d",record2.tm_min);
+    edit[14] =
+    glui->add_edittext_to_panel(obj_panel, "Record2:", GLUI_EDITTEXT_TEXT, tex[14]);
+    edit[14]->w=80;
     
-    msprintf(tex5a,sizeof(tex5a),"%d",offset.tm_min);
-    edittex5a =
-    glui->add_edittext_to_panel(obj_panel, "Calc:", GLUI_EDITTEXT_TEXT, tex5a );
-    edittex5a->w=80;
+    msprintf(tex[23],sizeof(tex[23]),"%d",record3.tm_min);
+    edit[23] =
+    glui->add_edittext_to_panel(obj_panel, "Record3:", GLUI_EDITTEXT_TEXT, tex[23]);
+    edit[23]->w=80;
     
     glui->add_column(true);
     
-    msprintf(sec,sizeof(sec),"%ld",(long)secondsOffSet);
-    editsec =
-    glui->add_edittext( "Offset:", GLUI_EDITTEXT_TEXT, sec );
-    editsec->w=160;
+    obj_panel =  glui->add_panel( "minutes to record" );
+    
+    msprintf(tex[15],sizeof(tex[15]),"----",-1);
+    edit[15] =
+    glui->add_edittext_to_panel(obj_panel, "Today:", GLUI_EDITTEXT_TEXT, tex[15]);
+    edit[15]->w=80;
+
+    msprintf(tex[16],sizeof(tex[16]),"%ld",record1time);
+    edit[16] =
+    glui->add_edittext_to_panel(obj_panel, "Record1:", GLUI_EDITTEXT_TEXT, tex[16]);
+    edit[16]->w=80;
+    
+    msprintf(tex[17],sizeof(tex[17]),"%ld",record2time);
+    edit[17] =
+    glui->add_edittext_to_panel(obj_panel, "Record2:", GLUI_EDITTEXT_TEXT, tex[17]);
+    edit[17]->w=80;
+    
+    msprintf(tex[18],sizeof(tex[18]),"%ld",record3time);
+    edit[18] =
+    glui->add_edittext_to_panel(obj_panel, "Record3:", GLUI_EDITTEXT_TEXT, tex[18]);
+    edit[18]->w=80;
+    
+    glui->add_column(true);
+    
+    obj_panel =  glui->add_panel( "Record Information" );
+
+    GLUI_Panel *panel3 = new GLUI_Panel(obj_panel, "Record1");
+    
+    new GLUI_Checkbox(panel3, "Record ", &on[0], 0, control_cb );
+
+    filePath[0] =
+    glui->add_edittext_to_panel(panel3, "Path:", GLUI_EDITTEXT_TEXT, rs.FilePath[0]);
+    filePath[0]->w=200;
     
     
-    new GLUI_Button(glui, "Refresh", 1, control_cb);
+    new GLUI_Button(panel3, "Set Record File", 100, control_cb);
     
-    new GLUI_Button(glui, "Calculate", 5, control_cb);
     
-    new GLUI_Button(glui, "Offset", 4, control_cb);
+    msprintf(freq[0],sizeof(freq[0]),"%ld",(long)rs.frequency[0]);
+    
+    frequency[0] =
+    glui->add_edittext_to_panel(panel3, "Frequency:", GLUI_EDITTEXT_TEXT, freq[0]);
+    frequency[0]->w=200;
+    
+    mode[0] =
+    glui->add_edittext_to_panel(panel3, "Mode:", GLUI_EDITTEXT_TEXT, rs.mode[0]);
+    mode[0]->w=200;
+    
+
+    panel3 = new GLUI_Panel(obj_panel, "Record2");
+    
+    new GLUI_Checkbox(panel3, "Record ", &on[1], 0, control_cb );
+    
+    filePath[1] =
+    glui->add_edittext_to_panel(panel3, "Path:", GLUI_EDITTEXT_TEXT, rs.FilePath[1]);
+    filePath[1]->w=200;
+    
+    
+    new GLUI_Button(panel3, "Set Record File", 101, control_cb);
+    
+    msprintf(freq[1],sizeof(freq[0]),"%ld",(long)rs.frequency[1]);
+    
+    frequency[1] =
+    glui->add_edittext_to_panel(panel3, "Frequency:", GLUI_EDITTEXT_TEXT, freq[1]);
+    frequency[1]->w=200;
+    
+    mode[1] =
+    glui->add_edittext_to_panel(panel3, "Mode:", GLUI_EDITTEXT_TEXT, rs.mode[1]);
+    mode[1]->w=200;
+    
+    
+    panel3 = new GLUI_Panel(obj_panel, "Record3");
+    
+    new GLUI_Checkbox(panel3, "Record ", &on[2], 0, control_cb );
+    
+    filePath[2] =
+    glui->add_edittext_to_panel(panel3, "Path:", GLUI_EDITTEXT_TEXT, rs.FilePath[2]);
+    filePath[2]->w=200;
+    
+    
+    new GLUI_Button(panel3, "Set Record File", 102, control_cb);
+    
+    msprintf(freq[2],sizeof(freq[0]),"%ld",(long)rs.frequency[2]);
+    
+    frequency[2] =
+    glui->add_edittext_to_panel(panel3, "Frequency:", GLUI_EDITTEXT_TEXT, freq[2]);
+    frequency[2]->w=200;
+    
+    mode[2] =
+    glui->add_edittext_to_panel(panel3, "Mode:", GLUI_EDITTEXT_TEXT, rs.mode[2]);
+    mode[2]->w=200;
+    
+    
+    glui->add_column(true);
+
+
+    new GLUI_Button(glui, "Refresh Now", 1, control_cb);
+    
+    new GLUI_Button(glui, "Start Recording", 4, control_cb);
     
     new GLUI_Button(glui, "Close", 2, control_cb);
     
     // glui->set_main_gfx_window( glutGetWindow() );
+    
+    //printf("%s %s %s %s %s\n",edit[0]->get_text(),edit[3]->get_text(),edit[6]->get_text(),edit[9]->get_text(),edit[12]->get_text());
+    
+    //printf("%s %s %s %s %s\n",edit[1]->get_text(),edit[4]->get_text(),edit[7]->get_text(),edit[10]->get_text(),edit[13]->get_text());
+    
+    //printf("%s %s %s %s %s\n",edit[2]->get_text(),edit[5]->get_text(),edit[8]->get_text(),edit[11]->get_text(),edit[14]->get_text());
     
     return 0;
 }
 static int getValues()
 {
     
-    sscanf(edittext1->get_text(),"%d", &dvr.tm_mday);
-    sscanf(edittext2->get_text(),"%d", &dvr.tm_mon);
-    dvr.tm_mon -= 1;
-    sscanf(edittext3->get_text(),"%d", &dvr.tm_year);
-    dvr.tm_year -= 1900;
-    sscanf(edittext4->get_text(),"%d", &dvr.tm_hour);
-    sscanf(edittext5->get_text(),"%d", &dvr.tm_min);
+  //  printf("%s %s %s %s %s\n",edit[0]->get_text(),edit[3]->get_text(),edit[6]->get_text(),edit[9]->get_text(),edit[12]->get_text());
     
-    sscanf(edittex1->get_text(),"%d", &today.tm_mday);
-    sscanf(edittex2->get_text(),"%d", &today.tm_mon);
+  //  printf("%s %s %s %s %s\n",edit[1]->get_text(),edit[4]->get_text(),edit[7]->get_text(),edit[10]->get_text(),edit[13]->get_text());
+    
+  //  printf("%s %s %s %s %s\n",edit[2]->get_text(),edit[5]->get_text(),edit[8]->get_text(),edit[11]->get_text(),edit[14]->get_text());
+
+    
+    sscanf(edit[0]->get_text(),"%d", &today.tm_mon);
+    sscanf(edit[3]->get_text(),"%d", &today.tm_mday);
     today.tm_mon -= 1;
-    sscanf(edittex3->get_text(),"%d", &today.tm_year);
+    sscanf(edit[6]->get_text(),"%d", &today.tm_year);
     today.tm_year -= 1900;
-    sscanf(edittex4->get_text(),"%d", &today.tm_hour);
-    sscanf(edittex5->get_text(),"%d", &today.tm_min);
+    sscanf(edit[9]->get_text(),"%d", &today.tm_hour);
+    sscanf(edit[12]->get_text(),"%d", &today.tm_min);
     
-    sscanf(edittext1a->get_text(),"%d", &real.tm_mday);
-    sscanf(edittext2a->get_text(),"%d", &real.tm_mon);
-    real.tm_mon -= 1;
-    sscanf(edittext3a->get_text(),"%d", &real.tm_year);
-    real.tm_year -= 1900;
-    sscanf(edittext4a->get_text(),"%d", &real.tm_hour);
-    sscanf(edittext5a->get_text(),"%d", &real.tm_min);
+    record1.tm_sec=0;
+    record2.tm_sec=0;
+    record3.tm_sec=0;
     
-    sscanf(editsec->get_text(),"%lg", &secondsOffSet);
+    sscanf(edit[1]->get_text(),"%d", &record1.tm_mon);
+    sscanf(edit[4]->get_text(),"%d", &record1.tm_mday);
+    //printf("record1.tm_mon %d\n",record1.tm_mon);
+    record1.tm_mon = record1.tm_mon-1;
+    //printf("record1.tm_mon %d\n",record1.tm_mon);
+    sscanf(edit[7]->get_text(),"%d", &record1.tm_year);
+    //printf("record1.tm_year %d\n",record1.tm_year);
+    record1.tm_year = record1.tm_year-1900;
+    //printf("record1.tm_year %d\n",record1.tm_year);
+    sscanf(edit[10]->get_text(),"%d", &record1.tm_hour);
+    sscanf(edit[13]->get_text(),"%d", &record1.tm_min);
     
+    sscanf(edit[2]->get_text(),"%d", &record2.tm_mon);
+    sscanf(edit[5]->get_text(),"%d", &record2.tm_mday);
+    //printf("record2.tm_mon %d\n",record2.tm_mon);
+    record2.tm_mon = record2.tm_mon-1;
+    //printf("record2.tm_mon %d\n",record2.tm_mon);
+    sscanf(edit[8]->get_text(),"%d", &record2.tm_year);
+    //printf("record2.tm_year %d\n",record2.tm_year);
+    record2.tm_year = record2.tm_year-1900;
+    //printf("record2.tm_year %d\n",record2.tm_year);
+    sscanf(edit[11]->get_text(),"%d", &record2.tm_hour);
+    sscanf(edit[14]->get_text(),"%d", &record2.tm_min);
+    
+    sscanf(edit[19]->get_text(),"%d", &record3.tm_mon);
+    sscanf(edit[20]->get_text(),"%d", &record3.tm_mday);
+    record3.tm_mon -= 1;
+    sscanf(edit[21]->get_text(),"%d", &record3.tm_year);
+    record3.tm_year -= 1900;
+    sscanf(edit[22]->get_text(),"%d", &record3.tm_hour);
+    sscanf(edit[23]->get_text(),"%d", &record3.tm_min);
+
+    
+/*
+    printf("tm_sec %d ",record1.tm_sec);
+    printf("tm_min %d ",record1.tm_min);
+    printf("tm_hour %d ",record1.tm_hour);
+    printf("tm_mday %d ",record1.tm_mday);
+    printf("tm_mon %d ",record1.tm_mon);
+    printf("tm_year %d ",record1.tm_year);
+    printf("tm_zone %s\n",record1.tm_zone);
+    
+    printf("tm_sec %d ",record2.tm_sec);
+    printf("tm_min %d ",record2.tm_min);
+    printf("tm_hour %d ",record2.tm_hour);
+    printf("tm_mday %d ",record2.tm_mday);
+    printf("tm_mon %d ",record2.tm_mon);
+    printf("tm_year %d ",record2.tm_year);
+    printf("tm_zone %s\n",record2.tm_zone);
+*/
+    
+    //sdr->rs.start[0]=mktime(&record1);
+    
+    //sdr->rs.start[1]=mktime(&record2);
+    
+    sdr->rs.start[0]=timelocal(&record1);
+    
+    sdr->rs.start[1]=timelocal(&record2);
+    
+    sdr->rs.start[2]=timelocal(&record3);
+
+/*
+    printf("tm_sec %d ",record1.tm_sec);
+    printf("tm_min %d ",record1.tm_min);
+    printf("tm_hour %d ",record1.tm_hour);
+    printf("tm_mday %d ",record1.tm_mday);
+    printf("tm_mon %d ",record1.tm_mon);
+    printf("tm_year %d ",record1.tm_year);
+    printf("tm_zone %s\n",record1.tm_zone);
+    
+    printf("tm_sec %d ",record2.tm_sec);
+    printf("tm_min %d ",record2.tm_min);
+    printf("tm_hour %d ",record2.tm_hour);
+    printf("tm_mday %d ",record2.tm_mday);
+    printf("tm_mon %d ",record2.tm_mon);
+    printf("tm_year %d ",record2.tm_year);
+    printf("tm_zone %s\n",record2.tm_zone);
+    
+*/
+    printf("start[0] %ld start[1] %ld start[2] %ld\n",sdr->rs.start[0],sdr->rs.start[1],sdr->rs.start[2]);
+
+    sscanf(edit[16]->get_text(),"%ld", &sdr->rs.stop[0]);
+    sdr->rs.stop[0] *= 60;
+    sscanf(edit[17]->get_text(),"%ld", &sdr->rs.stop[1]);
+    sdr->rs.stop[1] *= 60;
+    sscanf(edit[18]->get_text(),"%ld", &sdr->rs.stop[2]);
+    sdr->rs.stop[2] *= 60;
+
+    
+    sscanf(frequency[0]->get_text(),"%lf", &sdr->rs.frequency[0]);
+    sscanf(frequency[1]->get_text(),"%lf", &sdr->rs.frequency[1]);
+    sscanf(frequency[2]->get_text(),"%lf", &sdr->rs.frequency[2]);
+
     return 0;
 }
-
+static void IQSave(struct Scene *scene,char *name)
+{
+    
+    if(GetWorking(scene->FilePathIQ,sizeof(scene->FilePathIQ))){
+        strncatToPath(scene->FilePathIQ,name,sizeof(scene->FilePathIQ));
+    }
+    //fprintf(stderr,"FilePathIQ %s nlast %d\n",scene->FilePathIQ,nlast);
+    
+    filePath[nlast]->set_text(scene->FilePathIQ);
+    
+}
 static void control_cb(int control)
 {
     std::string file_name;
     time_t now;
     
-    
-    if(control == 1)
+    if(control > 99){
+        void AudioSave(struct Scene *scene,char *name);
+        control -= 100;
+        nlast=control;
+        dialogSaveC(sdr->scene,IQSave,0,NULL);
+    }else if(control == 1)
     {
         time(&now);  /* get current time; same as: now = time(NULL)  */
         
         today = *localtime(&now);
         
-        msprintf(tex1,sizeof(tex1),"%d",today.tm_mday);
-        edittex1->set_text(tex1);
+        msprintf(tex[0],sizeof(tex[0]),"%d",today.tm_mon+1);
+        edit[0]->set_text(tex[0]);
         
-        msprintf(tex2,sizeof(tex2),"%d",today.tm_mon+1);
-        edittex2->set_text(tex2);
+        msprintf(tex[3],sizeof(tex[3]),"%d",today.tm_mday);
+        edit[3]->set_text(tex[3]);
         
-        msprintf(tex3,sizeof(tex3),"%d",today.tm_year+1900);
-        edittex3->set_text(tex3);
+        msprintf(tex[6],sizeof(tex[6]),"%d",today.tm_year+1900);
+        edit[6]->set_text(tex[6]);
         
-        msprintf(tex4,sizeof(tex4),"%d",today.tm_hour);
-        edittex4->set_text(tex4);
+        msprintf(tex[9],sizeof(tex[9]),"%d",today.tm_hour);
+        edit[9]->set_text(tex[9]);
        
-        msprintf(tex5,sizeof(tex5),"%d",today.tm_min);
-        edittex5->set_text(tex5);
-       
-
-        
+        msprintf(tex[12],sizeof(tex[12]),"%d",today.tm_min);
+        edit[12]->set_text(tex[12]);
     }
     else if(control == 4)
     {
         getValues();
         
+        sdr->rs.on[0]=on[0];
+        sdr->rs.on[1]=on[1];
+        sdr->rs.on[2]=on[2];
+
         /*
         printf("tm_sec %d ",dvr.tm_sec);
         printf("tm_min %d ",dvr.tm_min);
@@ -340,58 +527,16 @@ static void control_cb(int control)
         printf("tm_year %d ",dvr.tm_year+1900);
         printf("tm_zone %s\n",dvr.tm_zone);
         
-        
-        printf("tm_sec %d ",real.tm_sec);
-        printf("tm_min %d ",real.tm_min);
-        printf("tm_hour %d ",real.tm_hour);
-        printf("tm_mday %d ",real.tm_mday);
-        printf("tm_mon %d ",real.tm_mon);
-        printf("tm_year %d ",real.tm_year+1900);
-        printf("tm_zone %s\n",real.tm_zone);
         */
-        
-        secondsOffSet = difftime(mktime(&real),mktime(&dvr));
-        
-       // printf("%ld\n",(long)secondsOffSet);
-        
-        msprintf(sec,sizeof(sec),"%ld",(long)secondsOffSet);
-        editsec->set_text(sec);
         
     }
     else if(control == 2)
     {
+        getValues();
+        
         glui->close();
         glui=NULL;
     }
-    else if(control == 5)
-    {
-        
-        time_t tdvr;
-        
-        getValues();
-                
-        tdvr=mktime(&today);
-        
-        tdvr=tdvr-(long)secondsOffSet;
-        
-        offset = *localtime(&tdvr);
-       
-        msprintf(tex1a,sizeof(tex1a),"%d",offset.tm_mday);
-        edittex1a->set_text(tex1a);
-        
-        msprintf(tex2a,sizeof(tex2a),"%d",offset.tm_mon+1);
-        edittex2a->set_text(tex2a);
-        
-        msprintf(tex3a,sizeof(tex3a),"%d",offset.tm_year+1900);
-        edittex3a->set_text(tex3a);
-        
-        msprintf(tex4a,sizeof(tex4a),"%d",offset.tm_hour);
-        edittex4a->set_text(tex4a);
-        
-        msprintf(tex5a,sizeof(tex5a),"%d",offset.tm_min);
-        edittex5a->set_text(tex5a);
-        
-        
-    }
+    
     glutPostRedisplay();
 }

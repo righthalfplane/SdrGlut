@@ -258,6 +258,16 @@ struct TransmitData{
     int sub_window;
 };
 
+struct RecordSoundStruct{
+    time_t start[5];
+    time_t stop[5];
+    char FilePath[5][2048];
+    int on[5];
+    int state[5];
+    double frequency[5];
+    char mode[5][16];
+};
+
 class CLines;
 
 class Radio;
@@ -320,6 +330,10 @@ public:
     
     int doFrequencyFile(char *path);
     
+    int doSoundRecord();
+    
+    int dialogTime();
+
     volatile int inTransmit;
     
     volatile int inDialog;
@@ -410,7 +424,7 @@ public:
     
     int insert;
 
-    
+    struct RecordSoundStruct rs;
 };
 
 typedef Radio *RadioPtr;
