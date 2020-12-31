@@ -5,6 +5,7 @@
 #define EXTERN
 #include <SoapySDR/Version.h>
 #include <SoapySDR/Modules.h>
+#include <SoapySDR/Logger.h>
 #include "Utilities.h"
 #include "Scene.h"
 #include "QuitDialog.h"
@@ -38,7 +39,7 @@ static void control_cb(int control);
 
 static void control_cb2(int control);
 
-char *ProgramVersion=(char *)"SdrGlut-776";
+char *ProgramVersion=(char *)"SdrGlut-777";
 
 extern "C" struct Scene *sceneRoot(void);
 
@@ -294,6 +295,9 @@ int main (int argc, char *argv[]) {
 
     fprintf(stderr,"LIQUID_VERSION_NUMBER %d\n",LIQUID_VERSION_NUMBER);
     
+    SoapySDR_setLogLevel(SOAPY_SDR_WARNING);
+    SoapySDR_setLogLevel(SOAPY_SDR_TRACE);
+
     // signal(SIGPIPE, SIG_IGN);
     
     for(int n=1;n<argc;++n){
