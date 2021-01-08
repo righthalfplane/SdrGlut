@@ -11,8 +11,8 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.21
 ## Demo videos
 - [Icom IC-R30 vs a AOR AR8200 MK3 at FRS frequencies.](https://youtu.be/IpzZd8qS4g8)
 - [SdrGlut uses WSJT-X and GridTracker to capture digital Amateur traffic.](https://youtu.be/poebQhvDJ5k)
-- [SdrGlut - How to set the Time, Frequency and Mode for Recordings.](https://youtu.be/hxxhsxCiPlY)
-- [sdrTest is a test program for software defined radios.](https://youtu.be/oGKcOFbus_U)
+- [SdrGlut - How to set the Time, Frequency and Mode for Recordings.](https://youtu.be/oGKcOFbus_U)
+- [sdrTest is a test program for software defined radios.](https://youtu.be/hxxhsxCiPlY)
 - [SoapyRemote generates distortion in the signal when sending.](https://youtu.be/_F1SvWRZwxg)
 - [Sdrglut vs Gqrx on the raspberry Pi 4 (a speed comparison)](https://youtu.be/_UA0gFtRorI)
 - [OpenGL speed tests of the Raspberry PI-4](https://youtu.be/pGWB5a5rb-s)
