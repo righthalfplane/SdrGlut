@@ -180,7 +180,8 @@ static int print_device(libusb_device *dev, int level)
 		fprintf(stderr, "failed to get device descriptor");
 		return -1;
 	}
-
+	
+	description[0]=0;
 	ret = libusb_open(dev, &handle);
 	if (LIBUSB_SUCCESS == ret) {
 		if (desc.iManufacturer) {
@@ -208,10 +209,10 @@ static int print_device(libusb_device *dev, int level)
 			snprintf(description + strlen(description), sizeof(description) -
 			strlen(description), "%04X", desc.idProduct);
 	}
-	else {
-		snprintf(description, sizeof(description), "%04X - %04X",
+//	else {
+		snprintf(description + strlen(description), sizeof(description)-strlen(description), " (%04X - %04X)",
 			desc.idVendor, desc.idProduct);
-	}
+//	}
 
 	printf("%.*sDev (bus %d, device %d): %s\n", level * 2, "                    ",
 		libusb_get_bus_number(dev), libusb_get_device_address(dev), description);
