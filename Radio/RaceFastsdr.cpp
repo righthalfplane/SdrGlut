@@ -689,7 +689,7 @@ static int StartIt(struct playData *rx)
     
     //fprintf(stderr,"time = %g\n",end-start);
 
-   // exit(0);
+    //exit(0);
     
     alSourcePlay(rx->source);
     if ((error = alGetError()) != AL_NO_ERROR)
@@ -1290,12 +1290,14 @@ static int doMix(struct playData *rx,float *buf,float *buf2,struct Filters *f)
         //r = 0.001*(rand() % 100);
         //i = 0.001*(rand() % 100);
         if(rx->dt > 0){
+            //if(k == 0)printf("b %g ",atan2(i,r));
             buf2[k * 2] = (float)(r*rx->coso - i*rx->sino);
             buf2[k * 2 + 1] = (float)(i*rx->coso + r*rx->sino);
             sint=rx->sino*rx->cosdt+rx->coso*rx->sindt;
             cost=rx->coso*rx->cosdt-rx->sino*rx->sindt;
             rx->coso=cost;
             rx->sino=sint;
+            //if(k == 0)printf("b %g diff %g\n",atan2(buf2[k * 2],buf2[k * 2 + 1]),atan2(buf2[k * 2],buf2[k * 2 + 1])-atan2(i,r));
         }else{
             buf2[k * 2] = r;
             buf2[k * 2 + 1] = i;

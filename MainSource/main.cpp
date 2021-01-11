@@ -39,7 +39,7 @@ static void control_cb(int control);
 
 static void control_cb2(int control);
 
-char *ProgramVersion=(char *)"SdrGlut-777";
+char *ProgramVersion=(char *)"SdrGlut-779";
 
 extern "C" struct Scene *sceneRoot(void);
 
@@ -296,7 +296,7 @@ int main (int argc, char *argv[]) {
     fprintf(stderr,"LIQUID_VERSION_NUMBER %d\n",LIQUID_VERSION_NUMBER);
     
     SoapySDR_setLogLevel(SOAPY_SDR_WARNING);
-    SoapySDR_setLogLevel(SOAPY_SDR_TRACE);
+    //SoapySDR_setLogLevel(SOAPY_SDR_TRACE);
 
     // signal(SIGPIPE, SIG_IGN);
     
