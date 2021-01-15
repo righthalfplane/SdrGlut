@@ -888,10 +888,10 @@ FoundTime:
         
         ic=water.ic[n];
 
-        if(water.ic[n-1] > ic)ic=water.ic[n-1];
-        if(water.ic[n-2] > ic)ic=water.ic[n-2];
-        if(water.ic[n+1] > ic)ic=water.ic[n+1];
-        if(water.ic[n+2] > ic)ic=water.ic[n+2];
+       // if(water.ic[n-1] > ic)ic=water.ic[n-1];
+       // if(water.ic[n-2] > ic)ic=water.ic[n-2];
+       // if(water.ic[n+1] > ic)ic=water.ic[n+1];
+       // if(water.ic[n+2] > ic)ic=water.ic[n+2];
 
         
         water.data[ns1+3*n]=pd.palette[3*ic];

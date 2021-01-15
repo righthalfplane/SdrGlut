@@ -1678,10 +1678,12 @@ int rxBuffer(void *rxv)
 */
                 //printf("amin %g amax %g witch %d count %d\n",amin,amax,rx->witchRFBuffer,count);
                 if(ret != -1){
+                    //double as=(double)rx->size/(double)rx->FFTcount;
                     for(int k=0;k<rx->FFTcount;++k){
+                        //int ks=k*as;
                         if(k < rx->size){
-                           // rx->real[k]=buff[2*k]*scale;
-                           // rx->imag[k]=buff[2*k+1]*scale;
+                           // rx->real[k]=buff[2*ks]*scale;
+                           // rx->imag[k]=buff[2*ks+1]*scale;
                             rx->real[k]=buff[2*k];
                             rx->imag[k]=buff[2*k+1];
                         }else{

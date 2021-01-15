@@ -49,6 +49,11 @@
 #define MODE_CW   6
 
 /*
+#define LIQUID_VERSION_4 1
+*/
+
+
+/*
 g++ -O2 -std=c++11 -Wno-deprecated -o sdrTest sdrTest.cpp mThread.cpp cMalloc.c -lrtaudio -lSoapySDR -lliquid -lpthread -framework OpenAL
 
 g++ -O2 -std=c++11 -Wno-deprecated -o sdrTest sdrTest.cpp mThread.cpp cMalloc.c -lrtaudio -lSoapySDR -lliquid -lpthread -lopenal
