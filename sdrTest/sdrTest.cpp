@@ -76,10 +76,7 @@ g++ -O2 -std=c++11 -Wno-deprecated -o sdrTest sdrTest.cpp mThread.cpp cMalloc.c 
 
 ./sdrTest -fc 162.0e6 -f 162.4e6 -nbfm -gain 1
 
-./sdrTest -fc 9.36e6 -f 9.35e6
-
-./sdrTest -fc 101.1e6 -f 101.5e6 -fm -gain 1 -faudio
-
+./sdrTest -fc 102.0e6 -f 102.1e6 -fm -gain 1 -faudio 20000 -file test.raw
 
 */
 
