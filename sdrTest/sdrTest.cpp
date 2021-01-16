@@ -72,9 +72,14 @@ g++ -O2 -std=c++11 -Wno-deprecated -o sdrTest sdrTest.cpp mThread.cpp cMalloc.c 
 
 ./sdrTest -fc 103.0e6 -f 103.7e6 -fm -gain 1
 
+./sdrTest -fc 102.0e6 -f 102.1e6 -fm -gain 1
+
 ./sdrTest -fc 162.0e6 -f 162.4e6 -nbfm -gain 1
 
 ./sdrTest -fc 9.36e6 -f 9.35e6
+
+./sdrTest -fc 101.1e6 -f 101.5e6 -fm -gain 1 -faudio
+
 
 */
 
@@ -120,7 +125,7 @@ struct playData{
 
     unsigned long MTU;
     
-    float fOut;
+    float faudio;
     
     float Ratio;
 
@@ -156,6 +161,8 @@ struct playData{
  	std::string set[20];
  	std::string value[20];
  	int setcount;
+ 	
+ 	FILE *out;
  	
 
 };
@@ -254,6 +261,8 @@ int main (int argc, char * argv [])
     rx.antennaUse=NULL;
     rx.channel=0;
     rx.setcount=0;
+    rx.faudio=48000;
+    rx.out=NULL;
 	
 	signal(SIGINT, signalHandler);  
 
@@ -276,6 +285,13 @@ int main (int argc, char * argv [])
 	         rx.fc=atof(argv[++n]);
 	    }else if(!strcmp(argv[n],"-f")){
 	         rx.f=atof(argv[++n]);
+	    }else if(!strcmp(argv[n],"-file")){
+	         rx.out=fopen(argv[++n],"wb");
+	         if(rx.out == NULL){
+	             fprintf(stderr,"Could Not Open %s to Write\n",argv[n]);
+	         }
+	    }else if(!strcmp(argv[n],"-faudio")){
+	         rx.faudio=atof(argv[++n]);
 	    }else if(!strcmp(argv[n],"-device")){
 	         rx.deviceNumber=atoi(argv[++n]);
 	    }else if(!strcmp(argv[n],"-audiodevice")){
@@ -302,7 +318,6 @@ int main (int argc, char * argv [])
 		
 	rx.channels=2;
 	
-    rx.fOut=48000;
     
 	initPlay(&rx);
 		
@@ -315,86 +330,87 @@ int main (int argc, char * argv [])
 	
 	launchThread((void *)&rx,rxBuffer);   	
 	
-	
 	RtAudio dac;
 	
-	int deviceCount=dac.getDeviceCount();
+	if(!rx.out){
+	
+		int deviceCount=dac.getDeviceCount();
 		
 	
 	
-	if (deviceCount < 1 ) {
-		std::cout << "\nNo audio devices found!\n";
-		exit( 0 );
-	}
+		if (deviceCount < 1 ) {
+			std::cout << "\nNo audio devices found!\n";
+			exit( 0 );
+		}
 	
 	
-	fprintf(stderr,"\nAudio device Count %d default output device %d audiodevice %d\n",deviceCount,dac.getDefaultOutputDevice(),audiodevice);
+		fprintf(stderr,"\nAudio device Count %d default output device %d audiodevice %d\n",deviceCount,dac.getDefaultOutputDevice(),audiodevice);
 	
-    RtAudio::DeviceInfo info;
-    for (int i=0; i<deviceCount; i++) {
-        
-        try {
-            info=dac.getDeviceInfo(i);
-            if(info.outputChannels > 0){
-            // Print, for example, the maximum number of output channels for each device
-                fprintf(stderr,"audio device = %d : output  channels = %d Device Name = %s",i,info.outputChannels,info.name.c_str());
-                if(info.sampleRates.size()){
-                    fprintf(stderr," sampleRates = ");
-                    for (int ii = 0; ii < info.sampleRates.size(); ++ii){
-                 		fprintf(stderr," %d ",info.sampleRates[ii]);
-                   }
-				}
-                fprintf(stderr,"\n");
-             }
-             
-            if(info.inputChannels > 0){
-            // Print, for example, the maximum number of output channels for each device
-                fprintf(stderr,"audio device = %d : input   channels = %d Device Name = %s",i,info.inputChannels,info.name.c_str());
-                 if(info.sampleRates.size()){
-                    fprintf(stderr," sampleRates = ");
-                    for (int ii = 0; ii < info.sampleRates.size(); ++ii){
-                 		fprintf(stderr," %d ",info.sampleRates[ii]);
-                   }
-				}
-                fprintf(stderr,"\n");
-           }
+		RtAudio::DeviceInfo info;
+		for (int i=0; i<deviceCount; i++) {
+		
+			try {
+				info=dac.getDeviceInfo(i);
+				if(info.outputChannels > 0){
+				// Print, for example, the maximum number of output channels for each device
+					fprintf(stderr,"audio device = %d : output  channels = %d Device Name = %s",i,info.outputChannels,info.name.c_str());
+					if(info.sampleRates.size()){
+						fprintf(stderr," sampleRates = ");
+						for (int ii = 0; ii < info.sampleRates.size(); ++ii){
+							fprintf(stderr," %d ",info.sampleRates[ii]);
+					   }
+					}
+					fprintf(stderr,"\n");
+				 }
+			 
+				if(info.inputChannels > 0){
+				// Print, for example, the maximum number of output channels for each device
+					fprintf(stderr,"audio device = %d : input   channels = %d Device Name = %s",i,info.inputChannels,info.name.c_str());
+					 if(info.sampleRates.size()){
+						fprintf(stderr," sampleRates = ");
+						for (int ii = 0; ii < info.sampleRates.size(); ++ii){
+							fprintf(stderr," %d ",info.sampleRates[ii]);
+					   }
+					}
+					fprintf(stderr,"\n");
+			   }
 
-        }
-        catch (RtAudioError &error) {
-            error.printMessage();
-            break;
-        }
-        
-    }
-    
-	fprintf(stderr,"\n");
+			}
+			catch (RtAudioError &error) {
+				error.printMessage();
+				break;
+			}
+		
+		}
 	
-	list_audio();
+		fprintf(stderr,"\n");
 	
-	printInfo();
+		list_audio();
+	
+		printInfo();
 	
 	
-	RtAudio::StreamParameters parameters;
-	parameters.deviceId = dac.getDefaultOutputDevice();
-	parameters.deviceId = audiodevice;
-	parameters.nChannels = 2;
-	parameters.nChannels = 1;
-	parameters.firstChannel = 0;
-	//unsigned int sampleRate = 48000;
-	unsigned int sampleRate =   44100;
-	unsigned int bufferFrames = 4096; // 256 sample frames
+		RtAudio::StreamParameters parameters;
+		parameters.deviceId = dac.getDefaultOutputDevice();
+		parameters.deviceId = audiodevice;
+		parameters.nChannels = 2;
+		parameters.nChannels = 1;
+		parameters.firstChannel = 0;
+		//unsigned int sampleRate = 48000;
+		unsigned int sampleRate =   44100;
+		unsigned int bufferFrames = 4096; // 256 sample frames
 
 
-	try {
-		dac.openStream( &parameters, NULL, RTAUDIO_SINT16,
-						sampleRate, &bufferFrames, &sound, (void *)&rx );
-		dac.startStream();
-	}
-	catch ( RtAudioError& e ) {
-		e.printMessage();
-		exit( 0 );
-	}
-	
+		try {
+			dac.openStream( &parameters, NULL, RTAUDIO_SINT16,
+							sampleRate, &bufferFrames, &sound, (void *)&rx );
+			dac.startStream();
+		}
+		catch ( RtAudioError& e ) {
+			e.printMessage();
+			exit( 0 );
+		}
+	}	
 	
 	playRadio(&rx);
 
@@ -405,23 +421,23 @@ int main (int argc, char * argv [])
 	stopPlay(&rx);
 	
 	
-	
-  try {
-    // Stop the stream
-    dac.stopStream();
-  }
-  catch (RtAudioError& e) {
-    e.printMessage();
-  }
-  if ( dac.isStreamOpen() ) dac.closeStream();
-	
-	
-	
+	if(!rx.out){
+		  try {
+			// Stop the stream
+			dac.stopStream();
+		  }
+		  catch (RtAudioError& e) {
+			e.printMessage();
+		  }
+		  if ( dac.isStreamOpen() ) dac.closeStream();
+	}
 	
     
     pthread_mutex_destroy(&rx.mutex);
     pthread_mutex_destroy(&rx.mutexa);
     pthread_mutex_destroy(&rx.mutexo);
+	
+	if(rx.out)fclose(rx.out);
 	
 	return 0 ;
 } /* main */
@@ -544,7 +560,9 @@ int playRadio(struct playData *rx)
         
         std::cout << "rate " << rate << std::endl;
       
-        int size=rate*4096/(10*4800);
+        int size=rate*4096/(rx->faudio);
+        
+        if(rx->out)size=rate/10;
         
         //int size=rate/10;
                      
@@ -570,12 +588,12 @@ int playRadio(struct playData *rx)
 
         for(int k=0;k<NUM_ABUFF;++k){
         	if(rx->buffa[k])free(rx->buffa[k]);
-        	rx->buffa[k]=(short int *)malloc(2*rx->fOut*4);
+        	rx->buffa[k]=(short int *)malloc(2*rx->faudio*4);
         	if(!rx->buffa[k]){
-        	    fprintf(stderr,"1 malloc Errror %ld\n",(long)(2*rx->fOut*4));
+        	    fprintf(stderr,"1 malloc Errror %ld\n",(long)(2*rx->faudio*4));
        	     	return 1;
        		}
-        	zerol((char *)rx->buffa[k],2*rx->fOut*4);
+        	zerol((char *)rx->buffa[k],2*rx->faudio*4);
         	rx->buffStacka[k]=-1;
         }
         
@@ -611,11 +629,15 @@ int playRadio(struct playData *rx)
   	while(!threadexit){
   		Sleep2(50);
   		
-		//int ibuff;
-		//ibuff=popBuffa(rx);
-		//if (ibuff >= 0){
-		//	++i;
-		//}
+		int ibuff;
+		
+		if(rx->out){
+			ibuff=popBuffa(rx);
+			if (ibuff >= 0){
+				short int *buff= rx->buffa[ibuff % NUM_ABUFF];
+				fwrite(buff, 2, rx->faudio/10,rx->out);
+			}
+		}
 		
    	}      
     double end=rtime();
@@ -708,12 +730,12 @@ int Process(void *rxv)
 		printf("Process Start rx->frame %d\n",rx->frame);
 	
 	
-	float *aBuff=(float *)malloc(2*rx->fOut*4);
+	float *aBuff=(float *)malloc(2*rx->faudio*4);
     if(!aBuff){
-        fprintf(stderr,"3 malloc Errror %ld\n",(long)(2*rx->fOut*4));
+        fprintf(stderr,"3 malloc Errror %ld\n",(long)(2*rx->faudio*4));
        	 return 1;
     }
-    zerol((char *)aBuff,2*rx->fOut*4);
+    zerol((char *)aBuff,2*rx->faudio*4);
 	
 	while(rx->frame >= 0){
 		if(doFilter(rx,wBuff,aBuff,&f)){
@@ -1232,7 +1254,7 @@ int setFilters(struct playData *rx,struct Filters *f)
     
     float As = 60.0f;
     
-    float ratio=(float)(rx->fOut / rx->samplerate);
+    float ratio=(float)(rx->faudio / rx->samplerate);
     
     liquid_ampmodem_type mode=LIQUID_AMPMODEM_DSB;
     
@@ -1265,7 +1287,7 @@ int setFilters(struct playData *rx,struct Filters *f)
     }
     
     rx->Ratio = (float)(rx->bw/ rx->samplerate);
-    ratio= (float)(48000.0/rx->bw);
+    ratio= (float)(rx->faudio/rx->bw);
     
     f->demod=freqdem_create(0.5);
     
