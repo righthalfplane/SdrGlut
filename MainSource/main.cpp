@@ -39,7 +39,7 @@ static void control_cb(int control);
 
 static void control_cb2(int control);
 
-char *ProgramVersion=(char *)"SdrGlut-782";
+char *ProgramVersion=(char *)"SdrGlut-783";
 
 extern "C" struct Scene *sceneRoot(void);
 
@@ -271,7 +271,7 @@ static int doAbout(void)
 	p->set_alignment(GLUI_ALIGN_CENTER);
 		
 	new GLUI_StaticText(glui2, ""); 
-	p = new GLUI_StaticText(glui2, "Copyright 2011-2020 Dale Ranta. All rights reserved."); 
+	p = new GLUI_StaticText(glui2, "Copyright 2011-2021 Dale Ranta. All rights reserved."); 
 	p->set_alignment(GLUI_ALIGN_CENTER);
 	
 	new GLUI_Button(glui2, "Close", 3, control_cb2); 

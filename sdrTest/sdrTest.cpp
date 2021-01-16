@@ -76,11 +76,9 @@ g++ -O2 -std=c++11 -Wno-deprecated -o sdrTest sdrTest.cpp mThread.cpp cMalloc.c 
 
 ./sdrTest -fc 162.0e6 -f 162.4e6 -nbfm -gain 1
 
-./sdrTest -fc 102.0e6 -f 102.1e6 -fm -gain 1 -faudio 20000 -file test.raw
+./sdrTest -fc 102.0e6 -f 102.1e6 -fm -gain 1 -faudio 12000 -file test.raw
 
 */
-
-#define	BLOCK_SIZE 4800
 
 #define NUM_SOURCES 1
 
@@ -336,7 +334,7 @@ int main (int argc, char * argv [])
 	
 	
 		if (deviceCount < 1 ) {
-			std::cout << "\nNo audio devices found!\n";
+			fprintf(stderr,"\nNo audio devices found!\n");
 			exit( 0 );
 		}
 	
@@ -393,14 +391,12 @@ int main (int argc, char * argv [])
 		parameters.nChannels = 2;
 		parameters.nChannels = 1;
 		parameters.firstChannel = 0;
-		//unsigned int sampleRate = 48000;
-		unsigned int sampleRate =   44100;
-		unsigned int bufferFrames = 4096; // 256 sample frames
+		unsigned int bufferFrames = rx.faudio/50; // 256 sample frames
 
 
 		try {
 			dac.openStream( &parameters, NULL, RTAUDIO_SINT16,
-							sampleRate, &bufferFrames, &sound, (void *)&rx );
+							rx.faudio, &bufferFrames, &sound, (void *)&rx );
 			dac.startStream();
 		}
 		catch ( RtAudioError& e ) {
@@ -548,29 +544,18 @@ int StartIt(struct playData *rx)
 
 int playRadio(struct playData *rx)
 {
- //   ALenum error;
-    
- //   ALint processed;
-
 
         double rate=rx->device->getSampleRate(SOAPY_SDR_RX, 0);
         
-        std::cout << "rate " << rate << std::endl;
+        fprintf(stderr,"rate \n");
       
-        int size=rate*4096/(rx->faudio);
-        
-        if(rx->out)size=rate/10;
-        
-        //int size=rate/10;
-                     
-        //int size=200000;
-        
-        //size=size*2*48000.0/10000.0;
-  
-                 
+        int size=rate/50;
+                    
+    	if(rx->out)size=rate/10;
+                       
         rx->size=size;
         
-        printf("rate %f rx->size %d\n",rate,rx->size);
+        fprintf(stderr,"rate %f rx->size %d\n",rate,rx->size);
                 
         for(int k=0;k<NUM_DATA_BUFF;++k){
         	if(rx->buff[k])free(rx->buff[k]);
@@ -606,17 +591,12 @@ int playRadio(struct playData *rx)
         
         rx->frame=0;
         
-        
-    
-        
        // launchThread((void *)rx,Process);   	
 
        // launchThread((void *)rx,Process); 
           	
         launchThread((void *)rx,Process);   	        
         
-
-	
 		Sleep2(100);
  
         fprintf(stderr,"Start playing\n");
@@ -627,7 +607,7 @@ int playRadio(struct playData *rx)
   		Sleep2(50);
   		
 		int ibuff;
-		
+	
 		if(rx->out){
 			ibuff=popBuffa(rx);
 			if (ibuff >= 0){
@@ -818,6 +798,11 @@ int doFilter(struct playData *rx,float *wBuff,float *aBuff,struct Filters *f)
             
         }
         
+        
+    double r=sqrt(rx->coso*rx->coso+rx->sino*rx->sino);
+    rx->coso /= r;
+    rx->sino /= r;
+      
 
 	//float *buf=aBuff;
 	buf=aBuff;
@@ -1612,7 +1597,7 @@ int doAudio(float *aBuff,struct playData *rx)
 	
 	if(gain <= 0.0)gain=1.0;
 	
-	for (int i=0; i<BLOCK_SIZE; i++ ) {
+	for (int i=0; i<rx->faudio; i++ ) {
 		double v;
 		v=buff[i];
 		if(v < amin)amin=v;
@@ -1627,7 +1612,7 @@ int doAudio(float *aBuff,struct playData *rx)
 		
 	dmin=amin;
 
-	for(int k=0;k<BLOCK_SIZE;++k){
+	for(int k=0;k<rx->faudio;++k){
 		double v;
 		v=gain*buff[k];
 		v=(v-dmin)*dnom-32000;
