@@ -19,6 +19,8 @@
 
 #include <sys/time.h>
 
+#include <time.h>
+
 
 #ifdef __APPLE__
 #include <OpenAL/al.h>
@@ -160,6 +162,8 @@ struct playData{
  	double timeout;
  	double timestart;
  	FILE *out;
+ 	int dumpbyminute;
+    int idump;
  	
 
 };
@@ -262,12 +266,24 @@ int main (int argc, char * argv [])
     rx.out=NULL;
     rx.timeout=0;
     rx.timestart=0;
+    rx.dumpbyminute=0;
+    rx.idump=0;
 	
 	signal(SIGINT, signalHandler);  
 
 	for(int n=1;n<argc;++n){
 	    if(!strcmp(argv[n],"-debug")){
 		   rx.Debug = 1;
+	    }else if(!strcmp(argv[n],"-dumpbyminute")){
+		   char filename[256];
+		   sprintf(filename,"minute-%08d.raw",rx.idump++);
+		   fprintf(stderr,"filename %s\n",filename);
+		   rx.out=fopen(filename,"wb");
+		   if(rx.out == NULL){
+				fprintf(stderr,"Could Not Open %s to Write\n",filename);
+				exit(1);
+		   }
+		   rx.dumpbyminute = 1;
 	    }else if(!strcmp(argv[n],"-am")){
 		   rx.decodemode = MODE_AM;
 	    }else if(!strcmp(argv[n],"-fm")){
@@ -309,9 +325,6 @@ int main (int argc, char * argv [])
 			// infilename = argv [n] ;
 		}
 	}
-	
-	
-	
 	
 	pthread_mutex_init(&rx.mutex,NULL);
 	pthread_mutex_init(&rx.mutexa,NULL);
@@ -554,9 +567,9 @@ int playRadio(struct playData *rx)
         double rate=rx->device->getSampleRate(SOAPY_SDR_RX, 0);
               
         int size=rate/50;
-                    
-    	if(rx->out)size=rate/10;
-                       
+    
+       	if(rx->out)size=rate/10;
+ 	        
         rx->size=size;
         
         fprintf(stderr,"rate %f rx->size %d\n",rate,rx->size);
@@ -587,9 +600,33 @@ int playRadio(struct playData *rx)
         	rx->bufferState[k]=0;
         }
     
+    	if(rx->dumpbyminute){
+    		struct tm today;
+    		struct tm next;
+    		fprintf(stderr,"Waiting For Next Minute\n");
+    		time_t now;
+    		time(&now);
+    		today = *localtime(&now);
+    		do {
+    			Sleep2(5);
+      			time(&now);
+    			next = *localtime(&now);
+  			}while(today.tm_min == next.tm_min);
+  			
+    	    rx->doWhat=2;
+
+    	    fprintf(stderr,"Start Time: ");
+    		fprintf(stderr,"year %d ",next.tm_year+1900);
+       		fprintf(stderr,"month %d ",next.tm_mon+1); 		
+      		fprintf(stderr,"day %d ",next.tm_mday);
+    		fprintf(stderr,"hour %d ",next.tm_hour);
+     		fprintf(stderr,"min %d ",next.tm_min);
+   	        fprintf(stderr,"sec %d \n",next.tm_sec);
 
 
-        rx->doWhat=2;
+    	}else{
+    	   rx->doWhat=2;
+    	}
         
         rx->witch=0;
         
@@ -605,7 +642,7 @@ int playRadio(struct playData *rx)
  
         fprintf(stderr,"Start playing\n");
         
-        
+    int count=0;
 	rx->timestart=rtime();
   	while(!threadexit){
   		Sleep2(50);
@@ -618,8 +655,22 @@ int playRadio(struct playData *rx)
 			int ibuff;
 			ibuff=popBuffa(rx);
 			if (ibuff >= 0){
+			   	char filename[256];
 				short int *buff= rx->buffa[ibuff % NUM_ABUFF];
 				fwrite(buff, 2, rx->faudio/10,rx->out);
+				if(rx->dumpbyminute){
+					if(++count == 10*60){
+						fclose(rx->out);
+						sprintf(filename,"minute-%08d.raw",rx->idump++);
+						fprintf(stderr,"filename %s\n",filename);
+						rx->out=fopen(filename,"wb");
+						if(rx->out == NULL){
+							fprintf(stderr,"Could Not Open %s to Write\n",filename);
+							exit(1);
+						}
+						count=0;
+					}
+				}
 			}
 		}
 		
@@ -1177,7 +1228,7 @@ int rxBuffer(void *rxv)
 	{
 	     switch(rx->doWhat){
 	     case 0:
-	     	;
+	     	Sleep2(5);
 	        break;
 	     case 1:
 	        fprintf(stderr,"Exit rxBuffer\n");
