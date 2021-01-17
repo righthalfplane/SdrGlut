@@ -157,6 +157,8 @@ struct playData{
  	std::string value[20];
  	int setcount;
  	
+ 	double timeout;
+ 	double timestart;
  	FILE *out;
  	
 
@@ -258,6 +260,8 @@ int main (int argc, char * argv [])
     rx.setcount=0;
     rx.faudio=48000;
     rx.out=NULL;
+    rx.timeout=0;
+    rx.timestart=0;
 	
 	signal(SIGINT, signalHandler);  
 
@@ -293,6 +297,8 @@ int main (int argc, char * argv [])
 	         audiodevice=atoi(argv[++n]);
 	    }else if(!strcmp(argv[n],"-samplerate")){
             rx.samplerate=atof(argv[++n]);
+	    }else if(!strcmp(argv[n],"-timeout")){
+            rx.timeout=atof(argv[++n]);
 	    }else if(!strcmp(argv[n],"-antenna")){
             rx.antennaUse=strsave(argv[++n],9870);
 	    }else if(!strcmp(argv[n],"-set")){
@@ -546,9 +552,7 @@ int playRadio(struct playData *rx)
 {
 
         double rate=rx->device->getSampleRate(SOAPY_SDR_RX, 0);
-        
-        fprintf(stderr,"rate \n");
-      
+              
         int size=rate/50;
                     
     	if(rx->out)size=rate/10;
@@ -602,13 +606,16 @@ int playRadio(struct playData *rx)
         fprintf(stderr,"Start playing\n");
         
         
-	double start=rtime();
+	rx->timestart=rtime();
   	while(!threadexit){
   		Sleep2(50);
   		
-		int ibuff;
+		if(rx->timeout > 0 && rtime() > rx->timeout+rx->timestart){
+			break;
+		}
 	
 		if(rx->out){
+			int ibuff;
 			ibuff=popBuffa(rx);
 			if (ibuff >= 0){
 				short int *buff= rx->buffa[ibuff % NUM_ABUFF];
@@ -616,12 +623,13 @@ int playRadio(struct playData *rx)
 			}
 		}
 		
+		
    	}      
     double end=rtime();
     
-    double total=end-start;
+    double total=end-rx->timestart;
     
-    fprintf(stderr," Seconds %.4f Seconds/frame %.4f\n",total,total/100);
+    fprintf(stderr," Seconds %.2f\n",total);
     
     rx->doWhat=0;
         
