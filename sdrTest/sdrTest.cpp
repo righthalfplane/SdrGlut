@@ -95,7 +95,7 @@ g++ -O2 -std=c++11 -Wno-deprecated -o sdrTest sdrTest.cpp mThread.cpp cMalloc.c 
 /opt/local/bin/sox -t raw -r 48000 -b 16 -c 1 -L -e signed-integer test01.raw -n stat
 
 ./sdrTest -fc 602e6 -f 602.308400e6 -usb -timeout 10 -file test01.raw -device 1 -PPM -0.380
-./sdrTest -fc 602e6 -f 602.308400e6 -usb -timeout 10 -file test01.raw -device 0
+./sdrTest -fc 602e6 -f 602.308400e6 -usb -timeout 5 -file test01.raw -device 0
 /opt/local/bin/sox -t raw -r 48000 -b 16 -c 1 -L -e signed-integer test01.raw -n stat
 
 */
@@ -117,15 +117,15 @@ struct playData{
     int channels;
     int samplerate;
 	int Debug;
-	float gain;
-	float fc;
-	float f;
-	float dt;
-	float sino;
-	float coso;
-	float sindt;
-	float cosdt;
-	float w;
+	double gain;
+	double fc;
+	double f;
+	double dt;
+	double sino;
+	double coso;
+	double sindt;
+	double cosdt;
+	double w;
 	double bw;
 	int decodemode;
 
