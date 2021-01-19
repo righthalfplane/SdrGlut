@@ -78,7 +78,25 @@ g++ -O2 -std=c++11 -Wno-deprecated -o sdrTest sdrTest.cpp mThread.cpp cMalloc.c 
 
 ./sdrTest -fc 162.0e6 -f 162.4e6 -nbfm -gain 1
 
-./sdrTest -fc 102.0e6 -f 102.1e6 -fm -gain 1 -faudio 12000 -file test.raw
+./sdrTest -fc 102.0e6 -f 102.1e6 -fm -gain 0.9 -faudio 12000 -file test.raw -timeout 10
+
+./sdrTest -fc 101.1e6 -f 101.5e6 -fm -gain 0.9 -faudio 12000 -file test.raw -timeout 10
+
+./sdrTest -fc 102.0e6 -f 102.1e6 -fm -gain 1 -timeout 15 -faudio 12000 -file test.raw
+
+./sdrTest -fc 102.0e6 -f 102.1e6 -fm -gain 1 -timeout 601 -dumpbyminute -faudio 12000
+
+./sdrTest -fc 102.0e6 -f 102.1e6 -fm -gain 1 -dumpbyminute -faudio 12000
+
+./sdrTest -fc 602e6 -f 602.308400e6 -usb -timeout 10 -file test01.raw
+
+./sdrTest -fc 602e6 -f 602.308400e6 -usb -timeout 10 -file test01.raw -device 1
+
+/opt/local/bin/sox -t raw -r 48000 -b 16 -c 1 -L -e signed-integer test01.raw -n stat
+
+./sdrTest -fc 602e6 -f 602.308400e6 -usb -timeout 10 -file test01.raw -device 1 -PPM -0.380
+./sdrTest -fc 602e6 -f 602.308400e6 -usb -timeout 10 -file test01.raw -device 0
+/opt/local/bin/sox -t raw -r 48000 -b 16 -c 1 -L -e signed-integer test01.raw -n stat
 
 */
 
@@ -164,7 +182,11 @@ struct playData{
  	FILE *out;
  	int dumpbyminute;
     int idump;
+    
+    double aminGlobal;
+    double amaxGlobal;
  	
+ 	double PPM;
 
 };
 
@@ -268,7 +290,11 @@ int main (int argc, char * argv [])
     rx.timestart=0;
     rx.dumpbyminute=0;
     rx.idump=0;
-	
+    rx.PPM=0;
+    rx.aminGlobal=0;
+    rx.amaxGlobal=0;
+	 	
+
 	signal(SIGINT, signalHandler);  
 
 	for(int n=1;n<argc;++n){
@@ -296,6 +322,8 @@ int main (int argc, char * argv [])
             rx.decodemode = MODE_LSB;
 	    }else if(!strcmp(argv[n],"-gain")){
 	         rx.gain=atof(argv[++n]);
+	    }else if(!strcmp(argv[n],"-PPM")){
+	         rx.PPM=atof(argv[++n]);
 	    }else if(!strcmp(argv[n],"-fc")){
 	         rx.fc=atof(argv[++n]);
 	    }else if(!strcmp(argv[n],"-f")){
@@ -531,7 +559,7 @@ int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
 	}
   }
   
- // printf("streamTime %f nBufferFrames %d audioOut %d doWhat %d ibuff %d\n",
+ // fprintf(stderr,"streamTime %f nBufferFrames %d audioOut %d doWhat %d ibuff %d\n",
   //     streamTime,nBufferFrames,rx->audioOut,rx->doWhat,ibuff);
   
   return 0;
@@ -763,7 +791,7 @@ int Process(void *rxv)
     }
     zerol((char *)wBuff,2*rx->size*4);
 
-		printf("Process Start rx->frame %d\n",rx->frame);
+	fprintf(stderr,"Process Start rx->frame %d\n",rx->frame);
 	
 	
 	float *aBuff=(float *)malloc(2*rx->faudio*4);
@@ -780,7 +808,7 @@ int Process(void *rxv)
 			doAudio(aBuff,rx);
 		}
 	}
-	printf("Process return rx->frame %d\n",rx->frame);
+	fprintf(stderr,"Process return rx->frame %d\n",rx->frame);
 	
 	if(wBuff)free(wBuff);
 	
@@ -804,11 +832,11 @@ int doFilter(struct playData *rx,float *wBuff,float *aBuff,struct Filters *f)
 {
  	int ip=popBuff(rx);
  	if(ip < 0){
- 	// printf("wait thread %d\n",f->thread);
+ 	// fprintf(stderr,"wait thread %d\n",f->thread);
  	     return 1;
  	}
  	
- 	//printf("ip %d thread %d\n",ip,f->thread);
+ 	//fprintf(stderr,"ip %d thread %d\n",ip,f->thread);
  	
  	int witch=ip % NUM_DATA_BUFF;
  	
@@ -816,7 +844,7 @@ int doFilter(struct playData *rx,float *wBuff,float *aBuff,struct Filters *f)
  	//fprintf(stderr,"doFilter witch %d ip %d start \n",witch,ip);
 	
  	
- 	// printf("shift %f size %d fShift %p\n",shift,rx->size,rx->fShift);
+ 	// fprintf(stderr,"shift %f size %d fShift %p\n",shift,rx->size,rx->fShift);
  /*
  
  	float shift=rx->fc-rx->f;
@@ -882,7 +910,7 @@ int doFilter(struct playData *rx,float *wBuff,float *aBuff,struct Filters *f)
 
         msresamp_rrrf_execute(f->iqSampler2, (float *)buf2, num, (float *)buf, &num2);  // interpolate
 
-        //printf("2 rx->size %d num %u num2 %u\n",rx->size,num,num2);
+        //fprintf(stderr,"2 rx->size %d num %u num2 %u\n",rx->size,num,num2);
 
     }else if(rx->decodemode < MODE_USB){
         #define DC_ALPHA 0.99    //ALPHA for DC removal filter ~20Hz Fcut with 15625Hz Sample Rate
@@ -1067,13 +1095,14 @@ int findRadio(struct playData *rx)
     
     results = SoapySDR::Device::enumerate();
     
-    std::cout << "results.size " << results.size() << std::endl;
+    std::cout << "Number of Devices Found: " << results.size() << std::endl;
     
     if(results.size() < 1)return 1;
     
     rx->device = NULL;
     
     SoapySDR::Kwargs deviceArgs;
+    
     
     
     for(unsigned int k=0;k<results.size();++k){
@@ -1084,19 +1113,20 @@ int findRadio(struct playData *rx)
 			}
     }
     
+    std::cout << std::endl;
+
     for(unsigned int k=0;k<results.size();++k){
     
     	if(k == rx->deviceNumber){
         
 			deviceArgs = results[k];
 		
-			std::cout << std::endl;
 	
-			std::cout << "*****   device = " << k << " selected *****" << std::endl;
+			std::cout << "device = " << k << " selected" << std::endl;
 	
 	
 			for (SoapySDR::Kwargs::const_iterator it = deviceArgs.begin(); it != deviceArgs.end(); ++it) {
-				std::cout << "  " << it->first << " = " << it->second << std::endl;
+				std::cout << it->first << " = " << it->second << std::endl;
 				if (it->first == "driver") {
 					//dev->setDriver(it->second);
 				} else if (it->first == "label" || it->first == "device") {
@@ -1139,7 +1169,7 @@ int findRadio(struct playData *rx)
             	for (SoapySDR::ArgInfoList::const_iterator args_i = args.begin(); args_i != args.end(); args_i++) {
                 	SoapySDR::ArgInfo arg = (*args_i);
 
-                	printf("key %s value %s read %s type %d min %g max %g step %g\n",arg.key.c_str(),arg.value.c_str(),rx->device->readSetting(arg.key).c_str(),
+                	fprintf(stderr,"key %s value %s read %s type %d min %g max %g step %g\n",arg.key.c_str(),arg.value.c_str(),rx->device->readSetting(arg.key).c_str(),
                        	(int)arg.type,arg.range.minimum(),arg.range.maximum(),arg.range.step());
 
             	}
@@ -1178,13 +1208,14 @@ int findRadio(struct playData *rx)
 
         	std::vector<double> band=rx->device->listBandwidths(SOAPY_SDR_RX, rx->channel);
         	if(band.size()){
-                 fprintf(stderr,"\nBandwidth MHZ ");
-      		}
-			for (size_t j = 0; j <band.size(); j++)
-        	{
-               fprintf(stderr," %.2f ",band[j]/1.0e6);
-         	}
-            fprintf(stderr,"\n\n");
+                fprintf(stderr,"\nBandwidth MHZ ");  		
+				for (size_t j = 0; j <band.size(); j++)
+				{
+				   fprintf(stderr," %.2f ",band[j]/1.0e6);
+				}
+				fprintf(stderr,"\n\n");
+            }
+            
 
 			std::vector<double> rate=rx->device->listSampleRates(SOAPY_SDR_RX, rx->channel);
         	if(rate.size()){
@@ -1207,9 +1238,18 @@ int findRadio(struct playData *rx)
 
 			rx->device->activateStream(rx->rxStream, 0, 0, 0); 
 
-			std::cout << "getGainMode: " << rx->device->getGainMode(SOAPY_SDR_RX, rx->channel) << " ";
-
-			std::cout << std::endl;
+			std::cout << "getGainMode: " << rx->device->getGainMode(SOAPY_SDR_RX, rx->channel) << std::endl;
+			
+			int hasFrequencyCorrection= rx->device->hasFrequencyCorrection(SOAPY_SDR_RX, rx->channel);
+			
+			std::cout << "hasFrequencyCorrection: " << hasFrequencyCorrection<< std::endl;
+			
+			if(hasFrequencyCorrection && rx->PPM){
+			    rx->device->setFrequencyCorrection(SOAPY_SDR_RX, rx->channel,rx->PPM);
+			}
+			
+		
+			// std::cout << std::endl;
 			
              
 		}
@@ -1262,12 +1302,12 @@ int rxBuffer(void *rxv)
 				 timeNs++;
 						   
 				if(ret <= 0){
-				   printf("ret=%d, flags=%d, timeNs=%lld b0 %f b1 %f \n", ret, flags, timeNs,buff[0],buff[1]);
+				   fprintf(stderr,"ret=%d, flags=%d, timeNs=%lld b0 %f b1 %f \n", ret, flags, timeNs,buff[0],buff[1]);
 				   break;
 				}else if(ret < toRead){
                     count += ret;
                     toRead=toRead-ret;
-					//printf("ret=%d, flags=%d, timeNs=%lld b0 %f b1 %f toRead %d witch %d\n", ret, flags, timeNs,buff[0],buff[1],toRead,rx->witch);
+					//fprintf(stderr,"ret=%d, flags=%d, timeNs=%lld b0 %f b1 %f toRead %d witch %d\n", ret, flags, timeNs,buff[0],buff[1],toRead,rx->witch);
 				}else{
 					break;
 				}
@@ -1372,7 +1412,7 @@ static int initPlay(struct playData *rx)
     	rx->w=2.0*pi*(rx->fc - rx->f);
     	rx->sindt=sin(rx->w*rx->dt);
     	rx->cosdt=cos(rx->w*rx->dt);
-    	printf("fc %f f %f dt %g samplerate %d\n",rx->fc,rx->f,rx->dt,rx->samplerate);
+    	fprintf(stderr,"fc %f f %f dt %g samplerate %d\n",rx->fc,rx->f,rx->dt,rx->samplerate);
     }
     
     
@@ -1585,7 +1625,7 @@ int testRadio(struct playData *rx,SoapySDR::Kwargs deviceArgs)
             for (SoapySDR::ArgInfoList::const_iterator args_i = args.begin(); args_i != args.end(); args_i++) {
                 SoapySDR::ArgInfo arg = (*args_i);
 
-                printf("key %s value %s read %s type %d min %g max %g step %g\n",arg.key.c_str(),arg.value.c_str(),rx->device->readSetting(arg.key).c_str(),
+                fprintf(stderr,"key %s value %s read %s type %d min %g max %g step %g\n",arg.key.c_str(),arg.value.c_str(),rx->device->readSetting(arg.key).c_str(),
                        (int)arg.type,arg.range.minimum(),arg.range.maximum(),arg.range.step());
 
             }
@@ -1656,25 +1696,64 @@ int doAudio(float *aBuff,struct playData *rx)
 	
 	if(gain <= 0.0)gain=1.0;
 	
+	double average=0;
+	
 	for (int i=0; i<rx->faudio; i++ ) {
 		double v;
 		v=buff[i];
+        average += v;
 		if(v < amin)amin=v;
 		if(v > amax)amax=v;
 	}
 	
+	average /= rx->faudio;
+	
+    amin -= average;
+
+    amax -= average;
+	
+
+    if(rx->aminGlobal == 0.0)rx->aminGlobal=amin;
+
+    rx->aminGlobal = 0.8*rx->aminGlobal+0.2*amin;
+
+    amin=rx->aminGlobal;
+
+    
+
+    if(rx->amaxGlobal == 0.0)rx->amaxGlobal=amax;
+
+    rx->amaxGlobal = 0.8*rx->amaxGlobal+0.2*amax;
+
+    amax=rx->amaxGlobal;
+
+
 	//fprintf(stderr,"doAudio size %d amin %f amax %f audioOut %d\n",BLOCK_SIZE,amin,amax,audioOut);
 	
-	//amin=0.0;
 	
-	dnom=64000.0/(amax-amin);
+    if((amax-amin) > 0){
+
+        dnom=65535.0/(amax-amin);
+    }else{
+
+        dnom=65535.0;
+    }
 		
 	dmin=amin;
 
 	for(int k=0;k<rx->faudio;++k){
 		double v;
-		v=gain*buff[k];
-		v=(v-dmin)*dnom-32000;
+
+        v=buff[k];
+
+		v=gain*((v-average)*dnom);
+
+        if(v < -32765){
+            v = -32765;
+        }else if(v > 32765){
+            v=32765;
+        }
+
 		data[k]=(short int)v;
 	}	
 
@@ -1718,7 +1797,7 @@ static void list_audio()
     
     enumeration = alcIsExtensionPresent(NULL, "ALC_ENUMERATION_EXT");
     if (enumeration == AL_FALSE){
-        printf("enumeration not supported\n");
+        fprintf(stderr,"enumeration not supported\n");
     }else{
         list_audio_devices(alcGetString(NULL, ALC_DEVICE_SPECIFIER));
         list_audio_devices(alcGetString(NULL, ALC_CAPTURE_DEFAULT_DEVICE_SPECIFIER));
