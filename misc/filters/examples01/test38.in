@@ -102,5 +102,6 @@ fir 100
  99,   8.8769745e-08
  end
 dft 201
+force ifft 4096 10
 exit
 

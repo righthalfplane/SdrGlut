@@ -104,5 +104,6 @@ fir 101
 end
 dft 200
 force impulse 201
+force ifft 4096 10
 exit
 
