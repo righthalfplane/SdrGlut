@@ -9,6 +9,7 @@ SdrGlut now has a send option where it uses tcp/ip to transfer the I/Q stream to
 https://github.com/righthalfplane/SdrGlut/releases/tag/v1.21
 
 ## Demo videos
+- [Icom IC-R30 vs a Cobra 38WXST at CB frequencies](https://youtu.be/FBa0GskAYCI)
 - [Icom IC-R30 vs a Eton Elite Executive at CB frequencies](https://youtu.be/jJe3iPdgmLY)
 - [Icom IC-R6800 vs a ALINCO DX-R8 at CB frequencies](https://youtu.be/H_mMCzuW_aI)
 - [Icom IC-R6800 vs a AOR AR8200 MK3 at CB frequencies.](https://youtu.be/xeJGhNRZTTM)
