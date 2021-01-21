@@ -811,7 +811,7 @@ int doForce(BatchPtr Batch,struct CommandInfo *cp)
           int nend=(int)f;
           for(int n=0;n<np;++n){
               real[n]=0;
-              if(nw++ > nend && n < np/2){
+              if(++nw >= nend && n < np/2){
                   nw=0;
                   real[n]=1;
               }
