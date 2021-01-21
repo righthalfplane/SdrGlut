@@ -9,6 +9,10 @@ SdrGlut now has a send option where it uses tcp/ip to transfer the I/Q stream to
 https://github.com/righthalfplane/SdrGlut/releases/tag/v1.21
 
 ## Demo videos
+- [How to Install RtAudio on the Raspberry pi](https://youtu.be/YKyYXtv4aGw)
+- [How to Install RtAudio on MacOS](https://youtu.be/HlnC5K5qQ98)
+- [How to Install RtAudio on Windows 10](https://youtu.be/DyYIKiu2zVI)
+- [How to Install RtAudio on Ubuntu18.04](https://youtu.be/mOGWG1K52wA)
 - [SdrGlut uses WSJT-X and GridTracker to capture digital Amateur traffic.](https://youtu.be/poebQhvDJ5k)
 - [SdrGlut - How to set the Time, Frequency and Mode for Recordings.](https://youtu.be/oGKcOFbus_U)
 - [sdrTest is a test program for software defined radios.](https://youtu.be/hxxhsxCiPlY)
@@ -90,10 +94,6 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.21
 - [A UFO flys over San Diego](https://youtu.be/O054bYnZmFw)
 - [The Vanishing Jet and Templet Based Vision](https://youtu.be/caeDZnL3oPg)
 - [DISCON the Ultimate computer system of 1982](https://youtu.be/a3yK93VcKm4)
-- [How to Install RtAudio on the Raspberry pi](https://youtu.be/YKyYXtv4aGw)
-- [How to Install RtAudio on MacOS](https://youtu.be/HlnC5K5qQ98)
-- [How to Install RtAudio on Windows 10](https://youtu.be/DyYIKiu2zVI)
-- [How to Install RtAudio on Ubuntu18.04](https://youtu.be/mOGWG1K52wA)
 - [Using gnuradio-companion to capture over the air ATSC video with the LimeSDR Mini](https://youtu.be/guPmP1VPqKk)
 - [Using gnuradio-companion to capture over the air ATSC video](https://youtu.be/jQGk9dORKrc)
 - [LimeSDR Mini using CubicSDR 0.2.5 on Several Systems](https://youtu.be/zCTIK82YW9w)
