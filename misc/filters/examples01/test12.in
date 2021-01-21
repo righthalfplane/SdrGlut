@@ -9,5 +9,6 @@ force sin 10 1000 101
 force random 4096
 force sin 10 1000 1024
 force sin 10 2000 512
+force ifft 4096 20
 exit
 

@@ -6,6 +6,7 @@ force sin 10 1000 1800
 force sin 10 2500 1800
 force sin 10 3500 1800
 force sin 10 4000 1800
+force ifft 4096 10
 exit
 
 

@@ -4,6 +4,7 @@ response 401
 force sin 10 760000 2401
 force sin 10 750000 2401
 force sin 10 740000 2401
+force ifft 4096 1
 exit
 
 cbandpass butter 8 0.2 745000 755000

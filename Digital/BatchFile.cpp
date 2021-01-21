@@ -793,6 +793,37 @@ int doForce(BatchPtr Batch,struct CommandInfo *cp)
           if(force)eFree(force);
           
           
+      }else if(!mstrcmp((char *)"ifft",command)){
+          
+          int np=(int)value;
+          double f;
+          
+          ret=doubleCommand(&f,cp);
+          if(ret)goto ErrorOut;
+          ++(cp->n);
+
+          fprintf(stderr,"\n    fft   steps %d\n\n",(int)value);
+          
+          double *real = (double *)eMalloc(np*sizeof(double),20048);
+          double *imag = (double *)eMalloc(np*sizeof(double),20048);
+
+          int nw=0;
+          int nend=(int)f;
+          for(int n=0;n<np;++n){
+              real[n]=0;
+              if(nw++ > nend && n < np/2){
+                  nw=0;
+                  real[n]=1;
+              }
+              imag[n]=0;
+          }
+          
+          doFFT2(real,imag,(long)np,-1);
+
+          pl->force(real,np);
+          
+          if(real)eFree(real);
+          if(imag)eFree(imag);
       }else if(!mstrcmp((char *)"impulse",command)){
           
           int np=(int)value;

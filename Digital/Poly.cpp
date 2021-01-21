@@ -129,6 +129,9 @@ int Poly::forceFIR(double *input,int npoint)
     
     BatchPlot((char *)"forceFIR",0,xnp,ynp,npoint);
     
+    if(npoint == 512 || npoint == 1024 || npoint == 2048 || npoint == 4096)
+        BatchPlot((char *)"forceFIR(fft)",1,xnp,ynp,npoint);
+
     if(xnp)eFree(xnp);
     
     if(ynp)eFree(ynp);
@@ -188,6 +191,9 @@ int Poly::forceCascade(double *input,int npoint)
     
     BatchPlot((char *)"forceCascade",0,xnp,ynp,npoint);
     
+    if(npoint == 512 || npoint == 1024 || npoint == 2048 || npoint == 4096)
+        BatchPlot((char *)"forceCascade(fft)",1,xnp,ynp,npoint);
+
     return 0;
 }
 int Poly::force(double *input,int npoint)
@@ -273,7 +279,7 @@ int Poly::force(double *input,int npoint)
     BatchPlot((char *)"force",0,xnp,ynp,npoint);
     
     if(npoint == 512 || npoint == 1024 || npoint == 2048 || npoint == 4096)
-            BatchPlot((char *)"force",1,xnp,ynp,npoint);
+            BatchPlot((char *)"force(fft)",1,xnp,ynp,npoint);
 
     if(xnp)eFree(xnp);
     
