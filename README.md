@@ -9,12 +9,6 @@ SdrGlut now has a send option where it uses tcp/ip to transfer the I/Q stream to
 https://github.com/righthalfplane/SdrGlut/releases/tag/v1.21
 
 ## Demo videos
-- [Icom IC-R30 vs a Cobra 38WXST at CB frequencies](https://youtu.be/FBa0GskAYCI)
-- [Icom IC-R30 vs a Eton Elite Executive at CB frequencies](https://youtu.be/jJe3iPdgmLY)
-- [Icom IC-R6800 vs a ALINCO DX-R8 at CB frequencies](https://youtu.be/H_mMCzuW_aI)
-- [Icom IC-R6800 vs a AOR AR8200 MK3 at CB frequencies.](https://youtu.be/xeJGhNRZTTM)
-- [Icom IC-R6800 vs a AOR AR8200 MK3 at FRS frequencies.](https://youtu.be/PPTMccFdxdk)
-- [Icom IC-R30 vs a AOR AR8200 MK3 at FRS frequencies.](https://youtu.be/IpzZd8qS4g8)
 - [SdrGlut uses WSJT-X and GridTracker to capture digital Amateur traffic.](https://youtu.be/poebQhvDJ5k)
 - [SdrGlut - How to set the Time, Frequency and Mode for Recordings.](https://youtu.be/oGKcOFbus_U)
 - [sdrTest is a test program for software defined radios.](https://youtu.be/hxxhsxCiPlY)
@@ -53,6 +47,12 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.21
 - [LimeSDR Mini using SdrGlut on Several Systems](https://youtu.be/yhxqu5VcO3w)
 - [Gqrx vs SdrGlut at CB frequencies](https://youtu.be/P7zBRdvK6Jg)
 - [Gqrx vs SdrGlut at FRS frequencies](https://youtu.be/g_v3TBrCw4o)
+- [Icom IC-R30 vs a Cobra 38WXST at CB frequencies](https://youtu.be/FBa0GskAYCI)
+- [Icom IC-R30 vs a Eton Elite Executive at CB frequencies](https://youtu.be/jJe3iPdgmLY)
+- [Icom IC-R6800 vs a ALINCO DX-R8 at CB frequencies](https://youtu.be/H_mMCzuW_aI)
+- [Icom IC-R6800 vs a AOR AR8200 MK3 at CB frequencies.](https://youtu.be/xeJGhNRZTTM)
+- [Icom IC-R6800 vs a AOR AR8200 MK3 at FRS frequencies.](https://youtu.be/PPTMccFdxdk)
+- [Icom IC-R30 vs a AOR AR8200 MK3 at FRS frequencies.](https://youtu.be/IpzZd8qS4g8)
 - [SdrPlay RSP2 vs NetSDR+ using SdrGlut Part 1. ](https://youtu.be/LdIaFVuAICw)
 - [SdrPlay RSP2 vs NetSDR+ using SdrGlut Part 2. ](https://youtu.be/1QJromJ76Lo)
 - [SdrPlay RSP2 vs NetSDR+ using SdrGlut Part 3. ](https://youtu.be/NXLYYvLQN_k)
