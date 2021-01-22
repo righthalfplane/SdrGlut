@@ -17,6 +17,7 @@ https://github.com/righthalfplane/SdrGlut/releases/tag/v1.21
 - [How to Install RtAudio on MacOS](https://youtu.be/HlnC5K5qQ98)
 - [How to Install RtAudio on Windows 10](https://youtu.be/DyYIKiu2zVI)
 - [How to Install RtAudio on Ubuntu18.04](https://youtu.be/mOGWG1K52wA)
+- [How to Install RtAudio on Ubuntu20.04](https://youtu.be/tJ72-yEJgmU)
 - [SdrGlut uses WSJT-X and GridTracker to capture digital Amateur traffic.](https://youtu.be/poebQhvDJ5k)
 - [SoapyRemote generates distortion in the signal when sending.](https://youtu.be/_F1SvWRZwxg)
 - [Sdrglut vs Gqrx on the raspberry Pi 4 (a speed comparison)](https://youtu.be/_UA0gFtRorI)
