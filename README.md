@@ -9,7 +9,7 @@ SdrGlut now has a send option where it uses tcp/ip to transfer the I/Q stream to
 https://github.com/righthalfplane/SdrGlut/releases/tag/v1.21
 
 ## Demo videos
-- [Using the Impulse Source to Show Filter Response with gnuradio-companion](https://youtu.be/vsm18e7duPU)
+- [Using gnuradio and the Impulse Source to Show Filter Frequency Response](https://youtu.be/vsm18e7duPU)
 - [How to Install SdrGlut (A software defined radio) on the Raspberry PI](https://youtu.be/xD9_6c3OisM)
 - [SdrGlut - How to set the Time, Frequency and Mode for Recordings.](https://youtu.be/oGKcOFbus_U)
 - [The Improved Search and Scan Features of SdrGlut](https://youtu.be/4oTv2DinCRk)
