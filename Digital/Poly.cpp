@@ -86,9 +86,9 @@ int Poly::forceFIR(double *input,int npoint)
     
     double t=1.0/sampleRate;
     
-    fprintf(stderr,"forceFIR %d scale %18.9e period %18.9e\n",npoint,scale,t);
+    if(iprint)fprintf(stderr,"forceFIR %d scale %18.9e period %18.9e\n",npoint,scale,t);
     
-    fprintf(stderr,"           SECONDS,           AMPLITUDE,             INPUT\n");
+    if(iprint)fprintf(stderr,"           SECONDS,           AMPLITUDE,             INPUT\n");
     
     
     
@@ -124,7 +124,7 @@ int Poly::forceFIR(double *input,int npoint)
         
         ynp[n]=y/scale;
 
-        fprintf(stderr,"    %18.9e, %18.9e , %18.9e\n",n*t,y/scale,x);
+        if(iprint)fprintf(stderr,"    %18.9e, %18.9e , %18.9e\n",n*t,y/scale,x);
     }
     
     BatchPlot((char *)"forceFIR",0,xnp,ynp,npoint);
@@ -159,9 +159,9 @@ int Poly::forceCascade(double *input,int npoint)
     
     double t=1.0/sampleRate;
     
-    fprintf(stderr,"        forceCascade steps %d period %18.9e\n\n",npoint,t);
+    if(iprint)fprintf(stderr,"        forceCascade steps %d period %18.9e\n\n",npoint,t);
 
-    fprintf(stderr,"           SECONDS,           AMPLITUDE,             INPUT\n");
+    if(iprint)fprintf(stderr,"           SECONDS,           AMPLITUDE,             INPUT\n");
 
     for(int n=0;n<npoint;++n){
         double y;
@@ -186,7 +186,7 @@ int Poly::forceCascade(double *input,int npoint)
         
         ynp[n]=y/scale;
         
-        fprintf(stderr,"    %18.9e, %18.9e , %18.9e\n",n*t,y/scale,x);
+        if(iprint)fprintf(stderr,"    %18.9e, %18.9e , %18.9e\n",n*t,y/scale,x);
     }
     
     BatchPlot((char *)"forceCascade",0,xnp,ynp,npoint);
@@ -227,9 +227,9 @@ int Poly::force(double *input,int npoint)
     
     double t=1.0/sampleRate;
     
-    fprintf(stderr,"force %d scale %18.9e period %18.9e\n",npoint,scale,t);
+    if(iprint)fprintf(stderr,"force %d scale %18.9e period %18.9e\n",npoint,scale,t);
    
-    fprintf(stderr,"           SECONDS,           AMPLITUDE,             INPUT\n");
+    if(iprint)fprintf(stderr,"           SECONDS,           AMPLITUDE,             INPUT\n");
   
     
     double *xn = (double *)eMalloc(nfore*sizeof(double),20003);
@@ -273,7 +273,7 @@ int Poly::force(double *input,int npoint)
         
         ynp[n]=y/scale;
             
-        fprintf(stderr,"    %18.9e, %18.9e , %18.9e\n",n*t,y/scale,x);
+        if(iprint)fprintf(stderr,"    %18.9e, %18.9e , %18.9e\n",n*t,y/scale,x);
     }
     
     BatchPlot((char *)"force",0,xnp,ynp,npoint);
@@ -616,8 +616,8 @@ int Poly::cascadeEM()
     
     cascade=nnp;
     
-    printf("\n                                           Biquad Coefficents\n\n");
-    printf("           gain               b0                   b1                 b2                  a1                 a2\n\n");
+    if(iprint)printf("\n                                           Biquad Coefficents\n\n");
+    if(iprint)printf("           gain               b0                   b1                 b2                  a1                 a2\n\n");
 
     for(int k=0;k<nnp;++k){
         int nl=np-k-1;
@@ -636,10 +636,10 @@ int Poly::cascadeEM()
         sum=(z*z*biquad[k].b0+z*biquad[k].b1+biquad[k].b2)/(z*z+z*biquad[k].a1+biquad[k].a2);
         biquad[k].kk=1.0/abs(sum);
                 
-        printf(" %18.9e, %18.9e, %18.9e, %18.9e, %18.9e, %18.9e \n",biquad[k].kk,biquad[k].b0,biquad[k].b1,biquad[k].b2,biquad[k].a1,biquad[k].a2);
+        if(iprint)printf(" %18.9e, %18.9e, %18.9e, %18.9e, %18.9e, %18.9e \n",biquad[k].kk,biquad[k].b0,biquad[k].b1,biquad[k].b2,biquad[k].a1,biquad[k].a2);
     }
 
-    printf("\n");
+    if(iprint)printf("\n");
     
     return 0;
 }
@@ -655,9 +655,9 @@ int Poly::cresponse(double steps)
     
     double dt=(pi)/(steps-1);
 
-    fprintf(stderr,"\n      cresponse thetaNorm %g \n",thetaNorm);
+    if(iprint)fprintf(stderr,"\n      cresponse thetaNorm %g \n",thetaNorm);
 
-    fprintf(stderr,"\n      FREQUENCY,         AMPLITUDE\n");
+    if(iprint)fprintf(stderr,"\n      FREQUENCY,         AMPLITUDE\n");
 
     for(int k=0;k<steps;++k){
         double theta=k*dt;
@@ -668,7 +668,7 @@ int Poly::cresponse(double steps)
         }
         xnp[k]=theta*sampleRate/(2*pi);
         ynp[k]=abs(sum);
-        fprintf(stderr,"%18.9e, %18.9e %18.9e\n",theta/* *sampleRate/(2*pi) */,abs(sum),theta/pi);
+        if(iprint)fprintf(stderr,"%18.9e, %18.9e %18.9e\n",theta/* *sampleRate/(2*pi) */,abs(sum),theta/pi);
     }
     BatchPlot((char *)"cresponse",0,xnp,ynp,(long)steps);
     
@@ -702,7 +702,7 @@ int Poly::response(double steps)
 
     double scale=abs(sum);  // normalize at 0 Hz
 
-    fprintf(stderr,"\n      Response thetaNorm %g scale %g\n",thetaNorm,scale);
+    if(iprint)fprintf(stderr,"\n      Response thetaNorm %g scale %g\n",thetaNorm,scale);
     
     double *xnp=(double *)eMalloc((unsigned long)(steps*sizeof(double)),20016);
     double *ynp=(double *)eMalloc((unsigned long)(steps*sizeof(double)),20017);
@@ -711,7 +711,7 @@ int Poly::response(double steps)
     
     double dt=(pi)/(steps-1);
 
-    fprintf(stderr,"\n      FREQUENCY,         AMPLITUDE\n");
+    if(iprint)fprintf(stderr,"\n      FREQUENCY,         AMPLITUDE\n");
     for(int k=0;k<steps;++k){
         double theta=k*dt;
         complex<double> z = exp(complex<double>(0,theta));
@@ -730,7 +730,7 @@ int Poly::response(double steps)
         
         xnp[k]=theta*sampleRate/(2*pi);
         ynp[k]=abs(sum)/scale;
-        fprintf(stderr,"%18.9e, %18.9e %18.9e\n",theta/* *sampleRate/(2*pi) */,abs(sum)/scale,theta/pi);
+        if(iprint)fprintf(stderr,"%18.9e, %18.9e %18.9e\n",theta/* *sampleRate/(2*pi) */,abs(sum)/scale,theta/pi);
     }
     
     BatchPlot((char *)"response",0,xnp,ynp,(long)steps);
@@ -744,10 +744,10 @@ int Poly::dft(int npoints)
 {
     //fprintf(stderr,"dft npoints %d FIRCount %d\n",npoints,FIRCount);
     
-    fprintf(stderr,"\n           N,           COEFFICIENTS\n");
+    if(iprint)fprintf(stderr,"\n           N,           COEFFICIENTS\n");
     
     for(int n=0;n<FIRCount;++n){
-        printf("         %3d,       %18.9e\n",n, FIRCoefficients[n]);
+        if(iprint)printf("         %3d,       %18.9e\n",n, FIRCoefficients[n]);
     }
     
     complex<double> *x = (complex<double> *)eMalloc(FIRCount*sizeof(complex<double>),20018);
@@ -761,7 +761,7 @@ int Poly::dft(int npoints)
     double *xnp = (double *)eMalloc(FIRCount*sizeof(double),20019);
     double *ynp = (double *)eMalloc(FIRCount*sizeof(double),20020);
     
-    fprintf(stderr,"\n       FREQUENCY,       AMPLITUDE\n");
+    if(iprint)fprintf(stderr,"\n       FREQUENCY,       AMPLITUDE\n");
     for(int k=0;k<FIRCount;++k){
         sum=0;
         for(int n=0;n<FIRCount;++n){
@@ -770,7 +770,7 @@ int Poly::dft(int npoints)
         x[k]=sum;
         xnp[k]=df*k;
         ynp[k]=::norm(sum);
-        fprintf(stderr,"%18.9e,%18.9e\n",df*k,::norm(sum));
+        if(iprint)fprintf(stderr,"%18.9e,%18.9e\n",df*k,::norm(sum));
     }
     
     BatchPlot((char *)"dft",0,xnp,ynp,FIRCount);
@@ -786,13 +786,13 @@ int Poly::dft(int npoints)
  */
     
 /*
-    fprintf(stderr,"\n       FREQUENCY,    AMPLITUDE\n");
+    if(iprint)fprintf(stderr,"\n       FREQUENCY,    AMPLITUDE\n");
     for(int n=0;n<FIRCount;++n){
         sum=0.0;
         for(int k=0;k<FIRCount;++k){
             sum +=x[k]*exp(complex<double>(0.0,(2.0*pi*k*n)/FIRCount));
         }
-        fprintf(stderr,"%16.8g,%16.8g\n",(double)n,sum.real()/FIRCount);
+        if(iprint)fprintf(stderr,"%16.8g,%16.8g\n",(double)n,sum.real()/FIRCount);
     }
 */
     
@@ -1048,13 +1048,13 @@ int Poly::low(double f,int inorm)
 }
 int Poly::march(int nstep,double step,int flag)
 {
-    fprintf(stderr,"%d %g %d\n",nstep,step,flag);
+    if(iprint)fprintf(stderr,"%d %g %d\n",nstep,step,flag);
     
     double *xnp = (double *)eMalloc((nstep+1)*sizeof(double),20022);
     double *ynp = (double *)eMalloc((nstep+1)*sizeof(double),20023);
 
     
-    fprintf(stderr,"          t,              rsr,               rsi \n");
+    if(iprint)fprintf(stderr,"          t,              rsr,               rsi \n");
     double t = -step;
     for(int n=0;n<nstep+1;++n){
         t += step;
@@ -1076,7 +1076,7 @@ int Poly::march(int nstep,double step,int flag)
         }
         xnp[n]=t;
         ynp[n]=rsr;
-        fprintf(stderr,"%18.9e,%18.9e,%18.9e\n",t,rsr,rsi);
+        if(iprint)fprintf(stderr,"%18.9e,%18.9e,%18.9e\n",t,rsr,rsi);
     }
     
     BatchPlot((char *)"march",0,xnp,ynp,(long)(nstep+1));
@@ -1196,7 +1196,7 @@ int Poly::forces(BatchPtr Batch,int nforces)
     
     zerol((char *)&cp,sizeof(struct CommandInfo));
 
-   fprintf(stderr,"          forces %d\n",nforces);
+   if(iprint)fprintf(stderr,"          forces %d\n",nforces);
     
     if(nforces < 1)return 0;
     
@@ -1263,7 +1263,7 @@ int Poly::forces(BatchPtr Batch,int nforces)
         ret=doubleCommand(&coef2[n],&cp);
         if(ret)coef2[n]=0;
         if(type[n] == SIN  || type[n] == COS)coef2[n]=2*pi*coef2[n];
-        fprintf(stderr,"     %s   %g    %g\n",command,coef1[n],coef2[n]);
+        if(iprint)fprintf(stderr,"     %s   %g    %g\n",command,coef1[n],coef2[n]);
     }
     
     if(BatchNextLine(Batch,line,sizeof(line)))goto ErrorOut;
@@ -1326,7 +1326,7 @@ int Poly::trans(BatchPtr Batch,int nzero,int npole)
     if(BatchNextLine(Batch,line,sizeof(line)))goto Error;
     if(getCommand(line,&cp))goto Error;
     command=stringCommand(&cp);
-    fprintf(stderr,"command %s\n",command);
+    if(iprint)fprintf(stderr,"command %s\n",command);
 
 
     char mes[256];
@@ -1346,7 +1346,7 @@ int Poly::invert(int flag)
     double b;
     int nt;
     
-    fprintf(stderr,"invert \n");
+    if(iprint)fprintf(stderr,"invert \n");
     
     if(pz){
         if(pz[0].poles)eFree(pz[0].poles);
@@ -1391,9 +1391,9 @@ int Poly::invert(int flag)
         
         if(flag == 0)continue;
         
-        fprintf(stderr," nf %d con %g delay %g\n",nf,pz[nf].con,delay[nf]);
+        if(iprint)fprintf(stderr," nf %d con %g delay %g\n",nf,pz[nf].con,delay[nf]);
         for(int nr=0;nr<pz[nf].np;++nr){
-            fprintf(stderr,"%4d %18.9e,%18.9e,%18.9e,%18.9e\n",nr,pz[nf].rs[nr],pz[nf].poles[nr].real(),pz[nf].ts[nr],pz[nf].poles[nr].imag());
+            if(iprint)fprintf(stderr,"%4d %18.9e,%18.9e,%18.9e,%18.9e\n",nr,pz[nf].rs[nr],pz[nf].poles[nr].real(),pz[nf].ts[nr],pz[nf].poles[nr].imag());
         }
     }
     
@@ -1551,9 +1551,9 @@ int Poly::sweep(double f1,double f2,int ns,int npass,int ilog)
         double f=f1;
         long nn=0;
         if(iangle > 0){
-            fprintf(stderr,"      FREQUENCY,         ANGLE\n");
+            if(iprint)fprintf(stderr,"      FREQUENCY,         ANGLE\n");
         }else{
-            fprintf(stderr,"      FREQUENCY,         AMPLITUDE\n");
+            if(iprint)fprintf(stderr,"      FREQUENCY,         AMPLITUDE\n");
         }
         for(int ks=1;ks<=ns;++ks){
             double w=pi2*f;
@@ -1584,10 +1584,10 @@ int Poly::sweep(double f1,double f2,int ns,int npass,int ilog)
             xnp[nn]=f;
             if(iangle > 0){
               ynp[nn]=theta*cont;
-                fprintf(stderr,"%18.9e,%18.9e\n",f,theta*cont);
+                if(iprint)fprintf(stderr,"%18.9e,%18.9e\n",f,theta*cont);
             }else{
                ynp[nn]=r;
-                fprintf(stderr,"%18.9e,%18.9e\n",f,r);
+                if(iprint)fprintf(stderr,"%18.9e,%18.9e\n",f,r);
             }
             if(ilog <= 0){
                 f=f+df;
