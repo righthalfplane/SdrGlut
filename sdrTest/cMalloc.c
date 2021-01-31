@@ -16,8 +16,6 @@ static long total;
 //#define DEBUG77
 #ifdef DEBUG77
 
-#include <pthread.h>
-
 static std::mutex mutex;
 
 
@@ -92,7 +90,8 @@ void *cRealloc(char *p,unsigned long r,int tag)
 	}
 	sprintf(buff,"Error Tried to realloc %ld\n",(long)p);
 	fprintf(stderr,"%s\n",buff);
-	pthread_mutex_unlock(&mutex);
+	mutex.unlock();
+
 	return 0;
 found:
 
@@ -129,7 +128,7 @@ int cFree(char *p)
 	/* sprintf(buff,"Error Tried to free %lu rank %d\n",(unsigned long)p,xg.rank); */
 	sprintf(buff,"Error Tried to free %lu\n",(unsigned long)p);
 	fprintf(stderr,"%s\n",buff);
-	pthread_mutex_unlock(&mutex);
+	mutex.unlock();
 	return 1;
 found:
     //fprintf(stderr,"free tag %d\n",tagm[k]);
