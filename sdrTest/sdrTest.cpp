@@ -191,11 +191,11 @@ struct Filters{
 };
 
 	 
-	std::mutex mutex;
+static std::mutex mutex;
 	
-	std::mutex mutexa;
+static std::mutex mutexa;
 	
-	std::mutex mutexo;
+static std::mutex mutexo;
 
 
 

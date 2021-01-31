@@ -18,7 +18,8 @@ static long total;
 
 #include <pthread.h>
 
-pthread_mutex_t mutex;
+static std::mutex mutex;
+
 
 #define END_OF_MEMORY 900000
 static void  *given[END_OF_MEMORY];
@@ -35,11 +36,10 @@ void *cMalloc(unsigned long r,int tag)
 	static int one=0;
 	
 	if(one == 0){
-	    pthread_mutex_init(&mutex,NULL);
 	    one=1;
 	}
 	
-	pthread_mutex_lock(&mutex);
+	mutex.lock();
 	
 	for(k=0;k<maxgiven;++k){
 	    if(!given[k])goto empty;
@@ -70,8 +70,9 @@ empty:
     
     //fprintf(stderr,"malloc tag %d\n",tagm[k]);
 
+	
+	mutex.unlock();
 
-	pthread_mutex_unlock(&mutex);
 
 	return give;
 }
@@ -82,7 +83,9 @@ void *cRealloc(char *p,unsigned long r,int tag)
 	char buff[256];
 	int k;
 	
-	pthread_mutex_lock(&mutex);
+	mutex.lock();
+	
+
 	
 	for(k=0;k<maxgiven;++k){
 	    if(given[k] == p)goto found;
@@ -106,8 +109,8 @@ found:
     end[r+1]=0xff;
     end[r+2]=0xff;
     end[r+3]=0xff;
-
-	pthread_mutex_unlock(&mutex);
+    
+	mutex.unlock();
 	return give;
 	
 }
@@ -118,7 +121,8 @@ int cFree(char *p)
     unsigned char *end;
 	int k;
 	
-	pthread_mutex_lock(&mutex);
+	mutex.lock();
+
 	for(k=0;k<maxgiven;++k){
 	    if(given[k] == p)goto found;
 	}
@@ -140,7 +144,7 @@ found:
 	    --maxgiven;
 	    if(maxgiven < 0 )maxgiven=0;
 	}	
-	pthread_mutex_unlock(&mutex);
+	mutex.unlock();
 	return 0;
 }
 void checkall(void)
