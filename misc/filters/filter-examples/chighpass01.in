@@ -5,6 +5,7 @@ force sin 10 500 600
 force sin 10 1000 600
 force sin 10 3000 600
 force sin 10 4000 600
+force ifft 4096 2
 exit
 
 

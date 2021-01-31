@@ -4,7 +4,7 @@
 #include <SoapySDR/Device.hpp>
 #include <SoapySDR/Formats.h>
 
-#include <pthread.h>
+#include <mutex>
 
 #include <liquid/liquid.h>
 
@@ -60,13 +60,13 @@ g++ -O2 -std=c++11 -Wno-deprecated -o sdrTest sdrTest.cpp mThread.cpp cMalloc.c 
 
 g++ -O2 -std=c++11 -Wno-deprecated -o sdrTest sdrTest.cpp mThread.cpp cMalloc.c -lrtaudio -lSoapySDR -lliquid -lpthread -lopenal
 
-./sdrTest -fc 1e6 -f 0.6e6 -gain 1
+./sdrTest -fc 1e6 -f 0.6e6 -am -gain 1
 
 ./sdrTest -fc 1e6 -f 0.76e6 -am -gain 1
 
-./sdrTest -fc 1e6 -f 1.17e6 -gain 1
+./sdrTest -fc 1e6 -f 1.17e6 -am -gain 1
 
-./sdrTest -fc 10.1e6 -f 10.0e6 -gain 1
+./sdrTest -fc 10.1e6 -f 10.0e6 -am -gain 1
 
 ./sdrTest -fc 27.1e6 -f 27.185e6 -gain 1
 
@@ -163,11 +163,6 @@ struct playData{
     
     volatile int frame;
     
-	pthread_mutex_t mutex;
-	
-	pthread_mutex_t mutexa;
-	
-	pthread_mutex_t mutexo;
 
    	volatile int thread; 
 
@@ -200,6 +195,13 @@ struct Filters{
 	int thread;	
 	double amHistory;
 };
+
+	 
+	std::mutex mutex;
+	
+	std::mutex mutexa;
+	
+	std::mutex mutexo;
 
 
 
@@ -293,6 +295,8 @@ int main (int argc, char * argv [])
     rx.PPM=0;
     rx.aminGlobal=0;
     rx.amaxGlobal=0;
+    rx.decodemode = MODE_AM;
+
 	 	
 
 	signal(SIGINT, signalHandler);  
@@ -354,10 +358,6 @@ int main (int argc, char * argv [])
 		}
 	}
 	
-	pthread_mutex_init(&rx.mutex,NULL);
-	pthread_mutex_init(&rx.mutexa,NULL);
-	pthread_mutex_init(&rx.mutexo,NULL);
-		
 	rx.channels=2;
 	
     
@@ -472,11 +472,7 @@ int main (int argc, char * argv [])
 		  if ( dac.isStreamOpen() ) dac.closeStream();
 	}
 	
-    
-    pthread_mutex_destroy(&rx.mutex);
-    pthread_mutex_destroy(&rx.mutexa);
-    pthread_mutex_destroy(&rx.mutexo);
-	
+    	
 	if(rx.out)fclose(rx.out);
 	
 	return 0 ;
@@ -934,7 +930,7 @@ int doFilter(struct playData *rx,float *wBuff,float *aBuff,struct Filters *f)
 int pushBuffa(int nbuffer,struct playData *rx)
 {
 
-	pthread_mutex_lock(&rx->mutexa);
+	mutexa.lock();
 //	fprintf(stderr,"pushBuffa in %d\n",rx->bufftopa);
 	
     if(rx->bufftopa >= NUM_ABUFF){
@@ -959,8 +955,8 @@ int pushBuffa(int nbuffer,struct playData *rx)
 //    fprintf(stderr,"pushBuffa nbuffer %d top %d\n",nbuffer,rx->bufftopa);
     
 //	fprintf(stderr,"pushBuffa out\n");
-	pthread_mutex_unlock(&rx->mutexa);
-	
+	mutexa.unlock();
+
 	return 0;
 }
 
@@ -969,7 +965,7 @@ int popBuffa(struct playData *rx)
 	int ret;
 	
 	
-	pthread_mutex_lock(&rx->mutexa);
+	mutexa.lock();
 //	fprintf(stderr,"popBuffa in %d\n",rx->bufftopa);
 	
 	ret=-1;
@@ -1008,14 +1004,15 @@ int popBuffa(struct playData *rx)
 Out:
 //    if(ret > 0)fprintf(stderr,"popBuffa ret %d top %d\n",ret,rx->bufftopa);
 //	fprintf(stderr,"popBuffa out\n");
-	pthread_mutex_unlock(&rx->mutexa);
+	mutexa.unlock();
+
 	return ret;
 }
 
 int pushBuff(int nbuffer,struct playData *rx)
 {
 
-	pthread_mutex_lock(&rx->mutex);
+	mutex.lock();
 	
     if(rx->bufftop >= NUM_DATA_BUFF){
         rx->bufftop=NUM_DATA_BUFF;
@@ -1036,7 +1033,8 @@ int pushBuff(int nbuffer,struct playData *rx)
     	rx->buffStack[rx->bufftop++]=nbuffer;
     }
     
-	pthread_mutex_unlock(&rx->mutex);
+	mutex.unlock();
+
 	
 	return 0;
 }
@@ -1046,7 +1044,8 @@ int popBuff(struct playData *rx)
 	int ret;
 	
 	
-	pthread_mutex_lock(&rx->mutex);
+	mutex.lock();
+
 	
 	ret=-1;
 	
@@ -1082,7 +1081,8 @@ int popBuff(struct playData *rx)
 	
 	
 Out:
-	pthread_mutex_unlock(&rx->mutex);
+	mutex.unlock();
+
 	return ret;
 }
 
@@ -1677,11 +1677,12 @@ int doAudio(float *aBuff,struct playData *rx)
 	int audioOut;
 
 	
-	pthread_mutex_lock(&rx->mutexo);
+	mutexo.lock();
 	audioOut=rx->audioOut;
 	//fprintf(stderr,"audioOut %d\n",audioOut);
 	data=rx->buffa[rx->audioOut++ % NUM_ABUFF];
-	pthread_mutex_unlock(&rx->mutexo);
+	mutexo.unlock();
+
 	
 
 	double amin=1e30;
