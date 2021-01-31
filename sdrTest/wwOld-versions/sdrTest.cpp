@@ -36,6 +36,10 @@
 
 #include "mThread.h"
 
+
+
+
+
 #define MODE_FM   0
 #define MODE_NBFM 1
 #define MODE_AM   2
@@ -242,6 +246,7 @@ int GetTime(long *Seconds,long *milliseconds);
 
 double rtime(void);
 
+int testRadio(struct playData *rx,SoapySDR::Kwargs deviceArgs);
 
 int doAudioOLD2(float *aBuff,struct playData *rx);
 
@@ -259,7 +264,7 @@ static void list_audio_devices(const ALCchar *devices);
 static void list_audio(void);
 
 void signalHandler( int signum ) {
-	//mprint("signum %d\n",signum);
+	//fprintf(stderr,"signum %d\n",signum);
 	threadexit=1;
 }
 
@@ -300,10 +305,10 @@ int main (int argc, char * argv [])
 	    }else if(!strcmp(argv[n],"-dumpbyminute")){
 		   char filename[256];
 		   sprintf(filename,"minute-%08d.raw",rx.idump++);
-		   mprint("filename %s\n",filename);
+		   fprintf(stderr,"filename %s\n",filename);
 		   rx.out=fopen(filename,"wb");
 		   if(rx.out == NULL){
-				mprint("Could Not Open %s to Write\n",filename);
+				fprintf(stderr,"Could Not Open %s to Write\n",filename);
 				exit(1);
 		   }
 		   rx.dumpbyminute = 1;
@@ -328,7 +333,7 @@ int main (int argc, char * argv [])
 	    }else if(!strcmp(argv[n],"-file")){
 	         rx.out=fopen(argv[++n],"wb");
 	         if(rx.out == NULL){
-	             mprint("Could Not Open %s to Write\n",argv[n]);
+	             fprintf(stderr,"Could Not Open %s to Write\n",argv[n]);
 	         }
 	    }else if(!strcmp(argv[n],"-faudio")){
 	         rx.faudio=atof(argv[++n]);
@@ -346,7 +351,7 @@ int main (int argc, char * argv [])
 	     rx.set[rx.setcount]=argv[++n];
 	     rx.value[rx.setcount++]=argv[++n];
 	    }else{
-	    	mprint("Unknown Command = \"%s\"\n",argv[n]);
+	    	fprintf(stderr,"Unknown Command = \"%s\"\n",argv[n]);
 			// infilename = argv [n] ;
 		}
 	}
@@ -357,7 +362,7 @@ int main (int argc, char * argv [])
 	initPlay(&rx);
 		
 	if(findRadio(&rx) || rx.device == NULL){
-	    mprint("Error Opening SDR\n");
+	    fprintf(stderr,"Error Opening SDR\n");
 		return 1;
 	}
 	
@@ -374,12 +379,12 @@ int main (int argc, char * argv [])
 	
 	
 		if (deviceCount < 1 ) {
-			mprint("\nNo audio devices found!\n");
+			fprintf(stderr,"\nNo audio devices found!\n");
 			exit( 0 );
 		}
 	
 	
-		mprint("\nAudio device Count %d default output device %d audiodevice %d\n",deviceCount,dac.getDefaultOutputDevice(),audiodevice);
+		fprintf(stderr,"\nAudio device Count %d default output device %d audiodevice %d\n",deviceCount,dac.getDefaultOutputDevice(),audiodevice);
 	
 		RtAudio::DeviceInfo info;
 		for (int i=0; i<deviceCount; i++) {
@@ -388,26 +393,26 @@ int main (int argc, char * argv [])
 				info=dac.getDeviceInfo(i);
 				if(info.outputChannels > 0){
 				// Print, for example, the maximum number of output channels for each device
-					mprint("audio device = %d : output  channels = %d Device Name = %s",i,info.outputChannels,info.name.c_str());
+					fprintf(stderr,"audio device = %d : output  channels = %d Device Name = %s",i,info.outputChannels,info.name.c_str());
 					if(info.sampleRates.size()){
-						mprint(" sampleRates = ");
+						fprintf(stderr," sampleRates = ");
 						for (int ii = 0; ii < info.sampleRates.size(); ++ii){
-							mprint(" %d ",info.sampleRates[ii]);
+							fprintf(stderr," %d ",info.sampleRates[ii]);
 					   }
 					}
-					mprint("\n");
+					fprintf(stderr,"\n");
 				 }
 			 
 				if(info.inputChannels > 0){
 				// Print, for example, the maximum number of output channels for each device
-					mprint("audio device = %d : input   channels = %d Device Name = %s",i,info.inputChannels,info.name.c_str());
+					fprintf(stderr,"audio device = %d : input   channels = %d Device Name = %s",i,info.inputChannels,info.name.c_str());
 					 if(info.sampleRates.size()){
-						mprint(" sampleRates = ");
+						fprintf(stderr," sampleRates = ");
 						for (int ii = 0; ii < info.sampleRates.size(); ++ii){
-							mprint(" %d ",info.sampleRates[ii]);
+							fprintf(stderr," %d ",info.sampleRates[ii]);
 					   }
 					}
-					mprint("\n");
+					fprintf(stderr,"\n");
 			   }
 
 			}
@@ -418,7 +423,7 @@ int main (int argc, char * argv [])
 		
 		}
 	
-		mprint("\n");
+		fprintf(stderr,"\n");
 	
 		list_audio();
 	
@@ -473,33 +478,32 @@ int main (int argc, char * argv [])
 
 int printInfo(void)
 {
-	mprint("%s\n","SoapySDR Library");
-	
-	mprint("Lib Version: v%s\n",SoapySDR::getLibVersion().c_str());
-	mprint("API Version: v%s\n",SoapySDR::getAPIVersion().c_str());
-	mprint("ABI Version: v%s\n",SoapySDR::getABIVersion().c_str());
-	mprint("Install root:  %s\n",SoapySDR::getRootPath().c_str());
+    std::cout << "SoapySDR Library" << std::endl;
+    std::cout << "Lib Version: v" << SoapySDR::getLibVersion() << std::endl;
+    std::cout << "API Version: v" << SoapySDR::getAPIVersion() << std::endl;
+    std::cout << "ABI Version: v" << SoapySDR::getABIVersion() << std::endl;
+    std::cout << "Install root: " << SoapySDR::getRootPath() << std::endl;
     
     std::vector<std::string> path=SoapySDR::listSearchPaths();
     for(size_t i=0;i<path.size();++i){
- 	    mprint("Search path:  %s\n",path[i].c_str());
-   }
+        std::cout << "Search path: " << path[i] << std::endl;
+    }
 
     std::vector<std::string> mod=SoapySDR::listModules();
     
     for (size_t k=0;k<mod.size();++k)
     {
-   	    mprint("Module found: %s ",mod[k].c_str());
-      /*
+        std::cout << "Module found: " << mod[k];
+        /*
         const auto &errMsg = SoapySDR::loadModule(mod[k]);
-        if (not errMsg.empty())mprint("Module found: %s ",errMsg.c_str());
+        if (not errMsg.empty()) std::cout << "\n  " << errMsg;
         */
-    	mprint("\n");
+        std::cout << std::endl;
     
     }
-    if (mod.empty())mprint("No modules found!\n");
+    if (mod.empty()) std::cout << "No modules found!" << std::endl;
     
-    mprint("\n");
+    std::cout << std::endl;
 
     return 0;
 }
@@ -514,8 +518,9 @@ int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
     
   struct playData *rx=(struct playData *)userData;
   
-  if ( status )mprint("Stream underflow detected!\n");
- 
+  if ( status )
+    std::cout << "Stream underflow detected!" << std::endl;
+  
 	int ibuff;
 	ibuff=popBuffa(rx);
 	if (ibuff >= 0){
@@ -548,7 +553,7 @@ int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
 	}
   }
   
- // mprint("streamTime %f nBufferFrames %d audioOut %d doWhat %d ibuff %d\n",
+ // fprintf(stderr,"streamTime %f nBufferFrames %d audioOut %d doWhat %d ibuff %d\n",
   //     streamTime,nBufferFrames,rx->audioOut,rx->doWhat,ibuff);
   
   return 0;
@@ -589,13 +594,13 @@ int playRadio(struct playData *rx)
  	        
         rx->size=size;
         
-        mprint("rate %f rx->size %d\n",rate,rx->size);
+        fprintf(stderr,"rate %f rx->size %d\n",rate,rx->size);
                 
         for(int k=0;k<NUM_DATA_BUFF;++k){
         	if(rx->buff[k])free(rx->buff[k]);
         	rx->buff[k]=(float *)malloc(2*size*4);
         	if(!rx->buff[k]){
-        	    mprint("1 malloc Errror %ld\n",(long)(2*size*4));
+        	    fprintf(stderr,"1 malloc Errror %ld\n",(long)(2*size*4));
        	     	return 1;
        		}
         	zerol((char *)rx->buff[k],2*size*4);
@@ -606,7 +611,7 @@ int playRadio(struct playData *rx)
         	if(rx->buffa[k])free(rx->buffa[k]);
         	rx->buffa[k]=(short int *)malloc(2*rx->faudio*4);
         	if(!rx->buffa[k]){
-        	    mprint("1 malloc Errror %ld\n",(long)(2*rx->faudio*4));
+        	    fprintf(stderr,"1 malloc Errror %ld\n",(long)(2*rx->faudio*4));
        	     	return 1;
        		}
         	zerol((char *)rx->buffa[k],2*rx->faudio*4);
@@ -620,7 +625,7 @@ int playRadio(struct playData *rx)
     	if(rx->dumpbyminute){
     		struct tm today;
     		struct tm next;
-    		mprint("Waiting For Next Minute\n");
+    		fprintf(stderr,"Waiting For Next Minute\n");
     		time_t now;
     		time(&now);
     		today = *localtime(&now);
@@ -632,13 +637,13 @@ int playRadio(struct playData *rx)
   			
     	    rx->doWhat=2;
 
-    	    mprint("Start Time: ");
-    		mprint("year %d ",next.tm_year+1900);
-       		mprint("month %d ",next.tm_mon+1); 		
-      		mprint("day %d ",next.tm_mday);
-    		mprint("hour %d ",next.tm_hour);
-     		mprint("min %d ",next.tm_min);
-   	        mprint("sec %d \n",next.tm_sec);
+    	    fprintf(stderr,"Start Time: ");
+    		fprintf(stderr,"year %d ",next.tm_year+1900);
+       		fprintf(stderr,"month %d ",next.tm_mon+1); 		
+      		fprintf(stderr,"day %d ",next.tm_mday);
+    		fprintf(stderr,"hour %d ",next.tm_hour);
+     		fprintf(stderr,"min %d ",next.tm_min);
+   	        fprintf(stderr,"sec %d \n",next.tm_sec);
 
 
     	}else{
@@ -657,7 +662,7 @@ int playRadio(struct playData *rx)
         
 		Sleep2(100);
  
-        mprint("Start playing\n");
+        fprintf(stderr,"Start playing\n");
         
     int count=0;
 	rx->timestart=rtime();
@@ -679,10 +684,10 @@ int playRadio(struct playData *rx)
 					if(++count == 10*60){
 						fclose(rx->out);
 						sprintf(filename,"minute-%08d.raw",rx->idump++);
-						mprint("filename %s\n",filename);
+						fprintf(stderr,"filename %s\n",filename);
 						rx->out=fopen(filename,"wb");
 						if(rx->out == NULL){
-							mprint("Could Not Open %s to Write\n",filename);
+							fprintf(stderr,"Could Not Open %s to Write\n",filename);
 							exit(1);
 						}
 						count=0;
@@ -697,7 +702,7 @@ int playRadio(struct playData *rx)
     
     double total=end-rx->timestart;
     
-    mprint(" Seconds %.2f\n",total);
+    fprintf(stderr," Seconds %.2f\n",total);
     
     rx->doWhat=0;
         
@@ -723,7 +728,7 @@ int playRadio(struct playData *rx)
     
     double total=end-start;
     
-    mprint(" Seconds %.4f Seconds/frame %.4f\n",total,total/100);
+    fprintf(stderr," Seconds %.4f Seconds/frame %.4f\n",total,total/100);
     
     exit(1);
 */   
@@ -775,17 +780,17 @@ int Process(void *rxv)
 	
 	float *wBuff=(float *)malloc(2*rx->size*4);
     if(!wBuff){
-        mprint("2 malloc Errror %ld\n",(long)(2*rx->size*4));
+        fprintf(stderr,"2 malloc Errror %ld\n",(long)(2*rx->size*4));
        	 return 1;
     }
     zerol((char *)wBuff,2*rx->size*4);
 
-	mprint("Process Start rx->frame %d\n",rx->frame);
+	fprintf(stderr,"Process Start rx->frame %d\n",rx->frame);
 	
 	
 	float *aBuff=(float *)malloc(2*rx->faudio*4);
     if(!aBuff){
-        mprint("3 malloc Errror %ld\n",(long)(2*rx->faudio*4));
+        fprintf(stderr,"3 malloc Errror %ld\n",(long)(2*rx->faudio*4));
        	 return 1;
     }
     zerol((char *)aBuff,2*rx->faudio*4);
@@ -797,7 +802,7 @@ int Process(void *rxv)
 			doAudio(aBuff,rx);
 		}
 	}
-	mprint("Process return rx->frame %d\n",rx->frame);
+	fprintf(stderr,"Process return rx->frame %d\n",rx->frame);
 	
 	if(wBuff)free(wBuff);
 	
@@ -821,19 +826,19 @@ int doFilter(struct playData *rx,float *wBuff,float *aBuff,struct Filters *f)
 {
  	int ip=popBuff(rx);
  	if(ip < 0){
- 	// mprint("wait thread %d\n",f->thread);
+ 	// fprintf(stderr,"wait thread %d\n",f->thread);
  	     return 1;
  	}
  	
- 	//mprint("ip %d thread %d\n",ip,f->thread);
+ 	//fprintf(stderr,"ip %d thread %d\n",ip,f->thread);
  	
  	int witch=ip % NUM_DATA_BUFF;
  	
  	
- 	//mprint("doFilter witch %d ip %d start \n",witch,ip);
+ 	//fprintf(stderr,"doFilter witch %d ip %d start \n",witch,ip);
 	
  	
- 	// mprint("shift %f size %d fShift %p\n",shift,rx->size,rx->fShift);
+ 	// fprintf(stderr,"shift %f size %d fShift %p\n",shift,rx->size,rx->fShift);
  /*
  
  	float shift=rx->fc-rx->f;
@@ -899,7 +904,7 @@ int doFilter(struct playData *rx,float *wBuff,float *aBuff,struct Filters *f)
 
         msresamp_rrrf_execute(f->iqSampler2, (float *)buf2, num, (float *)buf, &num2);  // interpolate
 
-        //mprint("2 rx->size %d num %u num2 %u\n",rx->size,num,num2);
+        //fprintf(stderr,"2 rx->size %d num %u num2 %u\n",rx->size,num,num2);
 
     }else if(rx->decodemode < MODE_USB){
         #define DC_ALPHA 0.99    //ALPHA for DC removal filter ~20Hz Fcut with 15625Hz Sample Rate
@@ -924,7 +929,7 @@ int pushBuffa(int nbuffer,struct playData *rx)
 {
 
 	mutexa.lock();
-//	mprint("pushBuffa in %d\n",rx->bufftopa);
+//	fprintf(stderr,"pushBuffa in %d\n",rx->bufftopa);
 	
     if(rx->bufftopa >= NUM_ABUFF){
         rx->bufftopa=NUM_ABUFF;
@@ -945,9 +950,9 @@ int pushBuffa(int nbuffer,struct playData *rx)
     	rx->buffStacka[rx->bufftopa++]=nbuffer;
     }
     
-//    mprint("pushBuffa nbuffer %d top %d\n",nbuffer,rx->bufftopa);
+//    fprintf(stderr,"pushBuffa nbuffer %d top %d\n",nbuffer,rx->bufftopa);
     
-//	mprint("pushBuffa out\n");
+//	fprintf(stderr,"pushBuffa out\n");
 	mutexa.unlock();
 
 	return 0;
@@ -959,7 +964,7 @@ int popBuffa(struct playData *rx)
 	
 	
 	mutexa.lock();
-//	mprint("popBuffa in %d\n",rx->bufftopa);
+//	fprintf(stderr,"popBuffa in %d\n",rx->bufftopa);
 	
 	ret=-1;
 	
@@ -995,8 +1000,8 @@ int popBuffa(struct playData *rx)
 	
 	
 Out:
-//    if(ret > 0)mprint("popBuffa ret %d top %d\n",ret,rx->bufftopa);
-//	mprint("popBuffa out\n");
+//    if(ret > 0)fprintf(stderr,"popBuffa ret %d top %d\n",ret,rx->bufftopa);
+//	fprintf(stderr,"popBuffa out\n");
 	mutexa.unlock();
 
 	return ret;
@@ -1088,7 +1093,7 @@ int findRadio(struct playData *rx)
     
     results = SoapySDR::Device::enumerate();
     
-    mprint("Number of Devices Found: %ld\n",(long)results.size());
+    std::cout << "Number of Devices Found: " << results.size() << std::endl;
     
     if(results.size() < 1)return 1;
     
@@ -1099,14 +1104,14 @@ int findRadio(struct playData *rx)
     
     
     for(unsigned int k=0;k<results.size();++k){
-    		mprint("SDR device =  %ld ",(long)k);
+			std::cout << "SDR device = " << k << "  ";
 			deviceArgs = results[k];
 			for (SoapySDR::Kwargs::const_iterator it = deviceArgs.begin(); it != deviceArgs.end(); ++it) {
-				if (it->first == "label")mprint(" %s = %s\n ",it->first.c_str(), it->second.c_str());
+				if (it->first == "label")std::cout << "  " << it->first << " = " << it->second << std::endl;
 			}
     }
     
-    mprint("\n");
+    std::cout << std::endl;
 
     for(unsigned int k=0;k<results.size();++k){
     
@@ -1115,11 +1120,11 @@ int findRadio(struct playData *rx)
 			deviceArgs = results[k];
 		
 	
-	    		mprint("device =  %ld selected\n",(long)k);
-
+			std::cout << "device = " << k << " selected" << std::endl;
+	
 	
 			for (SoapySDR::Kwargs::const_iterator it = deviceArgs.begin(); it != deviceArgs.end(); ++it) {
-				mprint("%s = %s ",it->first.c_str(), it->second.c_str());
+				std::cout << it->first << " = " << it->second << std::endl;
 				if (it->first == "driver") {
 					//dev->setDriver(it->second);
 				} else if (it->first == "label" || it->first == "device") {
@@ -1127,33 +1132,23 @@ int findRadio(struct playData *rx)
 				}
 			}
 		
+			// testRadio(rx,deviceArgs);
 			
-    		mprint("\n\n");
+			std::cout << std::endl;
 
 			
 			rx->device = SoapySDR::Device::make(deviceArgs);
 			
-			mprint("driver= %s\n",rx->device->getDriverKey().c_str());
-			mprint("hardware= %s\n",rx->device->getHardwareKey().c_str());
-        
-        
-			SoapySDR::Kwargs it=rx->device->getHardwareInfo();
-		
-			for( SoapySDR::Kwargs::iterator  ii=it.begin(); ii!=it.end(); ++ii)
-			{
-					mprint("%s = %s ",ii->first.c_str(), ii->second.c_str());
-			}
-
-			
-    		mprint("\n\n");
+			std::cout << std::endl;
 			
 			        //query device info
         	std::vector<std::string> names = rx->device->listAntennas(SOAPY_SDR_RX,  rx->channel);
-        	mprint("Rx antennas: \n",(long)k);
-
+        	std::cout << "Rx antennas: " << std::endl;
         
         	for (std::vector<std::string>::const_iterator ii = names.begin(); ii != names.end(); ++ii){
-       			mprint("%s\n",(*ii).c_str());
+            
+           		 std::cout << (*ii) << std::endl;
+            
         	}
 			        
         	rx->antennaCount=names.size();
@@ -1163,36 +1158,36 @@ int findRadio(struct playData *rx)
         	}
 
 			
-        	mprint("\n");
-        	
-        	mprint("Setting Info: \n");
-						
+			
+			std::cout << std::endl;
+        	std::cout << "Setting Info: " << std::endl;
+			
         	SoapySDR::ArgInfoList args = rx->device->getSettingInfo();
         	if (args.size()) {
             	for (SoapySDR::ArgInfoList::const_iterator args_i = args.begin(); args_i != args.end(); args_i++) {
                 	SoapySDR::ArgInfo arg = (*args_i);
 
-                	mprint("key %s value %s read %s type %d min %g max %g step %g\n",arg.key.c_str(),arg.value.c_str(),rx->device->readSetting(arg.key).c_str(),
+                	fprintf(stderr,"key %s value %s read %s type %d min %g max %g step %g\n",arg.key.c_str(),arg.value.c_str(),rx->device->readSetting(arg.key).c_str(),
                        	(int)arg.type,arg.range.minimum(),arg.range.maximum(),arg.range.step());
 
             	}
         	}
-        	mprint("\n");
+			std::cout << std::endl;
 			
 			
 			
 		
             if(rx->antennaUse){
-            	mprint("Use antenna \"%s\"\n",rx->antennaUse);
+            	fprintf(stderr,"Use antenna \"%s\"\n",rx->antennaUse);
             	rx->device->setAntenna(SOAPY_SDR_RX, rx->channel, rx->antennaUse);
             }
             
             
             
             if(rx->setcount){          
-             	mprint("setcount %d\n",rx->setcount);
+             	fprintf(stderr,"setcount %d\n",rx->setcount);
            		for(int k=0;k<rx->setcount;++k){
-              		mprint("%s %s\n",rx->set[k].c_str(),rx->value[k].c_str());
+              		fprintf(stderr,"%s %s\n",rx->set[k].c_str(),rx->value[k].c_str());
                		rx->device->writeSetting(rx->set[k],rx->value[k]);
                 }
             }
@@ -1200,69 +1195,59 @@ int findRadio(struct playData *rx)
                 
         	SoapySDR::Range range=rx->device->getGainRange(SOAPY_SDR_RX, rx->channel);
         
-            mprint("Gain range RX min %g max %g \n",range.minimum(),range.maximum());
+            fprintf(stderr,"Gain range RX min %g max %g \n",range.minimum(),range.maximum());
    
             SoapySDR::RangeList rlist=rx->device->getFrequencyRange(SOAPY_SDR_RX, rx->channel);
             
         	for (size_t j = 0; j < rlist.size(); j++)
         	{
-         	    mprint("FrequencyRange min %g max %g \n",rlist[j].minimum(),rlist[j].maximum());
+         	    fprintf(stderr,"FrequencyRange min %g max %g \n",rlist[j].minimum(),rlist[j].maximum());
         	}
 
         	std::vector<double> band=rx->device->listBandwidths(SOAPY_SDR_RX, rx->channel);
         	if(band.size()){
-                mprint("\nBandwidth MHZ ");  		
+                fprintf(stderr,"\nBandwidth MHZ ");  		
 				for (size_t j = 0; j <band.size(); j++)
 				{
-				   mprint(" %.2f ",band[j]/1.0e6);
+				   fprintf(stderr," %.2f ",band[j]/1.0e6);
 				}
-				mprint("\n\n");
+				fprintf(stderr,"\n\n");
             }
             
 
 			std::vector<double> rate=rx->device->listSampleRates(SOAPY_SDR_RX, rx->channel);
         	if(rate.size()){
-                 mprint("SampleRates MHZ ");
+                 fprintf(stderr,"SampleRates MHZ ");
       		}
 			for (size_t j = 0; j < rate.size(); j++)
         	{
-           		mprint(" %.2f ",rate[j]/1.0e6);
+           		fprintf(stderr," %.2f ",rate[j]/1.0e6);
          	}
-            mprint("\n\n");
+            fprintf(stderr,"\n\n");
 
-            mprint("Gains: \n");  		
-			names=rx->device->listGains( SOAPY_SDR_RX, rx->channel);
-			for (size_t j = 0; j < names.size(); j++)
-			{
-				mprint("%lu %s ",j, names[j].c_str());
-			
-				SoapySDR::Range range3=rx->device->getGainRange(SOAPY_SDR_RX, rx->channel, names[j].c_str());
-				mprint("range max %g min %g\n",range3.maximum(),range3.minimum());
-			}
-
-           mprint("\n");
 
 			rx->device->setSampleRate(SOAPY_SDR_RX, rx->channel, rx->samplerate);
 			
 			rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc);
 			
-        	mprint("rx->samplerate %d\n",rx->samplerate);
+        	std::cout << "rx->samplerate " << rx->samplerate << std::endl;
 			
 			rx->rxStream = rx->device->setupStream(SOAPY_SDR_RX, SOAPY_SDR_CF32, (const std::vector<size_t>)0);
 
 			rx->device->activateStream(rx->rxStream, 0, 0, 0); 
 
-        	mprint("getGainMode: %d\n",rx->device->getGainMode(SOAPY_SDR_RX, rx->channel));
+			std::cout << "getGainMode: " << rx->device->getGainMode(SOAPY_SDR_RX, rx->channel) << std::endl;
 			
 			int hasFrequencyCorrection= rx->device->hasFrequencyCorrection(SOAPY_SDR_RX, rx->channel);
 			
-        	mprint("hasFrequencyCorrection: %d\n",hasFrequencyCorrection);
+			std::cout << "hasFrequencyCorrection: " << hasFrequencyCorrection<< std::endl;
 			
 			if(hasFrequencyCorrection && rx->PPM){
 			    rx->device->setFrequencyCorrection(SOAPY_SDR_RX, rx->channel,rx->PPM);
 			}
 			
 		
+			// std::cout << std::endl;
 			
              
 		}
@@ -1284,10 +1269,10 @@ int rxBuffer(void *rxv)
 	     	Sleep2(5);
 	        break;
 	     case 1:
-	        mprint("Exit rxBuffer\n");
+	        fprintf(stderr,"Exit rxBuffer\n");
 	        return 0;
 		 case 2:
-	       // mprint("rxBuffer case 2\n");
+	       // fprintf(stderr,"rxBuffer case 2\n");
 	       	        
         	long long timeNs=0;
            
@@ -1315,12 +1300,12 @@ int rxBuffer(void *rxv)
 				 timeNs++;
 						   
 				if(ret <= 0){
-				   mprint("ret=%d, flags=%d, timeNs=%lld b0 %f b1 %f \n", ret, flags, timeNs,buff[0],buff[1]);
+				   fprintf(stderr,"ret=%d, flags=%d, timeNs=%lld b0 %f b1 %f \n", ret, flags, timeNs,buff[0],buff[1]);
 				   break;
 				}else if(ret < toRead){
                     count += ret;
                     toRead=toRead-ret;
-					//mprint("ret=%d, flags=%d, timeNs=%lld b0 %f b1 %f toRead %d witch %d\n", ret, flags, timeNs,buff[0],buff[1],toRead,rx->witch);
+					//fprintf(stderr,"ret=%d, flags=%d, timeNs=%lld b0 %f b1 %f toRead %d witch %d\n", ret, flags, timeNs,buff[0],buff[1],toRead,rx->witch);
 				}else{
 					break;
 				}
@@ -1334,7 +1319,7 @@ int rxBuffer(void *rxv)
 		     
 	     }
 	     
-	     //mprint("rx->doWhat %d\n",rx->doWhat);
+	     //fprintf(stderr,"rx->doWhat %d\n",rx->doWhat);
 	}
 	return 0;
 }
@@ -1425,7 +1410,7 @@ static int initPlay(struct playData *rx)
     	rx->w=2.0*pi*(rx->fc - rx->f);
     	rx->sindt=sin(rx->w*rx->dt);
     	rx->cosdt=cos(rx->w*rx->dt);
-    	mprint("fc %f f %f dt %g samplerate %d\n",rx->fc,rx->f,rx->dt,rx->samplerate);
+    	fprintf(stderr,"fc %f f %f dt %g samplerate %d\n",rx->fc,rx->f,rx->dt,rx->samplerate);
     }
     
     
@@ -1484,6 +1469,206 @@ int zerol(unsigned char *s,unsigned long n)
 	return 0;
 }
 
+int testRadio(struct playData *rx,SoapySDR::Kwargs deviceArgs)
+{
+
+    try
+    {
+        rx->device = SoapySDR::Device::make(deviceArgs);
+        std::cout << "  driver=" << rx->device->getDriverKey() << std::endl;
+        std::cout << "  hardware=" << rx->device->getHardwareKey() << std::endl;
+        
+        
+        SoapySDR::Kwargs it=rx->device->getHardwareInfo();
+        
+        for( SoapySDR::Kwargs::iterator  ii=it.begin(); ii!=it.end(); ++ii)
+        {
+            std::cout << (*ii).first << ": " << (*ii).second << std::endl;
+        }
+        
+
+        std::cout << std::endl;
+        
+        
+        rx->rxStream = rx->device->setupStream(SOAPY_SDR_RX, SOAPY_SDR_CF32, (const std::vector<size_t>)0);
+        
+        rx->device->setSampleRate(SOAPY_SDR_RX, 0, rx->samplerate);
+
+        rx->device->activateStream(rx->rxStream, 0, 0, 0);
+       
+        
+        //query device info
+        std::vector<std::string> names = rx->device->listAntennas(SOAPY_SDR_RX, 0);
+        std::cout << "Rx antennas: " << std::endl;
+        
+        for (std::vector<std::string>::const_iterator ii = names.begin(); ii != names.end(); ++ii){
+            
+            std::cout << (*ii) << std::endl;
+            
+        }
+        
+        
+        names = rx->device->listGains(SOAPY_SDR_RX, 0);
+        std::cout <<  "Rx gains: " << std::endl;
+        
+        for (int ii = 0; ii < names.size(); ++ii){
+            
+            if(names[ii] == "ATT"){
+                rx->device->setGain(SOAPY_SDR_RX, 0, names[ii], 0.0);
+                //std::cout << "ATT Set Zero"<< std::endl;
+            }
+            if(names[ii] == "VGA"){
+                //rx->device->setGain(SOAPY_SDR_RX, 0, names[ii], 38.0);
+                rx->device->setGain(SOAPY_SDR_RX, 0, names[ii], 36.0);
+                //std::cout << "VGA Set 52"<< std::endl;
+            }
+            if(names[ii] == "TUNER"){
+                //rx->device->setGain(SOAPY_SDR_RX, 0, names[i], 45);
+                rx->device->setGain(SOAPY_SDR_RX, 0, names[ii], 60);
+                //std::cout << "TUNER Set 59"<< std::endl;
+            }
+            if(names[ii] == "LNAT"){
+                //rx->device->setGain(SOAPY_SDR_RX, 0, names[ii], 45);
+                rx->device->setGain(SOAPY_SDR_RX, 0, names[ii], 60);
+                //std::cout << "LNAT Set 59"<< std::endl;
+            }
+           
+            
+            std::cout << (names[ii]) << " " << rx->device->getGain(SOAPY_SDR_RX, 0, names[ii]) << " ";
+            
+        }
+        
+        std::cout << std::endl;
+        
+        
+        SoapySDR::Range granges = rx->device->getGainRange(SOAPY_SDR_RX, 0);
+        std::cout <<  "getGainRange: " << std::endl; 
+        
+        std::cout << (granges.minimum()) << " ";
+        std::cout << (granges.maximum()) << " ";
+        
+        bool hasGainMode;
+        
+        hasGainMode=rx->device->hasGainMode(SOAPY_SDR_RX, 0);
+        
+        std::cout << std::endl;
+        
+        std::cout << "hasGainMode: " << hasGainMode << " ";
+        
+        std::cout << std::endl;
+        
+        
+        if(hasGainMode){
+            
+            // rx->device->setGainMode(SOAPY_SDR_RX, 0, true);
+            
+            std::cout << "getGainMode: " << rx->device->getGainMode(SOAPY_SDR_RX, 0) << " ";
+        
+            std::cout << std::endl;
+        }
+        
+        
+        SoapySDR::RangeList ranges = rx->device->getFrequencyRange(SOAPY_SDR_RX, 0);
+        std::cout <<  "Rx freq ranges: " << std::endl; 
+        
+        for (std::vector<SoapySDR::Range>::const_iterator ii = ranges.begin(); ii != ranges.end(); ++ii){
+            
+            std::cout << (ii->minimum()) << " ";
+            std::cout << (ii->maximum()) << " ";
+            
+        }
+        
+        std::cout << std::endl;
+        
+        
+        //query device info
+        std::vector<double> bnames = rx->device->listBandwidths(SOAPY_SDR_RX, 0);
+        std::cout <<  "Bandwidths: " << std::endl; 
+        
+        for (std::vector<double>::const_iterator ii = bnames.begin(); ii != bnames.end(); ++ii){
+            
+            std::cout << (*ii) << std::endl;
+            
+        }
+      
+        
+        std::cout << std::endl;
+    
+        
+        std::cout << "hasDCOffset: " << rx->device->hasDCOffset(SOAPY_SDR_RX, 0) << " ";
+        
+        std::cout << std::endl;
+        
+        
+        bool hasDCOffsetMode=rx->device->hasDCOffsetMode(SOAPY_SDR_RX, 0);
+        
+        std::cout << "hasDCOffsetMode: " << hasDCOffsetMode << " ";
+        
+        std::cout << std::endl;
+        
+        if(hasDCOffsetMode){
+            
+            bool automatic=true;
+            
+            rx->device->setDCOffsetMode(SOAPY_SDR_RX, 0,automatic);
+            
+            std::cout << "getDCOffsetMode: " << rx->device->getDCOffsetMode(SOAPY_SDR_RX, 0) << " ";
+            
+            std::cout << std::endl;
+           
+        }
+        
+        SoapySDR::ArgInfoList args = rx->device->getSettingInfo();
+        if (args.size()) {
+            for (SoapySDR::ArgInfoList::const_iterator args_i = args.begin(); args_i != args.end(); args_i++) {
+                SoapySDR::ArgInfo arg = (*args_i);
+
+                fprintf(stderr,"key %s value %s read %s type %d min %g max %g step %g\n",arg.key.c_str(),arg.value.c_str(),rx->device->readSetting(arg.key).c_str(),
+                       (int)arg.type,arg.range.minimum(),arg.range.maximum(),arg.range.step());
+
+            }
+        }
+      
+        
+        
+        rx->device->setSampleRate(SOAPY_SDR_RX, 0, rx->samplerate);
+        
+        rx->device->setFrequency(SOAPY_SDR_RX, 0, rx->fc);
+        
+        
+        rx->MTU=rx->device->getStreamMTU(rx->rxStream);
+        
+        std::cout << "rx->MTU: " << rx->MTU << " ";
+        
+        std::cout << std::endl;
+     
+        
+        double freq=rx->device->getFrequency(SOAPY_SDR_RX, 0);
+        
+        std::cout << "freq " << freq << std::endl;
+        
+        double rate=rx->device->getSampleRate(SOAPY_SDR_RX, 0);
+        
+        std::cout << "rate " << rate << std::endl;
+              
+    }
+    
+    catch (const std::exception &ex)
+    {
+        std::cerr << "Error making device: " << ex.what() << std::endl;
+        return EXIT_FAILURE;
+    }    
+    
+    std::cout << std::endl;
+    
+    if(rx->device == NULL){
+        std::cerr << "Error : device == NULL" << std::endl;
+        return 1;
+    }
+    
+    return 0;
+
+}
 int doAudio(float *aBuff,struct playData *rx)
 {
 	int short *data;
@@ -1492,7 +1677,7 @@ int doAudio(float *aBuff,struct playData *rx)
 	
 	mutexo.lock();
 	audioOut=rx->audioOut;
-	//mprint("audioOut %d\n",audioOut);
+	//fprintf(stderr,"audioOut %d\n",audioOut);
 	data=rx->buffa[rx->audioOut++ % NUM_ABUFF];
 	mutexo.unlock();
 
@@ -1542,7 +1727,7 @@ int doAudio(float *aBuff,struct playData *rx)
     amax=rx->amaxGlobal;
 
 
-	//mprint("doAudio size %d amin %f amax %f audioOut %d\n",BLOCK_SIZE,amin,amax,audioOut);
+	//fprintf(stderr,"doAudio size %d amin %f amax %f audioOut %d\n",BLOCK_SIZE,amin,amax,audioOut);
 	
 	
     if((amax-amin) > 0){
@@ -1611,7 +1796,7 @@ static void list_audio()
     
     enumeration = alcIsExtensionPresent(NULL, "ALC_ENUMERATION_EXT");
     if (enumeration == AL_FALSE){
-        mprint("enumeration not supported\n");
+        fprintf(stderr,"enumeration not supported\n");
     }else{
         list_audio_devices(alcGetString(NULL, ALC_DEVICE_SPECIFIER));
         list_audio_devices(alcGetString(NULL, ALC_CAPTURE_DEFAULT_DEVICE_SPECIFIER));
@@ -1623,15 +1808,15 @@ static void list_audio_devices(const ALCchar *devices)
     const ALCchar *device = devices, *next = devices + 1;
     size_t len = 0;
 
-    mprint( "OpenAL Devices list:\n");
-    mprint( "----------\n");
+    fprintf(stdout, "OpenAL Devices list:\n");
+    fprintf(stdout, "----------\n");
 
     while (device && *device != '\0' && next && *next != '\0') {
-        mprint( "%s\n", device);
+        fprintf(stdout, "%s\n", device);
         len = strlen(device);
         device += (len + 1);
         next += (len + 2);
     }
-    mprint( "----------\n\n");
+    fprintf(stdout, "----------\n\n");
 }
 
