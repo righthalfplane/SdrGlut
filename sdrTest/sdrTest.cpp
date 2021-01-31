@@ -1,3 +1,4 @@
+#include "firstFile.h"
 #include <SoapySDR/Version.hpp>
 #include <SoapySDR/Modules.hpp>
 #include <SoapySDR/Registry.hpp>
@@ -20,8 +21,8 @@
 #include <string.h>
 #include <ctype.h>
 #include <math.h>
-
-#include <sys/time.h>
+#include<sys/stat.h>
+#include <sys/timeb.h>
 
 #include <time.h>
 
@@ -50,11 +51,11 @@
 
 
 /*
-g++ -O2 -std=c++11 -Wno-deprecated -o sdrTest sdrTest.cpp mThread.cpp cMalloc.c -lrtaudio -lSoapySDR -lliquid -framework OpenAL
+g++ -O2 -std=c++11 -Wno-deprecated -o sdrTest sdrTest.cpp mThread.cpp cMalloc.cpp -lrtaudio -lSoapySDR -lliquid -framework OpenAL
 
-g++ -O2 -std=c++11 -Wno-deprecated -o sdrTest sdrTest.cpp mThread.cpp cMalloc.c -lrtaudio -lSoapySDR -lliquid -lopenal -pthread
+g++ -O2 -std=c++11 -Wno-deprecated -o sdrTest sdrTest.cpp mThread.cpp cMalloc.cpp -lrtaudio -lSoapySDR -lliquid -lopenal -pthread
 
-./sdrTest -fc 1e6 -f 0.6e6 -am -gain 1
+./sdrTest -fc 1e6 -f 0.6e6 -am -gain 1  -timeout 5
 
 ./sdrTest -fc 1e6 -f 0.76e6 -am -gain 1
 
@@ -238,12 +239,9 @@ int setBuffers(struct playData *rx, int numBuff);
 
 int StartIt(struct playData *rx);
 
-int GetTime(long *Seconds,long *milliseconds);
+static int GetTime(long *Seconds,long *milliseconds);
 
 double rtime(void);
-
-
-int doAudioOLD2(float *aBuff,struct playData *rx);
 
 int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
          double streamTime, RtAudioStreamStatus status, void *userData );
@@ -1452,27 +1450,33 @@ static int stopPlay(struct playData *rx)
 }
 double rtime(void)
 {
-        long milliseconds;
-        long Seconds;
-        double ret;
+	long milliseconds;
+	long Seconds;
+	double ret;
 
 
-        GetTime(&Seconds,&milliseconds);
+	GetTime(&Seconds, &milliseconds);
 
-        ret=(double)Seconds+(double)milliseconds/1000.;
+	ret = (double)Seconds + (double)milliseconds / 1000.;
 
-        return ret;
+	return ret;
 
 }
-int GetTime(long *Seconds,long *milliseconds)
+static int GetTime(long *Seconds, long *milliseconds)
 {
-        struct timeval curTime;
+	struct timeb t;
 
-        gettimeofday(&curTime,(struct timezone *) NULL);
-        *Seconds=curTime.tv_sec;
-        *milliseconds=curTime.tv_usec/1000;
-        return 0;
+	if (!Seconds || !milliseconds)return 1;
+
+
+	ftime(&t);
+
+	*Seconds = (long)t.time;
+	*milliseconds = t.millitm;
+
+	return 0;
 }
+
 
 int zerol(unsigned char *s,unsigned long n)
 {
