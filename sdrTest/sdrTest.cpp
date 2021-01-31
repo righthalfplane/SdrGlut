@@ -329,13 +329,13 @@ int main (int argc, char * argv [])
 	             mprint("Could Not Open %s to Write\n",argv[n]);
 	         }
 	    }else if(!strcmp(argv[n],"-faudio")){
-	         rx.faudio=atof(argv[++n]);
+	         rx.faudio=(float)atof(argv[++n]);
 	    }else if(!strcmp(argv[n],"-device")){
 	         rx.deviceNumber=atoi(argv[++n]);
 	    }else if(!strcmp(argv[n],"-audiodevice")){
 	         audiodevice=atoi(argv[++n]);
 	    }else if(!strcmp(argv[n],"-samplerate")){
-            rx.samplerate=atof(argv[++n]);
+            rx.samplerate=(int)atof(argv[++n]);
 	    }else if(!strcmp(argv[n],"-timeout")){
             rx.timeout=atof(argv[++n]);
 	    }else if(!strcmp(argv[n],"-antenna")){
@@ -429,12 +429,12 @@ int main (int argc, char * argv [])
 		parameters.nChannels = 2;
 		parameters.nChannels = 1;
 		parameters.firstChannel = 0;
-		unsigned int bufferFrames = rx.faudio/50; // 256 sample frames
+		unsigned int bufferFrames = (unsigned int)(rx.faudio/50); // 256 sample frames
 
 
 		try {
 			dac.openStream( &parameters, NULL, RTAUDIO_SINT16,
-							rx.faudio, &bufferFrames, &sound, (void *)&rx );
+							(unsigned int)rx.faudio, &bufferFrames, &sound, (void *)&rx );
 			dac.startStream();
 		}
 		catch ( RtAudioError& e ) {
@@ -507,7 +507,7 @@ int printInfo(void)
 int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
          double streamTime, RtAudioStreamStatus status, void *userData )
 {
-  unsigned int i, j;
+  unsigned int i;
   short int *buffer = (short int *) outputBuffer;
     
   struct playData *rx=(struct playData *)userData;
@@ -581,9 +581,9 @@ int playRadio(struct playData *rx)
 
         double rate=rx->device->getSampleRate(SOAPY_SDR_RX, 0);
               
-        int size=rate/50;
+        int size=(int)rate/50;
     
-       	if(rx->out)size=rate/10;
+       	if(rx->out)size=(int)rate/10;
  	        
         rx->size=size;
         
@@ -602,12 +602,12 @@ int playRadio(struct playData *rx)
 
         for(int k=0;k<NUM_ABUFF;++k){
         	if(rx->buffa[k])free(rx->buffa[k]);
-        	rx->buffa[k]=(short int *)malloc(2*rx->faudio*4);
+        	rx->buffa[k]=(short int *)malloc((size_t)(2*rx->faudio*4));
         	if(!rx->buffa[k]){
         	    mprint("1 malloc Errror %ld\n",(long)(2*rx->faudio*4));
        	     	return 1;
        		}
-        	zerol((char *)rx->buffa[k],2*rx->faudio*4);
+        	zerol((char *)rx->buffa[k],(unsigned long)(2*rx->faudio*4));
         	rx->buffStacka[k]=-1;
         }
         
@@ -672,7 +672,7 @@ int playRadio(struct playData *rx)
 			if (ibuff >= 0){
 			   	char filename[256];
 				short int *buff= rx->buffa[ibuff % NUM_ABUFF];
-				fwrite(buff, 2, rx->faudio/10,rx->out);
+				fwrite(buff, 2,(size_t) (rx->faudio/10),rx->out);
 				if(rx->dumpbyminute){
 					if(++count == 10*60){
 						fclose(rx->out);
@@ -781,12 +781,12 @@ int Process(void *rxv)
 	mprint("Process Start rx->frame %d\n",rx->frame);
 	
 	
-	float *aBuff=(float *)malloc(2*rx->faudio*4);
+	float *aBuff=(float *)malloc((size_t)(2*rx->faudio*4));
     if(!aBuff){
         mprint("3 malloc Errror %ld\n",(long)(2*rx->faudio*4));
        	 return 1;
     }
-    zerol((char *)aBuff,2*rx->faudio*4);
+    zerol((char *)aBuff,(unsigned long)(2*rx->faudio*4));
 	
 	while(rx->frame >= 0){
 		if(doFilter(rx,wBuff,aBuff,&f)){
@@ -857,8 +857,8 @@ int doFilter(struct playData *rx,float *wBuff,float *aBuff,struct Filters *f)
             //r = 0.001*(rand() % 100);
             //i = 0.001*(rand() % 100);
             if(rx->dt > 0){
-                buf2[k * rx->channels] = (r*rx->coso - i*rx->sino);
-                buf2[k * rx->channels + 1] = (i*rx->coso + r*rx->sino);
+                buf2[k * rx->channels] = (float)(r*rx->coso - i*rx->sino);
+                buf2[k * rx->channels + 1] = (float)(i*rx->coso + r*rx->sino);
                 sint=rx->sino*rx->cosdt+rx->coso*rx->sindt;
                 cost=rx->coso*rx->cosdt-rx->sino*rx->sindt;
                 rx->coso=cost;
@@ -1154,7 +1154,7 @@ int findRadio(struct playData *rx)
        			mprint("%s\n",(*ii).c_str());
         	}
 			        
-        	rx->antennaCount=names.size();
+        	rx->antennaCount=(int)names.size();
         	rx->antenna=(char **)cMalloc((unsigned long)(rx->antennaCount*sizeof(char *)),8833);
         	for (size_t i=0;i<names.size();++i){
             	rx->antenna[i]=strsave((char *)names[i].c_str(),5555);
@@ -1415,7 +1415,7 @@ static int initPlay(struct playData *rx)
     
     rx->audioOut=0;
     if(rx->fc != rx->f){
-    	float pi;
+    	double pi;
     	pi=4.0*atan(1.0);
     	rx->dt=1.0/(double)rx->samplerate;
     	rx->sino=0;
