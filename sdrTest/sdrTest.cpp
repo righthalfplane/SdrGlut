@@ -4,12 +4,16 @@
 #include <SoapySDR/Device.hpp>
 #include <SoapySDR/Formats.h>
 
-#include <mutex>
 
 #include <liquid/liquid.h>
 
-#include <csignal>
+#include <RtAudio.h>
+
 #include <iostream>
+#include <csignal>
+#include <mutex>
+#include <cstdio>
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -32,10 +36,7 @@
 
 #include "mThread.h"
 
-#include <RtAudio.h>
 
-#include <cstdio>
-#include <iostream>
 
 
 
