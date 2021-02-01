@@ -370,8 +370,6 @@ int main (int argc, char * argv [])
 	
 		int deviceCount=dac.getDeviceCount();
 		
-	
-	
 		if (deviceCount < 1 ) {
 			mprint("\nNo audio devices found!\n");
 			exit( 0 );
@@ -421,8 +419,6 @@ int main (int argc, char * argv [])
 	
 		list_audio();
 	
-		printInfo();
-	
 	
 		RtAudio::StreamParameters parameters;
 		parameters.deviceId = dac.getDefaultOutputDevice();
@@ -443,6 +439,9 @@ int main (int argc, char * argv [])
 			exit( 0 );
 		}
 	}	
+	
+	
+	printInfo();
 	
 	playRadio(&rx);
 
@@ -582,7 +581,7 @@ int StartIt(struct playData *rx)
 int playRadio(struct playData *rx)
 {
 
-        double rate=rx->device->getSampleRate(SOAPY_SDR_RX, 0);
+        double rate=rx->device->getSampleRate(SOAPY_SDR_RX, rx->channel);
               
         int size=(int)rate/50;
     
@@ -593,10 +592,10 @@ int playRadio(struct playData *rx)
         mprint("rate %f rx->size %d\n",rate,rx->size);
                 
         for(int k=0;k<NUM_DATA_BUFF;++k){
-        	if(rx->buff[k])free(rx->buff[k]);
-        	rx->buff[k]=(float *)malloc(2*size*4);
+        	if(rx->buff[k])cFree((char *)rx->buff[k]);
+        	rx->buff[k]=(float *)cMalloc(2*size*4,5789);
         	if(!rx->buff[k]){
-        	    mprint("1 malloc Errror %ld\n",(long)(2*size*4));
+        	    mprint("5 cMalloc Errror %ld\n",(long)(2*size*4));
        	     	return 1;
        		}
         	zerol((char *)rx->buff[k],2*size*4);
@@ -604,10 +603,10 @@ int playRadio(struct playData *rx)
         }
 
         for(int k=0;k<NUM_ABUFF;++k){
-        	if(rx->buffa[k])free(rx->buffa[k]);
-        	rx->buffa[k]=(short int *)malloc((size_t)(2*rx->faudio*4));
+        	if(rx->buffa[k])cFree((char *)rx->buffa[k]);
+        	rx->buffa[k]=(short int *)cMalloc((size_t)(2*rx->faudio*4),5272);
         	if(!rx->buffa[k]){
-        	    mprint("1 malloc Errror %ld\n",(long)(2*rx->faudio*4));
+        	    mprint("10 cMalloc Errror %ld\n",(long)(2*rx->faudio*4));
        	     	return 1;
        		}
         	zerol((char *)rx->buffa[k],(unsigned long)(2*rx->faudio*4));
@@ -774,9 +773,9 @@ int Process(void *rxv)
 	
 	setFilters(rx,&f);
 	
-	float *wBuff=(float *)malloc(2*rx->size*4);
+	float *wBuff=(float *)cMalloc(2*rx->size*4,4567);
     if(!wBuff){
-        mprint("2 malloc Errror %ld\n",(long)(2*rx->size*4));
+        mprint("2 cMalloc Errror %ld\n",(long)(2*rx->size*4));
        	 return 1;
     }
     zerol((char *)wBuff,2*rx->size*4);
@@ -784,9 +783,9 @@ int Process(void *rxv)
 	mprint("Process Start rx->frame %d\n",rx->frame);
 	
 	
-	float *aBuff=(float *)malloc((size_t)(2*rx->faudio*4));
+	float *aBuff=(float *)cMalloc((size_t)(2*rx->faudio*4),9837);
     if(!aBuff){
-        mprint("3 malloc Errror %ld\n",(long)(2*rx->faudio*4));
+        mprint("3 cMalloc Errror %ld\n",(long)(2*rx->faudio*4));
        	 return 1;
     }
     zerol((char *)aBuff,(unsigned long)(2*rx->faudio*4));
@@ -800,9 +799,9 @@ int Process(void *rxv)
 	}
 	mprint("Process return rx->frame %d\n",rx->frame);
 	
-	if(wBuff)free(wBuff);
+	if(wBuff)cFree((char *)wBuff);
 	
-	if(aBuff)free(aBuff);
+	if(aBuff)cFree((char *)aBuff);
 	
 	if (f.iqSampler)msresamp_crcf_destroy(f.iqSampler);
 	
@@ -1441,6 +1440,16 @@ static int stopPlay(struct playData *rx)
         SoapySDR::Device::unmake(rx->device);
     }
         	
+ 	for(int k=0;k<NUM_DATA_BUFF;++k){
+		if(rx->buff[k])cFree((char *)rx->buff[k]);
+		rx->buff[k]=NULL;
+	}
+
+	for(int k=0;k<NUM_ABUFF;++k){
+		if(rx->buffa[k])cFree((char *)rx->buffa[k]);
+		rx->buffa[k]=NULL;
+	}
+       	
     if(rx->antenna){
         for (size_t i=0;i<rx->antennaCount;++i){
             cFree(rx->antenna[i]);
