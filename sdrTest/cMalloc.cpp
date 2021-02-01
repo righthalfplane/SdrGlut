@@ -2,10 +2,8 @@
 #include "firstFile.h"
 #include <stdio.h>
 #include <stdlib.h>
-//#include "Tools.h"
-//#include "ulibTypes.h"
 
-//int WarningBatch(char *buff);
+#include <mutex>
 
 void checkall(void);
 
@@ -17,7 +15,6 @@ static long total;
 #ifdef DEBUG77
 
 static std::mutex mutex;
-
 
 #define END_OF_MEMORY 900000
 static void  *given[END_OF_MEMORY];

@@ -206,6 +206,7 @@ void *cMalloc(unsigned long r, int tag);
 
 char *strsave(char *s,int tag);
 
+int cFree(char *p);
 
 int zerol(unsigned char *s,unsigned long n);
 
@@ -261,6 +262,8 @@ void signalHandler( int signum ) {
 	threadexit=1;
 }
 
+void checkall(void);
+
 int main (int argc, char * argv [])
 {	
 	struct playData rx;
@@ -287,8 +290,6 @@ int main (int argc, char * argv [])
     rx.aminGlobal=0;
     rx.amaxGlobal=0;
     rx.decodemode = MODE_AM;
-
-	 	
 
 	signal(SIGINT, signalHandler);  
 
@@ -465,6 +466,8 @@ int main (int argc, char * argv [])
 	
     	
 	if(rx.out)fclose(rx.out);
+	
+	checkall();
 	
 	return 0 ;
 } /* main */
@@ -1094,8 +1097,6 @@ int findRadio(struct playData *rx)
     
     SoapySDR::Kwargs deviceArgs;
     
-    
-    
     for(unsigned int k=0;k<results.size();++k){
     		mprint("SDR device =  %ld ",(long)k);
 			deviceArgs = results[k];
@@ -1112,10 +1113,8 @@ int findRadio(struct playData *rx)
         
 			deviceArgs = results[k];
 		
-	
 	    		mprint("device =  %ld selected\n",(long)k);
 
-	
 			for (SoapySDR::Kwargs::const_iterator it = deviceArgs.begin(); it != deviceArgs.end(); ++it) {
 				mprint("%s = %s ",it->first.c_str(), it->second.c_str());
 				if (it->first == "driver") {
@@ -1125,14 +1124,12 @@ int findRadio(struct playData *rx)
 				}
 			}
 		
-			
     		mprint("\n\n");
 
-			
 			rx->device = SoapySDR::Device::make(deviceArgs);
 			
-			mprint("driver= %s\n",rx->device->getDriverKey().c_str());
-			mprint("hardware= %s\n",rx->device->getHardwareKey().c_str());
+			mprint("driver = %s\n",rx->device->getDriverKey().c_str());
+			mprint("hardware = %s\n",rx->device->getHardwareKey().c_str());
         
         
 			SoapySDR::Kwargs it=rx->device->getHardwareInfo();
@@ -1426,7 +1423,6 @@ static int initPlay(struct playData *rx)
     	mprint("fc %f f %f dt %g samplerate %d\n",rx->fc,rx->f,rx->dt,rx->samplerate);
     }
     
-    
 	return 0;
 }
 
@@ -1444,7 +1440,16 @@ static int stopPlay(struct playData *rx)
     
         SoapySDR::Device::unmake(rx->device);
     }
-
+        	
+    if(rx->antenna){
+        for (size_t i=0;i<rx->antennaCount;++i){
+            cFree(rx->antenna[i]);
+            rx->antenna[i]=NULL;
+        }
+        cFree((char *)rx->antenna);
+        rx->antenna=NULL;
+        rx->antennaCount=0;
+	}
     
 	return 0;
 }
