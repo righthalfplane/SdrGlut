@@ -1,5 +1,5 @@
 samplerate 10000
-cbandpass butter 14 2.0 2000 3000
+cbandpass butter 8 2.0 2000 3000
 response 201
 force sin 10 1000 400
 force sin 10 2500 400
@@ -7,6 +7,9 @@ force sin 10 4000 400
 force ifft 4096 2
 exit
 
+
+
+cbandpass butter 14 2.0 2000 3000
 
 
 frequencyNorm 2500

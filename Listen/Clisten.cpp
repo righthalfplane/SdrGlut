@@ -1,11 +1,6 @@
-#ifndef _CRT_SECURE_NO_WARNINGS
-#define _CRT_SECURE_NO_WARNINGS 1
-#endif
+#include "firstFile.h"
 
-
-#ifndef  _WINSOCK_DEPRECATED_NO_WARNINGS 
-#define _WINSOCK_DEPRECATED_NO_WARNINGS  1
-#endif
+#include "Clisten.h"
 
 #include <cstdio>
 #include <chrono>
@@ -26,21 +21,7 @@
 
 // #include <unistd.h>
 
-
 using namespace std;
-
-//g++ -O2 -o listen listen.cpp mThread.c -lliquid -lrtaudio -lpthread
-
-#define MODE_FM   0
-#define MODE_NBFM 1
-#define MODE_AM   2
-#define MODE_NAM  3
-#define MODE_USB  4
-#define MODE_LSB  5
-#define MODE_CW   6
-#define MODE_NAM2 7
-
-
 
 #include <stdlib.h>
 
@@ -48,138 +29,9 @@ using namespace std;
 
 #include "mThread.h"
 
-
-struct SoapyNetSDR_SocketInit
-{
-    SoapyNetSDR_SocketInit(void)
-    {
-        #ifdef _MSC_VER
-        WSADATA wsaData;
-        WSAStartup(MAKEWORD(2, 2), &wsaData);
-        #endif
-    }
-    ~SoapyNetSDR_SocketInit(void)
-    {
-        #ifdef _MSC_VER
-        WSACleanup();
-        #endif
-    }
-};
-
-
- struct Filters2{
-    int np;
-    ampmodem demodAM;
-    freqdem demod;
-    msresamp_crcf iqSampler;
-    msresamp_rrrf iqSampler2;
-    int thread;
-    double amHistory;
-};
-
-
-class Listen {
-    
-public:
-    int wShift;
-    int Debug;
-    float gain;
-    double fc;
-    double f;
-    double dt;
-    double sino;
-    double coso;
-    double sindt;
-    double cosdt;
-    double w;
-    int channels;
-    int size;
-    volatile int ibuff;
-	complex<float> *output;
-	complex<float> *buff1;
-	float Ratio;
-	double fOut;
-    int samplerate;
-    double aminGlobal;
-    double amaxGlobal;
-	double bw;
-	long ncommand;
-	
-    Listen();
-    ~Listen();
-    
-    SOCKET connectToServer(char *serverName,unsigned short *Port);
-
-	int getPortAndName(char *in,unsigned int *hostAddr,unsigned short *Port);
-	
-	SOCKET createService(unsigned short *Port);
-	
-	int CheckSocket(SOCKET serverSocket,int *count,int ms);
-	
-	int ListenSocket(SOCKET clientSocket);
-	
-	int netRead(SOCKET clientSocket,char *buff,long n);
-	
-	int readCommand(SOCKET clientSocket,char *buff,long *size);
-	
-	int getLong(SOCKET clientSocket,long *n);
-
-	int readString(SOCKET clientSocket,char *buff,long nbyte);
-
-	SOCKET waitForService(char *name);
-	
-	int setCenterFrequency(double frequency,double sampleRate);
-	
-	int setFrequency(double frequency);
-
-	SOCKET startService(char *name);
-	
-	int mix(float *buf1,float *buf2);
-
-	unsigned int hostAddr;
-
-	long Bytes;
-
-	unsigned short Port;
-	
-	SOCKET serverSocket;
-
-	SOCKET clientSocket;
-
-	struct sockaddr_in clientSocketAddr;
-	
-	socklen_t addrLen;
-	
-	socklen_t namelen;
-
-	long buffsize;
-	
-	int decodemode;
-
-	struct Filters2 filter;
-
-	SoapyNetSDR_SocketInit socket_init;
-
-	int pipe;
-	
-	int binary;
-
-};
-
 static int copyl(char *p1,char *p2,long n);
 
 static int zerol(char *p,long n);
-
-int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
-         double streamTime, RtAudioStreamStatus status, void *userData );
-
-int launchThread(void *data,int (*sageThread)(void *data));
-
-int ListenSocket(void *rxv);
-
-static int freeFilters(struct Filters2 *f);
-
-static int setFilters(class Listen *rx,struct Filters2 *f);
 
 Listen::Listen()
 {
@@ -220,136 +72,7 @@ Listen::~Listen()
 {
 	closesocket(clientSocket);
 }
-
-int main(int argc,char *argv[])
-{
-
-    class Listen *l=new Listen;
-    
-    int device=-2;
-    
-	for(int n=1;n<argc;++n){
-	    if(!strcmp(argv[n],"-debug")){
-		   l->Debug = 1;
-	    }else if(!strcmp(argv[n],"-am")){
-		   l->decodemode = MODE_AM;
-	    }else if(!strcmp(argv[n],"-fm")){
-		   l->decodemode = MODE_FM;
-        }else if(!strcmp(argv[n],"-nbfm")){
-            l->decodemode = MODE_NBFM;
-        }else if(!strcmp(argv[n],"-usb")){
-            l->decodemode = MODE_USB;
-        }else if(!strcmp(argv[n],"-lsb")){
-            l->decodemode = MODE_LSB;
-	    }else if(!strcmp(argv[n],"-gain")){
-	         l->gain=(float)atof(argv[++n]);
-        }else if(!strcmp(argv[n],"-f")){
-            l->f=atof(argv[++n]);
-        }else if(!strcmp(argv[n],"-p")){
-            l->Port=(unsigned int)atof(argv[++n]);
-        }else if(!strcmp(argv[n],"-device")){
-            device=(int)atof(argv[++n]);
-        }else if(!strcmp(argv[n],"-pipe")){
-            l->pipe=1;
-        }else if(!strcmp(argv[n],"-binary")){
-            l->binary=1;
-		}
-	}
-       
-	RtAudio dac;
-	
-	int deviceCount=dac.getDeviceCount();
-		
-	if (deviceCount  < 1 ) {
-		fprintf(stderr,"\nNo audio devices found!\n");
-		return 1;
-	}
-	
-	fprintf(stderr,"deviceCount %d default output device %d\n",deviceCount,dac.getDefaultOutputDevice());
-	
-    RtAudio::DeviceInfo info;
-    for (int i=0; i<deviceCount; i++) {
-        
-        try {
-            info=dac.getDeviceInfo(i);
-            if(info.outputChannels > 0){
-            // Print, for example, the maximum number of output channels for each device
-                fprintf(stderr,"device = %d : maximum output  channels = %d Device Name = %s\n",i,info.outputChannels,info.name.c_str());
-             }
-             
-            if(info.inputChannels > 0){
-            // Print, for example, the maximum number of output channels for each device
-                fprintf(stderr,"device = %d : maximum output  channels = %d Device Name = %s\n",i,info.inputChannels,info.name.c_str());
-            }
-
-        }
-        catch (RtAudioError &error) {
-            error.printMessage();
-            break;
-        }
-        
-    }
-
-	RtAudio::StreamParameters parameters;
-	
-	if(device == -2){
-	    parameters.deviceId = dac.getDefaultOutputDevice();
-	}else{
-	    parameters.deviceId = device;
-	}
-	parameters.nChannels = 1;
-	parameters.firstChannel = 0;
-	unsigned int sampleRate = 48000;
-	//unsigned int bufferFrames = 4096;
-	unsigned int bufferFrames = 4800/2;
-
-
-	try {
-		dac.openStream( &parameters, NULL, RTAUDIO_SINT16,
-						sampleRate, &bufferFrames, &sound, (void *)l);
-		dac.startStream();
-	}
-	catch ( RtAudioError& e ) {
-		e.printMessage();
-		exit( 0 );
-	}
-    
-
-	// l->Debug=0;
-	
-	SOCKET ret = l->waitForService(argv[1]);
-	if(ret < 0){
-		return 1;
-	}
-	
-
-	//l->ListenSocket(l->clientSocket);
-	
-
-	l->ibuff=-2;
-	launchThread((void *)l,ListenSocket);
-	
-	while(l->ibuff != -1){
-		Sleep2(10);
-	}
-
-	try {
-    	// Stop the stream
-    	dac.stopStream();
-  	}
-  	catch (RtAudioError& e) {
-    	e.printMessage();
-  	}
-  	
-  	if ( dac.isStreamOpen() ) dac.closeStream();
-
-
-
-    delete l;
-
-	return 0;
-}
-static int freeFilters(struct Filters2 *f)
+int Listen::freeFilters(struct Filters2 *f)
 {
     if (f->iqSampler)msresamp_crcf_destroy(f->iqSampler);
     f->iqSampler=0;
@@ -366,7 +89,7 @@ static int freeFilters(struct Filters2 *f)
     return 0;
 
 }
-static int setFilters(class Listen *rx,struct Filters2 *f)
+int Listen::setFilters(class Listen *rx,struct Filters2 *f)
 {
     float As = 60.0f;
     
@@ -478,7 +201,7 @@ int ListenSocket(void *rxv)
 	//if(!in)in=fopen("junk.raw","wb");
 
 	fprintf(stderr,"******************************************************\n");
-	fprintf(stderr,"**  listen 727 - COPYRIGHT 2020. Start **\n");
+	fprintf(stderr,"**  listen 803 - COPYRIGHT 2020-2021. Start **\n");
 	fprintf(stderr,"******************************************************\n");
 
 	start=time(&ship);
@@ -520,8 +243,8 @@ int ListenSocket(void *rxv)
 		    double buff[2];
 		    l->netRead(l->clientSocket,(char *)buff,size);
 		    l->decodemode=(int)buff[0];
-		    freeFilters(&l->filter);
-		    setFilters(l,&l->filter);
+		    l->freeFilters(&l->filter);
+		    l->setFilters(l,&l->filter);
 		    if(l->Debug)fprintf(stderr,"decodemode %d \n",l->decodemode);
 	    }else if(!strcmp(buff,"FLOA")){
 	        if(l->Debug){
@@ -636,7 +359,7 @@ int ListenSocket(void *rxv)
     fprintf(stderr,"%ld Seconds To Receive %ld Bytes (%ld Bytes/s)\n",
                  (long)total,l->Bytes,(long)(l->Bytes/total));
 	fprintf(stderr,"******************************************************\n");
-	fprintf(stderr,"**  listen 649 - COPYRIGHT 2020. Done  **\n");
+	fprintf(stderr,"**  listen 803 - COPYRIGHT 2020-2021. Done  **\n");
 	fprintf(stderr,"******************************************************\n");
 
     return 1;
@@ -652,120 +375,7 @@ int launchThread(void *data,int (*sageThread)(void *data))
 }
 */
 
-int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
-         double streamTime, RtAudioStreamStatus status, void *userData )
-{
-  unsigned int i;
-  
-  short int *buffer = (short int *) outputBuffer;
-    
-  class Listen *rx=(class Listen *)userData;
-  
-  if ( status )fprintf(stderr,"Stream underflow detected!");
-    
-    //int nskip=rx->size/nBufferFrames;
-  
-	if (rx->ibuff >= 0){
-	
-		unsigned int num;
-		unsigned int num2;
-	
-		num=0;
-		num2=0;
-		
-		float *buf1=(float *)rx->buff1;
-		float *buf2=(float *)rx->output;
-	
-		msresamp_crcf_execute(rx->filter.iqSampler, (liquid_float_complex *)buf2, rx->size, (liquid_float_complex *)buf1, &num);  // decimate
-	
-		if(rx->decodemode < MODE_AM){
-			freqdem_demodulate_block(rx->filter.demod, (liquid_float_complex *)buf1, (int)num, (float *)buf2);
-			msresamp_rrrf_execute(rx->filter.iqSampler2, (float *)buf2, num, (float *)buf1, &num2);  // interpolate
-			//fprintf(stderr,"2 rx->size %d num %u num2 %u\n",rx->size,num,num2);
-		}else if(rx->decodemode < MODE_USB){
-	#define DC_ALPHA 0.99
-		
-			for(unsigned int n=0;n<num;++n){
-				double mag=sqrt(buf1[2*n]*buf1[2*n]+buf1[2*n+1]*buf1[2*n+1]);
-				double z0=mag + (rx->filter.amHistory * DC_ALPHA);
-				buf2[n]=(float)(z0-rx->filter.amHistory);
-				rx->filter.amHistory=z0;
-			}
-			msresamp_rrrf_execute(rx->filter.iqSampler2, (float *)buf2, num, (float *)buf1, &num2);  // interpolate
-		}else{
-			ampmodem_demodulate_block(rx->filter.demodAM,  (liquid_float_complex *)buf1, (int)num, (float *)buf2);
-			msresamp_rrrf_execute(rx->filter.iqSampler2, (float *)buf2, num, (float *)buf1, &num2);  // interpolate
-		}
 
-		//fprintf(stderr,"2 rx->size %d num %u num2 %u\n",play->size,num,num2);
-
-		double dmin,dnom,gain;
-	
-		double amin=1e30;
-		double amax=-1e30;
-		double average=0;
-
-		gain=rx->gain;
-	
-		if(gain < 0.0)gain=1.0;
-	
-		for (size_t i=0; i<num2; i++ ) {
-			double v;
-			v=buf1[i];
-			average += v;
-			if(v < amin)amin=v;
-			if(v > amax)amax=v;
-			
-		}
-
-		average /= num2;
-		
-		amin -= average;
-		
-		amax -= average;
-	
-		if(rx->aminGlobal == 0.0)rx->aminGlobal=amin;
-		rx->aminGlobal = 0.8*rx->aminGlobal+0.2*amin;
-		amin=rx->aminGlobal;
-	
-		if(rx->amaxGlobal == 0.0)rx->amaxGlobal=amax;
-		rx->amaxGlobal = 0.8*rx->amaxGlobal+0.2*amax;
-		amax=rx->amaxGlobal;
-
-
-		if((amax-amin) > 0){
-			dnom=65535.0/(amax-amin);
-		}else{
-			dnom=65535.0;
-		}
-	
-		dmin=amin;
-		//int short *data=filter.data;
-		for(size_t k=0;k<num2;++k){
-			short int vv;
-			unsigned  char *c=(unsigned char *)&vv;
-			double v;
-			v=buf1[k];
-			v=gain*((v-average)*dnom);
-			if(rx->pipe){
-				buffer[k]=0;
-				vv=(short int)v;
-				fputc(c[0],stdout);
-				fputc(c[1],stdout);
-			}else{
-				buffer[k]=(short int)v;
-			}
-		}
-   	   rx->ibuff=-2;
-	}else{
-		for ( i=0; i<nBufferFrames; i++ ) {
-		  buffer[i] = 0;
-		}
-  	}
-  
-    
-  return 0;
-}
 int Listen::setFrequency(double frequency)
 {
 	double pi;

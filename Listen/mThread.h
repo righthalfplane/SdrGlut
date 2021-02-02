@@ -7,22 +7,13 @@
 extern      "C"
 {
 #endif                          /* c_plusplus || __cplusplus */
-	
-	typedef struct mThreadStruct{
-	void *data;
-	long smin;
-	long smax;
-    volatile int done;
-    int nthread;
-	double value1;
-	double value2;
-	double value3;
-	void *saveThreadData;
-    void *save;     /* place to save windows thread handle for later release */
-}mThread;
-
+						
 	int launchThread(void *data,int (*sageThread)(void *data));
 	
+	int zerol(char *p,unsigned long n);
+	
+	void mprint(const char *fmt, ...);
+
 	int Sleep2(int ms);
 
 #if defined c_plusplus || defined __cplusplus

@@ -426,7 +426,7 @@ int main (int argc, char * argv [])
 		parameters.nChannels = 2;
 		parameters.nChannels = 1;
 		parameters.firstChannel = 0;
-		unsigned int bufferFrames = (unsigned int)(rx.faudio/50); // 256 sample frames
+		unsigned int bufferFrames = (unsigned int)(rx.faudio/50);
 
 
 		try {
