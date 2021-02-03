@@ -9,6 +9,7 @@ SdrGlut now has a send option where it uses tcp/ip to transfer the I/Q stream to
 https://github.com/righthalfplane/SdrGlut/releases/tag/v1.21
 
 ## Demo videos
+- [How to Install SdrGlut on MacOs Catalina (a software defined radio)](https://youtu.be/cOPHQ9_nHEA)
 - [How to Install SdrGlut on Ubuntu 18.04 (a software defined radio)](https://youtu.be/LVpo78ubRiI)
 - [Using gnuradio and the Impulse Source to Show Filter Frequency Response](https://youtu.be/vsm18e7duPU)
 - [How to Install SdrGlut (A software defined radio) on the Raspberry PI](https://youtu.be/xD9_6c3OisM)
