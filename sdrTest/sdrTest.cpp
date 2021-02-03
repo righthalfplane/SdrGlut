@@ -26,7 +26,7 @@
 
 #include <time.h>
 
-
+/*
 #ifdef __APPLE__
 #include <OpenAL/al.h>
 #include <OpenAL/alc.h>
@@ -34,6 +34,7 @@
 #include <AL/alut.h>
 #include <AL/al.h>
 #endif
+*/
 
 #include "mThread.h"
 
@@ -254,8 +255,8 @@ volatile int threadexit;
 
 int audiodevice;
 
-static void list_audio_devices(const ALCchar *devices);
-static void list_audio(void);
+//static void list_audio_devices(const ALCchar *devices);
+//static void list_audio(void);
 
 void signalHandler( int signum ) {
 	//mprint("signum %d\n",signum);
@@ -417,7 +418,7 @@ int main (int argc, char * argv [])
 	
 		mprint("\n");
 	
-		list_audio();
+//		list_audio();
 	
 	
 		RtAudio::StreamParameters parameters;
@@ -1622,6 +1623,7 @@ char *strsave(char *s,int tag)
 		mstrncpy(p,s,length);
 	return(p);
 }
+/*
 static void list_audio()
 {
 
@@ -1632,7 +1634,7 @@ static void list_audio()
         mprint("enumeration not supported\n");
     }else{
         list_audio_devices(alcGetString(NULL, ALC_DEVICE_SPECIFIER));
-        list_audio_devices(alcGetString(NULL, ALC_CAPTURE_DEFAULT_DEVICE_SPECIFIER));
+        list_audio_devices(alcGetString(NULL, ALC_CAPTURE_DEFAULT_DEVICE_SPECIFIER));       
     }
 
 }
@@ -1652,4 +1654,4 @@ static void list_audio_devices(const ALCchar *devices)
     }
     mprint( "----------\n\n");
 }
-
+*/
