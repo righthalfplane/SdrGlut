@@ -113,17 +113,8 @@ int main(int argc,char *argv[])
 	if(ret < 0){
 		return 1;
 	}
-	
+		
 
-	//l->ListenSocket(l->clientSocket);
-	
-
-	l->ibuff=-2;
-	launchThread((void *)l,ListenSocket);
-	
-	while(l->ibuff != -1){
-		Sleep2(10);
-	}
 
 	try {
     	// Stop the stream

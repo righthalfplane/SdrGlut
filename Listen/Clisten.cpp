@@ -444,18 +444,16 @@ SOCKET Listen::waitForService(char *name)
 		clientSocket=accept(serverSocket,(struct  sockaddr  *)&clientSocketAddr,
 	                        &addrLen);
 	                        
-	    //ListenSocket(clientSocket);
-	    
-	    
-	   // fprintf(stderr,"accept \n");
-	    
-	    break;
-
+		this->ibuff=-2;
+		launchThread((void *)this,ListenSocket);
 	
+		while(this->ibuff != -1){
+			Sleep2(10);
+		}
+	                                             
+ 	     shutdown(clientSocket,2);
+	     close(clientSocket);
 	}
-	
-	
-	
 	
 	return serverSocket;
 	
@@ -503,10 +501,10 @@ int Listen::readCommand(SOCKET clientSocket,char *buff,long *size)
 	
 }
 
-int Listen::ListenSocket(SOCKET clientSocket)
-{
-	return 0;
-}
+//int Listen::ListenSocket(SOCKET clientSocket)
+//{
+//	return 0;
+//}
 
 int Listen::netRead(SOCKET clientSocket,char *buff,long n)
 {

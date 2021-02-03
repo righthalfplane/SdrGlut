@@ -97,7 +97,7 @@ public:
 	
 	int CheckSocket(SOCKET serverSocket,int *count,int ms);
 	
-	int ListenSocket(SOCKET clientSocket);
+	//int ListenSocket(SOCKET clientSocket);
 	
 	int netRead(SOCKET clientSocket,char *buff,long n);
 	
