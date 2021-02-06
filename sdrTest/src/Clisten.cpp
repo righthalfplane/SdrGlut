@@ -31,7 +31,7 @@ using namespace std;
 
 static int copyl(char *p1,char *p2,long n);
 
-static int zerol(char *p,long n);
+//static int zerol(char *p,long n);
 
 Listen::Listen()
 {
@@ -471,12 +471,12 @@ int Listen::getPortAndName(char *in,unsigned int *hostAddr,unsigned short *Port)
 
 	return 0;
 }
-static int zerol(char *p,long n)
-{
-	if(!p)return 1;
-	while(n-- > 0)*p++ = 0;
-	return 0;
-}
+//static int zerol(char *p,long n)
+//{
+//	if(!p)return 1;
+//	while(n-- > 0)*p++ = 0;
+//	return 0;
+//}
 SOCKET Listen::connectToServer(char *serverName,unsigned short *Port)
 {
 	struct sockaddr_in serverSocketAddr;
