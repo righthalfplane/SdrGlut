@@ -14,7 +14,11 @@ If you get an error on the line -
 sdrTest.cpp:1270:50: error: too few arguments to function ‘ampmodem_s*
 
 
-uncomment the line -
+uncomment the line in sdrTest.cpp -
+
+#define LIQUID_VERSION_4 1
+
+uncomment the line in Clisten.cpp -
 
 #define LIQUID_VERSION_4 1
 
