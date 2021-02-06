@@ -241,46 +241,53 @@ int Listen::setCenterFrequency(double frequency,double sampleRate)
 
 	return 0;
 }
-SOCKET Listen::waitForService(char *name)
+int WaitFor(void *rxv)
 {
+	class Listen *l=(class Listen *)rxv;
 	
-	serverSocket=startService(name);
+	l->serverSocket=l->startService(l->name);
 
 	//fprintf(stderr,"startService %lld\n", serverSocket);
 	
-	addrLen=sizeof(clientSocketAddr);
+	l->addrLen=sizeof(l->clientSocketAddr);
 	
 	while(1){
 		int count;
 		int ret;
 
-	    ret=CheckSocket(serverSocket,&count,3000);
+	    ret=l->CheckSocket(l->serverSocket,&count,3000);
 
 
 		if(ret <= 0){
-		    fprintf(stderr,"ret %d\n",ret);
+		    if(l->Debug)fprintf(stderr,"ret %d\n",ret);
 			continue;
         }
         
-		fprintf(stderr,"ret %d\n",ret);
+		if(l->Debug)fprintf(stderr,"ret %d\n",ret);
 		
-		clientSocket=accept(serverSocket,(struct  sockaddr  *)&clientSocketAddr,
-	                        &addrLen);
+		l->clientSocket=accept(l->serverSocket,(struct  sockaddr  *)&l->clientSocketAddr,
+	                        &l->addrLen);
 	                        
-		this->ibuff=-2;
-		launchThread((void *)this,ListenSocket);
-	
-		while(this->ibuff != -1){
-			Sleep2(10);
-		}
+		l->ibuff=-2;
+		
+	    ListenSocket(l);
 	                                             
- 	     shutdown(clientSocket,2);
-	     close(clientSocket);
+ 	     shutdown(l->clientSocket,2);
+	     close(l->clientSocket);
 	}
 	
-	return serverSocket;
+	return l->serverSocket;
 	
-	return -1;
+}
+
+SOCKET Listen::waitForService(char *name)
+{
+	
+	copyl(name,this->name,(long)strlen(name)+1);
+	
+	launchThread((void *)this,WaitFor);
+
+	return 0;
 }
 
 SOCKET Listen::startService(char *name)

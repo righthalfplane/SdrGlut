@@ -1,0 +1,19 @@
+a 192.168.0.2:3700
+#a 192.168.0.3:3700
+fc 162e6
+f 162.4e6
+m MODE_NBFM
+q
+  
+  
+
+fc 101e6
+f 101.5e6
+m MODE_FM
+
+  
+m MODE_AM
+m MODE_NAM
+m MODE_USB
+m MODE_LSB
+m MODE_CW

@@ -510,6 +510,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = 4675AE8F1C2C43DD00FE0144;
@@ -726,6 +727,7 @@
 					/usr/local/lib,
 					"$(PROJECT_DIR)",
 				);
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -745,6 +747,7 @@
 					/usr/local/lib,
 					"$(PROJECT_DIR)",
 				);
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

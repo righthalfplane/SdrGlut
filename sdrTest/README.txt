@@ -1,10 +1,10 @@
 To build sdrTest on the MacOS -
 
-g++ -O2 -std=c++11 -Wno-deprecated -o sdrTest sdrTest.cpp mThread.cpp cMalloc.c -lrtaudio -lSoapySDR -lliquid -framework OpenAL
+g++ -O2 -std=c++11 -Wno-deprecated -o sdrTest ./src/sdrTest.cpp ./src/mThread.cpp ./src/cMalloc.cpp ./src/Clisten.cpp -lrtaudio -lSoapySDR -lliquid -framework OpenAL -Wno-return-type-c-linkage
 
 To build sdrTest on the Linux systems -
 
-g++ -O2 -std=c++11 -Wno-deprecated -o sdrTest sdrTest.cpp mThread.cpp cMalloc.c -lrtaudio -lSoapySDR -lliquid -lopenal -pthread
+g++ -O2 -std=c++11 -Wno-deprecated -o sdrTest ./src/sdrTest.cpp ./src/mThread.cpp ./src/cMalloc.cpp ./src/Clisten.cpp -lrtaudio -lSoapySDR -lliquid -lopenal -pthread
 
 
 If you get an error on the line -
@@ -21,6 +21,7 @@ uncomment the line -
 
 Some examples -
 
+./sdrTest -fc 101.1e6 -f 101.5e6 -fm -gain 1 -audiodevice 2
 
 ./sdrTest -fc 1e6 -f 0.6e6 -gain 1
 
@@ -49,3 +50,16 @@ Some examples -
 ./sdrTest -fc 102.0e6 -f 102.1e6 -fm -gain 1 -dumpbyminute -faudio 12000
 
 /opt/local/bin/sox -t raw -r 48000 -b 16 -c 1 -L -e signed-integer saveAudio.raw -n stat
+
+
+
+To build control on the MacOS -
+
+g++ -O2 -std=c++11 -Wno-deprecated  -o control ./src/mainControl.cpp ./src/mThread.cpp ./src/send.cpp -lliquid -lrtaudio -lpthread -Wno-return-type-c-linkage
+
+control < ./examples/control.in
+control < ./examples/control01.in
+control < ./examples/control02.in
+control < ./examples/control03.in
+
+
