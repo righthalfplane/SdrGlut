@@ -9,6 +9,6 @@ int main(int argc,char *argv[])
 	printf("#a 192.168.0.3:3700\n");
 	printf("fc 162e6\n");
 	printf("f 162.4e6\n");
-	printf("m MODE_NBFM\n");
+	printf("m nbfm\n");
 	printf("q\n");
 }

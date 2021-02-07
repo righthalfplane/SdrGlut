@@ -90,19 +90,19 @@ int main(int argc,char *argv[])
 	    }else if(buf[0] == 'm'){
 	         char buf2[256];
 	         sscanf(buf,"m %s",buf2);
-	         if(!strcmp(buf2,"MODE_FM")){
+	         if(!strcmp(buf2,"fm")){
 	            rx->decodemode=MODE_FM;
-	         }else if(!strcmp(buf2,"MODE_NBFM")){
+	         }else if(!strcmp(buf2,"nbfm")){
 	            rx->decodemode=MODE_NBFM;
-	         }else if(!strcmp(buf2,"MODE_AM")){
+	         }else if(!strcmp(buf2,"am")){
 	            rx->decodemode=MODE_AM;
-	         }else if(!strcmp(buf2,"MODE_NAM")){
+	         }else if(!strcmp(buf2,"nam")){
 	            rx->decodemode=MODE_NAM;
-	         }else if(!strcmp(buf2,"MODE_USB")){
+	         }else if(!strcmp(buf2,"usb")){
 	            rx->decodemode=MODE_USB;
-	         }else if(!strcmp(buf2,"MODE_LSB")){
+	         }else if(!strcmp(buf2,"lsb")){
 	            rx->decodemode=MODE_LSB;
-	         }else if(!strcmp(buf2,"MODE_CW")){
+	         }else if(!strcmp(buf2,"cw")){
 	            rx->decodemode=MODE_CW;
 	         }
 	         

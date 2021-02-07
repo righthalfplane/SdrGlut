@@ -15,7 +15,7 @@ int main(int argc,char *argv[])
 	printf("#a 192.168.0.3:3700\n");
 	printf("fc 1e6\n");
 	printf("f 1e6\n");
-	printf("m MODE_AM\n");
+	printf("m am\n");
 	for(int k=-10;k<=10;++k){
 	   double f=1e6+k*10000;
 	   printf("f %ld\n",(long)f);
