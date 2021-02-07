@@ -66,4 +66,11 @@ control < ./examples/control01.in
 control < ./examples/control02.in
 control < ./examples/control03.in
 
+To build control on the Linux systems -
+
+g++ -O2 -std=c++11 -Wno-deprecated  -o control ./src/mainControl.cpp ./src/mThread.cpp ./src/send.cpp -lliquid -lrtaudio -lpthread 
+
+
+
+
 
