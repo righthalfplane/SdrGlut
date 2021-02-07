@@ -273,7 +273,7 @@ int WaitFor(void *rxv)
 	    ListenSocket(l);
 	                                             
  	     shutdown(l->clientSocket,2);
-	     close(l->clientSocket);
+	     closesocket(l->clientSocket);
 	}
 	
 	return l->serverSocket;

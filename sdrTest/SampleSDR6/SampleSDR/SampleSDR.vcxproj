@@ -19,16 +19,16 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\cMalloc.cpp" />
-    <ClCompile Include="..\..\mThread.cpp" />
-    <ClCompile Include="..\..\sdrTest.cpp" />
+    <ClCompile Include="..\..\src\Clisten.cpp" />
+    <ClCompile Include="..\..\src\cMalloc.cpp" />
+    <ClCompile Include="..\..\src\mThread.cpp" />
+    <ClCompile Include="..\..\src\sdrTest.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\firstFile.h" />
-    <ClInclude Include="..\..\mThread.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="..\..\README.txt" />
+    <ClInclude Include="..\..\src\Clisten.h" />
+    <ClInclude Include="..\..\src\firstFile.h" />
+    <ClInclude Include="..\..\src\mThread.h" />
+    <ClInclude Include="..\..\src\SocketDefs.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

@@ -525,26 +525,27 @@ static int setFrequency(double frequency,struct playData *rx)
     
 	return 0;
 }
-static int setDecodeMode(double mode,struct playData *rx)
-{	
-	if(!rx)return 1;
-		    
-	rx->decodemode=(int)mode;
-	
-	rx->frame=-2;
-	
-	while(rx->frame == -2){
+static int setDecodeMode(double mode, struct playData *rx)
+{
+	if (!rx)return 1;
+
+	rx->decodemode = (int)mode;
+
+	rx->frame = -2;
+
+	while (rx->frame == -2) {
 		Sleep2(5);
 	}
-	
-	rx->frame=0;
-	
-	launchThread((void *)rx,Process);   	        
- 
-	
+
+	rx->frame = 0;
+
+	launchThread((void *)rx, Process);
+
+
 	return 0;
 
 }
+
 int ListenSocket(void *rxv)
 {
     
@@ -1179,7 +1180,6 @@ int doFilter(struct playData *rx,float *wBuff,float *aBuff,struct Filters *f)
         
 	return 0;
 }
-
 int pushBuffa(int nbuffer,struct playData *rx)
 {
 
@@ -1188,12 +1188,12 @@ int pushBuffa(int nbuffer,struct playData *rx)
 	
     if(rx->bufftopa >= NUM_ABUFF){
         rx->bufftopa=NUM_ABUFF;
-        int small,ks;
-        small=1000000000;
+        int small2,ks;
+        small2=1000000000;
         ks=-1;
         for(int k=0;k<NUM_ABUFF;++k){
-             if(rx->buffStacka[k] < small){
-             	small=rx->buffStacka[k];
+             if(rx->buffStacka[k] < small2){
+             	small2=rx->buffStacka[k];
              	ks=k;
              }
         }
@@ -1231,12 +1231,12 @@ int popBuffa(struct playData *rx)
  		goto Out;
  	}
  	
-       int small,ks;
-        small=1000000000;
+       int small2,ks;
+        small2=1000000000;
         ks=-1;
         for(int k=0;k<rx->bufftopa;++k){
-             if(rx->buffStacka[k] < small){
-             	small=rx->buffStacka[k];
+             if(rx->buffStacka[k] < small2){
+             	small2=rx->buffStacka[k];
              	ks=k;
              }
         }
@@ -1269,12 +1269,12 @@ int pushBuff(int nbuffer,struct playData *rx)
 	
     if(rx->bufftop >= NUM_DATA_BUFF){
         rx->bufftop=NUM_DATA_BUFF;
-        int small,ks;
-        small=1000000000;
+        int small2,ks;
+        small2=1000000000;
         ks=-1;
         for(int k=0;k<NUM_DATA_BUFF;++k){
-             if(rx->buffStack[k] < small){
-             	small=rx->buffStack[k];
+             if(rx->buffStack[k] < small2){
+             	small2=rx->buffStack[k];
              	ks=k;
              }
         }
@@ -1291,6 +1291,7 @@ int pushBuff(int nbuffer,struct playData *rx)
 	
 	return 0;
 }
+
 
 int popBuff(struct playData *rx)
 {
@@ -1310,12 +1311,12 @@ int popBuff(struct playData *rx)
  		goto Out;
  	}
  	
-       int small,ks;
-        small=1000000000;
+       int small2,ks;
+        small2=1000000000;
         ks=-1;
         for(int k=0;k<rx->bufftop;++k){
-             if(rx->buffStack[k] < small){
-             	small=rx->buffStack[k];
+             if(rx->buffStack[k] < small2){
+             	small2=rx->buffStack[k];
              	ks=k;
              }
         }
@@ -1338,6 +1339,10 @@ Out:
 
 	return ret;
 }
+
+
+
+
 
 int findRadio(struct playData *rx)
 {
