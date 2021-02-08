@@ -6,7 +6,7 @@ The latest release makes improvements to the Listen, sdrTest and control utiliti
 
 SdrGlut now has a send option where it uses tcp/ip to transfer the I/Q stream to other programs. It can be programed to record any frequency in any mode at any time. Listen is an example of a program that receives the data. Listen can decode AM, FM, NBFM, USB, LSB and output the audio to the speakers or another program. SdrGlut now has digital filter design mode. It can do highpass, lowpass, bandpass and bandstop filters. Best of all - it generates a c++ program that implements and tests the filter - so there is no question about how to make it work. It adds Voltage bias for powered antennas and Direct Sample Mode for RTL devices. It adds a window that can use the transmit capable SDRs as a signal generator for testing AM, NBFM, USB, and LSB devices. It has a prebuild exe for macOS, a zipped folder for Windows and a zipped folder for Ubuntu 18.04 to unpack and run from
 
-https://github.com/righthalfplane/SdrGlut/releases/tag/v1.21
+https://github.com/righthalfplane/SdrGlut/releases/tag/v1.22
 
 ## Demo videos
 - [How to Install SdrGlut on MacOS Catalina (a software defined radio)](https://youtu.be/cOPHQ9_nHEA)
