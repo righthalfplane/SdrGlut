@@ -182,11 +182,13 @@ struct playData{
     double amaxGlobal;
  	
  	double PPM;
+ 	
+ 	int ncut;
 
 };
 
 struct Filters{
-	    int np;
+	int np;
     ampmodem demodAM;
 	freqdem demod;
 	msresamp_crcf iqSampler;
@@ -301,6 +303,7 @@ int main (int argc, char * argv [])
     rx.amaxGlobal=0;
     rx.decodemode = MODE_AM;
     rx.Debug = 0;
+    rx.ncut = 20;
 
 	signal(SIGINT, signalHandler);  
 	
@@ -442,7 +445,7 @@ int main (int argc, char * argv [])
 		parameters.nChannels = 2;
 		parameters.nChannels = 1;
 		parameters.firstChannel = 0;
-		unsigned int bufferFrames = (unsigned int)(rx.faudio/50);
+		unsigned int bufferFrames = (unsigned int)(rx.faudio/rx.ncut);
 
 
 		try {
@@ -843,10 +846,10 @@ int playRadio(struct playData *rx)
 
         double rate=rx->device->getSampleRate(SOAPY_SDR_RX, rx->channel);
               
-        int size=(int)rate/50;
+		if(rx->out)rx->ncut=10;
+        
+		int size=(int)rate/rx->ncut;
     
-       	if(rx->out)size=(int)rate/10;
- 	        
         rx->size=size;
         
         mprint("rate %f rx->size %d\n",rate,rx->size);
@@ -934,9 +937,9 @@ int playRadio(struct playData *rx)
 			if (ibuff >= 0){
 			   	char filename[256];
 				short int *buff= rx->buffa[ibuff % NUM_ABUFF];
-				fwrite(buff, 2,(size_t) (rx->faudio/10),rx->out);
+				fwrite(buff, 2,(size_t) (rx->faudio/rx->ncut),rx->out);
 				if(rx->dumpbyminute){
-					if(++count == 10*60){
+					if(++count == rx->ncut*60){
 						fclose(rx->out);
 						sprintf(filename,"minute-%08d.raw",rx->idump++);
 						mprint("filename %s\n",filename);

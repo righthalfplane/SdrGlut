@@ -119,19 +119,7 @@ int main(int argc,char *argv[])
 
 	exit(0);
 
-	
-    
-    
-
-    
-
-
-    
-
-    
     doEnd(rx->send);
-
-
 }
 int main2(int argc,char *argv[])
 {
