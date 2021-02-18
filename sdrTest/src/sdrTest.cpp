@@ -183,6 +183,8 @@ struct playData{
  	
  	double PPM;
  	
+ 	double rf_gain;
+ 	
  	int ncut;
 
 };
@@ -304,6 +306,8 @@ int main (int argc, char * argv [])
     rx.decodemode = MODE_AM;
     rx.Debug = 0;
     rx.ncut = 20;
+    
+    rx.rf_gain=0;
 
 	signal(SIGINT, signalHandler);  
 	
@@ -339,6 +343,8 @@ int main (int argc, char * argv [])
 	         rx.gain=atof(argv[++n]);
 	    }else if(!strcmp(argv[n],"-PPM")){
 	         rx.PPM=atof(argv[++n]);
+	    }else if(!strcmp(argv[n],"-rf_gain")){
+	         rx.rf_gain=atof(argv[++n]);
 	    }else if(!strcmp(argv[n],"-fc")){
 	         rx.fc=atof(argv[++n]);
 	    }else if(!strcmp(argv[n],"-f")){
@@ -1440,29 +1446,32 @@ int findRadio(struct playData *rx)
             	}
         	}
         	mprint("\n");
+        	
 			
-			
-			
-		
-            if(rx->antennaUse){
-            	mprint("Use antenna \"%s\"\n",rx->antennaUse);
-            	rx->device->setAntenna(SOAPY_SDR_RX, rx->channel, rx->antennaUse);
-            }
-            
-            
-            
-            if(rx->setcount){          
+	        if(rx->setcount){          
              	mprint("setcount %d\n",rx->setcount);
            		for(int k=0;k<rx->setcount;++k){
               		mprint("%s %s\n",rx->set[k].c_str(),rx->value[k].c_str());
                		rx->device->writeSetting(rx->set[k],rx->value[k]);
                 }
+        		mprint("\n");
             }
                 
+	
+            if(rx->antennaUse){
+            	mprint("Use antenna \"%s\"\n",rx->antennaUse);
+            	rx->device->setAntenna(SOAPY_SDR_RX, rx->channel, rx->antennaUse);
+            }
+            
                 
         	SoapySDR::Range range=rx->device->getGainRange(SOAPY_SDR_RX, rx->channel);
         
-            mprint("Gain range RX min %g max %g \n",range.minimum(),range.maximum());
+            mprint("RF Gain range RX min %g max %g \n",range.minimum(),range.maximum());
+            
+            if(rx->rf_gain > 0){
+              	mprint("RF Gain set to %g \n",rx->rf_gain);
+              	rx->device->setGain(SOAPY_SDR_RX, rx->channel,rx->rf_gain);
+            }
    
             SoapySDR::RangeList rlist=rx->device->getFrequencyRange(SOAPY_SDR_RX, rx->channel);
             
