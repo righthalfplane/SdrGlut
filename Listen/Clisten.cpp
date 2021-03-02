@@ -185,8 +185,184 @@ int Listen::mix(float *buf1,float *buf2)
     
 	return 0;
 }
+int ListenSocket(void *rxv)
+{
+    
+    class Listen *l=(class Listen *)rxv;
+    
+	time_t start,total;
+	time_t ship;
+	char buff[256];
+	long size;
+	
+	//FILE *in=NULL;
+	
+	//if(!in)in=fopen("junk.raw","wb");
 
+	fprintf(stderr,"******************************************************\n");
+	fprintf(stderr,"**  listen 825 - COPYRIGHT 2020-2021. Start **\n");
+	fprintf(stderr,"******************************************************\n");
 
+	start=time(&ship);
+	
+	l->Bytes=0;
+	
+    l->ncommand=0;
+
+	while(1){
+	    if(l->readCommand(l->clientSocket,buff,&size))return 1;
+		if(l->Debug)fprintf(stderr,"buff %s size %ld ncommand %ld\n",buff,size,l->ncommand);
+		l->ncommand++;
+	    if(!strcmp(buff,"ENDT")){
+	        if(l->Debug){
+				fprintf(stderr,"ENDT\n");
+		    }
+	        break;
+	    }else if(!strcmp(buff,"STAT")){
+	        if(l->Debug){
+				fprintf(stderr,"STAT\n");
+		    }
+		    long n=2*sizeof(double);
+		    double buff[2];
+		    l->netRead(l->clientSocket,(char *)buff,n);
+		    l->setCenterFrequency(buff[0],buff[1]);
+		    if(l->Debug)fprintf(stderr,"fc %g samplerate %d\n",l->fc,l->samplerate);
+	    }else if(!strcmp(buff,"F   ")){
+	        if(l->Debug){
+				fprintf(stderr,"F   \n");
+		    }
+		    double buff[2];
+		    l->netRead(l->clientSocket,(char *)buff,size);
+		    l->setFrequency(buff[0]);
+		    if(l->Debug)fprintf(stderr,"f %g \n",l->f);
+	    }else if(!strcmp(buff,"DECO")){
+	        if(l->Debug){
+				fprintf(stderr,"DECO\n");
+		    }
+		    double buff[2];
+		    l->netRead(l->clientSocket,(char *)buff,size);
+		    l->decodemode=(int)buff[0];
+		    l->freeFilters(&l->filter);
+		    l->setFilters(l,&l->filter);
+		    if(l->Debug)fprintf(stderr,"decodemode %d \n",l->decodemode);
+	    }else if(!strcmp(buff,"FLOA")){
+	        if(l->Debug){
+				fprintf(stderr,"FLOA\n");
+		    }
+		    if(size > l->buffsize){
+		       if(l->output)free(l->output);
+		       l->output=(complex<float> *)malloc(size);
+		       if(l->buff1)free(l->buff1);
+		       l->buff1=(complex<float> *)malloc(size);
+		       l->buffsize=size;
+		    }
+		    l->Bytes += size;
+		    l->netRead(l->clientSocket,(char *)l->buff1,size);
+		    if(l->binary)fwrite((char *)l->buff1,size,1,stdout);
+		    l->size=size/(2*sizeof(float));
+            l->mix((float *)l->buff1,(float *)l->output);
+            l->ibuff=1;
+            while(l->ibuff==1)Sleep2(10);
+         }else if(!strcmp(buff,"SHOR")){
+            if(l->Debug){
+                fprintf(stderr,"SHOR\n");
+            }
+            if(size > l->buffsize){
+                if(l->output)free(l->output);
+                l->output=(complex<float> *)malloc(size*2);
+                if(l->buff1)free(l->buff1);
+                l->buff1=(complex<float> *)malloc(size*2);
+                l->buffsize=size;
+            }
+            l->Bytes += size;
+            l->netRead(l->clientSocket,(char *)l->buff1,size);
+		    if(l->binary)fwrite((char *)l->buff1,size,1,stdout);
+            l->size=size/(2*sizeof(short int));
+            short int *in=(short int *)l->buff1;
+            float *out=(float *)l->buff1;
+            for(int n=0;n<l->size*2;++n){
+                int kk=l->size*2-1-n;
+                out[kk]=in[kk];
+            }
+            l->mix((float *)l->buff1,(float *)l->output);
+            l->ibuff=1;
+            while(l->ibuff==1)Sleep2(10);
+       }else if(!strcmp(buff,"SIGN")){
+            if(l->Debug){
+                fprintf(stderr,"SIGN\n");
+           }
+            if(size > l->buffsize){
+                if(l->output)free(l->output);
+                l->output=(complex<float> *)malloc(size*8);
+                if(l->buff1)free(l->buff1);
+                l->buff1=(complex<float> *)malloc(size*8);
+                l->buffsize=size;
+            }
+            l->Bytes += size;
+            l->netRead(l->clientSocket,(char *)l->buff1,size);
+ 		    if(l->binary)fwrite((char *)l->buff1,size,1,stdout);
+            l->size=size/(2*sizeof(signed char));
+            signed char *in=(signed char *)l->buff1;
+            float *out=(float *)l->buff1;
+            for(int n=0;n<l->size*2;++n){
+                int kk=l->size*2-1-n;
+                out[kk]=(float)(in[kk]*256.0+0.5);
+            }
+            l->mix((float *)l->buff1,(float *)l->output);
+            l->ibuff=1;
+            while(l->ibuff==1)Sleep2(10);            
+       }else if(!strcmp(buff,"USIG")){
+            if(l->Debug){
+                fprintf(stderr,"USIG\n");
+           }
+            if(size > l->buffsize){
+                if(l->output)free(l->output);
+                l->output=(complex<float> *)malloc(size*8);
+                if(l->buff1)free(l->buff1);
+                l->buff1=(complex<float> *)malloc(size*8);
+                l->buffsize=size;
+            }
+            l->Bytes += size;
+            l->netRead(l->clientSocket,(char *)l->buff1,size);
+ 		    if(l->binary)fwrite((char *)l->buff1,size,1,stdout);
+ 		   // if(in)fwrite((char *)l->buff1,size,1,in);
+            l->size=size/(2*sizeof(unsigned char));
+            unsigned char *in=(unsigned char *)l->buff1;
+            float *out=(float *)l->buff1;
+            for(int n=0;n<l->size*2;++n){
+                int kk=l->size*2-1-n;
+                float v=in[kk];
+                out[kk]=(float)((v-128.0)*256.0+0.5);
+            }
+            l->mix((float *)l->buff1,(float *)l->output);
+            l->ibuff=1;
+            while(l->ibuff==1)Sleep2(10);            
+	    }else{
+	        fprintf(stderr,"Unknown Command (%s) %d %d %d %d Skiping\n",
+	                buff,buff[0],buff[1],buff[2],buff[3]);
+	        if(size > l->buffsize){
+                if(l->output)free(l->output);
+                l->output=(complex<float> *)malloc(size*8);
+            }
+            l->Bytes += size;
+            l->netRead(l->clientSocket,(char *)l->output,size);
+	    }
+	}
+	
+	//if(in)fclose(in);
+
+	l->ibuff= -1;
+
+    total=time(&ship)-start;
+	if(!total)total=1;
+    fprintf(stderr,"%ld Seconds To Receive %ld Bytes (%ld Bytes/s)\n",
+                 (long)total,l->Bytes,(long)(l->Bytes/total));
+	fprintf(stderr,"******************************************************\n");
+	fprintf(stderr,"**  listen 825 - COPYRIGHT 2020-2021. Done  **\n");
+	fprintf(stderr,"******************************************************\n");
+
+    return 1;
+}
 
 /*
 int launchThread(void *data,int (*sageThread)(void *data))
