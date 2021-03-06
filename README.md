@@ -9,6 +9,7 @@ SdrGlut now has a send option where it uses tcp/ip to transfer the I/Q stream to
 https://github.com/righthalfplane/SdrGlut/releases/tag/v1.22
 
 ## Demo videos
+- [Using The Raspberry Pi as a IR Receiver.](https://youtu.be/UsrgqJ1gPJw)
 - [SdrTest being remotely controlled by the control utility.](https://youtu.be/Ux1QHtEMzTY)
 - [How to Install SdrGlut on MacOS Catalina (a software defined radio)](https://youtu.be/cOPHQ9_nHEA)
 - [How to Install SdrGlut on Ubuntu 18.04 (a software defined radio)](https://youtu.be/LVpo78ubRiI)
