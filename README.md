@@ -9,6 +9,7 @@ SdrGlut now has a send option where it uses tcp/ip to transfer the I/Q stream to
 https://github.com/righthalfplane/SdrGlut/releases/tag/v1.22
 
 ## Demo videos
+- [OpenGL speed tests of the MacBook pro M1](https://youtu.be/BXh3y1-3pug)
 - [Using the Raspberry Pi as a IR Transmitter](https://youtu.be/1f0Z4V7Ii7w)
 - [SdrGlut uses DSD to decode Public Service Channels with the RSPduo](https://youtu.be/x0Bo27QmZjA)
 - [Using The Raspberry Pi as a IR Receiver.](https://youtu.be/UsrgqJ1gPJw)
