@@ -9,6 +9,7 @@ SdrGlut is a simple software defined radio player. Using glut for drawing and gl
 sdrTest can now be remotely controlled by the control utility or other programs. On MacOS Big Sur, you need to start xquartz before starting SdrGlut.SdrGlut now has a send option where it uses tcp/ip to transfer the I/Q stream to other programs. It can be programed to record any frequency in any mode at any time. Listen is an example of a program that receives the data. Listen can decode AM, FM, NBFM, USB, LSB and output the audio to the speakers or another program. SdrGlut now has digital filter design mode. It can do highpass, lowpass, bandpass and bandstop filters. Best of all - it generates a c++ program that implements and tests the filter - so there is no question about how to make it work. It adds Voltage bias for powered antennas and Direct Sample Mode for RTL devices. It adds a window that can use the transmit capable SDRs as a signal generator for testing AM, NBFM, USB, and LSB devices. It has a prebuild exe for macOS, a zipped folder for Windows and a zipped folder for Ubuntu 18.04 to unpack and run from
 
 ## Demo videos
+- [An Introduction to SdrGlut (A software defined radio)](https://youtu.be/JEXK-r6PvmA)
 - [OpenGL speed tests of the MacBook pro M1](https://youtu.be/BXh3y1-3pug)
 - [Using the Raspberry Pi as a IR Transmitter](https://youtu.be/1f0Z4V7Ii7w)
 - [SdrGlut uses DSD to decode Public Service Channels with the RSPduo](https://youtu.be/x0Bo27QmZjA)
