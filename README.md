@@ -61,6 +61,7 @@ sdrTest can now be remotely controlled by the control utility or other programs.
 - [LimeSDR Mini using SdrGlut on Several Systems](https://youtu.be/yhxqu5VcO3w)
 - [Gqrx vs SdrGlut at CB frequencies](https://youtu.be/P7zBRdvK6Jg)
 - [Gqrx vs SdrGlut at FRS frequencies](https://youtu.be/g_v3TBrCw4o)
+- [Icom IC-R30 vs a HackRF One at FRS frequencies with SdrGlut.](https://youtu.be/c5-g440IR7M)
 - [Icom IC-R30 vs a Cobra 38WXST at CB frequencies](https://youtu.be/FBa0GskAYCI)
 - [Icom IC-R30 vs a Eton Elite Executive at CB frequencies](https://youtu.be/jJe3iPdgmLY)
 - [Icom IC-R6800 vs a ALINCO DX-R8 at CB frequencies](https://youtu.be/H_mMCzuW_aI)
