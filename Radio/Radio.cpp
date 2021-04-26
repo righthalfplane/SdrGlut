@@ -1507,6 +1507,7 @@ int Radio::OpenWindows(struct Scene *scene)
     glutMotionFunc(moveMouse);
     glutDisplayFunc(displayc);
     glutKeyboardFunc(keys2);
+    //glutPassiveMotionFunc(getMousePassive);
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
@@ -2498,6 +2499,7 @@ static void getMousePassive(int x, int y)
         sdr=(RadioPtr)FindScene(&list->scene);
     }
     
+    
     if(!sdr)return;
     
     sdr->box.x=0;
@@ -2506,6 +2508,8 @@ static void getMousePassive(int x, int y)
     sdr->box.ysize=0;
     
     int up;
+    
+    //fprintf(stderr,"p x %d y %d\n",x,y);
     
     if(y > 20){
         return;
