@@ -1,5 +1,9 @@
 # SdrGult
 
+A users group is just starting - you can ask questions there -
+
+https://groups.google.com/g/sdrglut-users
+
 SdrGlut V1.23 Adds native support for Apple's M1 devices.
 
 https://github.com/righthalfplane/SdrGlut/releases/tag/v1.23
