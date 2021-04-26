@@ -25,10 +25,91 @@ static GLUI_Checkbox *check_box;
 
 static void control_cb(int control);
 static void control_cb2(int control);
+static void control_cb3(int control);
 
 extern "C" int doFFT2(double *x,double *y,long length,int direction);
 
 #define Mode_Buttons   180
+
+
+int Radio::dialogSendIQ(struct Scene *scene)
+{
+    if(!scene)return 1;
+    
+    if(qq.glui){
+        qq.glui->close();
+    }
+    
+    qq.sceneLocal=scene;
+    
+    qq.glui = GLUI_Master.create_glui(rx->driveName);
+    
+    GLUI_Panel *obj_panel =  qq.glui->add_panel( "Mode" );
+    
+    qq.group2 =
+    qq.glui->add_radiogroup_to_panel(obj_panel,&qq.modetype,Mode_Buttons,control_cb3);
+    
+    qq.glui->add_radiobutton_to_group( qq.group2, "Float" );
+    qq.glui->add_radiobutton_to_group( qq.group2, "Short int" );
+    qq.glui->add_radiobutton_to_group( qq.group2, "Signed char" );
+    qq.glui->add_radiobutton_to_group( qq.group2, "UnSigned char" );
+    
+    obj_panel =  qq.glui->add_panel( "Send Information" );
+    
+    
+    new GLUI_Checkbox( obj_panel, "Frequency", &qq.frequencyFlag, 10, control_cb3 );
+    
+    new GLUI_Checkbox( obj_panel, "Demodulate Mode", &qq.demodulationFlag, 11, control_cb3 );
+    
+    obj_panel =  qq.glui->add_panel( "Tcp-Address" );
+    
+    
+    qq.edittext1 =
+    qq.glui->add_edittext_to_panel( obj_panel, "", GLUI_EDITTEXT_TEXT, qq.text1);
+    qq.edittext1->w=200;
+    
+    
+    obj_panel =  qq.glui->add_panel( "Commands" );
+    
+    new GLUI_Button(obj_panel, "Send", 2,control_cb3);
+    
+    new GLUI_Button(obj_panel, "Stop", 4, control_cb3);
+    
+    new GLUI_Button(obj_panel, "Close", 6, control_cb3);
+    
+    qq.sub_window=glutGetWindow();
+    
+    //qq.sub_window=qq.glui->get_glut_window_id();
+    
+    qq.glui->set_main_gfx_window(qq.sub_window);
+    
+    return 0;
+}
+static void control_cb3(int control)
+{
+    RadioPtr s=(RadioPtr)FindSceneRadio(glutGetWindow());
+    if(!s)return;
+    
+    sscanf(s->qq.edittext1->get_text(),"%s",s->qq.text1);
+    
+    s->rx->demodulationFlag=s->qq.demodulationFlag;
+    
+    s->rx->frequencyFlag=s->qq.frequencyFlag;
+    
+    if(control == Mode_Buttons)
+    {
+        fprintf(stderr,"Mode_Buttons %d\n",s->qq.modetype);
+    }else if(control == 2){
+        (*s->rx->pStartSend)(s->rx,s->qq.text1,-(s->qq.modetype+1));
+    } else if(control == 4){
+        s->rx->controlSend = -1;
+        fprintf(stderr,"Stop Command Send\n");
+    } else if(control == 6){
+        s->qq.glui->close();
+        s->qq.glui=NULL;
+    }
+    glutPostRedisplay();
+}
 
 int Radio::dialogSend(struct Scene *scene)
 {
@@ -98,7 +179,7 @@ static void control_cb2(int control)
     {
         fprintf(stderr,"Mode_Buttons %d\n",s->bb.modetype);
     }else if(control == 2){
-        (*s->rx->pStartSend)(s->rx,s->bb.text1,s->bb.modetype);
+        (*s->rx->pStartSend)(s->rx,s->bb.text1,(s->bb.modetype+1));
    } else if(control == 4){
        s->rx->controlSend = -1;
        fprintf(stderr,"Stop Command Send\n");
@@ -594,6 +675,7 @@ RadioPtr FindSceneRadio(int window)
             r=(RadioPtr)w;
             if(r->dd.sub_window == window)return r;
             if(r->bb.sub_window == window)return r;
+            if(r->qq.sub_window == window)return r;
             if(r->mooWindow == window)return r;
         }
         w=w->CNext;

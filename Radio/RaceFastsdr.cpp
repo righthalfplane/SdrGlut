@@ -148,10 +148,24 @@ static int StartSend(struct playData *rx,char *name,int type)
         printf("name %s\n",name);
     }
     
-    rx->send=(SOCKET)connectToServer((char *)name,&rx->Port);
-    if(rx->send == -1){
-        fprintf(stderr,"connect failed\n");
-        return 1;
+    size_t MTU=rx->device->getStreamMTU(rx->rxStream);
+    
+    fprintf(stderr,"MTU %ld\n",MTU);
+
+    rx->name=name;
+    
+    if(type > 0){
+        rx->send=(SOCKET)connectToServer((char *)name,&rx->Port);
+        if(rx->send == -1){
+            fprintf(stderr,"TCP connect failed\n");
+            return 1;
+        }
+    }else{
+        if ((rx->send = socket(AF_INET, SOCK_DGRAM, 0)) == -1)
+        {
+            fprintf(stderr,"UDP connect failed\n");
+            return 1;
+        }
     }
     
     rx->dataType=type;
@@ -160,24 +174,59 @@ static int StartSend(struct playData *rx,char *name,int type)
     
     return 0;
 }
+int sendto2(SOCKET socket,char *data,long size,struct sockaddr *server_addr,size_t sizeaddr)
+{
+    int ret;
+    long n;
+
+    while(size > 0){
+        n=size;
+        if(n > 2040*4)n=2040*4;
+        ret=(int)sendto(socket,data, n, 0, server_addr, (socklen_t)sizeaddr);
+        if(ret == -1){
+            fprintf(stderr,"sendto error %d EMSGSIZE %d\n",errno,EMSGSIZE);
+            return 1;
+        }
+        data += n;
+        size -= n;
+    }
+    return 0;
+
+}
 int rxSend(void *rxv)
 {
     
     struct playData *rx=(struct playData *)rxv;
+    struct sockaddr_in server_addr;
+    struct hostent *host;
+    socklen_t sin_size;
+    int ret;
     long size=2;
     
     if(!rx)return 0;
     
+    host= (struct hostent *) gethostbyname((char *)"127.0.0.1");
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(5000);
+    server_addr.sin_addr = *((struct in_addr *)host->h_addr);
+    bzero(&(server_addr.sin_zero),8);
+    sin_size = sizeof(struct sockaddr);
+
     rx->save=new saveData;
     
     rx->samplerate_save=-1;
     rx->fc_save=-1;
 
+    int flag=1;
     int type=rx->dataType;
+    if(type < 0){
+        type = -type;
+        flag=0;
+    }
     while(rx->controlSend >= 0){
        if(rx->controlSend == 1){
-            writeStat(rx->send,rx);
-           if(type == 0){
+            if(flag)writeStat(rx->send,rx);
+           if(type == 1){
                double amin =  1e33;
                double amax = -1e33;
                double average=0;
@@ -239,11 +288,18 @@ int rxSend(void *rxv)
                //printf("f amin %g amax %g count %ld\n",amin,amax,count);
 
                size=(long)(rx->size*sizeof(float));
-               if(writeLab(rx->send,(char *)"FLOA",size))return 1;
-               if(netWrite(rx->send,(char *)rx->sendBuff2,size))return 1;
-               if(writeLab(rx->send,(char *)"FLOA",size))return 1;
-               if(netWrite(rx->send,(char *)&rx->sendBuff2[rx->size],size))return 1;
-            }else if(type == 1){
+               if(flag){
+                   if(writeLab(rx->send,(char *)"FLOA",size))return 1;
+                   if(netWrite(rx->send,(char *)rx->sendBuff2,size))return 1;
+                   if(writeLab(rx->send,(char *)"FLOA",size))return 1;
+                   if(netWrite(rx->send,(char *)&rx->sendBuff2[rx->size],size))return 1;
+               }else{
+                   ret=sendto2(rx->send,(char *)rx->sendBuff2, size,
+                               (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
+                   ret=sendto2(rx->send,(char *)&rx->sendBuff2[rx->size], size,
+                          (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
+               }
+            }else if(type == 2){
                 double amin =  1e33;
                 double amax = -1e33;
                 double average=0;
@@ -304,11 +360,18 @@ int rxSend(void *rxv)
                 }
                // printf(" f amin %g amax %g count %ld\n",amin,amax,count);
                 size=rx->size*sizeof(short int);
-                if(writeLab(rx->send,(char *)"SHOR",size))return 1;
-                if(netWrite(rx->send,(char *)rx->sendBuff2,size))return 1;
-                if(writeLab(rx->send,(char *)"SHOR",size))return 1;
-                if(netWrite(rx->send,(char *)&data[rx->size],size))return 1;
-           }else if(type == 2){
+                if(flag){
+                    if(writeLab(rx->send,(char *)"SHOR",size))return 1;
+                    if(netWrite(rx->send,(char *)rx->sendBuff2,size))return 1;
+                    if(writeLab(rx->send,(char *)"SHOR",size))return 1;
+                    if(netWrite(rx->send,(char *)&data[rx->size],size))return 1;
+                }else{
+                    ret=sendto2(rx->send,(char *)rx->sendBuff2, size,
+                                (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
+                    ret=sendto2(rx->send,(char *)&data[rx->size], size,
+                           (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
+                }
+           }else if(type == 3){
                double amin =  1e33;
                double amax = -1e33;
                double average=0;
@@ -368,12 +431,18 @@ int rxSend(void *rxv)
                }
                //printf(" f amin %g amax %g count %ld\n",amin,amax,count);
                size=rx->size*sizeof(signed char);
-               if(writeLab(rx->send,(char *)"SIGN",size))return 1;
-               if(netWrite(rx->send,(char *)rx->sendBuff2,size))return 1;
-               if(writeLab(rx->send,(char *)"SIGN",size))return 1;
-               if(netWrite(rx->send,(char *)&data[rx->size],size))return 1;
-               
-           }else if(type == 3){
+               if(flag){
+                   if(writeLab(rx->send,(char *)"SIGN",size))return 1;
+                   if(netWrite(rx->send,(char *)rx->sendBuff2,size))return 1;
+                   if(writeLab(rx->send,(char *)"SIGN",size))return 1;
+                   if(netWrite(rx->send,(char *)&data[rx->size],size))return 1;
+               }else{
+                   ret=sendto2(rx->send,(char *)rx->sendBuff2, size,
+                               (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
+                   ret=sendto2(rx->send,(char *)&data[rx->size], size,
+                          (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
+               }
+           }else if(type == 4){
                double amin =  1e33;
                double amax = -1e33;
                double average=0;
@@ -434,10 +503,17 @@ int rxSend(void *rxv)
                }
               // printf("f  amin %g amax %g count %ld\n",amin,amax,count);
                size=rx->size*sizeof(unsigned char);
-               if(writeLab(rx->send,(char *)"USIG",size))return 1;
-               if(netWrite(rx->send,(char *)rx->sendBuff2,size))return 1;
-               if(writeLab(rx->send,(char *)"USIG",size))return 1;
-               if(netWrite(rx->send,(char *)&data[rx->size],size))return 1;
+               if(flag){
+                   if(writeLab(rx->send,(char *)"USIG",size))return 1;
+                   if(netWrite(rx->send,(char *)rx->sendBuff2,size))return 1;
+                   if(writeLab(rx->send,(char *)"USIG",size))return 1;
+                   if(netWrite(rx->send,(char *)&data[rx->size],size))return 1;
+               }else{
+                   ret=sendto2(rx->send,(char *)rx->sendBuff2, size,
+                               (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
+                   ret=sendto2(rx->send,(char *)&data[rx->size], size,
+                               (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
+               }
            }
            rx->controlSend = 0;
         }else{
@@ -447,8 +523,10 @@ int rxSend(void *rxv)
   
 
     if(rx->send >= 0){
-        doEnd(rx->send);
-        shutdown(rx->send,2);
+        if(flag){
+            doEnd(rx->send);
+            shutdown(rx->send,2);
+        }
         closesocket(rx->send);
     }
     

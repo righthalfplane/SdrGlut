@@ -108,6 +108,18 @@ struct DialogSendData{
     int frequencyFlag;
 };
 
+struct DialogSendIQ{
+    GLUI *glui;
+    char text1[255];
+    GLUI_EditText *edittext1;
+    struct Scene *sceneLocal;
+    int sub_window;
+    GLUI_RadioGroup *group2;
+    int modetype;
+    int demodulationFlag;
+    int frequencyFlag;
+};
+
 struct DialogRadioData{
     GLUI *glui;
     char text1[255];
@@ -293,6 +305,7 @@ public:
     int KillScene (struct Scene *scene);
     int dialogRadio (struct Scene *scene);
     int dialogSend(struct Scene *scene);
+    int dialogSendIQ(struct Scene *scene);
     int setFrequency2(struct playData *play);
     int setFrequency3(struct playData *play);
     int setFrequencyDuo(struct playData *play);
@@ -350,6 +363,8 @@ public:
     
     struct DialogSendData bb;
     
+    struct DialogSendIQ qq;
+
     struct TransmitData tt;
 
     double real[2*32768*sizeof(double)];

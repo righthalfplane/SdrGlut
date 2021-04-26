@@ -191,6 +191,8 @@ struct playData{
     float *sendBuff2;
     SOCKET send;
     
+    char *name;
+    
     int al_state;
     
     int dataType;

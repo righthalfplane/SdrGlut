@@ -58,6 +58,7 @@ extern "C" int DrawLine(int x1, int y1, int x2, int y2);
 #define SdrTransmit             104
 #define SdrSend                 105
 #define SdrReadFile             106
+#define SdrSendIQ               107
 
 ALvoid DisplayALError(unsigned char *szText, ALint errorCode);
 
@@ -1669,6 +1670,7 @@ int Radio::OpenWindows(struct Scene *scene)
     glutAddMenuEntry("SDR Dialog...", SdrDialog);
     if(rx->ntransmit)glutAddMenuEntry("Transmit...", SdrTransmit);
     glutAddMenuEntry("Send...", SdrSend);
+    glutAddMenuEntry("Send I/Q...", SdrSendIQ);
     glutAddMenuEntry("--------------------", -1);
     glutAddSubMenu("Palette", palette_menu);
     glutAddSubMenu("Mode", menu3);
@@ -2174,6 +2176,10 @@ int Radio::mMenuSelectl(struct Scene *scene,int item)
             
         case SdrSend:
             dialogSend(scene);
+            return 0;
+            
+        case SdrSendIQ:
+            dialogSendIQ(scene);
             return 0;
 
 	case ControlGetSelectionBox:

@@ -360,7 +360,7 @@ void GLUI_Scrollbar::draw_scroll_arrow(int arrowtype, int x, int y)
   glTranslatef(x+offset,y+offset,0);
   glColor3ubv(color);
   glBegin(GL_TRIANGLES);
-  glVertex2fv(tri); glVertex2fv(tri+2), glVertex2fv(tri+4);
+    glVertex2fv(tri); glVertex2fv(tri+2); glVertex2fv(tri+4);
   glEnd();
   glTranslatef(-(x+offset),-(y+offset),0);
   
@@ -368,7 +368,7 @@ void GLUI_Scrollbar::draw_scroll_arrow(int arrowtype, int x, int y)
     glTranslatef(x,y,0);
     glColor3ubv(gray);
     glBegin(GL_TRIANGLES);
-    glVertex2fv(tri); glVertex2fv(tri+2), glVertex2fv(tri+4);
+      glVertex2fv(tri); glVertex2fv(tri+2); glVertex2fv(tri+4);
     glEnd();
     glTranslatef(-x,-y,0);
   }
