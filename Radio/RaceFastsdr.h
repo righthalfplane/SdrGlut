@@ -196,6 +196,7 @@ struct playData{
     int al_state;
     
     int dataType;
+    int sendMode;
     char **antenna;
     size_t antennaCount;
     char **gains;
@@ -240,7 +241,7 @@ struct playData{
     int (*psdrDone)(struct playData *rx);
     int (*psdrSetMode)(struct playData *rx);
     int (*pSetAudio)(struct playData *rx,char *name,int type);
-    int (*pStartSend)(struct playData *rx,char *name,int type);
+    int (*pStartSend)(struct playData *rx,char *name,int type,int mode);
 
     double aminGlobal;
     double amaxGlobal;

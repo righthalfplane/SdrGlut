@@ -68,7 +68,7 @@ static int testRadio(struct playData *rx);
 
 static int SetAudio(struct playData *rx,char *name,int type);
 
-static int StartSend(struct playData *rx,char *name,int type);
+static int StartSend(struct playData *rx,char *name,int type,int mode);
 
 int freeMemoryRadio(struct playData *rx);
 
@@ -137,7 +137,7 @@ int RadioStart(int argc, char * argv [],struct playData *rx)
     
 	return 0 ;
 } /* main */
-static int StartSend(struct playData *rx,char *name,int type)
+static int StartSend(struct playData *rx,char *name,int type,int mode)
 {
     if(!rx)return 0;
 
@@ -154,7 +154,7 @@ static int StartSend(struct playData *rx,char *name,int type)
 
     rx->name=name;
     
-    if(type > 0){
+    if(mode < 2){
         rx->send=(SOCKET)connectToServer((char *)name,&rx->Port);
         if(rx->send == -1){
             fprintf(stderr,"TCP connect failed\n");
@@ -166,9 +166,18 @@ static int StartSend(struct playData *rx,char *name,int type)
             fprintf(stderr,"UDP connect failed\n");
             return 1;
         }
+/*
+        int n = 1024 * 8;
+        if (setsockopt(rx->send, SOL_SOCKET, SO_SNDBUF, &n, sizeof(n)) == -1) {
+            fprintf(stderr,"setsockopt failed\n");
+        }
+ */
+        
     }
     
+    
     rx->dataType=type;
+    rx->sendMode=mode;
     rx->controlSend = 0;
     launchThread((void *)rx,rxSend);
     
@@ -181,7 +190,8 @@ int sendto2(SOCKET socket,char *data,long size,struct sockaddr *server_addr,size
 
     while(size > 0){
         n=size;
-        if(n > 2040*4)n=2040*4;
+        //if(n > 2040*4)n=2040*4;
+        if(n > 1472)n=1472;
         ret=(int)sendto(socket,data, n, 0, server_addr, (socklen_t)sizeaddr);
         if(ret == -1){
             fprintf(stderr,"sendto error %d EMSGSIZE %d\n",errno,EMSGSIZE);
@@ -209,7 +219,9 @@ int rxSend(void *rxv)
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(5000);
     server_addr.sin_addr = *((struct in_addr *)host->h_addr);
-    bzero(&(server_addr.sin_zero),8);
+    //bzero(&(server_addr.sin_zero),8);
+    zerol((char *)&(server_addr.sin_zero),sizeof(server_addr.sin_zero));
+
     sin_size = sizeof(struct sockaddr);
 
     rx->save=new saveData;
@@ -217,16 +229,12 @@ int rxSend(void *rxv)
     rx->samplerate_save=-1;
     rx->fc_save=-1;
 
-    int flag=1;
+    int mode=rx->sendMode;;
     int type=rx->dataType;
-    if(type < 0){
-        type = -type;
-        flag=0;
-    }
     while(rx->controlSend >= 0){
        if(rx->controlSend == 1){
-            if(flag)writeStat(rx->send,rx);
-           if(type == 1){
+            if(mode == 0)writeStat(rx->send,rx);
+           if(type == 0){
                double amin =  1e33;
                double amax = -1e33;
                double average=0;
@@ -288,18 +296,27 @@ int rxSend(void *rxv)
                //printf("f amin %g amax %g count %ld\n",amin,amax,count);
 
                size=(long)(rx->size*sizeof(float));
-               if(flag){
+               if(mode == 0){
                    if(writeLab(rx->send,(char *)"FLOA",size))return 1;
                    if(netWrite(rx->send,(char *)rx->sendBuff2,size))return 1;
                    if(writeLab(rx->send,(char *)"FLOA",size))return 1;
                    if(netWrite(rx->send,(char *)&rx->sendBuff2[rx->size],size))return 1;
-               }else{
-                   ret=sendto2(rx->send,(char *)rx->sendBuff2, size,
-                               (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
-                   ret=sendto2(rx->send,(char *)&rx->sendBuff2[rx->size], size,
-                          (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
+               }else if(mode == 1){
+                   if(netWrite(rx->send,(char *)rx->sendBuff2,size))return 1;
+                   if(netWrite(rx->send,(char *)&rx->sendBuff2[rx->size],size))return 1;
+            }else{
+/*
+                ret=sendto2(rx->send,(char *)rx->sendBuff1, size*2,
+                            (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
+ */
+
+                ret=sendto2(rx->send,(char *)rx->sendBuff2, size,
+                            (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
+                ret=sendto2(rx->send,(char *)&rx->sendBuff2[rx->size], size,
+                            (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
+ 
                }
-            }else if(type == 2){
+            }else if(type == 1){
                 double amin =  1e33;
                 double amax = -1e33;
                 double average=0;
@@ -360,10 +377,13 @@ int rxSend(void *rxv)
                 }
                // printf(" f amin %g amax %g count %ld\n",amin,amax,count);
                 size=rx->size*sizeof(short int);
-                if(flag){
+                if(mode == 0){
                     if(writeLab(rx->send,(char *)"SHOR",size))return 1;
                     if(netWrite(rx->send,(char *)rx->sendBuff2,size))return 1;
                     if(writeLab(rx->send,(char *)"SHOR",size))return 1;
+                    if(netWrite(rx->send,(char *)&data[rx->size],size))return 1;
+                }else if(mode == 1){
+                    if(netWrite(rx->send,(char *)rx->sendBuff2,size))return 1;
                     if(netWrite(rx->send,(char *)&data[rx->size],size))return 1;
                 }else{
                     ret=sendto2(rx->send,(char *)rx->sendBuff2, size,
@@ -371,7 +391,7 @@ int rxSend(void *rxv)
                     ret=sendto2(rx->send,(char *)&data[rx->size], size,
                            (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
                 }
-           }else if(type == 3){
+           }else if(type == 2){
                double amin =  1e33;
                double amax = -1e33;
                double average=0;
@@ -431,10 +451,13 @@ int rxSend(void *rxv)
                }
                //printf(" f amin %g amax %g count %ld\n",amin,amax,count);
                size=rx->size*sizeof(signed char);
-               if(flag){
+               if(mode == 0){
                    if(writeLab(rx->send,(char *)"SIGN",size))return 1;
                    if(netWrite(rx->send,(char *)rx->sendBuff2,size))return 1;
                    if(writeLab(rx->send,(char *)"SIGN",size))return 1;
+                   if(netWrite(rx->send,(char *)&data[rx->size],size))return 1;
+               }else if(mode == 1){
+                   if(netWrite(rx->send,(char *)rx->sendBuff2,size))return 1;
                    if(netWrite(rx->send,(char *)&data[rx->size],size))return 1;
                }else{
                    ret=sendto2(rx->send,(char *)rx->sendBuff2, size,
@@ -442,7 +465,7 @@ int rxSend(void *rxv)
                    ret=sendto2(rx->send,(char *)&data[rx->size], size,
                           (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
                }
-           }else if(type == 4){
+           }else if(type == 3){
                double amin =  1e33;
                double amax = -1e33;
                double average=0;
@@ -503,12 +526,15 @@ int rxSend(void *rxv)
                }
               // printf("f  amin %g amax %g count %ld\n",amin,amax,count);
                size=rx->size*sizeof(unsigned char);
-               if(flag){
+               if(mode == 0){
                    if(writeLab(rx->send,(char *)"USIG",size))return 1;
                    if(netWrite(rx->send,(char *)rx->sendBuff2,size))return 1;
                    if(writeLab(rx->send,(char *)"USIG",size))return 1;
                    if(netWrite(rx->send,(char *)&data[rx->size],size))return 1;
-               }else{
+               }else if(mode == 1){
+                   if(netWrite(rx->send,(char *)rx->sendBuff2,size))return 1;
+                   if(netWrite(rx->send,(char *)&data[rx->size],size))return 1;
+              }else{
                    ret=sendto2(rx->send,(char *)rx->sendBuff2, size,
                                (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
                    ret=sendto2(rx->send,(char *)&data[rx->size], size,
@@ -523,7 +549,7 @@ int rxSend(void *rxv)
   
 
     if(rx->send >= 0){
-        if(flag){
+        if(mode < 2){
             doEnd(rx->send);
             shutdown(rx->send,2);
         }

@@ -44,15 +44,26 @@ int Radio::dialogSendIQ(struct Scene *scene)
     
     qq.glui = GLUI_Master.create_glui(rx->driveName);
     
-    GLUI_Panel *obj_panel =  qq.glui->add_panel( "Mode" );
+    GLUI_Panel *obj_panel =  qq.glui->add_panel( "Data Type" );
     
     qq.group2 =
-    qq.glui->add_radiogroup_to_panel(obj_panel,&qq.modetype,Mode_Buttons,control_cb3);
+    qq.glui->add_radiogroup_to_panel(obj_panel,&qq.datatype,Mode_Buttons,control_cb3);
     
     qq.glui->add_radiobutton_to_group( qq.group2, "Float" );
     qq.glui->add_radiobutton_to_group( qq.group2, "Short int" );
     qq.glui->add_radiobutton_to_group( qq.group2, "Signed char" );
     qq.glui->add_radiobutton_to_group( qq.group2, "UnSigned char" );
+    
+    
+    obj_panel =  qq.glui->add_panel( "Send Mode" );
+    
+    qq.group2 =
+    qq.glui->add_radiogroup_to_panel(obj_panel,&qq.sendmode,Mode_Buttons,control_cb3);
+    
+    qq.glui->add_radiobutton_to_group( qq.group2, "Listen Mode" );
+    qq.glui->add_radiobutton_to_group( qq.group2, "TCP/IP" );
+    qq.glui->add_radiobutton_to_group( qq.group2, "UDP" );
+
     
     obj_panel =  qq.glui->add_panel( "Send Information" );
     
@@ -98,9 +109,9 @@ static void control_cb3(int control)
     
     if(control == Mode_Buttons)
     {
-        fprintf(stderr,"Mode_Buttons %d\n",s->qq.modetype);
+        fprintf(stderr,"Mode_Buttons %d\n",s->qq.datatype);
     }else if(control == 2){
-        (*s->rx->pStartSend)(s->rx,s->qq.text1,-(s->qq.modetype+1));
+        (*s->rx->pStartSend)(s->rx,s->qq.text1,s->qq.datatype,s->qq.sendmode);
     } else if(control == 4){
         s->rx->controlSend = -1;
         fprintf(stderr,"Stop Command Send\n");
@@ -123,15 +134,24 @@ int Radio::dialogSend(struct Scene *scene)
     
     bb.glui = GLUI_Master.create_glui(rx->driveName);
     
-    GLUI_Panel *obj_panel =  bb.glui->add_panel( "Mode" );
+    GLUI_Panel *obj_panel =  bb.glui->add_panel( "Data Type" );
 
     bb.group2 =
-    bb.glui->add_radiogroup_to_panel(obj_panel,&bb.modetype,Mode_Buttons,control_cb2);
+    bb.glui->add_radiogroup_to_panel(obj_panel,&bb.datatype,Mode_Buttons,control_cb2);
     
     bb.glui->add_radiobutton_to_group( bb.group2, "Float" );
     bb.glui->add_radiobutton_to_group( bb.group2, "Short int" );
     bb.glui->add_radiobutton_to_group( bb.group2, "Signed char" );
     bb.glui->add_radiobutton_to_group( bb.group2, "UnSigned char" );
+
+    obj_panel =  bb.glui->add_panel( "Send Mode" );
+    
+    bb.group2 =
+    bb.glui->add_radiogroup_to_panel(obj_panel,&bb.sendmode,Mode_Buttons,control_cb2);
+    
+    bb.glui->add_radiobutton_to_group( bb.group2, "Listen Mode" );
+    bb.glui->add_radiobutton_to_group( bb.group2, "TCP/IP" );
+    bb.glui->add_radiobutton_to_group( bb.group2, "UDP" );
 
     obj_panel =  bb.glui->add_panel( "Send Information" );
 
@@ -177,9 +197,9 @@ static void control_cb2(int control)
 
     if(control == Mode_Buttons)
     {
-        fprintf(stderr,"Mode_Buttons %d\n",s->bb.modetype);
+        fprintf(stderr,"Mode_Buttons %d\n",s->bb.datatype);
     }else if(control == 2){
-        (*s->rx->pStartSend)(s->rx,s->bb.text1,(s->bb.modetype+1));
+        (*s->rx->pStartSend)(s->rx,s->bb.text1,s->bb.datatype,s->bb.sendmode);
    } else if(control == 4){
        s->rx->controlSend = -1;
        fprintf(stderr,"Stop Command Send\n");

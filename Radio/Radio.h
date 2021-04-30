@@ -103,7 +103,8 @@ struct DialogSendData{
     struct Scene *sceneLocal;
     int sub_window;
     GLUI_RadioGroup *group2;
-    int modetype;
+    int datatype;
+    int sendmode;
     int demodulationFlag;
     int frequencyFlag;
 };
@@ -115,7 +116,8 @@ struct DialogSendIQ{
     struct Scene *sceneLocal;
     int sub_window;
     GLUI_RadioGroup *group2;
-    int modetype;
+    int datatype;
+    int sendmode;
     int demodulationFlag;
     int frequencyFlag;
 };
