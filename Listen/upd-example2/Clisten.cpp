@@ -109,7 +109,7 @@ int ListenSocket(void *rxv)
 	time_t ship;
 	long size;
 	
-	size=1024;
+	size=4096*8;
 	
 	l->output=(complex<float> *)malloc(size*sizeof(complex<float>));
 	
