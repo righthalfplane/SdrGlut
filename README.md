@@ -1,4 +1,4 @@
-# SdrGult
+# SdrGlut
 
 A users group is just starting - you can ask questions there -
 
