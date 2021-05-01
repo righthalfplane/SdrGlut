@@ -1,12 +1,10 @@
-#include "firstFile.h"
 #include "Clisten.h"
-#include "mThread.h"
 
 
 /*
-g++ -O2 -o listen main.cpp Clisten.cpp mThread.cpp -lliquid -lrtaudio -lpthread
+c++ -O2 -o listen main.cpp Clisten.cpp mThread.cpp -lliquid -lrtaudio -lpthread
 
-g++ -O2 -std=c++11 -Wno-deprecated -o listen main.cpp Clisten.cpp mThread.cpp -lrtaudio -lSoapySDR -lliquid
+c++ -O2 -std=c++11 -Wno-deprecated -o listen main.cpp Clisten.cpp -lrtaudio -lSoapySDR -lliquid
 */
 
 

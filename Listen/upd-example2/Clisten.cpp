@@ -3,7 +3,6 @@
 #include <chrono>
 #include <thread>
 
-
 #include <complex>
 
 #include <iostream>
@@ -28,8 +27,8 @@ using namespace std;
 
 static int copyl(char *p1,char *p2,long n);
 
-
 int Sleep2(int ms)
+
 {
     std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 	return 0;
@@ -83,85 +82,13 @@ Listen::~Listen()
 }
 int Listen::freeFilters(struct Filters2 *f)
 {
-    if (f->iqSampler)msresamp_crcf_destroy(f->iqSampler);
-    f->iqSampler=0;
-
-    if (f->iqSampler2)msresamp_rrrf_destroy(f->iqSampler2);
-    f->iqSampler2=0;
- 
-    if(f->demod)freqdem_destroy(f->demod);
-    f->demod=0;
-
-    if(f->demodAM)ampmodem_destroy(f->demodAM);
-    f->demodAM=0;
     
     return 0;
 
 }
 int Listen::setFilters(class Listen *rx,struct Filters2 *f)
 {
-    float As = 60.0f;
-    
-    float ratio=(float)(rx->fOut / rx->samplerate);
-    
-    liquid_ampmodem_type mode=LIQUID_AMPMODEM_DSB;
-    
-    int iflag=0;
-    
-    if(rx->decodemode == MODE_AM){
-        rx->bw=10000.0;
-        mode=LIQUID_AMPMODEM_DSB;
-        iflag=0;
-    } else if(rx->decodemode == MODE_NAM){
-        rx->bw=5000.0;
-        mode=LIQUID_AMPMODEM_DSB;
-        iflag=0;
-    } else if(rx->decodemode == MODE_NBFM){
-        rx->bw=12500.0;
-      //  rx->bw=15000.0;
-    }else if(rx->decodemode == MODE_FM){
-        rx->bw=200000.0;
-    }else if(rx->decodemode == MODE_USB){   // Above 10 MHZ
-        rx->bw=6000.0;
-        mode=LIQUID_AMPMODEM_USB;
-        iflag=1;
-    }else if(rx->decodemode == MODE_LSB){  // Below 10 MHZ
-        rx->bw=6000.0;
-        mode=LIQUID_AMPMODEM_LSB;
-        iflag=1;
-    }else if(rx->decodemode == MODE_CW){  // Below 10 MHZ
-        rx->bw=3000.0;
-        mode=LIQUID_AMPMODEM_LSB;
-        iflag=1;
-    } else if(rx->decodemode == MODE_NAM2){
-        rx->bw=5000.0;
-        mode=LIQUID_AMPMODEM_DSB;
-        iflag=0;
-    }
-    rx->Ratio = (float)(rx->bw/ rx->samplerate);
-    ratio= (float)(48000.0/rx->bw);
 
-    
-    f->demod=freqdem_create(0.5);
-//#define LIQUID_VERSION_4 1
-#ifdef LIQUID_VERSION_4
-    f->demodAM = ampmodem_create(0.5, 0.0, mode, iflag);
-#else
-    f->demodAM = ampmodem_create(0.5, mode, iflag);
-#endif
-
-    f->iqSampler  = msresamp_crcf_create(rx->Ratio, As);
-    
-    f->iqSampler2 = msresamp_rrrf_create(ratio, As);
-    
-    //msresamp_crcf_print(f->iqSampler);
-   
-    
-    double rate=rx->samplerate;
-    
-    int size=(int)(0.5+(rate/10.0));
-    
-    rx->size=size;
 
     return 0;
     
@@ -169,31 +96,10 @@ int Listen::setFilters(class Listen *rx,struct Filters2 *f)
 
 int Listen::mix(float *buf1,float *buf2)
 {
-
-    double sint,cost;
-    
-    for (int k = 0 ; k < size ; k++){
-        float r = buf1[k * channels];
-        float i = buf1[k * channels + 1];
-        if(dt > 0){
-            buf2[k * channels] = (float)(r*coso - i*sino);
-            buf2[k * channels + 1] = (float)(i*coso + r*sino);
-            sint=sino*cosdt+coso*sindt;
-            cost=coso*cosdt-sino*sindt;
-            coso=cost;
-            sino=sint;
-        }else{
-            buf2[k * channels] = r;
-            buf2[k * channels + 1] = i;
-        }
-    }
-    
-    double rr=sqrt(coso*coso+sino*sino);
-    coso /= rr;
-    sino /= rr;
     
 	return 0;
 }
+
 int ListenSocket(void *rxv)
 {
     
@@ -201,12 +107,15 @@ int ListenSocket(void *rxv)
     
 	time_t start,total;
 	time_t ship;
-	char buff[256];
 	long size;
 	
-	//FILE *in=NULL;
+	size=1024;
 	
-	//if(!in)in=fopen("junk.raw","wb");
+	l->output=(complex<float> *)malloc(size*sizeof(complex<float>));
+	
+	FILE *in=NULL;
+	
+	if(!in)in=fopen("junk.raw","wb");
 
 	fprintf(stderr,"******************************************************\n");
 	fprintf(stderr,"**  listen 825 - COPYRIGHT 2020-2021. Start **\n");
@@ -219,146 +128,17 @@ int ListenSocket(void *rxv)
     l->ncommand=0;
 
 	while(1){
-	    if(l->readCommand(l->clientSocket,buff,&size))return 1;
-		if(l->Debug)fprintf(stderr,"buff %s size %ld ncommand %ld\n",buff,size,l->ncommand);
-		l->ncommand++;
-	    if(!strcmp(buff,"ENDT")){
-	        if(l->Debug){
-				fprintf(stderr,"ENDT\n");
-		    }
-	        break;
-	    }else if(!strcmp(buff,"STAT")){
-	        if(l->Debug){
-				fprintf(stderr,"STAT\n");
-		    }
-		    long n=2*sizeof(double);
-		    double buff[2];
-		    l->netRead(l->clientSocket,(char *)buff,n);
-		    l->setCenterFrequency(buff[0],buff[1]);
-		    if(l->Debug)fprintf(stderr,"fc %g samplerate %d\n",l->fc,l->samplerate);
-	    }else if(!strcmp(buff,"F   ")){
-	        if(l->Debug){
-				fprintf(stderr,"F   \n");
-		    }
-		    double buff[2];
-		    l->netRead(l->clientSocket,(char *)buff,size);
-		    l->setFrequency(buff[0]);
-		    if(l->Debug)fprintf(stderr,"f %g \n",l->f);
-	    }else if(!strcmp(buff,"DECO")){
-	        if(l->Debug){
-				fprintf(stderr,"DECO\n");
-		    }
-		    double buff[2];
-		    l->netRead(l->clientSocket,(char *)buff,size);
-		    l->decodemode=(int)buff[0];
-		    l->freeFilters(&l->filter);
-		    l->setFilters(l,&l->filter);
-		    if(l->Debug)fprintf(stderr,"decodemode %d \n",l->decodemode);
-	    }else if(!strcmp(buff,"FLOA")){
-	        if(l->Debug){
-				fprintf(stderr,"FLOA\n");
-		    }
-		    if(size > l->buffsize){
-		       if(l->output)free(l->output);
-		       l->output=(complex<float> *)malloc(size);
-		       if(l->buff1)free(l->buff1);
-		       l->buff1=(complex<float> *)malloc(size);
-		       l->buffsize=size;
-		    }
-		    l->Bytes += size;
-		    l->netRead(l->clientSocket,(char *)l->buff1,size);
-		    if(l->binary)fwrite((char *)l->buff1,size,1,stdout);
-		    l->size=size/(2*sizeof(float));
-            l->mix((float *)l->buff1,(float *)l->output);
-            l->ibuff=1;
-            while(l->ibuff==1)Sleep2(10);
-         }else if(!strcmp(buff,"SHOR")){
-            if(l->Debug){
-                fprintf(stderr,"SHOR\n");
-            }
-            if(size > l->buffsize){
-                if(l->output)free(l->output);
-                l->output=(complex<float> *)malloc(size*2);
-                if(l->buff1)free(l->buff1);
-                l->buff1=(complex<float> *)malloc(size*2);
-                l->buffsize=size;
-            }
-            l->Bytes += size;
-            l->netRead(l->clientSocket,(char *)l->buff1,size);
-		    if(l->binary)fwrite((char *)l->buff1,size,1,stdout);
-            l->size=size/(2*sizeof(short int));
-            short int *in=(short int *)l->buff1;
-            float *out=(float *)l->buff1;
-            for(int n=0;n<l->size*2;++n){
-                int kk=l->size*2-1-n;
-                out[kk]=in[kk];
-            }
-            l->mix((float *)l->buff1,(float *)l->output);
-            l->ibuff=1;
-            while(l->ibuff==1)Sleep2(10);
-       }else if(!strcmp(buff,"SIGN")){
-            if(l->Debug){
-                fprintf(stderr,"SIGN\n");
-           }
-            if(size > l->buffsize){
-                if(l->output)free(l->output);
-                l->output=(complex<float> *)malloc(size*8);
-                if(l->buff1)free(l->buff1);
-                l->buff1=(complex<float> *)malloc(size*8);
-                l->buffsize=size;
-            }
-            l->Bytes += size;
-            l->netRead(l->clientSocket,(char *)l->buff1,size);
- 		    if(l->binary)fwrite((char *)l->buff1,size,1,stdout);
-            l->size=size/(2*sizeof(signed char));
-            signed char *in=(signed char *)l->buff1;
-            float *out=(float *)l->buff1;
-            for(int n=0;n<l->size*2;++n){
-                int kk=l->size*2-1-n;
-                out[kk]=(float)(in[kk]*256.0+0.5);
-            }
-            l->mix((float *)l->buff1,(float *)l->output);
-            l->ibuff=1;
-            while(l->ibuff==1)Sleep2(10);            
-       }else if(!strcmp(buff,"USIG")){
-            if(l->Debug){
-                fprintf(stderr,"USIG\n");
-           }
-            if(size > l->buffsize){
-                if(l->output)free(l->output);
-                l->output=(complex<float> *)malloc(size*8);
-                if(l->buff1)free(l->buff1);
-                l->buff1=(complex<float> *)malloc(size*8);
-                l->buffsize=size;
-            }
-            l->Bytes += size;
-            l->netRead(l->clientSocket,(char *)l->buff1,size);
- 		    if(l->binary)fwrite((char *)l->buff1,size,1,stdout);
- 		   // if(in)fwrite((char *)l->buff1,size,1,in);
-            l->size=size/(2*sizeof(unsigned char));
-            unsigned char *in=(unsigned char *)l->buff1;
-            float *out=(float *)l->buff1;
-            for(int n=0;n<l->size*2;++n){
-                int kk=l->size*2-1-n;
-                float v=in[kk];
-                out[kk]=(float)((v-128.0)*256.0+0.5);
-            }
-            l->mix((float *)l->buff1,(float *)l->output);
-            l->ibuff=1;
-            while(l->ibuff==1)Sleep2(10);            
-	    }else{
-	        fprintf(stderr,"Unknown Command (%s) %d %d %d %d Skiping\n",
-	                buff,buff[0],buff[1],buff[2],buff[3]);
-	        if(size > l->buffsize){
-                if(l->output)free(l->output);
-                l->output=(complex<float> *)malloc(size*8);
-            }
-            l->Bytes += size;
-            l->netRead(l->clientSocket,(char *)l->output,size);
-	    }
+	    int ret=l->netRead(l->clientSocket,(char *)l->output,size);
+	    if(ret > 0)break;
+	    fwrite((char *)l->output,size,1,in);
+	    fprintf(stderr,"ret %d size %ld\n",ret,size);
+
 	}
 	
-	//if(in)fclose(in);
+	if(in)fclose(in);
+	
+	if(l->output)free(l->output);
+	l->output=NULL;
 
 	l->ibuff= -1;
 
@@ -373,6 +153,7 @@ int ListenSocket(void *rxv)
     return 1;
 }
 
+
 /*
 int launchThread(void *data,int (*sageThread)(void *data))
 {
@@ -386,44 +167,11 @@ int launchThread(void *data,int (*sageThread)(void *data))
 
 int Listen::setFrequency(double frequency)
 {
-	double pi;
-
-	if(frequency == f)return 0;
-	
-	f=frequency;
-	
-	pi=4.0*atan(1.0);
-	dt=1.0/(double)samplerate;
-	sino=0;
-	coso=1;
-	w=2.0*pi*(fc - f);
-	sindt=sin(w*dt);
-	cosdt=cos(w*dt);
 	
 	return 0;
 }
 int Listen::setCenterFrequency(double frequency,double sampleRate)
 {
-	double pi;
-	
-	if(frequency == fc && sampleRate == samplerate)return 0;
-
-	fc=frequency;
-
-	samplerate=(int)sampleRate;
-	
-	pi=4.0*atan(1.0);
-	dt=1.0/(double)samplerate;
-	sino=0;
-	coso=1;
-	w=2.0*pi*(fc - f);
-	sindt=sin(w*dt);
-	cosdt=cos(w*dt);
-	
-	freeFilters(&filter);
-	
-	setFilters(this, &filter);
-
 	return 0;
 }
 SOCKET Listen::waitForService(char *name)
