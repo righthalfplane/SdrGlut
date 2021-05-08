@@ -18,6 +18,7 @@ sdrTest can now be remotely controlled by the control utility or other programs.
 
 ## Demo videos
 - [An Introduction to SdrGlut (A software defined radio)](https://youtu.be/JEXK-r6PvmA)
+- [SdrGlut shows real time TV using the SDRplay RSPduo](https://youtu.be/VrzVkWhv9kY)
 - [Installing Voice Recognition on the Raspberry Pi](https://youtu.be/ZcBeYBxeINY)
 - [OpenGL speed tests of the MacBook pro M1](https://youtu.be/BXh3y1-3pug)
 - [Using the Raspberry Pi as a IR Transmitter](https://youtu.be/1f0Z4V7Ii7w)
