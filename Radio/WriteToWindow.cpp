@@ -402,7 +402,7 @@ static void menu_select(int item)
 
        // fprintf(stderr,"%d %d buff %s\n",moo->sel_start,moo->sel_end,buff);
         
-        s->sendMessage(&buff[n1],&buff[n2],M_SEND);
+        s->sendMessage(&buff[n1],&buff[n2],M_SEND2);
         
     }
 }

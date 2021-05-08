@@ -79,6 +79,21 @@ int Radio::dialogSendIQ(struct Scene *scene)
     qq.glui->add_edittext_to_panel( obj_panel, "", GLUI_EDITTEXT_TEXT, qq.text1);
     qq.edittext1->w=200;
     
+    obj_panel =  qq.glui->add_panel( "VLC" );
+
+    strncpy(qq.text2,"/Applications/VLC.app/Contents/MacOS/VLC",sizeof(qq.text2));
+    qq.edittext2 =
+    qq.glui->add_edittext_to_panel( obj_panel, "Location:", GLUI_EDITTEXT_TEXT, qq.text2);
+    qq.edittext2->w=200;
+
+    strncpy(qq.text3,"4",sizeof(qq.text3));
+    qq.edittext3 =
+    qq.glui->add_edittext_to_panel( obj_panel, "Program:", GLUI_EDITTEXT_TEXT,qq.text3);
+    qq.edittext3->w=200;
+
+    new GLUI_Button(obj_panel,"Set Program", 9,control_cb3);
+    
+    new GLUI_Button(obj_panel, "Stop", 10,control_cb3);
     
     obj_panel =  qq.glui->add_panel( "Commands" );
     
@@ -98,11 +113,15 @@ int Radio::dialogSendIQ(struct Scene *scene)
 }
 static void control_cb3(int control)
 {
+    char path[2048];
+    
     RadioPtr s=(RadioPtr)FindSceneRadio(glutGetWindow());
     if(!s)return;
     
     sscanf(s->qq.edittext1->get_text(),"%s",s->qq.text1);
-    
+    sscanf(s->qq.edittext2->get_text(),"%s",s->qq.text2);
+    sscanf(s->qq.edittext3->get_text(),"%s",s->qq.text3);
+
     s->rx->demodulationFlag=s->qq.demodulationFlag;
     
     s->rx->frequencyFlag=s->qq.frequencyFlag;
@@ -118,6 +137,29 @@ static void control_cb3(int control)
     } else if(control == 6){
         s->qq.glui->close();
         s->qq.glui=NULL;
+    } else if(control == 9){
+        printf("Location: %s\n",s->qq.text2);
+        printf("Channel: %s\n",s->qq.text3);
+        if(strlen(s->qq.text3) > 0){
+            sprintf(path,"%s -v udp://@:1234 --program=%s --extraintf rc%c",s->qq.text2,s->qq.text3,0);
+        }else{
+            sprintf(path,"%s -v  udp://@:1234 --extraintf rc%c",s->qq.text2,0);
+        }
+        printf("path %s\n",path);
+        if(s->qq.pipe){
+            fprintf(s->qq.pipe,"quit\n");
+            pclose(s->qq.pipe);
+        }
+        s->qq.pipe=popen(path,"w");
+        if(!s->qq.pipe){
+            printf("popen failed to open \"%s\" VLC\n",path);
+        }
+    } else if(control == 10){
+        if(s->qq.pipe){
+            fprintf(s->qq.pipe,"quit\n");
+            pclose(s->qq.pipe);
+        }
+        s->qq.pipe=NULL;
     }
     glutPostRedisplay();
 }

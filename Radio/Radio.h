@@ -113,6 +113,10 @@ struct DialogSendIQ{
     GLUI *glui;
     char text1[255];
     GLUI_EditText *edittext1;
+    char text2[255];
+    GLUI_EditText *edittext2;
+    char text3[255];
+    GLUI_EditText *edittext3;
     struct Scene *sceneLocal;
     int sub_window;
     GLUI_RadioGroup *group2;
@@ -120,6 +124,7 @@ struct DialogSendIQ{
     int sendmode;
     int demodulationFlag;
     int frequencyFlag;
+    FILE *pipe;
 };
 
 struct DialogRadioData{

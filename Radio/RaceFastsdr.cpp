@@ -100,6 +100,7 @@ int RadioStart(int argc, char * argv [],struct playData *rx)
     rx->FFTcount=4096;
     rx->FFTfilter=FILTER_BLACKMANHARRIS7;
     rx->controlSend = -1;
+    rx->fillBuffer = -1;
 
 
 	for(int n=1;n<argc;++n){
@@ -166,12 +167,6 @@ static int StartSend(struct playData *rx,char *name,int type,int mode)
             fprintf(stderr,"UDP connect failed\n");
             return 1;
         }
-/*
-        int n = 1024 * 8;
-        if (setsockopt(rx->send, SOL_SOCKET, SO_SNDBUF, &n, sizeof(n)) == -1) {
-            fprintf(stderr,"setsockopt failed\n");
-        }
- */
         
     }
     
@@ -229,11 +224,12 @@ int rxSend(void *rxv)
     rx->samplerate_save=-1;
     rx->fc_save=-1;
 
+    rx->fillBuffer=1;
     int mode=rx->sendMode;;
     int type=rx->dataType;
     while(rx->controlSend >= 0){
-       if(rx->controlSend == 1){
-            if(mode == 0)writeStat(rx->send,rx);
+       if(rx->fillBuffer == 0){
+           if(mode == 0)writeStat(rx->send,rx);
            if(type == 0){
                double amin =  1e33;
                double amax = -1e33;
@@ -541,17 +537,20 @@ int rxSend(void *rxv)
                                (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
                }
            }
-           rx->controlSend = 0;
+           rx->fillBuffer = 1;
+           Sleep2(10);
         }else{
             Sleep2(20);
         }
     }
   
+    rx->fillBuffer = -1;
 
     if(rx->send >= 0){
         if(mode < 2){
-            doEnd(rx->send);
+            if(mode ==0)doEnd(rx->send);
             shutdown(rx->send,2);
+            fprintf(stderr,"shutdown mode %d\n",mode);
         }
         closesocket(rx->send);
     }
@@ -1752,11 +1751,11 @@ int rxBuffer(void *rxv)
  */
         	    pushBuff(rx->witchRFBuffer,rx);
                 
-                if(rx->controlSend == 0){
+                if(rx->fillBuffer == 1){
                     for(int n=0;n<rx->size*2;++n){
                        rx->sendBuff1[n]=buff[n];
                     }
-                    rx->controlSend = 1;
+                    rx->fillBuffer = 0;
                 }
                 
                 if(file){

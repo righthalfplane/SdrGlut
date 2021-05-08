@@ -359,7 +359,11 @@ Radio::Radio(struct Scene *scene,SoapySDR::Kwargs deviceArgs): CWindow(scene)
 
 	zerol((char *)&water, sizeof(water));
 
-	zerol((char *)&dd, sizeof(dd));
+    zerol((char *)&dd, sizeof(dd));
+    
+    zerol((char *)&bb, sizeof(bb));
+    
+    zerol((char *)&qq, sizeof(qq));
 
     zerol((char *)&pd, sizeof(pd));
     
@@ -987,6 +991,32 @@ int Radio::sendMessage(char *m1,char *m2,int type)
         if(fabs(rx->fc-ff) > 0.5*rx->samplerate){
             rx->fc=ff+rx->bw;
         }
+
+        setFrequency2(rx);
+        
+        glutSetWindow(wnd);
+    }else if(type == M_SEND2){
+        if(!rx)return 0;
+        // fprintf(stderr,"Radio m1 %s m2 %s type %d\n",m1,m2,type);
+        for(unsigned int k=0;k<sizeof(Mode_Names)/sizeof(char *);++k){
+            if(!strcmp(m2,Mode_Names[k]))type=k;
+        }
+        
+        double ff=atof(m1)*1e6;
+        
+        //fprintf(stderr,"f %g mode %s\n",ff,Mode_Names[type]);
+        
+        int wnd=glutGetWindow();
+        
+        glutSetWindow(window1);
+        
+        if(type != rx->decodemode){
+            //fprintf(stderr,"type = %d\n",type);
+            setMode(type);
+        }
+        
+        rx->f=ff;
+        rx->fc=ff;
 
         setFrequency2(rx);
         

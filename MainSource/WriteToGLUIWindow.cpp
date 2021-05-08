@@ -282,7 +282,7 @@ int rxScan2(void *rxv)
               freq.push_back(&buff[n1]);
               modes.push_back(&buff[n2]);
              // fprintf(stderr,"buff1 '%s' buff2 '%s'\n",&buff[n1],&buff[n2]);
-             // sendMessageGlobal(&buff[n1],&buff[n2],M_SEND);
+             // sendMessageGlobal(&buff[n1],&buff[n2],M_SEND2);
               for(int i=n2;i<n;++i){
                   if(buff[i] == 0){
                       k=i;
@@ -439,7 +439,7 @@ static void menu_select(int item)
 
        // fprintf(stderr,"%d %d buff %s\n",moo->sel_start,moo->sel_end,buff);
         
-        sendMessageGlobal(&buff[n1],&buff[n2],M_SEND);
+        sendMessageGlobal(&buff[n1],&buff[n2],M_SEND2);
         
     }
 }
@@ -450,7 +450,7 @@ static void iddle(void){
     lineTime = rtime()+5;
     long int jj = nn % freq.size();
     fprintf(stderr,"nn %ld jj %ld %s %s\n",nn++,jj,freq[jj].c_str(),modes[jj].c_str());
-    sendMessageGlobal((char *)freq[jj].c_str(),(char *)freq[jj].c_str(),M_SEND);
+    sendMessageGlobal((char *)freq[jj].c_str(),(char *)freq[jj].c_str(),M_SEND2);
     return;
 }
 int WriteToGLUIWindow(char *message)

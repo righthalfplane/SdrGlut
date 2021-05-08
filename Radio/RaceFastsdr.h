@@ -186,6 +186,7 @@ struct playData{
     volatile int muteScan;
 
     volatile int controlSend;
+    volatile int fillBuffer;
     unsigned short Port;
     float *sendBuff1;
     float *sendBuff2;
