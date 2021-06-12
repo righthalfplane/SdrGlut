@@ -455,15 +455,15 @@ static void iddle(void){
 }
 int WriteToGLUIWindow(char *message)
 {
-	GLUI *glui;
-
+    GLUI *glui;
+    
     static int window=-1;
     
-	if(!message)return 1;
-	
-	glui = GLUI_Master.find_glui_by_window_id(gluiID);
-	
-	if(!glui){
+    if(!message)return 1;
+    
+    glui = GLUI_Master.find_glui_by_window_id(gluiID);
+    
+    if(!glui){
         glui = GLUI_Master.create_glui("BatchPrint", 0);
         if(!glui)return 1;
         gluiID=glui->get_glut_window_id();
@@ -473,52 +473,118 @@ int WriteToGLUIWindow(char *message)
         moo->set_h(400);
         moo->set_w(610);
         
-         GLUI_Master.set_glutIdleFunc(iddle);
-
+        GLUI_Master.set_glutIdleFunc(iddle);
+        
         //GLUI_Panel *panel3 = new GLUI_Panel(glui, "Scan Frequencies");
         //new GLUI_Button(panel3, "Stop", 401, menu_select);
-
+        
         window=glutGetWindow();
         
         glutSetWindow(gluiID);
-
-		glutCreateMenu(menu_select);
-		
+        
+        glutCreateMenu(menu_select);
+        
         glutAddMenuEntry("Set Frequency", 31);
         glutAddMenuEntry("Send Scan Frequencies", 400);
-//        glutAddMenuEntry("Scan Frequencies", 405);
-//        glutAddMenuEntry("Stop Scan", 401);
+        //        glutAddMenuEntry("Scan Frequencies", 405);
+        //        glutAddMenuEntry("Stop Scan", 401);
         glutAddMenuEntry("-------------", 34);
         glutAddMenuEntry("Copy", 35);
         glutAddMenuEntry("Paste", 36);
         glutAddMenuEntry("Save", 32);
         glutAddMenuEntry("-------------", 34);
         glutAddMenuEntry("Close", 33);
-
-		glutAttachMenu(GLUT_RIGHT_BUTTON);
-
-		glutSetWindow(window);
+        
+        glutAttachMenu(GLUT_RIGHT_BUTTON);
+        
+        glutSetWindow(window);
         
         moo->insertion_pt = -2;
         
-	}
-        if(moo){
-            if(moo->insertion_pt == -2){
-                moo->insertion_pt = -1;
-                moo->text=message;
-                insert=(int)strlen(message);
-                moo->insertion_pt += (int)strlen(message)+1;
-            }else{
-                if(moo->insertion_pt == -1){
-                    moo->insertion_pt=insert;
-               }
-                moo->text.insert(moo->insertion_pt,message);
-                moo->insertion_pt += (int)strlen(message);
-                insert=moo->insertion_pt;
-                moo->redraw_window();
+    }
+    if(moo){
+        if(moo->insertion_pt == -2){
+            moo->insertion_pt = -1;
+            moo->text=message;
+            insert=(int)strlen(message);
+            moo->insertion_pt += (int)strlen(message)+1;
+        }else{
+            if(moo->insertion_pt == -1){
+                moo->insertion_pt=insert;
             }
+            moo->text.insert(moo->insertion_pt,message);
+            moo->insertion_pt += (int)strlen(message);
+            insert=moo->insertion_pt;
+            moo->redraw_window();
         }
-  
-	return 0;
+    }
+    
+    return 0;
+}
+int WriteToHelpWindow(char *message)
+{
+    GLUI *glui;
+    
+    static int window=-1;
+    
+    if(!message)return 1;
+    
+    glui = GLUI_Master.find_glui_by_window_id(gluiID);
+    
+    if(!glui){
+        glui = GLUI_Master.create_glui("Help Window", 0);
+        if(!glui)return 1;
+        gluiID=glui->get_glut_window_id();
+        glui->set_main_gfx_window(glutGetWindow());
+        GLUI_Panel *ep = new GLUI_Panel(glui,"",true);
+        moo = new GLUI_TextBox2(ep,true,1,textbox_cb);
+        moo->set_h(400);
+        moo->set_w(610);
+        
+        GLUI_Master.set_glutIdleFunc(iddle);
+        
+        //GLUI_Panel *panel3 = new GLUI_Panel(glui, "Scan Frequencies");
+        //new GLUI_Button(panel3, "Stop", 401, menu_select);
+        
+        window=glutGetWindow();
+        
+        glutSetWindow(gluiID);
+        
+        glutCreateMenu(menu_select);
+        
+        //        glutAddMenuEntry("Scan Frequencies", 405);
+        //        glutAddMenuEntry("Stop Scan", 401);
+        glutAddMenuEntry("-------------", 34);
+        glutAddMenuEntry("Copy", 35);
+        glutAddMenuEntry("Paste", 36);
+        glutAddMenuEntry("Save", 32);
+        glutAddMenuEntry("-------------", 34);
+        glutAddMenuEntry("Close", 33);
+        
+        glutAttachMenu(GLUT_RIGHT_BUTTON);
+        
+        glutSetWindow(window);
+        
+        moo->insertion_pt = -2;
+        
+    }
+    if(moo){
+        if(moo->insertion_pt == -2){
+            moo->insertion_pt = -1;
+            moo->text=message;
+            insert=(int)strlen(message);
+            moo->insertion_pt += (int)strlen(message)+1;
+        }else{
+            if(moo->insertion_pt == -1){
+                moo->insertion_pt=insert;
+            }
+            moo->text.insert(moo->insertion_pt,message);
+            moo->insertion_pt += (int)strlen(message);
+            insert=moo->insertion_pt;
+            moo->redraw_window();
+        }
+    }
+    
+    return 0;
 }
 

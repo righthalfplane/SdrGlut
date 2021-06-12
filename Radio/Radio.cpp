@@ -574,6 +574,7 @@ int doRadioOpenRA(void)
             printf("%s=%s\n",it->first.c_str(),it->second.c_str());
             if (it->first == "driver") {
                 //dev->setDriver(it->second);
+                if(it->second == "audio")break;
            } else if (it->first == "label") {
                new GLUI_Button(obj_panel, (char *)it->second.c_str(), (int)(2+k), control_cb);
              //dev->setName(it->second);

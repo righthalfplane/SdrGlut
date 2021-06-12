@@ -1,0 +1,55 @@
+#! /bin/sh
+echo "hello1"
+cat <<_ACEOF >zzztest.c
+#include <liquid/liquid.h>
+int main(int arg,char *argv[])
+{
+	ampmodem demodAM;
+	int type,flag;
+	demodAM = ampmodem_create(0.5, 0.0, type, flag);
+	return 0;
+}
+_ACEOF
+
+echo "hello2"
+
+cat <<_ACEOF >zzztest2.c
+#include <liquid/liquid.h>
+int main(int arg,char *argv[])
+{
+	ampmodem demodAM;
+	int type,flag;
+	demodAM = ampmodem_create(0.5, type, flag);
+	return 0;
+}
+_ACEOF
+
+
+export FLAG1=0
+export FLAG2=0
+
+
+(eval cc -c zzztest.c) 2>zzzout.err
+(eval cc -c zzztest2.c) 2>zzzout2.err
+
+
+  if test -s zzzout.err; then
+		echo "out true"
+		export FLAG1=0
+  else
+		echo "out false"
+  fi
+
+  if test -s zzzout2.err; then
+		echo "out2 true"
+		export FLAG2=1
+  else
+		echo "out2 false"
+  fi
+  
+echo $FLAG1
+
+echo $FLAG2
+
+echo "hello3"
+

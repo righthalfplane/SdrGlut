@@ -39,7 +39,7 @@ static void control_cb(int control);
 
 static void control_cb2(int control);
 
-char *ProgramVersion=(char *)"SdrGlut-845";
+char *ProgramVersion=(char *)"SdrGlut-846";
 
 extern "C" struct Scene *sceneRoot(void);
 
@@ -66,6 +66,10 @@ static char **argvs;
 struct audioInfo *audio;
 
 struct audioInfo audioStruct;
+
+static int doHelp1();
+
+int WriteToHelpWindow(char *message);
 
 int mainClean(void)
 {
@@ -207,13 +211,16 @@ int dialogStart(void)
 		
 	new GLUI_Button(glui, "About", 1, control_cb); 
 			
-    new GLUI_Button(glui, "Close", 3, control_cb);
-    
-    new GLUI_Button(glui, "Files", 5, control_cb);
-
     new GLUI_Button(glui, "Radio", 8, control_cb);
     
+    
+    new GLUI_Button(glui, "Files", 5, control_cb);
+    
+    new GLUI_Button(glui, "Close", 3, control_cb);
+
 //    new GLUI_Button(glui, "Time", 9, control_cb);
+    
+    new GLUI_Button(glui, "Help", 2, control_cb);
 
 	new GLUI_Button(glui, "Quit", 4, control_cb);
 	
@@ -221,12 +228,15 @@ int dialogStart(void)
 	
 	return 0;
 }
+
 static void control_cb(int control) 
 {
 	if(control == 4)
 	{
 		dialogQuit();
-	} else if(control == 3){
+    } else if(control == 2){
+        doHelp1();
+    } else if(control == 3){
 		if(glui)glui->close();
 		glui=NULL;
     }else if(control == 5){
@@ -279,6 +289,48 @@ static int doAbout(void)
 	glui2->set_main_gfx_window( glutGetWindow() );
 
 	return 0;
+}
+
+static int doHelp1()
+{
+    WriteToHelpWindow((char *)"\n                                                    SdrGlut Help\n");
+    WriteToHelpWindow((char *)"\n");
+    WriteToHelpWindow((char *)"\
+SrdGlut uses the GLUT tool kit. This tool kit has one quirk - \nall of the menus are \
+hidden under a right click of the mouse button\n");
+    WriteToHelpWindow((char *)"\n                                                    Setting The Frequency\n\n");
+    WriteToHelpWindow((char *)"\
+The are many ways to set the Frequency.\n\nAfter you click\
+ the Radio Button, a window opens where you can set the initial Frequency.\n\n\
+In the Power Spectrum and Waterfall window, there are several more ways to set the Frequency.\n\n\
+Left click the mouse anywhere in the upper or lower part of the window to set the Frequency.\n\n\
+Spin the center Scroll button up or down to change the Frequency in bandwidth step sizes.\n");
+    WriteToHelpWindow((char *)"\n\
+Where the Frequency: is display at the upper left hand side of the window\n\
+You can left click in the upper half of the numbers to increase the Frequeny\n\
+You can left click in the lower half of the numbers to decrease the Frequeny\n");
+    WriteToHelpWindow((char *)"\n\
+In the Specturm, you can left click and hold the mouse down to drag the Frequeny.\n\n\
+In the Waterfall, you can left click and hold the mouse down to drag the Frequency Range.\n");
+    WriteToHelpWindow((char *)"\n\
+In the Zoom window, you can left click the mouse to change the Frequeny or \n\
+you can left click and drag the mouse the change the Frequency Range.\n");
+    WriteToHelpWindow((char *)"\n\
+In the Specturm, you can right click and select the \"SDR Dialog\".\n\
+In the Dialog, Set the \"Frequency\" and the \"Center Frequency\" and hit the \"Set Frequency\".\n");
+
+    
+    
+    WriteToHelpWindow((char *)"\n                                                    The Radio Button\n\n");
+    WriteToHelpWindow((char *)"\
+The Radio Button is used to select the Software Defined Radio that you \
+want to use.\nClick button that has the name of the desired device to select and run it.\n\
+It is also used set the initial Sample Rate and Frequency.\n\n");
+    WriteToHelpWindow((char *)"\
+If a \"SoapySDRUtil --find\" finds your device, but SdrGlut doesn't\n\
+you have two version of the SoapySDR tool kit installed.\n\
+Solutions to this common problem can be found at the Google \"sdrglut-user\" Group.\n");
+    return 0;
 }
 static void control_cb2(int control) 
 {
