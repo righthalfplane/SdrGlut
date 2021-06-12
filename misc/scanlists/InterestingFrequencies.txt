@@ -1,5 +1,12 @@
 Various FRequencies
 
+FM
+
+1,101.5,FM
+2,102.1,FM
+3,103.7,FM
+4,105.3,FM
+
 CB Channels
 
 1,26.965,AM

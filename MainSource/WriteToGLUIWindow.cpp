@@ -25,6 +25,8 @@ extern "C" int WriteToGLUIWindow(char *message);
 
 static int gluiID = -1;
 
+static int gluiID2 = -1;
+
 static void textbox_cb(GLUI_Control *control) {
     //printf("Got textbox callback\n");
 }
@@ -58,6 +60,8 @@ public:
 };
 
 static GLUI_TextBox2 *moo;
+
+static GLUI_TextBox *moo2;
 
 int GLUI_TextBox2::key_handler(unsigned char key, int modifiers)
 {
@@ -393,14 +397,17 @@ static void menu_select(int item)
       //  fprintf(stderr,"point %d buff %s\n",moo->insertion_pt,buff);
     }else if(item == 33){
         glui = GLUI_Master.find_glui_by_window_id(gluiID);
-
-		if(glui){
-			glui->close();
-		}
-		
-		moo=NULL;
-		
-		gluiID = -1;
+        if(glui){
+            glui->close();
+            moo=NULL;
+            gluiID = -1;
+        }
+        glui = GLUI_Master.find_glui_by_window_id(gluiID2);
+        if(glui){
+            glui->close();
+            moo2=NULL;
+            gluiID2 = -1;
+        }
     }else if(item == 31){
         char buff[4098];
         int n;
@@ -521,6 +528,18 @@ int WriteToGLUIWindow(char *message)
     
     return 0;
 }
+int WriteToHelpTop()
+{
+    GLUI *glui;
+    glui = GLUI_Master.find_glui_by_window_id(gluiID2);
+    if(glui){
+        if(moo2){
+            moo2->insertion_pt = 0;
+            moo2->update_and_draw_text();
+        }
+    }
+    return 0;
+}
 int WriteToHelpWindow(char *message)
 {
     GLUI *glui;
@@ -529,59 +548,59 @@ int WriteToHelpWindow(char *message)
     
     if(!message)return 1;
     
-    glui = GLUI_Master.find_glui_by_window_id(gluiID);
+    glui = GLUI_Master.find_glui_by_window_id(gluiID2);
     
     if(!glui){
         glui = GLUI_Master.create_glui("Help Window", 0);
         if(!glui)return 1;
-        gluiID=glui->get_glut_window_id();
+        gluiID2=glui->get_glut_window_id();
         glui->set_main_gfx_window(glutGetWindow());
         GLUI_Panel *ep = new GLUI_Panel(glui,"",true);
-        moo = new GLUI_TextBox2(ep,true,1,textbox_cb);
-        moo->set_h(400);
-        moo->set_w(610);
+        moo2 = new GLUI_TextBox(ep,true,1,textbox_cb);
+        moo2->set_h(400);
+        moo2->set_w(610);
         
-        GLUI_Master.set_glutIdleFunc(iddle);
+        //GLUI_Master.set_glutIdleFunc(iddle);
         
         //GLUI_Panel *panel3 = new GLUI_Panel(glui, "Scan Frequencies");
         //new GLUI_Button(panel3, "Stop", 401, menu_select);
         
         window=glutGetWindow();
         
-        glutSetWindow(gluiID);
+        glutSetWindow(gluiID2);
         
         glutCreateMenu(menu_select);
         
         //        glutAddMenuEntry("Scan Frequencies", 405);
         //        glutAddMenuEntry("Stop Scan", 401);
-        glutAddMenuEntry("-------------", 34);
-        glutAddMenuEntry("Copy", 35);
-        glutAddMenuEntry("Paste", 36);
-        glutAddMenuEntry("Save", 32);
-        glutAddMenuEntry("-------------", 34);
+        //glutAddMenuEntry("-------------", 34);
+        //glutAddMenuEntry("Copy", 35);
+        //glutAddMenuEntry("Paste", 36);
+        //glutAddMenuEntry("Save", 32);
+        //glutAddMenuEntry("-------------", 34);
         glutAddMenuEntry("Close", 33);
         
         glutAttachMenu(GLUT_RIGHT_BUTTON);
         
         glutSetWindow(window);
         
-        moo->insertion_pt = -2;
+        moo2->insertion_pt = -2;
         
     }
-    if(moo){
-        if(moo->insertion_pt == -2){
-            moo->insertion_pt = -1;
-            moo->text=message;
+    if(moo2){
+        if(moo2->insertion_pt == -2){
+            moo2->insertion_pt = -1;
+            moo2->text=message;
             insert=(int)strlen(message);
-            moo->insertion_pt += (int)strlen(message)+1;
+            moo2->insertion_pt += (int)strlen(message)+1;
         }else{
-            if(moo->insertion_pt == -1){
-                moo->insertion_pt=insert;
+            if(moo2->insertion_pt == -1){
+                moo2->insertion_pt=insert;
             }
-            moo->text.insert(moo->insertion_pt,message);
-            moo->insertion_pt += (int)strlen(message);
-            insert=moo->insertion_pt;
-            moo->redraw_window();
+            moo2->text.insert(moo2->insertion_pt,message);
+            moo2->insertion_pt += (int)strlen(message);
+            insert=moo2->insertion_pt;
+            moo2->redraw_window();
         }
     }
     

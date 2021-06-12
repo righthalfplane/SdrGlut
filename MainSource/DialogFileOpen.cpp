@@ -82,11 +82,11 @@ int dialogFileOpen(struct Scene *scene)
 	GLUI_RadioGroup *group1 =
 	glui->add_radiogroup_to_panel(obj_panel,&type,4,control_cb);
     
-    glui->add_radiobutton_to_group( group1, "FileType SDR File" );
+    glui->add_radiobutton_to_group( group1, "FileType: I/Q File" );
     
-    glui->add_radiobutton_to_group( group1, "FileType Frequency File" );
+    glui->add_radiobutton_to_group( group1, "FileType: Frequency File" );
     
-    glui->add_radiobutton_to_group( group1, "FileType Filter File" );
+    glui->add_radiobutton_to_group( group1, "FileType: Filter File" );
 
 	GLUI_Button *b=new GLUI_Button(glui, "Open", 3, control_cb); 
 	b->set_w(120);
