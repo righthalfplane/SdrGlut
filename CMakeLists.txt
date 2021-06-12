@@ -30,6 +30,7 @@ SET (sdrglut_sources
 	MainSource/main.cpp 
 	MainSource/QuitDialog.cpp 
 	MainSource/DialogSave.cpp 
+	MainSource/dialogTime.cpp 
     glui-routines/algebra3.cpp
     glui-routines/arcball.cpp
     glui-routines/glui.cpp 
@@ -91,6 +92,8 @@ SET (sdrglut_sources
 	Digital/BatchFile.cpp 
 	MainSource/eMemory.cpp 
 	Radio/send.cpp
+	Radio/send.cpp
+	Radio/WriteToWindow.cpp
 	CExpress/Utilities2.c
 	MainSource/Utilities.c
 	MainSource/Scene.c
