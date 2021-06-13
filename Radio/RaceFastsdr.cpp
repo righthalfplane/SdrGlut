@@ -1085,8 +1085,10 @@ static int sdrDone(struct playData *rx)
     }
     
     if(rx->sendBuff1)cFree((char *)rx->sendBuff1);
+    rx->sendBuff1=NULL;
 
     if(rx->sendBuff2)cFree((char *)rx->sendBuff2);
+    rx->sendBuff2=NULL;
     
     return 0;
 

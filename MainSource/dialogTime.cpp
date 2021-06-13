@@ -267,6 +267,11 @@ int Radio::dialogTime()
     
     new GLUI_Button(panel3, "Set Record File", 100, control_cb);
     
+    if(rs.frequency[0] == 0){
+        char *Mode_Names[] = {(char *)"FM",(char *)"NBFM",(char *)"AM",(char *)"NAM",(char *)"USB",(char *)"LSB",(char *)"CW"};
+        rs.frequency[0]=rx->f;
+        mstrncpy(rs.mode[0],Mode_Names[rx->decodemode],sizeof(rs.mode[0]));
+    }
     
     msprintf(freq[0],sizeof(freq[0]),"%ld",(long)rs.frequency[0]);
     
@@ -469,6 +474,10 @@ static void control_cb(int control)
     else if(control == 2)
     {
         getValues();
+        
+        sdr->rs.on[0]=on[0];
+        sdr->rs.on[1]=on[1];
+        sdr->rs.on[2]=on[2];
         
         glui->close();
         glui=NULL;
