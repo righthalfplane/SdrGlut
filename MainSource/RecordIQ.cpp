@@ -118,6 +118,7 @@ static void control_cb(int control)
             strncatToPath(sdr->scene->FilePathIQ,(char *)(dd->rd[n].filePath->get_text()),sizeof(sdr->scene->FilePathIQ));
         }
         if(dd->glui)dd->glui->close();
+        closeDialog(dd);
         dd->glui=NULL;
     }else if(control >= 0 && control <   dd->numradio){
         //fprintf(stderr,"flip check box %d\n",control);
@@ -197,7 +198,7 @@ static int getPointers(struct dataDialog *dd)
     CWinPtr w;
     int numradio;
     
-    dd->rd=(Radiodata *)cMalloc((unsigned long)(audio->numsource*sizeof(Radiodata)),8765);
+    dd->rd=(Radiodata *)cMalloc((unsigned long)(audio->numsource*sizeof(Radiodata)),18765);
     
     if(!dd->rd)return 1;
     
