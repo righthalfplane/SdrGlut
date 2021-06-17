@@ -10,8 +10,6 @@
 
 #include <liquid/liquid.h>
 
-#include "smeter.h"
-
 #include "audiolib.h"
 
 #include <iostream>
@@ -125,6 +123,7 @@ struct playData{
     ALuint source;
     double samplerate;
     double bandwidth;
+    double meterMax;
     int Debug;
     double gain;
     int nreceive;
@@ -275,8 +274,6 @@ struct playData{
     int end;
     
     SoapySDR::Kwargs deviceToOpen;
-    
-    CSMeter m_SMeter;
     
     std::mutex mutex;
     

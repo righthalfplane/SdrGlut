@@ -12,7 +12,6 @@
 #include "ulibTypes.h"
 #include <GL/glui.h>
 
-#include "smeter.h"
 #include "audiolib.h"
 
 #include <cstdlib>

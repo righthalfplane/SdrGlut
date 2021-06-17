@@ -696,7 +696,8 @@ int Radio::updateLine()
     
     int length=rx->FFTcount;
     
-    setDialogPower(rx->m_SMeter.GetAve());
+    
+
     
     real=rx->real;
     imag=rx->imag;
@@ -744,7 +745,7 @@ int Radio::updateLine()
  //   shift=rx->aminGlobal3;
 
     //printf("shift %g amin %g ",shift,amin);
-
+    
     amin =  1e33;
     amax = -1e33;
 
@@ -784,15 +785,23 @@ int Radio::updateLine()
         Plot=lines->lines->Plot;
         if(!Plot)return 1;
 
-       Plot->xAutoMaximum=TRUE;
-       Plot->xAutoMinimum=TRUE;
+        if(!Plot->xManualControl){
+            Plot->xAutoMaximum=TRUE;
+            Plot->xAutoMinimum=TRUE;
+        }
 
         GridPlotScale(Plot);
         
-        Plot->xAutoMaximum=FALSE;
-        Plot->xAutoMinimum=FALSE;
-        Plot->xSetMaximum=rmax;
-        Plot->xSetMinimum=rmin;
+        if(!Plot->xManualControl){
+            Plot->xAutoMaximum=FALSE;
+            Plot->xAutoMinimum=FALSE;
+            Plot->xSetMaximum=rmax;
+            Plot->xSetMinimum=rmin;
+        }else{
+            rmax=Plot->xSetMaximum;
+            rmin=Plot->xSetMinimum;
+
+        }
                 
         if(rx->cutOFFSearch){
             for(int k=0;k<length;++k){
@@ -887,12 +896,43 @@ FoundTime:
     
     
     // fprintf(stderr,"water length %ld\n",length);
-
-
-    for(int n=2;n<length-2;++n){
+    
+    double meterMax=magnitude2[nf];
+    int nmin,nmax;
+    nmin=length-1;
+    nmax=0;
+    for(int n=0;n<length;++n){
+        if(range[n] <= rmin)nmin=n;
+        if(range[n] <= rmax)nmax=n;
+        if(n > nf-5 && n < nf+5){
+            if(magnitude2[n] > meterMax)meterMax=magnitude2[n];
+        }
+    }
+    
+    // fprintf(stderr,"nf %ld mag %g meterMax %g\n",nf,magnitude2[nf],meterMax);
+    
+    setDialogPower(meterMax);
+    
+    rx->meterMax=meterMax;
+    
+    double dxn = -1;
+    if(nmax-nmin){
+        dxn=(double)(nmax-nmin)/(double)(length-1);
+    }else{
+        nmin=0;
+        dxn = 1;
+    }
+    
+    // fprintf(stderr,"nmin %d nmax %d dxn %g rmin %g rmax %g length %d\n",nmin,nmax,dxn,rmin,rmax,length);
+    
+    
+    for(int nn=2;nn<length-2;++nn){
         int ic;
         
+        int n=nn*dxn+nmin;
+        
         ic=water.ic[n];
+        
 
        // if(water.ic[n-1] > ic)ic=water.ic[n-1];
        // if(water.ic[n-2] > ic)ic=water.ic[n-2];
@@ -900,15 +940,15 @@ FoundTime:
        // if(water.ic[n+2] > ic)ic=water.ic[n+2];
 
         
-        water.data[ns1+3*n]=pd.palette[3*ic];
-        water.data[ns1+3*n+1]=pd.palette[3*ic+1];
-        water.data[ns1+3*n+2]=pd.palette[3*ic+2];
+        water.data[ns1+3*nn]=pd.palette[3*ic];
+        water.data[ns1+3*nn+1]=pd.palette[3*ic+1];
+        water.data[ns1+3*nn+2]=pd.palette[3*ic+2];
         
         
 
-        water.data[ns2+3*n]=pd.palette[3*ic];
-        water.data[ns2+3*n+1]=pd.palette[3*ic+1];
-        water.data[ns2+3*n+2]=pd.palette[3*ic+2];
+        water.data[ns2+3*nn]=pd.palette[3*ic];
+        water.data[ns2+3*nn+1]=pd.palette[3*ic+1];
+        water.data[ns2+3*nn+2]=pd.palette[3*ic+2];
         
     }
  
@@ -1133,9 +1173,7 @@ int Radio::setFrequency3(struct playData *rx)
     rx->amaxGlobal3=0;
     
     rx->averageGlobal=0;
-    
-    rx->m_SMeter.Reset();
-    
+        
     if(FindScene(scenel2)){
         SetFrequencyGlobal(scenel2, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
     }
@@ -1454,9 +1492,9 @@ static void displayc(void)
         char value[256];
         
         if(images->rx->mute){
-            msprintf(value,sizeof(value),"Frequency: %010ld Hz   Center Frequency: %010ld Hz Power: %.0f db MUTE",f,fc,images->rx->m_SMeter.GetAve());
+            msprintf(value,sizeof(value),"Frequency: %010ld Hz   Center Frequency: %010ld Hz Power: %.0f db MUTE",f,fc,images->rx->meterMax);
         }else{
-            msprintf(value,sizeof(value),"Frequency: %010ld Hz   Center Frequency: %010ld Hz Power: %.0f db",f,fc,images->rx->m_SMeter.GetAve());
+            msprintf(value,sizeof(value),"Frequency: %010ld Hz   Center Frequency: %010ld Hz Power: %.0f db",f,fc,images->rx->meterMax);
         }
         
         DrawString(20, (int)scene->yResolution-15, value);

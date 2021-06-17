@@ -248,6 +248,7 @@ struct uGridPlot{
     int xAutoMinimum;
     int yAutoMinimum;
     int xAutoMaximum;
+    int xManualControl;
     int yAutoMaximum;
     int xMajorLimit;
     int xMinorLimit;

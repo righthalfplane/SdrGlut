@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		460C7DD6223960D300F9E64A /* PlayIQ.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 460C7DD4223960D300F9E64A /* PlayIQ.cpp */; };
 		4614BF382473180E006E6894 /* eMemory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4614BF362473180E006E6894 /* eMemory.cpp */; };
-		4616E5B82208B6A700240B9F /* smeter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4616E5B62208B6A600240B9F /* smeter.cpp */; };
 		461B756E220379E400D8CBE6 /* RaceFastsdr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 461B756D220379E400D8CBE6 /* RaceFastsdr.cpp */; };
 		461E83582228916B00220E94 /* DialogFileOpen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 461E83572228916B00220E94 /* DialogFileOpen.cpp */; };
 		4623928F1C2C5A5A007F6B08 /* arcball.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4623928E1C2C5A5A007F6B08 /* arcball.cpp */; };
@@ -109,8 +108,6 @@
 		4612027E2428655000A80820 /* ulibTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ulibTypes.h; path = MainSource/ulibTypes.h; sourceTree = "<group>"; };
 		4614BF362473180E006E6894 /* eMemory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = eMemory.cpp; path = MainSource/eMemory.cpp; sourceTree = "<group>"; };
 		4614BF372473180E006E6894 /* eMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = eMemory.h; path = MainSource/eMemory.h; sourceTree = "<group>"; };
-		4616E5B62208B6A600240B9F /* smeter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = smeter.cpp; sourceTree = "<group>"; };
-		4616E5B72208B6A700240B9F /* smeter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = smeter.h; sourceTree = "<group>"; };
 		461AB5C922126C8E001522BD /* FileList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileList.h; path = CExpress/FileList.h; sourceTree = "<group>"; };
 		461B756D220379E400D8CBE6 /* RaceFastsdr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RaceFastsdr.cpp; sourceTree = "<group>"; };
 		461E83562228916B00220E94 /* DialogFileOpen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DialogFileOpen.h; path = MainSource/DialogFileOpen.h; sourceTree = "<group>"; };
@@ -305,9 +302,7 @@
 		466C645822028B8300D4EAE0 /* Radio */ = {
 			isa = PBXGroup;
 			children = (
-				4616E5B72208B6A700240B9F /* smeter.h */,
 				46DA4761248461EA0013FD0D /* SocketDefs.h */,
-				4616E5B62208B6A600240B9F /* smeter.cpp */,
 				4686063522028C1F0078D9F2 /* DialogRadio.cpp */,
 				4686063622028C1F0078D9F2 /* DialogRadio.h */,
 				46E216E723EE4300002C059A /* Transmit.cpp */,
@@ -545,7 +540,6 @@
 				467FE41A1C2C4F9B007D260F /* quaternion.cpp in Sources */,
 				467FE4051C2C4F9B007D260F /* glui_edittext.cpp in Sources */,
 				467FE4171C2C4F9B007D260F /* glui_treepanel.cpp in Sources */,
-				4616E5B82208B6A700240B9F /* smeter.cpp in Sources */,
 				46CE01B322125CF000140F6C /* fft.cpp in Sources */,
 				4623928F1C2C5A5A007F6B08 /* arcball.cpp in Sources */,
 				46CE01D3221265FB00140F6C /* ClinesPlotAttributes.cpp in Sources */,

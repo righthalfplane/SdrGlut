@@ -56,9 +56,13 @@ struct PlotAttributesData{
 	
 	GLUI_Checkbox *min_box;
 	
-	GLUI_Checkbox *max_box;
-	
+    GLUI_Checkbox *max_box;
+    
+    GLUI_Checkbox *manual_box;
+
 	int autoMin,autoMax;
+    
+    int manualControl;
 	
   	int sub_window;
 	
@@ -135,8 +139,10 @@ int CLines::PlotAttributes(struct Scene *scene, struct LineStruct *lines)
 	
 	pap->min_box = new GLUI_Checkbox( obj_panel, "Auto Min", &pap->autoMin, 7, control_cb );
 	
-	pap->max_box = new GLUI_Checkbox( obj_panel, "Auto Max", &pap->autoMax, 8, control_cb );
-	
+    pap->max_box = new GLUI_Checkbox( obj_panel, "Auto Max", &pap->autoMax, 8, control_cb );
+    
+    pap->manual_box = new GLUI_Checkbox( obj_panel, "Manual Control", &pap->manualControl, 18, control_cb );
+
 	new GLUI_Button(pap->glui, "Apply", 9, control_cb); 
 	
 	new GLUI_Button(pap->glui, "Close", 10, control_cb); 
@@ -187,8 +193,9 @@ static int getDialogData(struct PlotAttributesData *pap)
 	    pap->edittext1f->set_text(value);
 		
 	   	pap->min_box->set_int_val(Plot->xAutoMinimum);
-	   	pap->max_box->set_int_val(Plot->xAutoMaximum);
-		
+        pap->max_box->set_int_val(Plot->xAutoMaximum);
+        pap->manual_box->set_int_val(Plot->xManualControl);
+
 		pap->group2->set_int_val(Plot->xLogScale);
 		
 	}else{
@@ -220,8 +227,8 @@ static int getDialogData(struct PlotAttributesData *pap)
 	    pap->edittext1f->set_text(value);
 		
 	   	pap->min_box->set_int_val(Plot->yAutoMinimum);
-	   	pap->max_box->set_int_val(Plot->yAutoMaximum);
-		
+        pap->max_box->set_int_val(Plot->yAutoMaximum);
+
 		pap->group2->set_int_val(Plot->yLogScale);
 	}
 	
@@ -239,8 +246,10 @@ static int setDialogData(struct PlotAttributesData *pap)
 		
 		Plot->xAutoMinimum=pap->autoMin;
 		
-		Plot->xAutoMaximum=pap->autoMax;	
-		
+        Plot->xAutoMaximum=pap->autoMax;
+        
+        Plot->xManualControl=pap->manualControl;
+
 		if(!Plot->xAutoMinimum){
 			sscanf(pap->edittext1a->get_text(),"%lg", &Plot->xSetMinimum);
 		}

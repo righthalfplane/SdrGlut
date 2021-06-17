@@ -10,7 +10,6 @@
 #define SdrFileRA_h
 #include "ulibTypes.h"
 #include <GL/glui.h>
-#include "smeter.h"
 #include <cstdlib>
 #include <cstddef>
 #include <iostream>
@@ -79,7 +78,6 @@
 
 
 struct playData4{
-    CSMeter m_SMeter;
     ALCdevice *dev;
     ALCcontext *ctx;
     ALuint buffers[NUM_BUFFERS];
@@ -87,6 +85,7 @@ struct playData4{
     ALuint source;
     FILE *infile;
     double samplerate;
+    double meterMax;
     short int data[2*BLOCK_SIZE];
     float input[2*BLOCK_SIZE];
     float output[2*BLOCK_SIZE];

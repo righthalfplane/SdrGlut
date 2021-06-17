@@ -1355,9 +1355,7 @@ static int doFilter(struct playData *rx,float *wBuff,float *aBuff,struct Filters
     num2=0;
     
     msresamp_crcf_execute(f->iqSampler, (liquid_float_complex *)buf2, rx->size, (liquid_float_complex *)buf, &num);  // decimate
-    
-    rx->m_SMeter.ProcessData(num, (TYPECPX *)buf, (TYPEREAL)rx->bw);
-        
+            
     if(rx->decodemode < MODE_AM){
 		freqdem_demodulate_block(f->demod, (liquid_float_complex *)buf, (int)num, (float *)buf2);
         msresamp_rrrf_execute(f->iqSampler2, (float *)buf2, num, (float *)buf, &num2);  // interpolate

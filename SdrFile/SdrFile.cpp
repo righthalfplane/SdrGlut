@@ -450,8 +450,6 @@ int SdrFile::setBuffers(struct playData4 *play)
 
     //fprintf(stderr,"play->size %d num %u play->bw %.0f\n",play->size,num,play->bw);
     
-    play->m_SMeter.ProcessData(num, (TYPECPX *)buf1, (TYPEREAL)play->bw);
-    
     if(play->decodemode < MODE_AM){
         freqdem_demodulate_block(filter.demod, (liquid_float_complex *)buf1, (int)num, (float *)buf2);
         msresamp_rrrf_execute(filter.iqSampler2, (float *)buf2, num, (float *)buf1, &num2);  // interpolate
@@ -611,8 +609,6 @@ int SdrFile::updateLine()
         return 1;
     }
     
-    setDialogPower(play.m_SMeter.GetAve());
-    
     real=play.real;
     imag=play.imag;
     
@@ -717,6 +713,19 @@ int SdrFile::updateLine()
     }else{
         ne=2*nsub+1;
     }
+    
+    double meterMax=lreal[nf];
+
+    for(int n=0;n<length;++n){
+        if(n > nf-5 && n < nf+5){
+            if(lreal[n] > meterMax)meterMax=lreal[n];
+        }
+    }
+
+    setDialogPower(meterMax);
+    
+    play.meterMax=meterMax;
+
 
     if(FindScene(scenel2))lines2->plotPutData(scenel2,&range[ns],&lreal[ns],ne,0L);
 
@@ -1071,8 +1080,6 @@ int SdrFile::setFrequency(struct playData4 *play)
     play->amaxGlobal=0;
     
     play->averageGlobal=0;
-
-    play->m_SMeter.Reset();
     
     if(FindScene(scenel2)){
         SetFrequencyGlobal(scenel2, play->f, play->bw,M_FREQUENCY_BANDWIDTH);
@@ -1404,9 +1411,9 @@ static void displayc(void)
         int min=(time-hours*3600)/60;
         int sec=(time-hours*3600-min*60);
         if(images->mute){
-            msprintf(value,sizeof(value),"Frequency: %010ld Hz   Center Frequency: %010ld Hz Power: %.0f db Time: %02d:%02d:%02d MUTE",f,fc,images->play.m_SMeter.GetAve(),hours,min,sec);
+            msprintf(value,sizeof(value),"Frequency: %010ld Hz   Center Frequency: %010ld Hz Power: %.0f db Time: %02d:%02d:%02d MUTE",f,fc,images->play.meterMax,hours,min,sec);
         }else{
-            msprintf(value,sizeof(value),"Frequency: %010ld Hz   Center Frequency: %010ld Hz Power: %.0f db Time: %02d:%02d:%02d",f,fc,images->play.m_SMeter.GetAve(),hours,min,sec);
+            msprintf(value,sizeof(value),"Frequency: %010ld Hz   Center Frequency: %010ld Hz Power: %.0f db Time: %02d:%02d:%02d",f,fc,images->play.meterMax,hours,min,sec);
         }
         DrawString(20, (int)scene->yResolution-15, value);
         
