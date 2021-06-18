@@ -31,7 +31,6 @@ public:
 	virtual int LoadFile (struct Scene *scene,char *name, int fileType);
 	virtual int Keys(struct Scene *scene,unsigned int key, int x, int y);
 	virtual int SelectionBoxUpdate(struct Scene *scene,int flag);
-
     virtual int sendMessage(char *m1,char *m2,int type);
 
 	int New();

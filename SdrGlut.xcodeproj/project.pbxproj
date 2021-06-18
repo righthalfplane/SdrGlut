@@ -71,10 +71,7 @@
 		46CE01A8221259BF00140F6C /* CWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01A6221259BF00140F6C /* CWindow.cpp */; };
 		46CE01AC22125C8400140F6C /* FFT2.c in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01A922125C8400140F6C /* FFT2.c */; };
 		46CE01AD22125C8400140F6C /* Utilities2.c in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01AA22125C8400140F6C /* Utilities2.c */; };
-		46CE01B222125CF000140F6C /* fastfir.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01AE22125CF000140F6C /* fastfir.cpp */; };
-		46CE01B322125CF000140F6C /* fft.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01B122125CF000140F6C /* fft.cpp */; };
 		46CE01B622125D8400140F6C /* Scene.c in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01B422125D8400140F6C /* Scene.c */; };
-		46CE01BB22125E0500140F6C /* fir.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01B722125E0400140F6C /* fir.cpp */; };
 		46CE01C122125F3000140F6C /* Getpalette.c in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01C022125F3000140F6C /* Getpalette.c */; };
 		46CE01C4221260BB00140F6C /* QuitDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01C2221260BB00140F6C /* QuitDialog.cpp */; };
 		46CE01C72212632700140F6C /* sceneDisplay.c in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01C52212632700140F6C /* sceneDisplay.c */; };
@@ -198,14 +195,8 @@
 		46CE01A922125C8400140F6C /* FFT2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = FFT2.c; path = CExpress/FFT2.c; sourceTree = "<group>"; };
 		46CE01AA22125C8400140F6C /* Utilities2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Utilities2.c; path = CExpress/Utilities2.c; sourceTree = "<group>"; };
 		46CE01AB22125C8400140F6C /* Utilities2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Utilities2.h; path = CExpress/Utilities2.h; sourceTree = "<group>"; };
-		46CE01AE22125CF000140F6C /* fastfir.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fastfir.cpp; path = Classes/fastfir.cpp; sourceTree = "<group>"; };
-		46CE01AF22125CF000140F6C /* fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fft.h; path = Classes/fft.h; sourceTree = "<group>"; };
-		46CE01B022125CF000140F6C /* fastfir.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fastfir.h; path = Classes/fastfir.h; sourceTree = "<group>"; };
-		46CE01B122125CF000140F6C /* fft.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fft.cpp; path = Classes/fft.cpp; sourceTree = "<group>"; };
 		46CE01B422125D8400140F6C /* Scene.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Scene.c; path = MainSource/Scene.c; sourceTree = "<group>"; };
 		46CE01B522125D8400140F6C /* Scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Scene.h; path = MainSource/Scene.h; sourceTree = "<group>"; };
-		46CE01B722125E0400140F6C /* fir.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fir.cpp; path = MainSource/fir.cpp; sourceTree = "<group>"; };
-		46CE01B822125E0400140F6C /* fir.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fir.h; path = MainSource/fir.h; sourceTree = "<group>"; };
 		46CE01BE22125E9100140F6C /* mThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mThread.h; path = MainSource/mThread.h; sourceTree = "<group>"; };
 		46CE01C022125F3000140F6C /* Getpalette.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Getpalette.c; path = MainSource/Getpalette.c; sourceTree = "<group>"; };
 		46CE01C2221260BB00140F6C /* QuitDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = QuitDialog.cpp; path = MainSource/QuitDialog.cpp; sourceTree = "<group>"; };
@@ -397,10 +388,6 @@
 				46CE01D2221265FB00140F6C /* CLInesPlotLabels.h */,
 				46CE01C8221265AC00140F6C /* CLines.cpp */,
 				46CE01C9221265AC00140F6C /* CLines.h */,
-				46CE01AE22125CF000140F6C /* fastfir.cpp */,
-				46CE01B022125CF000140F6C /* fastfir.h */,
-				46CE01B122125CF000140F6C /* fft.cpp */,
-				46CE01AF22125CF000140F6C /* fft.h */,
 				46CE01A6221259BF00140F6C /* CWindow.cpp */,
 				46CE01A7221259BF00140F6C /* CWindow.h */,
 			);
@@ -452,8 +439,6 @@
 				46CE01C62212632700140F6C /* sceneDisplay.h */,
 				46CE01C3221260BB00140F6C /* QuitDialog.h */,
 				46CE01C022125F3000140F6C /* Getpalette.c */,
-				46CE01B722125E0400140F6C /* fir.cpp */,
-				46CE01B822125E0400140F6C /* fir.h */,
 				46CE01B422125D8400140F6C /* Scene.c */,
 				46CE01B522125D8400140F6C /* Scene.h */,
 				46B4EB192212570900041F98 /* cMalloc.c */,
@@ -529,7 +514,6 @@
 				46E216E923EE4300002C059A /* Transmit.cpp in Sources */,
 				46CE01AD22125C8400140F6C /* Utilities2.c in Sources */,
 				461B756E220379E400D8CBE6 /* RaceFastsdr.cpp in Sources */,
-				46CE01BB22125E0500140F6C /* fir.cpp in Sources */,
 				467FE4061C2C4F9B007D260F /* glui_filebrowser.cpp in Sources */,
 				467FE4151C2C4F9B007D260F /* glui_translation.cpp in Sources */,
 				4686063922028C1F0078D9F2 /* DialogRadio.cpp in Sources */,
@@ -540,14 +524,12 @@
 				467FE41A1C2C4F9B007D260F /* quaternion.cpp in Sources */,
 				467FE4051C2C4F9B007D260F /* glui_edittext.cpp in Sources */,
 				467FE4171C2C4F9B007D260F /* glui_treepanel.cpp in Sources */,
-				46CE01B322125CF000140F6C /* fft.cpp in Sources */,
 				4623928F1C2C5A5A007F6B08 /* arcball.cpp in Sources */,
 				46CE01D3221265FB00140F6C /* ClinesPlotAttributes.cpp in Sources */,
 				46266832239D9E8D002CCCF4 /* mThread.cpp in Sources */,
 				46CE01CA221265AC00140F6C /* CLines.cpp in Sources */,
 				467FE40C1C2C4F9B007D260F /* glui_radio.cpp in Sources */,
 				467FE4161C2C4F9B007D260F /* glui_tree.cpp in Sources */,
-				46CE01B222125CF000140F6C /* fastfir.cpp in Sources */,
 				46CE01A52212597700140F6C /* SceneList.c in Sources */,
 				467FE40A1C2C4F9B007D260F /* glui_node.cpp in Sources */,
 				467FE4101C2C4F9B007D260F /* glui_separator.cpp in Sources */,

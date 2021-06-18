@@ -42,8 +42,6 @@
 
 #include "SocketDefs.h"
 
-//#include "agc.h"
-
 #ifndef M_PI
 #define M_PI 3.14159265358979323846264338327950288
 #endif
@@ -110,7 +108,7 @@ public:
 };
 
 struct playData{
-    int start;
+    unsigned char start;
     ALCdevice *dev;
     ALCcontext *ctx;
     double real[2*32768*2];
@@ -118,7 +116,7 @@ struct playData{
     int FFTcount;
     int FFTfilter;
     int wShift;
-   int size;
+    int size;
 
     ALuint source;
     double samplerate;
@@ -148,15 +146,6 @@ struct playData{
 
     SoapySDR::Stream *rxStream;
     SoapySDR::Device *device;
-
-/*
-    int AgcSlope;
-    int AgcThresh;
-    int AgcManualGain;
-    bool AgcOn;
-    bool AgcHangOn;
-    int AgcDecay;
-*/
 
     unsigned long MTU;
     
@@ -226,7 +215,6 @@ struct playData{
     size_t sampleRatesCount;
     
     int directSampleMode;
-    std::string biasMode;
 
     int getRadioAttributes;
     
@@ -271,7 +259,9 @@ struct playData{
     
     int frequencyReset;
 
-    int end;
+    unsigned char end;
+    
+    int junk22;
     
     SoapySDR::Kwargs deviceToOpen;
     
@@ -281,6 +271,7 @@ struct playData{
     
     std::mutex mutexo;
     
+    std::string biasMode;
 
 };
 

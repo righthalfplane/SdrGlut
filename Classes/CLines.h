@@ -22,10 +22,11 @@ public:
     
   //  CSdrFile *sdr;
     
-    struct Scene *sceneSource;
     
 	CLines();
+    
 	CLines(struct Scene *scene);
+    
 	virtual ~CLines();
 
 	virtual int OpenWindows(struct Scene *scene);
@@ -50,6 +51,18 @@ public:
 	
 	int plotPutLabel(struct Scene *scene,char *label,long item);
 	
+    
+    
+    
+    int DrawLabels(struct Scene *scene);
+    
+    int SaveData(struct Scene *scene,char *path);
+    
+    static CLines *CLinesOpen(struct Scene *scene,int parentWindow);
+
+    
+    struct Scene *sceneSource;
+
 	struct uPlotLabelsStruct{
 		char Labels[5][256];
 		char flag[5];
@@ -68,38 +81,31 @@ public:
 		uGridPlotPtr Plot;
 		uPLotLabels labels;
 	};
-	
-	
+
+    int PlotLabels(struct Scene *scene,struct LineStruct *lines);
+    
+    int GetLineData(struct LineStruct *lines, uLineDataPtr *Line, int *linei, int *LineCount, int *Pattern);
+    
+    int LinePattern(struct LineStruct *lines, int line, int pattern, int flag);
+    
+    int LineColor(struct LineStruct *lines, int line, int color);
+    
+    int LineLabel(struct LineStruct *lines, int line, char *label);
+    
+    int LineDelete(struct LineStruct *lines, int line);
+    
+    int PlotAttributes(struct Scene *scene,struct LineStruct *lines);
+    
+    int PlotBox(struct Scene *scene,struct LineStruct *lines);
+
+    int LineAttributes(struct Scene *scene,struct LineStruct *lines);
+    
 	struct LineStruct lineHolder;
 	
 	struct LineStruct *lines;
 	
-	int LineAttributes(struct Scene *scene,struct LineStruct *lines);
-	
-	int GetLineData(struct LineStruct *lines, uLineDataPtr *Line, int *linei, int *LineCount, int *Pattern);
-	
-	int LinePattern(struct LineStruct *lines, int line, int pattern, int flag);
-	
-	int LineColor(struct LineStruct *lines, int line, int color);
-	
-	int LineLabel(struct LineStruct *lines, int line, char *label);
-	
-	int LineDelete(struct LineStruct *lines, int line);
-
-	int PlotAttributes(struct Scene *scene,struct LineStruct *lines);
-	
-	int PlotBox(struct Scene *scene,struct LineStruct *lines);
-	
-	int PlotLabels(struct Scene *scene,struct LineStruct *lines);
-	
-	int DrawLabels(struct Scene *scene);
-	
-	int SaveData(struct Scene *scene,char *path);
-	
-	static CLines *CLinesOpen(struct Scene *scene,int parentWindow);
-    
     double Frequency;
-    
+
     double BandWidth;
     
     int wShift;

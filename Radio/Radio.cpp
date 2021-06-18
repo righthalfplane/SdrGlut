@@ -381,7 +381,9 @@ Radio::Radio(struct Scene *scene,SoapySDR::Kwargs deviceArgs): CWindow(scene)
 
     }
 
-    zerol((char *)&rxs,&rxs.end-&rxs.start);
+    zerol((char *)&rxs,(&rxs.end-&rxs.start)+1);
+    
+   // fprintf(stderr,"diff %ld %ld \n",(long)(&rxs.end-&rxs.start),(long)((char *)(&rxs.end)-(char *)(&rxs.start)));
     
     rxs.deviceToOpen=deviceArgs;
 
@@ -695,9 +697,6 @@ int Radio::updateLine()
     }
     
     int length=rx->FFTcount;
-    
-    
-
     
     real=rx->real;
     imag=rx->imag;

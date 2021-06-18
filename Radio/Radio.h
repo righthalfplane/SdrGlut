@@ -325,8 +325,6 @@ public:
     virtual int OpenWindows(struct Scene *scene);
     void getMouse(int button, int state, int x, int y);
     int Display(struct Scene *scene);
-    char ApplicationDirectory[2048];
-    char filename[2048];
     int resetDemod();
     
     int setBandWidth(double bandwidth);
@@ -352,7 +350,25 @@ public:
     int doSoundRecord();
     
     int dialogTime();
+    
+    int setDialogFrequency(double frequency);
+    
+    int setDialogFc(double frequency);
+    
+    int setDialogRange(double pmin,double pmax);
+    
+    int setDialogPower(double power);
+    
+    int setDialogBandWidth(double power);
+    
+    int setDialogSampleRate(double power);
+    
+    int updateLine(void);
 
+    char ApplicationDirectory[2048];
+    
+    char filename[2048];
+    
     volatile int inTransmit;
     
     volatile int inDialog;
@@ -377,8 +393,6 @@ public:
     double imag[2*32768*sizeof(double)];
     long FFTlength;
 
-
-    
     CLines *lines;
     struct Scene *scenel;
     CLines *lines2;
@@ -391,22 +405,8 @@ public:
     double lineTime;
     double lineDumpInterval;
     double lineAlpha;
-     int updateLine(void);
     
     struct paletteDraw pd;
-
-    int setDialogFrequency(double frequency);
-    
-    int setDialogFc(double frequency);
-    
-    int setDialogRange(double pmin,double pmax);
-    
-    int setDialogPower(double power);
-    
-    int setDialogBandWidth(double power);
-    
-    int setDialogSampleRate(double power);
-
     
     double fcdown;
     
@@ -424,12 +424,10 @@ public:
 
     int window2;
     
-    SoapySDR::ArgInfoList flags;
     int *flagsmenu;
     int flagsflag;
     int inuseflag;
     
-    vector<double> scanFrequencies;
     int scanFound[200];
     double pauseTime;
     double pauseTimeDelta;
@@ -446,6 +444,11 @@ public:
     int insert;
 
     struct RecordSoundStruct rs;
+    
+    vector<double> scanFrequencies;
+    
+    SoapySDR::ArgInfoList flags;
+
 };
 
 typedef Radio *RadioPtr;

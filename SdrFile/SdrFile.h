@@ -43,11 +43,6 @@
 #include "paletteDraw.h"
 #include "DialogSave.h"
 
-#include "fastfir.h"
-
-#include "fir.h"
-
-
 #define BLOCK_SIZE 32768
 
 #define NUM_SOURCES 1
@@ -220,9 +215,25 @@ public:
     virtual int OpenWindows(struct Scene *scene);
     void getMouse(int button, int state, int x, int y);
     int Display(struct Scene *scene);
+    
+    int setDialogFrequency(double frequency);
+    
+    int setDialogFc(double frequency);
+    
+    int setDialogRange(double pmin,double pmax);
+    
+    int setDialogPower(double power);
+    
+    int resetDemod();
+    
+    int updateLine(void);
+
+    int setBuffers(struct playData4 *play);
+    
+    int StartIt(struct playData4 *play);
+
     char ApplicationDirectory[2048];
     char filename[2048];
-    int resetDemod();
 
     volatile int backGroundEvents;
     
@@ -246,18 +257,9 @@ public:
     double lineTime;
     double lineDumpInterval;
     double lineAlpha;
-     int updateLine(void);
     
     struct paletteDraw pd;
 
-    int setDialogFrequency(double frequency);
-    
-    int setDialogFc(double frequency);
-    
-    int setDialogRange(double pmin,double pmax);
-    
-    int setDialogPower(double power);
-                    
     double fcdown;
     
     double fdown;
@@ -269,11 +271,6 @@ public:
     double power;
     
     struct DialogSdrData dd;
-    
-    
-    int setBuffers(struct playData4 *play);
-    
-    int StartIt(struct playData4 *play);
     
     struct Filters2 filter;
     

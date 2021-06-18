@@ -1,4 +1,5 @@
 #include "SocketDefs.h"
+#include "Utilities.h"
 #include <cstdio>
 #include <algorithm>
 #include <iostream>
@@ -186,7 +187,7 @@ SOCKET connectToServer(char *serverName,unsigned short *Port)
 
 	result= -1;
 
-    memset(&serverSocketAddr, 0, sizeof(serverSocketAddr));
+    zerol((char *)&serverSocketAddr, sizeof(serverSocketAddr));
 
 	if(!(np=strrchr(serverName,':'))){
 	    printf("Bad Address (%s)",serverName);
