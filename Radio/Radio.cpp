@@ -369,6 +369,8 @@ Radio::Radio(struct Scene *scene,SoapySDR::Kwargs deviceArgs): CWindow(scene)
     
     zerol((char *)&rs, sizeof(rs));
     
+    zerol((char *)&start,end-start+1);
+    
     mstrncpy(rs.FilePath[0],(char *)"sound01.raw",sizeof(rs.FilePath[0]));
     mstrncpy(rs.FilePath[1],(char *)"sound02.raw",sizeof(rs.FilePath[1]));
     mstrncpy(rs.FilePath[2],(char *)"sound03.raw",sizeof(rs.FilePath[2]));

@@ -103,15 +103,12 @@ SdrFile::SdrFile(struct Scene *scene): CWindow(scene)
 
 	zerol((char *)&dd, sizeof(dd));
 
+    zerol((char *)&start, end-start+1);
 
     getPaletteByName((char *)"ps",(unsigned char *)&pd.palette);
     
     pd.sType=2;
     
-    backGroundEvents=0;
-    
-    mute=0;
-
     //fprintf(stderr,"Radio::Radio\n");
     
     play.frame=0;
@@ -132,8 +129,12 @@ SdrFile::SdrFile(struct Scene *scene): CWindow(scene)
         
     play.Debug=0;
     
-    play.lowpass = iirfilt_crcf_create_lowpass(6,0.104f);    // +- 5000 HZ
-
+    backGroundEvents=0;
+    
+    inDialog=0;
+    
+    mute=0;
+    
     lineDumpInterval=0.1;
     lineTime=rtime()+lineDumpInterval;
     
@@ -561,8 +562,6 @@ SdrFile::~SdrFile()
     
     stopPlay(&play);
     
-    if(play.lowpass)iirfilt_crcf_destroy(play.lowpass);
-
     if(play.infile)fclose (play.infile) ;
     play.infile=NULL;
 

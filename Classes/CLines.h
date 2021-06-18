@@ -51,16 +51,12 @@ public:
 	
 	int plotPutLabel(struct Scene *scene,char *label,long item);
 	
-    
-    
-    
     int DrawLabels(struct Scene *scene);
     
     int SaveData(struct Scene *scene,char *path);
     
     static CLines *CLinesOpen(struct Scene *scene,int parentWindow);
 
-    
     struct Scene *sceneSource;
 
 	struct uPlotLabelsStruct{

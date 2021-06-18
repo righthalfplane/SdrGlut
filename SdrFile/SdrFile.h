@@ -102,8 +102,6 @@ struct playData4{
     double w;
     volatile int frame;
     volatile long setFrameNumber;
-    iirfilt_crcf lowpass;
-    nco_crcf fShift;
     int gainMode;
     int hasGainMode;
     int decodemode;
@@ -232,6 +230,8 @@ public:
     
     int StartIt(struct playData4 *play);
 
+    unsigned char start;
+    
     char ApplicationDirectory[2048];
     char filename[2048];
 
@@ -243,6 +243,8 @@ public:
     
     struct playData4 play;
     
+    struct paletteDraw pd;
+
     double real[2*32768*sizeof(double)];
     double imag[2*32768*sizeof(double)];
     CLines *lines;
@@ -258,7 +260,6 @@ public:
     double lineDumpInterval;
     double lineAlpha;
     
-    struct paletteDraw pd;
 
     double fcdown;
     
@@ -281,6 +282,10 @@ public:
     int window2;
     
     volatile int mute;
+    
+    unsigned char end;
+    
+    int junk11;
 
 };
 

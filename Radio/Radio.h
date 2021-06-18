@@ -364,6 +364,8 @@ public:
     int setDialogSampleRate(double power);
     
     int updateLine(void);
+    
+    unsigned char start;
 
     char ApplicationDirectory[2048];
     
@@ -379,7 +381,6 @@ public:
     
     struct playData *rx;
     
-    struct playData rxs;
     
     struct DialogRadioData dd;
     
@@ -445,9 +446,15 @@ public:
 
     struct RecordSoundStruct rs;
     
+    unsigned char end;
+    
+    int junk11;
+    
     vector<double> scanFrequencies;
     
     SoapySDR::ArgInfoList flags;
+    
+    struct playData rxs;
 
 };
 
