@@ -234,9 +234,6 @@
     <ClInclude Include="..\Classes\Contours.h">
       <Filter>Classes</Filter>
     </ClInclude>
-    <ClInclude Include="..\Radio\smeter.h">
-      <Filter>Radio</Filter>
-    </ClInclude>
     <ClInclude Include="..\CExpress\uFiles.h">
       <Filter>CExpress</Filter>
     </ClInclude>
@@ -432,9 +429,6 @@
     </ClCompile>
     <ClCompile Include="..\CExpress\FFT2.c">
       <Filter>CExpress</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Radio\smeter.cpp">
-      <Filter>Radio</Filter>
     </ClCompile>
     <ClCompile Include="..\SdrFile\DialogSdrFile.cpp">
       <Filter>sdrFile</Filter>

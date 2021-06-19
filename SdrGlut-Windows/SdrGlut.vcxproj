@@ -303,7 +303,6 @@
     <ClInclude Include="..\Radio\DialogRadio.h" />
     <ClInclude Include="..\Radio\RaceFastsdr.h" />
     <ClInclude Include="..\Radio\Radio.h" />
-    <ClInclude Include="..\Radio\smeter.h" />
     <ClInclude Include="..\Classes\CWindow.h" />
     <ClInclude Include="..\Radio\SocketDefs.h" />
     <ClInclude Include="..\SdrFile\DialogSdrFile.h" />
@@ -380,7 +379,6 @@
     <ClCompile Include="..\Radio\RaceFastsdr.cpp" />
     <ClCompile Include="..\Radio\Radio.cpp" />
     <ClCompile Include="..\Radio\send.cpp" />
-    <ClCompile Include="..\Radio\smeter.cpp" />
     <ClCompile Include="..\Classes\CWindow.cpp" />
     <ClCompile Include="..\Radio\WriteToWindow.cpp" />
     <ClCompile Include="..\SdrFile\DialogSdrFile.cpp" />
