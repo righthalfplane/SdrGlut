@@ -103,7 +103,7 @@ SdrFile::SdrFile(struct Scene *scene): CWindow(scene)
 
 	zerol((char *)&dd, sizeof(dd));
 
-    zerol((char *)&start, end-start+1);
+    zerol((char *)&start, &end-&start+1);
 
     getPaletteByName((char *)"ps",(unsigned char *)&pd.palette);
     

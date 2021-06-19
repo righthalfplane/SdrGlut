@@ -1010,7 +1010,7 @@ static int CPlotxLin(struct uGridPlot *b,rRect *r,DOListPtr d)
         if(b->mode == 0){
             msprintf(Label,sizeof(Label),"%g%c",x,0);
         }else{
-		    msprintf(Label,sizeof(Label),"%.4f%c",x/1e6,0);
+		    msprintf(Label,sizeof(Label),"%.3f%c",x/1e6,0);
         }
 
 		width=PixelToLocal(uCStringWidth(Label,d->myIcon),d);
