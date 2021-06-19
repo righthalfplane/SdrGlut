@@ -118,6 +118,7 @@ static void control_cb3(int control)
     RadioPtr s=(RadioPtr)FindSceneRadio(glutGetWindow());
     if(!s)return;
     
+#ifndef _MSC_VER
     sscanf(s->qq.edittext1->get_text(),"%s",s->qq.text1);
     sscanf(s->qq.edittext2->get_text(),"%s",s->qq.text2);
     sscanf(s->qq.edittext3->get_text(),"%s",s->qq.text3);
@@ -161,6 +162,7 @@ static void control_cb3(int control)
         }
         s->qq.pipe=NULL;
     }
+#endif
     glutPostRedisplay();
 }
 
