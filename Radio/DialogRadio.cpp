@@ -111,6 +111,12 @@ int Radio::dialogSendIQ(struct Scene *scene)
     
     return 0;
 }
+
+#ifdef _MSC_VER
+#define popen _popen
+#define pclose _pclose
+#endif
+
 static void control_cb3(int control)
 {
     char path[2048];
@@ -118,10 +124,13 @@ static void control_cb3(int control)
     RadioPtr s=(RadioPtr)FindSceneRadio(glutGetWindow());
     if(!s)return;
     
-#ifndef _MSC_VER
+
     sscanf(s->qq.edittext1->get_text(),"%s",s->qq.text1);
     sscanf(s->qq.edittext2->get_text(),"%s",s->qq.text2);
     sscanf(s->qq.edittext3->get_text(),"%s",s->qq.text3);
+    
+    char *start=(char *)s->qq.edittext2->get_text();
+
 
     s->rx->demodulationFlag=s->qq.demodulationFlag;
     
@@ -139,12 +148,21 @@ static void control_cb3(int control)
         s->qq.glui->close();
         s->qq.glui=NULL;
     } else if(control == 9){
-        printf("Location: %s\n",s->qq.text2);
+        
+        printf("Location: ");
+        int n=0;
+        while(start[n]){
+            printf("%c",start[n]);
+            path[n]=start[n];
+            n++;
+        }
+        printf("\n");
+
         printf("Channel: %s\n",s->qq.text3);
         if(strlen(s->qq.text3) > 0){
-            sprintf(path,"%s -v udp://@:1234 --program=%s --extraintf rc%c",s->qq.text2,s->qq.text3,0);
+            sprintf(path+n," -v udp://@:1234 --program=%s --extraintf rc%c",s->qq.text3,0);
         }else{
-            sprintf(path,"%s -v  udp://@:1234 --extraintf rc%c",s->qq.text2,0);
+            sprintf(path+n," -v  udp://@:1234 --extraintf rc%c",0);
         }
         printf("path %s\n",path);
         if(s->qq.pipe){
@@ -162,7 +180,6 @@ static void control_cb3(int control)
         }
         s->qq.pipe=NULL;
     }
-#endif
     glutPostRedisplay();
 }
 

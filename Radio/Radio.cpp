@@ -11,6 +11,8 @@
 
 #include "mThread.h"
 
+#include <thread>
+
 #include "DialogFileOpen.h"
 
 #include <math.h>
@@ -579,8 +581,11 @@ int doRadioOpenRA(void)
             if (it->first == "driver") {
                 //dev->setDriver(it->second);
                 if(it->second == "audio")break;
-           } else if (it->first == "label") {
-               new GLUI_Button(obj_panel, (char *)it->second.c_str(), (int)(2+k), control_cb);
+            } else if (it->first == "device") {
+                if(it->second == "HackRF One")continue;
+                new GLUI_Button(obj_panel, (char *)it->second.c_str(), (int)(2+k), control_cb);
+            } else if (it->first == "label") {
+                new GLUI_Button(obj_panel, (char *)it->second.c_str(), (int)(2+k), control_cb);
              //dev->setName(it->second);
             }
         }
@@ -628,7 +633,7 @@ void Radio::playRadio (struct playData4 *rx)
 
 Radio::~Radio()
 {
-    fprintf(stderr,"~Radio() \n");
+ //   fprintf(stderr,"~Radio() start\n");
     
     rx->psdrDone(rx);
 
@@ -677,6 +682,7 @@ Radio::~Radio()
         }
         tt.glui=NULL;
     }
+//    fprintf(stderr,"~Radio() end\n");
 
 }
 int Radio::updateLine()
@@ -786,10 +792,10 @@ int Radio::updateLine()
         Plot=lines->lines->Plot;
         if(!Plot)return 1;
 
-        if(!Plot->xManualControl){
+       if(!Plot->xManualControl){
             Plot->xAutoMaximum=TRUE;
             Plot->xAutoMinimum=TRUE;
-        }
+       }
 
         GridPlotScale(Plot);
         
@@ -1307,6 +1313,8 @@ static int flip(unsigned char *b,int xsize,int ysize)
 int Radio::Display(struct Scene *scene)
 {
     if(!scene)return 1;
+    
+    //cout<<std::this_thread::get_id()<<endl;
     
     Radio::SetWindow(scene);
     
