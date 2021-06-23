@@ -7,9 +7,20 @@ A users group is just starting - you can ask questions there -
 
 https://groups.google.com/g/sdrglut-users
 
-SdrGlut V1.23 Adds native support for Apple's M1 devices.
+SdrGlut V1.24 Adds a Help Window and Some Bug Fixes.
 
-https://github.com/righthalfplane/SdrGlut/releases/tag/v1.23
+What is new ? 
+
+SdrGlut has a Help Window that covers the basic operation of the program. 
+SdrGlut can send I/Q data to other programs use TCP/IP or UDP modes. 
+SdrGlut has fixed the db read output in the Spectrum Window - removing the incorrect CSMeter routines. 
+SdrGlut has an extreme zoom for the Spectrum and Waterfall Windows. 
+SdrGlut has automated some of the input for the Audio Recording Window. 
+SdrGlut has fixed some data initialization errors that were causing random crashes. 
+SdrGlut has finally worked around a system bug in Ubuntu 20.04 that was causing a crash. 
+SdrGlut can set the VLC program mode for use with the decoding of real time TV. 
+
+https://github.com/righthalfplane/SdrGlut/releases/tag/v1.24
 
 SdrGlut is a simple software defined radio player. Using glut for drawing and glui for its dialogs makes it tiny compared to programs that use QT5 or wxWidgets. SdrGlut uses liquid-sdr and SoapySDR to preform the SDR calculations. The audio is handled by OpenAL and RtAudio.
 
