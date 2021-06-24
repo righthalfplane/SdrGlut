@@ -100,7 +100,7 @@ int Radio::dialogTime()
 */
     
     
-    glui = GLUI_Master.create_glui( "Time Dialog" );
+    glui = GLUI_Master.create_glui( "Audio Recording" );
     
     GLUI_Panel *obj_panel =  glui->add_panel( "month" );
     
