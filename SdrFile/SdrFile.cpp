@@ -481,20 +481,26 @@ int SdrFile::setBuffers(struct playData4 *play)
     
     if(gain <= 0.0)gain=1.0;
     
+    double average=0;
     for (size_t i=0; i<num2; i++ ) {
         double v;
         v=buf1[i];
+        average += v;
         if(v < amin)amin=v;
         if(v > amax)amax=v;
     }
 
+    average /= num2;
     
+    amin -= average;
+    amax -= average;
+
     if(play->aminGlobal == 0.0)play->aminGlobal=amin;
-    play->aminGlobal = 0.9*play->aminGlobal+0.1*amin;
+    play->aminGlobal = 0.8*play->aminGlobal+0.2*amin;
     amin=play->aminGlobal;
     
     if(play->amaxGlobal == 0.0)play->amaxGlobal=amax;
-    play->amaxGlobal = 0.9*play->amaxGlobal+0.1*amax;
+    play->amaxGlobal = 0.8*play->amaxGlobal+0.2*amax;
     amax=play->amaxGlobal;
 
 
@@ -509,9 +515,16 @@ int SdrFile::setBuffers(struct playData4 *play)
     for(size_t k=0;k<num2;++k){
         double v;
         v=buf1[k];
-        v=gain*((v-dmin)*dnom-32768);
+        v=gain*((v-average)*dnom);
         if(mute)v=0;
+        if(v < -32765){
+            v = -32765;
+        }else if(v > 32765){
+            v=32765;
+        }
         data[k]=(short int)v;
+
+        
     }
 
     // fprintf(stderr,"buffer %d used\n",buffer);
@@ -1077,6 +1090,8 @@ int SdrFile::setFrequency(struct playData4 *play)
     play->aminGlobal=0;
     
     play->amaxGlobal=0;
+    
+    play->aminGlobal3=0;
     
     play->averageGlobal=0;
     
@@ -1801,12 +1816,12 @@ int SdrFile::resetDemod()
 {
     
     SdrFilePtr myAppl=this;
-    
+/*
     for(int n=0;n<myAppl->FFTlength;++n){
         myAppl->lreal[n]=0;
         myAppl->limag[n]=0;
     }
-    
+*/
     for(int y=0;y<myAppl->water.ysize*2;++y){
         
         int ns=3*myAppl->water.xsize*y;
