@@ -9,6 +9,8 @@ https://groups.google.com/g/sdrglut-users
 
 SdrGlut V1.24 Adds a Help Window and Some Bug Fixes.
 
+Update - Fixed some problems with the Windows install versions.
+
 What is new ? 
 
 SdrGlut has a Help Window that covers the basic operation of the program. 
