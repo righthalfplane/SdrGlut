@@ -714,15 +714,16 @@ int Radio::updateLine()
         average += sqrt(real[k]*real[k]+imag[k]*imag[k]);
     }
     average /= length;
+
+    rx->averageGlobal = 0.9*rx->averageGlobal+0.1*average;
     
- //  static int drops=0;
- //  if(rx->averageGlobal == 0)drops=0;
+//   static int drops=0;
+//   if(rx->averageGlobal == 0)drops=0;
     if(rx->averageGlobal == 0)rx->averageGlobal=average;
     if(average < 0.5*rx->averageGlobal){
-    //    printf("Device '%s' Drop out average %g averageGlobal %g drops %d witchRFBuffer %d\n",rx->driveName,average,rx->averageGlobal,++drops,rx->witchRFBuffer);
+//        printf("Device '%s' Drop out average %g averageGlobal %g drops %d witchRFBuffer %d\n",rx->driveName,average,rx->averageGlobal,++drops,rx->witchRFBuffer);
         return 0;
     }
-    rx->averageGlobal = 0.9*rx->averageGlobal+0.1*average;
 
     doWindow(real,imag,length,rx->FFTfilter);
 
@@ -930,7 +931,9 @@ FoundTime:
         dxn = 1;
     }
     
-    // fprintf(stderr,"nmin %d nmax %d dxn %g rmin %g rmax %g length %d\n",nmin,nmax,dxn,rmin,rmax,length);
+//    static long count=1;
+    
+//     fprintf(stderr,"nmin %d nmax %d dxn %g rmin %g rmax %g length %d count %ld\n",nmin,nmax,dxn,rmin,rmax,length,count++);
     
     
     for(int nn=2;nn<length-2;++nn){
@@ -986,23 +989,6 @@ int Radio::BackGroundEvents(struct Scene *scene)
         rx->frequencyReset=0;
     }
     
-    if(flagsflag && (flags.size() > 0) && flagsmenu && !inuseflag){
-        for(size_t k=0;k<flags.size();++k){
-            if(flags[k].type == flags[k].BOOL){
-                glutSetMenu(flagsmenu[k]);
-                //int menu=glutGetMenu();
-                //fprintf(stderr,"k %d menu %d\n",(int)k,menu);
-                if(rx->device->readSetting(flags[k].key) == "true"){
-                    glutChangeToMenuEntry(1,"(x) true",(int)(5000+2*k));
-                    glutChangeToMenuEntry(2,"(  ) false",(int)(5000+2*k+1));
-                }else{
-                    glutChangeToMenuEntry(1,"(  ) true",(int)(5000+2*k));
-                    glutChangeToMenuEntry(2,"(x) false",(int)(5000+2*k+1));
-                }
-            }
-        }
-        flagsflag=0;
-    }
     
     updateLine();
     
@@ -1558,7 +1544,6 @@ int Radio::OpenWindows(struct Scene *scene)
     }
     
     scene->ThreadCount=8;
-    
 
     if( scene->stereoType == StereoDoubleBuffered){
         glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH | GLUT_STEREO);
@@ -2473,8 +2458,8 @@ static void enterexit(int item)
         sdr=FindSdrRadioWindow(glutGetWindow());
        
         if(!sdr)return;
-        
-        if(!sdr->inuseflag)sdr->flagsflag=1;
+       
+        // if(!sdr->inuseflag)sdr->flagsflag=1;
         
        // fprintf(stderr,"enterexit item %d\n",item);
     }
@@ -2489,29 +2474,48 @@ static void inuse(int item)
 
     if(item == GLUT_MENU_NOT_IN_USE){
         sdr->inuseflag=0;
+     //   fprintf(stderr,"not inuse sdr %p\n",sdr);
+        
+        RadioPtr f;
+        CWinPtr w;
+        
+        w=Root;
+        while(w){
+            if(w->scene->windowType == FileTypeSdrRadio){
+                f=(RadioPtr)w;
+                if(f->inuseflag){
+        //            fprintf(stderr,"found inuse sdr %p\n",f);
+                    return;
+                }
+            }
+            w=w->CNext;
+        }
+
+        if(sdr->flagsflag && (sdr->flags.size() > 0) && sdr->flagsmenu && !sdr->inuseflag){
+            for(size_t k=0;k<sdr->flags.size();++k){
+                if(sdr->flags[k].type == sdr->flags[k].BOOL){
+                    glutSetMenu(sdr->flagsmenu[k]);
+                    //int menu=glutGetMenu();
+                    //fprintf(stderr,"k %d menu %d\n",(int)k,menu);
+                    if(sdr->rx->device->readSetting(sdr->flags[k].key) == "true"){
+                        glutChangeToMenuEntry(1,"(x) true",(int)(5000+2*k));
+                        glutChangeToMenuEntry(2,"(  ) false",(int)(5000+2*k+1));
+                    }else{
+                        glutChangeToMenuEntry(1,"(  ) true",(int)(5000+2*k));
+                        glutChangeToMenuEntry(2,"(x) false",(int)(5000+2*k+1));
+                    }
+                }
+            }
+            sdr->flagsflag=0;
+        }
+  //      fprintf(stderr,"not inuse done %p\n",sdr);
+        sdr->inuseflag=0;
     }else{
+   //     fprintf(stderr,"inuse sdr %p\n",sdr);
         sdr->inuseflag=1;
     }
     
-    RadioPtr f;
-    CWinPtr w;
-    
-    w=Root;
-    while(w){
-        if(w->scene->windowType == FileTypeSdrRadio){
-            f=(RadioPtr)w;
-            if(f->rx->device == sdr->rx->device && f->rx != sdr->rx){
-                if(item == GLUT_MENU_NOT_IN_USE){
-                    f->inuseflag=0;
-                }else{
-                    f->inuseflag=1;
-                }
-                return;
-            }
-        }
-        w=w->CNext;
-    }
-    
+    sdr->rx->averageGlobal=0;
 }
 static void menu_selectl(int item)
 {

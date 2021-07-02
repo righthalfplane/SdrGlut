@@ -427,7 +427,8 @@ public:
     
     int *flagsmenu;
     int flagsflag;
-    int inuseflag;
+    
+    volatile int inuseflag;
     
     int scanFound[200];
     double pauseTime;
