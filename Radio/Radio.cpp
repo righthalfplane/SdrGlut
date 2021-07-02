@@ -715,15 +715,15 @@ int Radio::updateLine()
     }
     average /= length;
     
-   //static int drops=0;
-   //if(rx->averageGlobal == 0)drops=0;
+ //  static int drops=0;
+ //  if(rx->averageGlobal == 0)drops=0;
     if(rx->averageGlobal == 0)rx->averageGlobal=average;
-    rx->averageGlobal = 0.9*rx->averageGlobal+0.1*average;
     if(average < 0.5*rx->averageGlobal){
-        //printf("Device '%s' Drop out average %g averageGlobal %g drops %d\n",rx->driveName,average,rx->averageGlobal,++drops);
+    //    printf("Device '%s' Drop out average %g averageGlobal %g drops %d witchRFBuffer %d\n",rx->driveName,average,rx->averageGlobal,++drops,rx->witchRFBuffer);
         return 0;
     }
-    
+    rx->averageGlobal = 0.9*rx->averageGlobal+0.1*average;
+
     doWindow(real,imag,length,rx->FFTfilter);
 
     for(int n=0;n<length;++n){
@@ -1350,7 +1350,7 @@ int Radio::Display(struct Scene *scene)
     
     int nf1=(int)(0.5+(scene->xResolution)*((rx->f-rx->fc)+0.5*rx->samplerate+0.5*rx->bw)/(double)rx->samplerate);
 
-    int nf2=(int)(0.5+(scene->xResolution)*((rx->f-rx->fc)+0.5*rx->samplerate-0.5*rx->bw)/(double)rx->samplerate);
+    int nf2=(int)(-0.5+(scene->xResolution)*((rx->f-rx->fc)+0.5*rx->samplerate-0.5*rx->bw)/(double)rx->samplerate);
     
     if((nf1-nf2) < 6){
         nf1=nf+3;
