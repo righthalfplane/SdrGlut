@@ -249,7 +249,7 @@ int Radio::setFrequencyDuo(struct playData *rx)
     
     if(rx->fc < 0.5*rx->samplerate)rx->fc=0.5*rx->samplerate;
     
-   // fprintf(stderr,"setFrequencyDuo frequency %g channel %d\n",rx->fc,rx->channel);
+  //  fprintf(stderr,"setFrequencyDuo frequency %g channel %d\n",rx->fc,rx->channel);
 
     rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc-rx->foffset);
     
@@ -1105,9 +1105,11 @@ int Radio::SetFrequency(struct Scene *scene,double f,double bw, int message)
         if(fabs(f-rx->fc) > 0.5*rx->samplerate){
             rx->fc=f;
             setFrequency2(rx);
+           // fprintf(stderr,"M_FREQUENCY setFrequency2\n");
             return 0;
        }
         setFrequencyCoefficients(rx);
+       //fprintf(stderr,"M_FREQUENCY setFrequencyCoefficients\n");
         return 0;
     }
     
@@ -2401,8 +2403,27 @@ void Radio::getMouse(int button, int state, int x, int y)
         rx->f=fl;
         if(fabs(fl-rx->fc) > 0.5*rx->samplerate){
             rx->fc=fl;
-        }
-        setFrequency2(rx);
+            setFrequency2(rx);
+           // fprintf(stderr,"setFrequency2\n");
+        }else{
+            setDialogFrequency(rx->f);
+            
+            setFrequency(rx->f);
+            
+            setDialogFc(rx->fc);
+
+            setFrequencyCoefficients(rx);
+            
+            if(FindScene(scenel2)){
+                SetFrequencyGlobal(scenel2, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
+            }
+            
+            if(FindScene(scenel)){
+                SetFrequencyGlobal(scenel, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
+            }
+
+            //fprintf(stderr,"setFrequencyCoefficients\n");
+       }
         return;
     }else if(button == 4){
         float fl,bw;
@@ -2413,8 +2434,27 @@ void Radio::getMouse(int button, int state, int x, int y)
         rx->f=fl;
         if(fabs(fl-rx->fc) > 0.5*rx->samplerate){
             rx->fc=fl;
-        }
-        setFrequency2(rx);
+            setFrequency2(rx);
+            //fprintf(stderr,"setFrequency2\n");
+       }else{
+           setDialogFrequency(rx->f);
+           
+           setFrequency(rx->f);
+           
+           setDialogFc(rx->fc);
+
+            setFrequencyCoefficients(rx);
+           
+           if(FindScene(scenel2)){
+               SetFrequencyGlobal(scenel2, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
+           }
+           
+           if(FindScene(scenel)){
+               SetFrequencyGlobal(scenel, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
+           }
+
+            //fprintf(stderr,"setFrequencyCoefficients\n");
+       }
         return;
     }else if(button != 0){
         return;
