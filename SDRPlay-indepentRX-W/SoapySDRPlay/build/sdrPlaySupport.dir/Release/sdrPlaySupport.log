@@ -1,0 +1,8 @@
+﻿  Building Custom Rule C:/Users/Owner/Documents/Archive/SDRPlay-indepentRX2/SoapySDRPlay/CMakeLists.txt
+  Registration.cpp
+  sdrplay_api.cpp
+  Settings.cpp
+  Streaming.cpp
+  Version.cpp
+C:\Users\Owner\Documents\Archive\SDRPlay-indepentRX2\SoapySDRPlay\Settings.cpp(822,67): warning C4244: 'argument': conversion from 'const double' to 'uint32_t', possible loss of data
+  sdrPlaySupport.vcxproj -> C:\Users\Owner\Documents\Archive\SDRPlay-indepentRX2\SoapySDRPlay\build\Release\sdrPlaySupport.dll

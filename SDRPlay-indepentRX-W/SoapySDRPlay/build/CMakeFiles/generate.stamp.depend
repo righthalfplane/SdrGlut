@@ -1,0 +1,30 @@
+# CMake generation dependency list for this directory.
+C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.16/Modules/CMakeCXXInformation.cmake
+C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.16/Modules/CMakeCommonLanguageInclude.cmake
+C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.16/Modules/CMakeGenericSystem.cmake
+C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.16/Modules/CMakeInitializeConfigs.cmake
+C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.16/Modules/CMakeLanguageInformation.cmake
+C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.16/Modules/CMakeParseArguments.cmake
+C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.16/Modules/CMakeRCInformation.cmake
+C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.16/Modules/CMakeSystemSpecificInformation.cmake
+C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.16/Modules/CMakeSystemSpecificInitialize.cmake
+C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.16/Modules/Compiler/CMakeCommonCompilerMacros.cmake
+C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.16/Modules/Compiler/MSVC-CXX.cmake
+C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.16/Modules/FindGit.cmake
+C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.16/Modules/FindPackageHandleStandardArgs.cmake
+C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.16/Modules/FindPackageMessage.cmake
+C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.16/Modules/GNUInstallDirs.cmake
+C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.16/Modules/Platform/Windows-MSVC-CXX.cmake
+C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.16/Modules/Platform/Windows-MSVC.cmake
+C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.16/Modules/Platform/Windows.cmake
+C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/share/cmake-3.16/Modules/Platform/WindowsPaths.cmake
+C:/Program Files/PothosSDR/cmake/SoapySDRConfig.cmake
+C:/Program Files/PothosSDR/cmake/SoapySDRConfigVersion.cmake
+C:/Program Files/PothosSDR/cmake/SoapySDRExport-relwithdebinfo.cmake
+C:/Program Files/PothosSDR/cmake/SoapySDRExport.cmake
+C:/Program Files/PothosSDR/cmake/SoapySDRUtil.cmake
+C:/Users/Owner/Documents/Archive/SDRPlay-indepentRX2/SoapySDRPlay/CMakeLists.txt
+C:/Users/Owner/Documents/Archive/SDRPlay-indepentRX2/SoapySDRPlay/FindLibSDRplay.cmake
+C:/Users/Owner/Documents/Archive/SDRPlay-indepentRX2/SoapySDRPlay/build/CMakeFiles/3.16.19112601-MSVC_2/CMakeCXXCompiler.cmake
+C:/Users/Owner/Documents/Archive/SDRPlay-indepentRX2/SoapySDRPlay/build/CMakeFiles/3.16.19112601-MSVC_2/CMakeRCCompiler.cmake
+C:/Users/Owner/Documents/Archive/SDRPlay-indepentRX2/SoapySDRPlay/build/CMakeFiles/3.16.19112601-MSVC_2/CMakeSystem.cmake
