@@ -257,8 +257,6 @@ struct playData{
     
     int frequencyFlag;
     
-    int frequencyReset;
-
     unsigned char end;
     
     int junk22;

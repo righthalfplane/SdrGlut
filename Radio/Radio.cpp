@@ -983,13 +983,7 @@ int Radio::BackGroundEvents(struct Scene *scene)
     if(!scene || !backGroundEvents)return 1;
     
     if(!rx)return 0;
-    
-    if(rx->frequencyReset){
-        setFrequencyDuo(rx);
-        rx->frequencyReset=0;
-    }
-    
-    
+        
     updateLine();
     
     doSoundRecord();
@@ -2397,7 +2391,8 @@ void Radio::getMouse(int button, int state, int x, int y)
     if(button == 3){
         float fl,bw;
         bw=rx->bw*0.5;
-        if(rx->wShift != 0)bw /= 2;
+      //  if(rx->wShift != 0)bw /= 2;
+        if(rx->wShift != 0)bw = 500;
         fl=rx->f-bw;
         if(fl < 0)fl=-fl;
         rx->f=fl;
@@ -2428,7 +2423,8 @@ void Radio::getMouse(int button, int state, int x, int y)
     }else if(button == 4){
         float fl,bw;
         bw=rx->bw*0.5;
-        if(rx->wShift != 0)bw /= 2;
+        //if(rx->wShift != 0)bw /= 2;
+        if(rx->wShift != 0)bw=500;
         fl=rx->f+bw;
         if(fl < 0)fl=-fl;
         rx->f=fl;
