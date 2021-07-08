@@ -897,11 +897,6 @@ FoundTime:
     
     if(water.nline >= water.ysize)water.nline=0;
     
-    FloatToImage(magnitude2,length,&pd,water.ic);
-    
-    int ns1=3*water.xsize*(water.ysize-water.nline-1);
-    int ns2=3*water.xsize*water.ysize+3*water.xsize*(water.ysize-1-water.nline++);
-    
     
     // fprintf(stderr,"water length %ld\n",length);
     
@@ -923,6 +918,13 @@ FoundTime:
     
     rx->meterMax=meterMax;
     
+    unsigned char *wateric=(unsigned char *)range;
+    
+    FloatToImage(magnitude2,length,&pd,wateric);
+    
+    int ns1=3*water.xsize*(water.ysize-water.nline-1);
+    int ns2=3*water.xsize*water.ysize+3*water.xsize*(water.ysize-1-water.nline++);
+
     double dxn = -1;
     if(nmax-nmin){
         dxn=(double)(nmax-nmin)/(double)(length-1);
@@ -931,31 +933,49 @@ FoundTime:
         dxn = 1;
     }
     
+    double dxw=(double)(water.xsize-1)/(double)(length-1);
+    
 //    static long count=1;
     
 //     fprintf(stderr,"nmin %d nmax %d dxn %g rmin %g rmax %g length %d count %ld\n",nmin,nmax,dxn,rmin,rmax,length,count++);
     
     
-    for(int nn=2;nn<length-2;++nn){
+    if(rx->output){
+        fprintf(stderr,"water.xsize %d water.ysize %d nmin %d nmax %d dxw %g\n",water.xsize,water.ysize,nmin,nmax,dxw);
+    }
+    
+    int ics=wateric[(int)(2*dxn+nmin)];
+    
+    for(int nnn=2;nnn<length-2;++nnn){
         int ic;
         
-        int n=nn*dxn+nmin;
+        int n=nnn*dxn+nmin;
         
-        ic=water.ic[n];
+        int next=(nnn+1)*dxn+nmin;
         
+        ic=wateric[n];
+ 
+        int nn=nnn*dxw;
+        
+        int nn2=next*dxw;
 
-       // if(water.ic[n-1] > ic)ic=water.ic[n-1];
-       // if(water.ic[n-2] > ic)ic=water.ic[n-2];
-       // if(water.ic[n+1] > ic)ic=water.ic[n+1];
-       // if(water.ic[n+2] > ic)ic=water.ic[n+2];
+        if(rx->output){
+            fprintf(stderr,"nn %d nn2 %d nnn %d n %d next %d ic %d ics %d\n",nn,nn2,nnn,n,next,ic,ics);
+        }
 
+        if(ic > ics)ics=ic;
+        
+        if(nn == nn2)continue;
+        
+        ic=ics;
+        
+        ics=wateric[next];
+        
         
         water.data[ns1+3*nn]=pd.palette[3*ic];
         water.data[ns1+3*nn+1]=pd.palette[3*ic+1];
         water.data[ns1+3*nn+2]=pd.palette[3*ic+2];
         
-        
-
         water.data[ns2+3*nn]=pd.palette[3*ic];
         water.data[ns2+3*nn+1]=pd.palette[3*ic+1];
         water.data[ns2+3*nn+2]=pd.palette[3*ic+2];
@@ -963,6 +983,8 @@ FoundTime:
     }
  
     InvalRectMyWindow(scene);
+    
+    rx->output=0;
     
     return 0;
 }
@@ -1215,7 +1237,7 @@ int Radio::SetWindow(struct Scene *scene)
     water.DRect.xsize=xsize;
     water.DRect.ysize=ysize;
     
-    xsize=(int)rx->FFTcount;
+    //xsize=(int)rx->FFTcount;
     
     if(ysize == water.ysize && xsize == water.xsize && water.data)return 0;
     
@@ -2290,6 +2312,8 @@ static void keys2(unsigned char key, int x, int y)
             }else{
                 sdr->scanWait=0;
             }
+        }else if(key == 'o'){
+            sdr->rx->output=1;
         }
     }
     

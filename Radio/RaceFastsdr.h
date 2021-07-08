@@ -172,6 +172,7 @@ struct playData{
     volatile int controlProcess;
     volatile int mute;
     volatile int muteScan;
+    volatile int output;
 
     volatile int controlSend;
     volatile int fillBuffer;
