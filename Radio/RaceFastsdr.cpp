@@ -1290,8 +1290,8 @@ static int setFilters(struct playData *rx,struct Filters *f)
         rx->bw=6000.0;
         mode=LIQUID_AMPMODEM_LSB;
         iflag=1;
-    }else if(rx->decodemode == MODE_CW){  // Below 10 MHZ
-        rx->bw=3000.0;
+    }else if(rx->decodemode == MODE_CW){
+        rx->bw=1000.0;
         mode=LIQUID_AMPMODEM_LSB;
         iflag=1;
     }
