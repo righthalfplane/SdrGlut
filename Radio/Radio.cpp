@@ -253,6 +253,8 @@ int Radio::setFrequencyDuo(struct playData *rx)
 
     rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc-rx->foffset);
     
+    rx->averageGlobal=0;
+    
     return 0;
 }
 int Radio::closeScenes()
@@ -715,13 +717,13 @@ int Radio::updateLine()
     }
     average /= length;
 
-    rx->averageGlobal = 0.9*rx->averageGlobal+0.1*average;
     
-//   static int drops=0;
-//   if(rx->averageGlobal == 0)drops=0;
+    if(rx->averageGlobal == 0)rx->drops=0;
     if(rx->averageGlobal == 0)rx->averageGlobal=average;
+    rx->averageGlobal = 0.9*rx->averageGlobal+0.1*average;
     if(average < 0.5*rx->averageGlobal){
-//        printf("Device '%s' Drop out average %g averageGlobal %g drops %d witchRFBuffer %d\n",rx->driveName,average,rx->averageGlobal,++drops,rx->witchRFBuffer);
+        ++rx->drops;
+        if(rx->output)printf("Device: '%s' drops: %d Drop out average: %g averageGlobal: %g Buffer: %d\n",rx->driveName,rx->drops,average,rx->averageGlobal,rx->witchRFBuffer);
         return 0;
     }
 
@@ -940,9 +942,7 @@ FoundTime:
 //     fprintf(stderr,"nmin %d nmax %d dxn %g rmin %g rmax %g length %d count %ld\n",nmin,nmax,dxn,rmin,rmax,length,count++);
     
     
-    if(rx->output){
-        fprintf(stderr,"water.xsize %d water.ysize %d nmin %d nmax %d dxw %g\n",water.xsize,water.ysize,nmin,nmax,dxw);
-    }
+//        fprintf(stderr,"water.xsize %d water.ysize %d nmin %d nmax %d dxw %g\n",water.xsize,water.ysize,nmin,nmax,dxw);
     
     int ics=wateric[(int)(2*dxn+nmin)];
     
@@ -959,9 +959,7 @@ FoundTime:
         
         int nn2=next*dxw;
 
-        if(rx->output){
-            fprintf(stderr,"nn %d nn2 %d nnn %d n %d next %d ic %d ics %d\n",nn,nn2,nnn,n,next,ic,ics);
-        }
+//            fprintf(stderr,"nn %d nn2 %d nnn %d n %d next %d ic %d ics %d\n",nn,nn2,nnn,n,next,ic,ics);
 
         if(ic > ics)ics=ic;
         
@@ -983,8 +981,6 @@ FoundTime:
     }
  
     InvalRectMyWindow(scene);
-    
-    rx->output=0;
     
     return 0;
 }
@@ -2313,7 +2309,12 @@ static void keys2(unsigned char key, int x, int y)
                 sdr->scanWait=0;
             }
         }else if(key == 'o'){
-            sdr->rx->output=1;
+            sdr->rx->output = !sdr->rx->output;
+            if(sdr->rx->output){
+                fprintf(stderr,"Device: '%s' Drop Print On\n",sdr->rx->driveName);
+            }else{
+                fprintf(stderr,"Device: '%s' Drop Print Off\n",sdr->rx->driveName);
+            }
         }
     }
     

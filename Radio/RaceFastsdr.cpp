@@ -975,7 +975,7 @@ static int stopPlay(struct playData *rx)
         alSourceUnqueueBuffers(rx->source, 1, &fbuff);
         if ((error = alGetError()) != AL_NO_ERROR)
         {
-            fprintf(stderr,"Device %s Error in ",rx->driveName);
+            fprintf(stderr,"Device: %s Error in ",rx->driveName);
             DisplayALError((unsigned char *)"stopPlay alSourceUnqueueBuffers : ", error);
         }
         freebuffAudio(audio,fbuff);

@@ -240,6 +240,8 @@ struct playData{
     
     double averageGlobal;
     
+    int drops;
+    
     double aminGlobal3;
     double amaxGlobal3;
 
