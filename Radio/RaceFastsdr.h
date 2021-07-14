@@ -146,8 +146,6 @@ struct playData{
 
     SoapySDR::Stream *rxStream;
     SoapySDR::Device *device;
-
-    unsigned long MTU;
     
     int fOut;
     
@@ -261,6 +259,8 @@ struct playData{
     int frequencyFlag;
     
     unsigned char end;
+    
+    size_t MTU;
     
     int junk22;
     

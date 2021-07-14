@@ -149,9 +149,6 @@ static int StartSend(struct playData *rx,char *name,int type,int mode)
         printf("name %s\n",name);
     }
     
-    size_t MTU=rx->device->getStreamMTU(rx->rxStream);
-    
-    fprintf(stderr,"MTU %ld\n",MTU);
 
     rx->name=name;
     
@@ -718,7 +715,7 @@ static int playRadio(struct playData *rx)
     
     printf("Device %s samplerate %.0f rx->size %d Bandwidth %.0f\n",rx->driveName,rate,rx->size,bw);
     
-    size += 256;  // bug in rfspace NetSDR
+    size += 1024;  // bug in rfspace NetSDR and icr8600
     
     if(rx->sendBuff1)cFree((char *)rx->sendBuff1);
     rx->sendBuff1=(float *)cMalloc(2*size*sizeof(float),18887);
@@ -1652,7 +1649,9 @@ static int findRadio(struct playData *rx)
     testRadio(rx);
     
     rx->device->setSampleRate(SOAPY_SDR_RX, rx->channel, rx->samplerate);
-     
+    
+    rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc-rx->foffset);
+
     const std::vector<size_t> channels = {(unsigned long)rx->channel};
 
      rx->rxStream=rx->device->setupStream(SOAPY_SDR_RX, SOAPY_SDR_CF32,channels);
@@ -1665,8 +1664,7 @@ static int findRadio(struct playData *rx)
    
    // fprintf(stderr,"findRadio frequency %g channel %d\n",rx->fc,rx->channel);
     
-    rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc-rx->foffset);
-
+ 
     
     return 0;
     
@@ -1722,7 +1720,7 @@ int rxBuffer(void *rxv)
 				size_t iread;
 				
 				iread=toRead;
-                if(iread > 500000)iread=500000;
+                if(iread > rx->MTU)iread=rx->MTU;
 
 				ret = rx->device->readStream(rx->rxStream, buffs, iread, flags, timeNs, 100000L);
 			 
@@ -2096,6 +2094,9 @@ int testRadio(struct playData *rx)
             }
         }
         
+        rx->MTU=rx->device->getStreamMTU(rx->rxStream);
+        
+        fprintf(stderr,"MTU %ld\n",rx->MTU);
 
 
         // printf("rx->directSampleMode %d\n",rx->directSampleMode);
