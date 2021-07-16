@@ -704,16 +704,24 @@ int SdrFile::updateLine()
         Plot=lines->lines->Plot;
         if(!Plot)return 1;
 
-        Plot->xAutoMaximum=TRUE;
-        Plot->xAutoMinimum=TRUE;
-
+        if(!Plot->xManualControl){
+            Plot->xAutoMaximum=TRUE;
+            Plot->xAutoMinimum=TRUE;
+        }
+        
         GridPlotScale(Plot);
         
-        Plot->xAutoMaximum=FALSE;
-        Plot->xAutoMinimum=FALSE;
-        Plot->xSetMaximum=rmax;
-        Plot->xSetMinimum=rmin;
-    }
+        if(!Plot->xManualControl){
+            Plot->xAutoMaximum=FALSE;
+            Plot->xAutoMinimum=FALSE;
+            Plot->xSetMaximum=rmax;
+            Plot->xSetMinimum=rmin;
+        }else{
+            rmax=Plot->xSetMaximum;
+            rmin=Plot->xSetMinimum;
+            
+        }
+   }
     
     long ns,ne,nsub;
     nsub=length/20;
@@ -727,8 +735,12 @@ int SdrFile::updateLine()
     }
     
     double meterMax=lreal[nf];
-
+    int nmin,nmax;
+    nmin=length-1;
+    nmax=0;
     for(int n=0;n<length;++n){
+        if(range[n] <= rmin)nmin=n;
+        if(range[n] <= rmax)nmax=n;
         if(n > nf-5 && n < nf+5){
             if(lreal[n] > meterMax)meterMax=lreal[n];
         }
@@ -754,35 +766,63 @@ int SdrFile::updateLine()
     
     if(water.nline >= water.ysize)water.nline=0;
     
-    FloatToImage(lreal,length,&pd,water.ic);
+    unsigned char *wateric=(unsigned char *)range;
     
+    FloatToImage(lreal,length,&pd,wateric);
+
     int ns1=3*water.xsize*(water.ysize-water.nline-1);
     int ns2=3*water.xsize*water.ysize+3*water.xsize*(water.ysize-1-water.nline++);
     
     
     // fprintf(stderr,"water length %ld\n",length);
+    
+    double dxn = -1;
+    if(nmax-nmin){
+        dxn=(double)(nmax-nmin)/(double)(length-1);
+    }else{
+        nmin=0;
+        dxn = 1;
+    }
+    
+    double dxw=(double)(water.xsize-1)/(double)(length-1);
 
-    for(int n=2;n<length-2;++n){
+    
+    int ics=wateric[(int)(2*dxn+nmin)];
+
+    for(int nnn=2;nnn<length-2;++nnn){
         int ic;
         
-        ic=water.ic[n];
-        if(water.ic[n-1] > ic)ic=water.ic[n-1];
-        if(water.ic[n-2] > ic)ic=water.ic[n-2];
-        if(water.ic[n+1] > ic)ic=water.ic[n+1];
-        if(water.ic[n+2] > ic)ic=water.ic[n+2];
-
-        water.data[ns1+3*n]=pd.palette[3*ic];
-        water.data[ns1+3*n+1]=pd.palette[3*ic+1];
-        water.data[ns1+3*n+2]=pd.palette[3*ic+2];
+        int n=nnn*dxn+nmin;
+        
+        int next=(nnn+1)*dxn+nmin;
+        
+        ic=wateric[n];
+        
+        int nn=nnn*dxw;
+        
+        int nn2=next*dxw;
+        
+        //            fprintf(stderr,"nn %d nn2 %d nnn %d n %d next %d ic %d ics %d\n",nn,nn2,nnn,n,next,ic,ics);
+        
+        if(ic > ics)ics=ic;
+        
+        if(nn == nn2)continue;
+        
+        ic=ics;
+        
+        ics=wateric[next];
         
         
-
-        water.data[ns2+3*n]=pd.palette[3*ic];
-        water.data[ns2+3*n+1]=pd.palette[3*ic+1];
-        water.data[ns2+3*n+2]=pd.palette[3*ic+2];
+        water.data[ns1+3*nn]=pd.palette[3*ic];
+        water.data[ns1+3*nn+1]=pd.palette[3*ic+1];
+        water.data[ns1+3*nn+2]=pd.palette[3*ic+2];
+        
+        water.data[ns2+3*nn]=pd.palette[3*ic];
+        water.data[ns2+3*nn+1]=pd.palette[3*ic+1];
+        water.data[ns2+3*nn+2]=pd.palette[3*ic+2];
         
     }
- 
+
     InvalRectMyWindow(scene);
     
     return 0;
@@ -862,7 +902,7 @@ static int setFilters(struct playData4 *rx,struct Filters2 *f)
         mode=LIQUID_AMPMODEM_LSB;
         iflag=1;
     }else if(rx->decodemode == MODE_CW){  // Below 10 MHZ
-        rx->bw=3000.0;
+        rx->bw=750.0;
         mode=LIQUID_AMPMODEM_LSB;
         iflag=1;
     } else if(rx->decodemode == MODE_NAM2){
