@@ -55,7 +55,6 @@
 #define MODE_USB  4
 #define MODE_LSB  5
 #define MODE_CW   6
-#define MODE_NAM2 7
 
 #define FILTER_RECTANGULAR     0
 #define FILTER_HANN            1

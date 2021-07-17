@@ -234,8 +234,13 @@ int SdrFile::setInfo()
 {
     unsigned int samples=48000;
     
-    info.Tone=0.0;
     
+    if(play.decodemode == MODE_CW){
+        info.Tone=1;
+    }else{
+        info.Tone=0;
+    }
+        
     info.f=1000;
     
     double pi;
@@ -895,10 +900,6 @@ static int setFilters(struct playData4 *rx,struct Filters2 *f)
         rx->bw=500.0;
         mode=LIQUID_AMPMODEM_LSB;
         iflag=1;
-    } else if(rx->decodemode == MODE_NAM2){
-        rx->bw=5000.0;
-        mode=LIQUID_AMPMODEM_DSB;
-        iflag=0;
     }
     rx->Ratio = (float)(rx->bw/ rx->samplerate);
     ratio= (float)(48000.0/rx->bw);
@@ -1589,7 +1590,6 @@ int SdrFile::OpenWindows(struct Scene *scene)
     glutAddMenuEntry("USB", MODE_USB);
     glutAddMenuEntry("LSB", MODE_LSB);
     glutAddMenuEntry("CW", MODE_CW);
-    glutAddMenuEntry("NAM2", MODE_NAM2);
 
     int menu6=glutCreateMenu(doFilterMenu);
     glutAddMenuEntry("RECTANGULAR", FILTER_RECTANGULAR);
@@ -1789,9 +1789,6 @@ static void setMode(int item)
     switch(item){
         case MODE_AM:
             sdr->play.decodemode = MODE_AM;
-            break;
-        case MODE_NAM2:
-            sdr->play.decodemode = MODE_NAM2;
             break;
         case MODE_NAM:
             sdr->play.decodemode = MODE_NAM;
