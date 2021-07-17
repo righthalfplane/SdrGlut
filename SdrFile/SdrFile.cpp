@@ -230,6 +230,25 @@ int doSdrFileOpen(char *name)
     
     return 0;
 }
+int SdrFile::setInfo()
+{
+    unsigned int samples=48000;
+    
+    info.Tone=0.0;
+    
+    info.f=1000;
+    
+    double pi;
+    pi=4.0*atan(1.0);
+    info.dt=1.0/(double)samples;
+    info.sino=0;
+    info.coso=1;
+    double w=2.0*pi*(info.f);
+    info.sindt=sin(w*info.dt);
+    info.cosdt=cos(w*info.dt);
+
+    return 0;
+}
 int SdrFile::LoadFile(struct Scene *scene,char *filename, int fileType)
 {
     char name[512];
@@ -522,11 +541,22 @@ int SdrFile::setBuffers(struct playData4 *play)
         }else if(v > 32765){
             v=32765;
         }
+        if(info.Tone){
+            double sint=info.sino*info.cosdt+info.coso*info.sindt;
+            double cost=info.coso*info.cosdt-info.sino*info.sindt;
+            info.coso=cost;
+            info.sino=sint;
+            v *= cost;
+        }
         data[k]=(short int)v;
-
-        
     }
 
+    if(info.Tone){
+        double r=sqrt(info.coso*info.coso+info.sino*info.sino);
+        info.coso /= r;
+        info.sino /= r;
+    }
+    
     // fprintf(stderr,"buffer %d used\n",buffer);
 /*
     {
@@ -613,7 +643,7 @@ int SdrFile::updateLine()
     double amin,amax,v;
     
     if(rtime() < lineTime)return 0;
-
+    
     lineTime=rtime()+lineDumpInterval;
     
     if(play.FFTcount > FFTlength){
@@ -639,9 +669,9 @@ int SdrFile::updateLine()
     // fprintf(stderr,"average %g averageGlobal %g\n",average,rx->averageGlobal);
     
     int length=play.FFTcount;
-
+    
     doWindow(real,imag,length,play.FFTfilter);
-
+    
     for(int n=0;n<length;++n){
         real[n] *= pow(-1.0,n);
         imag[n] *= pow(-1.0,n);
@@ -665,13 +695,13 @@ int SdrFile::updateLine()
     
     if(play.aminGlobal3 == 0.0)play.aminGlobal3=shift;
     play.aminGlobal3 = 0.9*play.aminGlobal3+0.1*shift;
-    shift=play.aminGlobal3;
+    //shift=play.aminGlobal3;
     
     //printf("shift %g amin %g ",shift,amin);
     
     amin =  1e33;
     amax = -1e33;
-
+    
     double rmin=  1e33;
     double rmax= -1e33;
     
@@ -703,25 +733,17 @@ int SdrFile::updateLine()
         uGridPlotPtr Plot;
         Plot=lines->lines->Plot;
         if(!Plot)return 1;
-
-        if(!Plot->xManualControl){
-            Plot->xAutoMaximum=TRUE;
-            Plot->xAutoMinimum=TRUE;
-        }
+        
+        Plot->xAutoMaximum=TRUE;
+        Plot->xAutoMinimum=TRUE;
         
         GridPlotScale(Plot);
         
-        if(!Plot->xManualControl){
-            Plot->xAutoMaximum=FALSE;
-            Plot->xAutoMinimum=FALSE;
-            Plot->xSetMaximum=rmax;
-            Plot->xSetMinimum=rmin;
-        }else{
-            rmax=Plot->xSetMaximum;
-            rmin=Plot->xSetMinimum;
-            
-        }
-   }
+        Plot->xAutoMaximum=FALSE;
+        Plot->xAutoMinimum=FALSE;
+        Plot->xSetMaximum=rmax;
+        Plot->xSetMinimum=rmin;
+    }
     
     long ns,ne,nsub;
     nsub=length/20;
@@ -735,24 +757,20 @@ int SdrFile::updateLine()
     }
     
     double meterMax=lreal[nf];
-    int nmin,nmax;
-    nmin=length-1;
-    nmax=0;
+    
     for(int n=0;n<length;++n){
-        if(range[n] <= rmin)nmin=n;
-        if(range[n] <= rmax)nmax=n;
         if(n > nf-5 && n < nf+5){
             if(lreal[n] > meterMax)meterMax=lreal[n];
         }
     }
-
+    
     setDialogPower(meterMax);
     
     play.meterMax=meterMax;
-
-
+    
+    
     if(FindScene(scenel2))lines2->plotPutData(scenel2,&range[ns],&lreal[ns],ne,0L);
-
+    
     if(water.data == NULL)return 0;
     
     pd.dmin=amin;
@@ -760,69 +778,41 @@ int SdrFile::updateLine()
     
     
     setDialogRange(amin,amax);
-        
+    
     amin=water.amin;
     amax=water.amax;
     
     if(water.nline >= water.ysize)water.nline=0;
     
-    unsigned char *wateric=(unsigned char *)range;
+    FloatToImage(lreal,length,&pd,water.ic);
     
-    FloatToImage(lreal,length,&pd,wateric);
-
     int ns1=3*water.xsize*(water.ysize-water.nline-1);
     int ns2=3*water.xsize*water.ysize+3*water.xsize*(water.ysize-1-water.nline++);
     
     
     // fprintf(stderr,"water length %ld\n",length);
     
-    double dxn = -1;
-    if(nmax-nmin){
-        dxn=(double)(nmax-nmin)/(double)(length-1);
-    }else{
-        nmin=0;
-        dxn = 1;
-    }
-    
-    double dxw=(double)(water.xsize-1)/(double)(length-1);
-
-    
-    int ics=wateric[(int)(2*dxn+nmin)];
-
-    for(int nnn=2;nnn<length-2;++nnn){
+    for(int n=2;n<length-2;++n){
         int ic;
         
-        int n=nnn*dxn+nmin;
+        ic=water.ic[n];
+        if(water.ic[n-1] > ic)ic=water.ic[n-1];
+        if(water.ic[n-2] > ic)ic=water.ic[n-2];
+        if(water.ic[n+1] > ic)ic=water.ic[n+1];
+        if(water.ic[n+2] > ic)ic=water.ic[n+2];
         
-        int next=(nnn+1)*dxn+nmin;
-        
-        ic=wateric[n];
-        
-        int nn=nnn*dxw;
-        
-        int nn2=next*dxw;
-        
-        //            fprintf(stderr,"nn %d nn2 %d nnn %d n %d next %d ic %d ics %d\n",nn,nn2,nnn,n,next,ic,ics);
-        
-        if(ic > ics)ics=ic;
-        
-        if(nn == nn2)continue;
-        
-        ic=ics;
-        
-        ics=wateric[next];
+        water.data[ns1+3*n]=pd.palette[3*ic];
+        water.data[ns1+3*n+1]=pd.palette[3*ic+1];
+        water.data[ns1+3*n+2]=pd.palette[3*ic+2];
         
         
-        water.data[ns1+3*nn]=pd.palette[3*ic];
-        water.data[ns1+3*nn+1]=pd.palette[3*ic+1];
-        water.data[ns1+3*nn+2]=pd.palette[3*ic+2];
         
-        water.data[ns2+3*nn]=pd.palette[3*ic];
-        water.data[ns2+3*nn+1]=pd.palette[3*ic+1];
-        water.data[ns2+3*nn+2]=pd.palette[3*ic+2];
+        water.data[ns2+3*n]=pd.palette[3*ic];
+        water.data[ns2+3*n+1]=pd.palette[3*ic+1];
+        water.data[ns2+3*n+2]=pd.palette[3*ic+2];
         
     }
-
+    
     InvalRectMyWindow(scene);
     
     return 0;
@@ -902,7 +892,7 @@ static int setFilters(struct playData4 *rx,struct Filters2 *f)
         mode=LIQUID_AMPMODEM_LSB;
         iflag=1;
     }else if(rx->decodemode == MODE_CW){  // Below 10 MHZ
-        rx->bw=750.0;
+        rx->bw=500.0;
         mode=LIQUID_AMPMODEM_LSB;
         iflag=1;
     } else if(rx->decodemode == MODE_NAM2){
@@ -1126,6 +1116,8 @@ int SdrFile::setFrequency(struct playData4 *play)
         play->sindt=sin(play->w*play->dt);
         play->cosdt=cos(play->w*play->dt);
     }
+    
+    setInfo();
     
     play->aminGlobal=0;
     

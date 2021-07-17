@@ -188,6 +188,17 @@ struct DialogSdrData{
     int sub_window;
 };
 
+struct Info{
+    int Tone;
+    double f;
+    double dt;
+    double sino;
+    double coso;
+    double sindt;
+    double cosdt;
+};
+
+
 class CLines;
 
 class SdrFile;
@@ -229,6 +240,8 @@ public:
     int setBuffers(struct playData4 *play);
     
     int StartIt(struct playData4 *play);
+    
+    int setInfo();
 
     unsigned char start;
     
@@ -274,6 +287,8 @@ public:
     struct DialogSdrData dd;
     
     struct Filters2 filter;
+    
+    struct Info info;
     
     int w,h;
     

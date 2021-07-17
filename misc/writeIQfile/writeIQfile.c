@@ -10,14 +10,14 @@ int main(int argc,char *argv[])
 	float buff1[20000],buff2[20000];
 	int c;
 	msresamp_crcf iqSampler;
-	float As = 120.0f;
+	float As = 90.0f;
 
-    //
+    
     iqSampler  = msresamp_crcf_create(0.5, As);
-    iqSampler  = msresamp_crcf_create(2.0, As);
+    // iqSampler  = msresamp_crcf_create(2.0, As);
 
 	
-	in=fopen("SDRplay Dev0 RSPduo- Single(0)_IQ_7051236_62500_fc.raw","rb");
+	in=fopen("SDRplay-Single(0)_IQ_7000000_62500_fc.raw","rb");
 	if(!in)exit(1);
 	out=fopen("out","wb");
 	if(!out)exit(1);
