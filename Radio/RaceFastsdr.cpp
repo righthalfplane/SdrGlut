@@ -1288,7 +1288,7 @@ static int setFilters(struct playData *rx,struct Filters *f)
         mode=LIQUID_AMPMODEM_LSB;
         iflag=1;
     }else if(rx->decodemode == MODE_CW){
-        rx->bw=1000.0;
+        rx->bw=500.0;
         mode=LIQUID_AMPMODEM_LSB;
         iflag=1;
     }
@@ -1899,11 +1899,27 @@ static int doAudio(float *aBuff,struct playData *rx)
         }else if(v > 32765){
             v=32765;
         }
+        
+        if(rx->info1.Tone){
+            double sint=rx->info1.sino*rx->info1.cosdt+rx->info1.coso*rx->info1.sindt;
+            double cost=rx->info1.coso*rx->info1.cosdt-rx->info1.sino*rx->info1.sindt;
+            rx->info1.coso=cost;
+            rx->info1.sino=sint;
+            v *= cost;
+        }
+
 		data[k]=(short int)v;
        // if(v < amin)amin=v;
        // if(v > amax)amax=v;
 	}
 	
+    if(rx->info1.Tone){
+        double r=sqrt(rx->info1.coso*rx->info1.coso+rx->info1.sino*rx->info1.sino);
+        rx->info1.coso /= r;
+        rx->info1.sino /= r;
+    }
+
+    
    // fprintf(stderr,"doAudio amin %f amax %f \n",amin,amax);
 
 	pushBuffa(audioOut,rx);

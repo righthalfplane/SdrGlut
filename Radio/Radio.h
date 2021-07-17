@@ -193,6 +193,9 @@ struct Info{
 
 };
 
+
+
+
 struct TransmitData{
     GLUI *glui;
     char text1[255];
@@ -364,7 +367,7 @@ public:
     int setDialogSampleRate(double power);
     
     int updateLine(void);
-    
+        
     unsigned char start;
 
     char ApplicationDirectory[2048];
@@ -429,6 +432,7 @@ public:
     int flagsflag;
     
     volatile int inuseflag;
+    
     
     int scanFound[200];
     double pauseTime;

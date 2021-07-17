@@ -107,6 +107,17 @@ public:
     
 };
 
+struct Info1{
+    int Tone;
+    double f;
+    double dt;
+    double sino;
+    double coso;
+    double sindt;
+    double cosdt;
+};
+
+
 struct playData{
     unsigned char start;
     ALCdevice *dev;
@@ -261,6 +272,8 @@ struct playData{
     unsigned char end;
     
     size_t MTU;
+    
+    struct Info1 info1;
     
     int junk22;
     

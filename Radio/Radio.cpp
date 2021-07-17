@@ -140,6 +140,31 @@ int Radio::processScan(struct playData *rx)
     return 0;
 }
 
+int setInfo(struct playData *rx)
+{
+    unsigned int samples=48000;
+    
+    
+    if(rx->decodemode == MODE_CW){
+        rx->info1.Tone=1;
+    }else{
+        rx->info1.Tone=0;
+    }
+    
+    rx->info1.f=1000;
+    
+    double pi;
+    pi=4.0*atan(1.0);
+    rx->info1.dt=1.0/(double)samples;
+    rx->info1.sino=0;
+    rx->info1.coso=1;
+    double w=2.0*pi*(rx->info1.f);
+    rx->info1.sindt=sin(w*rx->info1.dt);
+    rx->info1.cosdt=cos(w*rx->info1.dt);
+    
+    return 0;
+}
+
 int Radio::fftIndex(double frequency)
 {
     if(!rx)return -1;
@@ -254,6 +279,8 @@ int Radio::setFrequencyDuo(struct playData *rx)
     rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc-rx->foffset);
     
     rx->averageGlobal=0;
+    
+    setInfo(rx);
     
     return 0;
 }
