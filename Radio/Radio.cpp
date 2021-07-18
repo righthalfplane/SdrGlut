@@ -794,7 +794,7 @@ int Radio::updateLine()
     long nf=0;
     for(int n=0;n<length;++n){
         double r;
-        r=rx->fc-0.5*rx->samplerate+(n+0.5)*ddx;
+        r=rx->fc-0.5*rx->samplerate+n*ddx;
         if(r < rmin)rmin=r;
         if(r > rmax)rmax=r;
         range[n]=r;
@@ -976,15 +976,15 @@ FoundTime:
     for(int nnn=2;nnn<length-2;++nnn){
         int ic;
         
-        int n=nnn*dxn+nmin;
+        int n=nnn*dxn+nmin+0.5;
         
-        int next=(nnn+1)*dxn+nmin;
+        int next=(nnn+1)*dxn+nmin+0.5;
         
         ic=wateric[n];
  
-        int nn=nnn*dxw;
+        int nn=nnn*dxw+0.5;
         
-        int nn2=next*dxw;
+        int nn2=next*dxw+0.5;
 
 //            fprintf(stderr,"nn %d nn2 %d nnn %d n %d next %d ic %d ics %d\n",nn,nn2,nnn,n,next,ic,ics);
 
