@@ -10,6 +10,10 @@
 #include <cstdio>
 #include <cstdlib>
 
+#include <chrono>
+#include <thread>
+
+
 #include "Radio.h"
 
 #include "DialogRangeData.h"
@@ -30,7 +34,6 @@ static void control_cb3(int control);
 extern "C" int doFFT2(double *x,double *y,long length,int direction);
 
 #define Mode_Buttons   180
-
 
 int Radio::dialogSendIQ(struct Scene *scene)
 {
@@ -228,6 +231,17 @@ int Radio::dialogSend(struct Scene *scene)
     bb.glui->add_edittext_to_panel( obj_panel, "", GLUI_EDITTEXT_TEXT, bb.text1);
     bb.edittext1->w=200;
 
+    obj_panel =  bb.glui->add_panel( "Voice Control" );
+    
+    strncpy(bb.text2,"./speechcontrol.py",sizeof(bb.text2));
+    bb.edittext2 =
+    bb.glui->add_edittext_to_panel( obj_panel, "Location:", GLUI_EDITTEXT_TEXT, bb.text2);
+    bb.edittext2->w=200;
+    
+    new GLUI_Button(obj_panel,"Start Voice Control", 9,control_cb2);
+    
+    new GLUI_Button(obj_panel, "Stop Voice Control", 10,control_cb2);
+
 
     obj_panel =  bb.glui->add_panel( "Commands" );
     
@@ -245,6 +259,7 @@ int Radio::dialogSend(struct Scene *scene)
 
     return 0;
 }
+
 static void control_cb2(int control)
 {
     RadioPtr s=(RadioPtr)FindSceneRadio(glutGetWindow());
@@ -252,6 +267,8 @@ static void control_cb2(int control)
     
     sscanf(s->bb.edittext1->get_text(),"%s",s->bb.text1);
     
+    sscanf(s->bb.edittext2->get_text(),"%s",s->bb.text2);
+
     s->rx->demodulationFlag=s->bb.demodulationFlag;
     
     s->rx->frequencyFlag=s->bb.frequencyFlag;
@@ -267,7 +284,15 @@ static void control_cb2(int control)
     } else if(control == 6){
         s->bb.glui->close();
         s->bb.glui=NULL;
-    }
+    } else if(control == 9){
+        if(s->voicecontrol == 0){
+            std::thread(&Radio::doVoice,s).detach();
+        }else{
+            fprintf(stderr,"Voice Control Running flag: %d\n",s->voicecontrol);
+        }
+    } else if(control == 10){
+        if(s->voicecontrol == 1)s->voicecontrol=2;
+   }
     glutPostRedisplay();
 }
 // static int doWindow(double *x,double *y,long length,int type);
@@ -803,6 +828,161 @@ RadioPtr FindSdrRadioWindow(struct playData *rx)
     }
     
     return NULL;
+    
+}
+
+typedef struct CommandInfo{
+    char *command[256][16];
+    double value[256];
+    int count[256];
+    int type[256];
+    int getKind;
+    char *line;
+    int nword;
+    int n;
+} *CommandPtr;
+
+#define BATCH_DOUBLE    0
+#define BATCH_STRING    1
+#define BATCH_BYTES        2
+
+int getCommandv(char *line,CommandPtr cp)
+{
+    static char number[]={
+        '0','1','2','3','4','5','6','7','8','9',
+        '+','-','.'};
+    char buff[256];
+    int c,n,nw,iret,k,inum;
+    
+    if(!cp)return 1;
+    
+    for(n=0;n<256;++n){
+        cp->type[n]=BATCH_DOUBLE;
+        cp->value[n]=0;
+        zerol((char *)cp->command[n],16l);
+    }
+    
+    cp->line=line;
+    cp->nword=0;
+    cp->n=0;
+    
+    if(!line)return 1;
+    
+    nw=0;
+    do{
+        
+        while((c = *line) != 0 && (c == ' ' || c == '\n' || c == '\r' || c == '\t')){
+            line++;
+        }
+        
+        n=0;
+        if(c == 0){
+            break;
+        }else if(c == '"'){
+            line++;
+            while((c = *line++) != 0 && c != '"' && n < 255 ){
+                buff[n++]=c;
+            }
+            buff[n]=0;
+            iret = 0;
+            cp->type[nw]=BATCH_STRING;
+            mstrncpy((char *)cp->command[nw],(char *)buff,16l);
+            continue;
+        }else{
+            while((c = *line++) != 0 && c != ' ' && c != '\n' && c != '\r' && c != '\t'
+                  && n < 255 ){
+                buff[n++]=c;
+            }
+        }
+        
+        if(c == ' ' || c == '"' || c == '\t'){
+            iret = 0;
+        }else{
+            iret = 1;
+        }
+        
+        buff[n]=0;
+        
+        if(!mstrcmp(buff,(char *)".") || !mstrcmp(buff,(char *)"..")){
+            cp->type[nw]=BATCH_STRING;
+            mstrncpy((char *)cp->command[nw],(char *)buff,16l);
+            continue;
+        }
+        
+        inum = 0;
+        for(k=0;k<(int)sizeof(number);++k){
+            if(*buff == number[k]){
+                inum = 1;
+                break;
+            }
+        }
+        
+        if(inum && (cp->getKind != BATCH_STRING)){
+            cp->value[nw] = atof(buff);
+        }else{
+            mstrncpy((char *)cp->command[nw],(char *)buff,16l);
+            cp->type[nw]=BATCH_STRING;
+        }
+        
+    }while((++nw < 256) &&  !iret);
+    
+    cp->nword = nw;
+    
+    cp->getKind=0;
+    
+    return 0;
+}
+int Radio::doVoice()
+{
+    struct CommandInfo p;
+    char name[256];
+    char data[256];
+    char *path=bb.text2;
+    
+    sprintf(name,"python -u %s%c",path,0);
+    fprintf(stderr,"Start Voice Control path %s\n",path);
+    FILE *pipe;
+    pipe=popen(name,"r");
+    if(!pipe){
+        printf("Start Voice Control Failed To Open \"%s\" \n",name);
+    }
+    
+    int filenum=fileno(pipe);
+    
+    //    printf("filenum %d\n",filenum);
+    
+    
+    voicecontrol=1;
+    while(voicecontrol == 1){
+        int count=(int)read(filenum,data,256);
+        if(count <= 0){
+            printf("read failed");
+            goto Continue;
+        }
+        data[count]=0;
+        
+        getCommandv(data,&p);
+        
+        if(p.nword < 1)goto Continue;;
+        
+        if(!mstrcmp((char *)p.command[0],(char *)"timeout")){
+            //printf("Time out found\n");
+            goto Continue;;
+        }
+
+        if(!mstrcmp((char *)p.command[0],(char *)"hey")){
+            printf("hey found\n");
+        }
+
+        printf("%s",data);
+        
+Continue:
+        Sleep2(100);
+    }
+    printf("Stop Voice Control\n");
+    if(pipe)pclose(pipe);
+    voicecontrol=0;
+    return 0;
     
 }
 

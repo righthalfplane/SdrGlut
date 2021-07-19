@@ -99,6 +99,10 @@ struct DialogSendData{
     GLUI *glui;
     char text1[255];
     GLUI_EditText *edittext1;
+    char text2[255];
+    GLUI_EditText *edittext2;
+    char text3[255];
+    GLUI_EditText *edittext3;
     struct Scene *sceneLocal;
     int sub_window;
     GLUI_RadioGroup *group2;
@@ -315,6 +319,7 @@ public:
     int dialogRadio (struct Scene *scene);
     int dialogSend(struct Scene *scene);
     int dialogSendIQ(struct Scene *scene);
+    int doVoice();
     int setFrequency2(struct playData *play);
     int setFrequency3(struct playData *play);
     int setFrequencyDuo(struct playData *play);
@@ -453,6 +458,8 @@ public:
     
     unsigned char end;
     
+    volatile int voicecontrol;
+
     int junk11;
     
     vector<double> scanFrequencies;

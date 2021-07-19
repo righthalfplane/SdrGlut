@@ -1720,7 +1720,7 @@ int rxBuffer(void *rxv)
 				size_t iread;
 				
 				iread=toRead;
-                if(iread > rx->MTU)iread=rx->MTU;
+                if(iread > 500000)iread=500000;
 
 				ret = rx->device->readStream(rx->rxStream, buffs, iread, flags, timeNs, 100000L);
 			 
@@ -2113,7 +2113,6 @@ int testRadio(struct playData *rx)
         rx->MTU=rx->device->getStreamMTU(rx->rxStream);
         
         fprintf(stderr,"MTU %ld\n",rx->MTU);
-
 
         // printf("rx->directSampleMode %d\n",rx->directSampleMode);
 /*
