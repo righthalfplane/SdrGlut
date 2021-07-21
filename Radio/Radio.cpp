@@ -1826,8 +1826,8 @@ int Radio::OpenWindows(struct Scene *scene)
     glutCreateMenu(menu_selectl);
     
     glutAddMenuEntry("Scan Frequency File...", SdrReadFile);
-    glutAddMenuEntry("SDR Dialog...", SdrDialog);
     glutAddMenuEntry("VoiceControl...", SdrVoiceControl);
+    glutAddMenuEntry("SDR Dialog...", SdrDialog);
     if(rx->ntransmit)glutAddMenuEntry("Transmit...", SdrTransmit);
     glutAddMenuEntry("Send...", SdrSendIQ);
     glutAddMenuEntry("--------------------", -1);

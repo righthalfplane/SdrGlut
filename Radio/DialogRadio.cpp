@@ -1124,18 +1124,20 @@ int Radio::doVoice()
     pipe=popen(name,"r");
     if(!pipe){
         printf("Start Voice Control Failed To Open \"%s\" \n",name);
+        return 1;
     }
     
     int filenum=fileno(pipe);
     
     //    printf("filenum %d\n",filenum);
     
-    
+    rx->Debug = 0;
+
     voicecontrol=1;
     while(voicecontrol == 1){
         int count=(int)read(filenum,data,256);
         if(count <= 0){
-            printf("read failed");
+            printf("read failed\n");
             goto Continue;
         }
         
@@ -1163,8 +1165,10 @@ int Radio::doVoice()
         if(p.command[0] == "hey" || p.command[0] == "he" ){
             if(p.command[1] == controlname){
                 if(p.type[2] == BATCH_DOUBLE){
-                    reset.frequency=p.value[2];
-                    p.n=3;
+                    p.n=2;
+PlayTag:
+                    reset.frequency=p.value[p.n];
+                    p.n+=1;
                     int type=getType(&p);
                     if(type >= 0)reset.decodemode=type;
                     //printf("frequency %g type %d\n",reset.frequency,reset.decodemode);
@@ -1174,8 +1178,8 @@ int Radio::doVoice()
                        if(doUP())action="Scan up - ";
                 }else if(p.command[2] ==  "down"){
                       if(doDown())action="Scan down - ";
-                }else if(p.command[2] ==  "save"){
-                    if(p.command[3] == "as"){
+                }else if(p.command[2] ==  "station"){
+                    if(p.command[3] == "is"){
                         struct stations station;
                         struct stations *sta;
                         int insert=-1;
@@ -1218,6 +1222,10 @@ int Radio::doVoice()
                 }else if(p.command[2] ==  "tune" || p.command[2] ==  "play"){
                     p.n=3;
                     if(p.command[3] == "to")p.n=4;
+                    
+                    if(p.type[p.n] == BATCH_DOUBLE){
+                        goto PlayTag;
+                    }
                     int insert=-1;
                     for(int i=0;i<(int)st.size();++i){
                        // printf("\'%s\' \'%s\' %d\n",st[i].name.c_str(),p.command[p.n].c_str(),st[i].name == p.command[p.n]);
@@ -1280,6 +1288,7 @@ Continue:
     if(pipe)pclose(pipe);
     voiceSpectrum=0;
     voicecontrol=0;
+    rx->Debug = 1;
     return 0;
     
 }

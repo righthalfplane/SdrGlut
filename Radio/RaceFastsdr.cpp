@@ -101,7 +101,7 @@ int RadioStart(int argc, char * argv [],struct playData *rx)
     rx->FFTfilter=FILTER_BLACKMANHARRIS7;
     rx->controlSend = -1;
     rx->fillBuffer = -1;
-
+    rx->Debug = 1;
 
 	for(int n=1;n<argc;++n){
 	    if(!strcmp(argv[n],"-debug")){
@@ -853,7 +853,7 @@ static int ProcessSound(void *rxv)
                         alGetSourcei(rx->source, AL_SOURCE_STATE, &rx->al_state);
                         if(rx->al_state == AL_STOPPED){
                             alSourcePlay(rx->source);
-                            printf("%s count %lu sound restarted\n",rx->driveName,count);
+                            if(rx->Debug)printf("%s count %lu sound restarted\n",rx->driveName,count);
                         }
                     }
 
@@ -1727,7 +1727,7 @@ int rxBuffer(void *rxv)
                 timeNs++;
 						   
 				if(ret <= 0){
-				   printf("Device %s ret=%d, flags=%d, timeNs=%lld b0 %f b1 %f witch %d\n",rx->driveName, ret, flags, timeNs,buff[0],buff[1],rx->witchRFBuffer);
+				   if(rx->Debug)printf("Device %s ret=%d, flags=%d, timeNs=%lld b0 %f b1 %f witch %d\n",rx->driveName, ret, flags, timeNs,buff[0],buff[1],rx->witchRFBuffer);
 				   break;
 				}else if(ret < toRead){
                     count += ret;
