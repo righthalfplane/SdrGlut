@@ -30,7 +30,6 @@ using namespace std;
 static GLUI_Checkbox *check_box;
 
 static void control_cb(int control);
-static void control_cb2(int control);
 static void control_cb3(int control);
 static void control_cb4(int control);
 
@@ -62,6 +61,11 @@ int Radio::doVoiceControl(struct Scene *scene)
     
     new GLUI_Button(obj_panel, "Stop Voice Control", 10,control_cb4);
     
+
+    obj_panel =  vv.glui->add_panel( "Commands" );
+    
+    new GLUI_Button(obj_panel, "Close", 6, control_cb4);
+
     vv.sub_window=glutGetWindow();
     
     //bb.sub_window=bb.glui->get_glut_window_id();
@@ -84,6 +88,9 @@ static void control_cb4(int control)
         }else{
             fprintf(stderr,"Voice Control Running flag: %d\n",s->voicecontrol);
         }
+    } else if(control == 6){
+        s->vv.glui->close();
+        s->vv.glui=NULL;
     } else if(control == 10){
         if(s->voicecontrol == 1)s->voicecontrol=2;
     }
@@ -1167,17 +1174,8 @@ int Radio::doVoice()
                        if(doUP())action="Scan up - ";
                 }else if(p.command[2] ==  "down"){
                       if(doDown())action="Scan down - ";
-                }else if(p.command[2] ==  "set"){
-                    if(p.command[3] == "volume" || p.command[3] == "vol"){
-                        p.n=4;
-                        if(p.command[4] == "to")p.n=5;
-                        double vol=p.value[p.n];
-                        if(vol < 0.0)vol=0.00001;
-                        if(vol > 1.0)vol=1.0;
-                        //printf("vol %g\n",vol);
-                        rx->gain=vol;
-                        action="Set volume - ";
-                    }else if(p.command[3] == "as"){
+                }else if(p.command[2] ==  "save"){
+                    if(p.command[3] == "as"){
                         struct stations station;
                         struct stations *sta;
                         int insert=-1;
@@ -1197,6 +1195,18 @@ int Radio::doVoice()
                         sta->frequency=rx->f;
                         sta->decodemode=rx->decodemode;
                         action="Set station from waterfall - "+sta->name+" - ";
+                    }
+
+                }else if(p.command[2] ==  "set"){
+                    if(p.command[3] == "volume" || p.command[3] == "vol"){
+                        p.n=4;
+                        if(p.command[4] == "to")p.n=5;
+                        double vol=p.value[p.n];
+                        if(vol < 0.0)vol=0.00001;
+                        if(vol > 1.0)vol=1.0;
+                        //printf("vol %g\n",vol);
+                        rx->gain=vol;
+                        action="Set volume - ";
                     }else if(p.command[3] == "squelch"){
                         p.n=4;
                         if(p.command[4] == "to")p.n=5;
@@ -1210,12 +1220,12 @@ int Radio::doVoice()
                     if(p.command[3] == "to")p.n=4;
                     int insert=-1;
                     for(int i=0;i<(int)st.size();++i){
-                        //printf("%s %s\n",st[i].name.c_str(),p.command[p.n].c_str());
+                       // printf("\'%s\' \'%s\' %d\n",st[i].name.c_str(),p.command[p.n].c_str(),st[i].name == p.command[p.n]);
                         if(st[i].name == p.command[p.n]){
                             insert=i;
                         }
                     }
-                    if(insert > 0){
+                    if(insert >= 0){
                         //printf("found %s\n",st[insert].name.c_str());
                         reset.frequency=st[insert].frequency;
                         reset.decodemode=st[insert].decodemode;
