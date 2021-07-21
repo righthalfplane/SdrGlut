@@ -9,10 +9,12 @@
 #include "firstFile.h"
 #include <cstdio>
 #include <cstdlib>
-
+#include <string>
 #include <chrono>
 #include <thread>
+#include <vector>
 
+using namespace std;
 
 #include "Radio.h"
 
@@ -30,11 +32,63 @@ static GLUI_Checkbox *check_box;
 static void control_cb(int control);
 static void control_cb2(int control);
 static void control_cb3(int control);
+static void control_cb4(int control);
 
 extern "C" int doFFT2(double *x,double *y,long length,int direction);
 
 #define Mode_Buttons   180
 
+
+int Radio::doVoiceControl(struct Scene *scene)
+{
+    if(!scene)return 1;
+    
+    if(vv.glui){
+        vv.glui->close();
+    }
+    
+    vv.sceneLocal=scene;
+    
+    vv.glui = GLUI_Master.create_glui(rx->driveName);
+    
+    GLUI_Panel *obj_panel =  vv.glui->add_panel( "Voice Control" );
+    
+    strncpy(vv.text2,"./speechcontrol.py",sizeof(vv.text2));
+    vv.edittext2 =
+    vv.glui->add_edittext_to_panel( obj_panel, "Location:", GLUI_EDITTEXT_TEXT, vv.text2);
+    vv.edittext2->w=200;
+    
+    new GLUI_Button(obj_panel,"Start Voice Control", 9,control_cb4);
+    
+    new GLUI_Button(obj_panel, "Stop Voice Control", 10,control_cb4);
+    
+    vv.sub_window=glutGetWindow();
+    
+    //bb.sub_window=bb.glui->get_glut_window_id();
+    
+    vv.glui->set_main_gfx_window(vv.sub_window);
+    
+    return 0;
+}
+
+static void control_cb4(int control)
+{
+    RadioPtr s=(RadioPtr)FindSceneRadio(glutGetWindow());
+    if(!s)return;
+    
+    sscanf(s->vv.edittext2->get_text(),"%s",s->vv.text2);
+    
+    if(control == 9){
+        if(s->voicecontrol == 0){
+            std::thread(&Radio::doVoice,s).detach();
+        }else{
+            fprintf(stderr,"Voice Control Running flag: %d\n",s->voicecontrol);
+        }
+    } else if(control == 10){
+        if(s->voicecontrol == 1)s->voicecontrol=2;
+    }
+    glutPostRedisplay();
+}
 int Radio::dialogSendIQ(struct Scene *scene)
 {
     if(!scene)return 1;
@@ -186,115 +240,7 @@ static void control_cb3(int control)
     glutPostRedisplay();
 }
 
-int Radio::dialogSend(struct Scene *scene)
-{
-    if(!scene)return 1;
-    
-    if(bb.glui){
-        bb.glui->close();
-    }
-    
-    bb.sceneLocal=scene;
-    
-    bb.glui = GLUI_Master.create_glui(rx->driveName);
-    
-    GLUI_Panel *obj_panel =  bb.glui->add_panel( "Data Type" );
 
-    bb.group2 =
-    bb.glui->add_radiogroup_to_panel(obj_panel,&bb.datatype,Mode_Buttons,control_cb2);
-    
-    bb.glui->add_radiobutton_to_group( bb.group2, "Float" );
-    bb.glui->add_radiobutton_to_group( bb.group2, "Short int" );
-    bb.glui->add_radiobutton_to_group( bb.group2, "Signed char" );
-    bb.glui->add_radiobutton_to_group( bb.group2, "UnSigned char" );
-
-    obj_panel =  bb.glui->add_panel( "Send Mode" );
-    
-    bb.group2 =
-    bb.glui->add_radiogroup_to_panel(obj_panel,&bb.sendmode,Mode_Buttons,control_cb2);
-    
-    bb.glui->add_radiobutton_to_group( bb.group2, "Listen Mode" );
-    bb.glui->add_radiobutton_to_group( bb.group2, "TCP/IP" );
-    bb.glui->add_radiobutton_to_group( bb.group2, "UDP" );
-
-    obj_panel =  bb.glui->add_panel( "Send Information" );
-
-
-    new GLUI_Checkbox( obj_panel, "Frequency", &bb.frequencyFlag, 10, control_cb2 );
-    
-    new GLUI_Checkbox( obj_panel, "Demodulate Mode", &bb.demodulationFlag, 11, control_cb2 );
-
-    obj_panel =  bb.glui->add_panel( "Tcp-Address" );
-    
-    
-    bb.edittext1 =
-    bb.glui->add_edittext_to_panel( obj_panel, "", GLUI_EDITTEXT_TEXT, bb.text1);
-    bb.edittext1->w=200;
-
-    obj_panel =  bb.glui->add_panel( "Voice Control" );
-    
-    strncpy(bb.text2,"./speechcontrol.py",sizeof(bb.text2));
-    bb.edittext2 =
-    bb.glui->add_edittext_to_panel( obj_panel, "Location:", GLUI_EDITTEXT_TEXT, bb.text2);
-    bb.edittext2->w=200;
-    
-    new GLUI_Button(obj_panel,"Start Voice Control", 9,control_cb2);
-    
-    new GLUI_Button(obj_panel, "Stop Voice Control", 10,control_cb2);
-
-
-    obj_panel =  bb.glui->add_panel( "Commands" );
-    
-    new GLUI_Button(obj_panel, "Send", 2,control_cb2);
-    
-    new GLUI_Button(obj_panel, "Stop", 4, control_cb2);
-    
-    new GLUI_Button(obj_panel, "Close", 6, control_cb2);
-
-    bb.sub_window=glutGetWindow();
-    
-    //bb.sub_window=bb.glui->get_glut_window_id();
-    
-    bb.glui->set_main_gfx_window(bb.sub_window);
-
-    return 0;
-}
-
-static void control_cb2(int control)
-{
-    RadioPtr s=(RadioPtr)FindSceneRadio(glutGetWindow());
-    if(!s)return;
-    
-    sscanf(s->bb.edittext1->get_text(),"%s",s->bb.text1);
-    
-    sscanf(s->bb.edittext2->get_text(),"%s",s->bb.text2);
-
-    s->rx->demodulationFlag=s->bb.demodulationFlag;
-    
-    s->rx->frequencyFlag=s->bb.frequencyFlag;
-
-    if(control == Mode_Buttons)
-    {
-        fprintf(stderr,"Mode_Buttons %d\n",s->bb.datatype);
-    }else if(control == 2){
-        (*s->rx->pStartSend)(s->rx,s->bb.text1,s->bb.datatype,s->bb.sendmode);
-   } else if(control == 4){
-       s->rx->controlSend = -1;
-       fprintf(stderr,"Stop Command Send\n");
-    } else if(control == 6){
-        s->bb.glui->close();
-        s->bb.glui=NULL;
-    } else if(control == 9){
-        if(s->voicecontrol == 0){
-            std::thread(&Radio::doVoice,s).detach();
-        }else{
-            fprintf(stderr,"Voice Control Running flag: %d\n",s->voicecontrol);
-        }
-    } else if(control == 10){
-        if(s->voicecontrol == 1)s->voicecontrol=2;
-   }
-    glutPostRedisplay();
-}
 // static int doWindow(double *x,double *y,long length,int type);
 
 int Radio::setDialogBandWidth(double bandwidth)
@@ -309,7 +255,6 @@ int Radio::setDialogBandWidth(double bandwidth)
     
     return 0;
 }
-
 int Radio::setDialogSampleRate(double samplerate)
 {
     char value[256];
@@ -782,6 +727,7 @@ RadioPtr FindSceneRadio(int window)
             if(r->dd.sub_window == window)return r;
             if(r->bb.sub_window == window)return r;
             if(r->qq.sub_window == window)return r;
+            if(r->vv.sub_window == window)return r;
             if(r->mooWindow == window)return r;
         }
         w=w->CNext;
@@ -832,7 +778,7 @@ RadioPtr FindSdrRadioWindow(struct playData *rx)
 }
 
 typedef struct CommandInfo{
-    char *command[256][16];
+    string command[256];
     double value[256];
     int count[256];
     int type[256];
@@ -859,8 +805,8 @@ int getCommandv(char *line,CommandPtr cp)
     for(n=0;n<256;++n){
         cp->type[n]=BATCH_DOUBLE;
         cp->value[n]=0;
-        zerol((char *)cp->command[n],16l);
-    }
+        cp->command[n]="";
+     }
     
     cp->line=line;
     cp->nword=0;
@@ -886,7 +832,7 @@ int getCommandv(char *line,CommandPtr cp)
             buff[n]=0;
             iret = 0;
             cp->type[nw]=BATCH_STRING;
-            mstrncpy((char *)cp->command[nw],(char *)buff,16l);
+            cp->command[nw]=buff;
             continue;
         }else{
             while((c = *line++) != 0 && c != ' ' && c != '\n' && c != '\r' && c != '\t'
@@ -905,7 +851,7 @@ int getCommandv(char *line,CommandPtr cp)
         
         if(!mstrcmp(buff,(char *)".") || !mstrcmp(buff,(char *)"..")){
             cp->type[nw]=BATCH_STRING;
-            mstrncpy((char *)cp->command[nw],(char *)buff,16l);
+            cp->command[nw]=buff;
             continue;
         }
         
@@ -917,12 +863,20 @@ int getCommandv(char *line,CommandPtr cp)
             }
         }
         
+        char *np=strrchr(buff,'/');
+        if(np){
+            inum = 0;
+        }else{
+            np=strrchr(buff,'-');
+            if(np)inum = 0;
+        }
+        
         if(inum && (cp->getKind != BATCH_STRING)){
             cp->value[nw] = atof(buff);
         }else{
-            mstrncpy((char *)cp->command[nw],(char *)buff,16l);
+            cp->command[nw]=buff;
             cp->type[nw]=BATCH_STRING;
-        }
+      }
         
     }while((++nw < 256) &&  !iret);
     
@@ -932,12 +886,230 @@ int getCommandv(char *line,CommandPtr cp)
     
     return 0;
 }
+static int cleanTime(struct CommandInfo *p)
+{
+    for(int n=0;n<p->nword;++n){
+        //printf("n %d type %d string \"%s\" \n",n,p->type[n],p->command[n].c_str());
+        if((p->type[n] == BATCH_DOUBLE) && (p->type[n+1] == BATCH_STRING)){
+            string val=p->command[n+1];
+            double mult=0.0;
+            if(val == "kilohertz" || val == "kilocyles"){
+                mult=1000.0;
+            }else if(val == "megahertz" || val == "megacycles"){
+                mult=1.0e6;
+            }else if(val == "gigahertz" || val == "gigacycles"){
+                mult=1.0e9;
+            }else if(val == "Hertz" || val == "cycles" ||
+                     val == "cycle" || val == "Cycles"){
+                 mult=1.0;
+            }
+            if(mult > 0.0){
+                p->value[n] *= mult;
+                p->command[n+1]="";
+                if(p->command[n+2] == "per"){
+                    p->command[n+2]="";
+                   if(p->command[n+3] == "second")p->command[n+3]="";
+                }
+            }
+           // printf("p->value[n] %g\n",p->value[n]);
+        }else if(p->type[n] == BATCH_STRING){
+            string val=p->command[n];
+            //printf("val = \'%s\' \n",val.c_str());
+            if(val == "zero"){
+                p->type[n] = BATCH_DOUBLE;
+                p->value[n] = 0.000001;
+            }else if(val == "one"){
+                p->type[n] = BATCH_DOUBLE;
+                p->value[n] = 1.0;
+            }else if(val == "1/2"){
+                p->type[n] = BATCH_DOUBLE;
+                p->value[n] = 0.5;
+            }else if(val == "1/3"){
+                p->type[n] = BATCH_DOUBLE;
+                p->value[n] = 0.3333333;
+            }else if(val == "2/3"){
+                p->type[n] = BATCH_DOUBLE;
+                p->value[n] = 0.6666666;
+            }else if(val == "1/4"){
+                p->type[n] = BATCH_DOUBLE;
+                p->value[n] = 0.25;
+            }else if(val == "1/16"){
+                p->type[n] = BATCH_DOUBLE;
+                p->value[n] = 0.0625;
+            }else if(val == "1/32"){
+                p->type[n] = BATCH_DOUBLE;
+                p->value[n] = 0.03125;
+            }else if(val == "3/4"){
+                p->type[n] = BATCH_DOUBLE;
+                p->value[n] = 0.75;
+            }else if(val == "-"){
+                p->type[n] = BATCH_DOUBLE;
+                p->value[n] = -p->value[n+1];
+                //printf("minus %g\n",p->value[n]);
+                p->type[n+1] = BATCH_STRING;
+           }
+        
+            //printf("p->value[n] %g\n",p->value[n]);
+        }
+    }
+    int nn=0;
+    for(int n=0;n<p->nword;++n){
+        if((p->type[n] == BATCH_STRING) && (p->command[n] == ""))continue;
+        p->command[nn]=p->command[n];
+        p->value[nn]=p->value[n];
+        p->count[nn]=p->count[n];
+        p->type[nn]=p->type[n];
+        ++nn;
+    }
+    
+    p->nword=nn;
+//    printf("p->nword %d\n",nn);
+
+    return 0;
+}
+static int getType(struct CommandInfo *p)
+{
+    int ret = -1;
+    for(int n=p->n;n<p->nword;++n){
+        if(p->command[n] == "am" || p->command[n] == "a.m."){
+            ret=MODE_AM;
+            p->n=n+1;
+            break;
+        }else if(p->command[n] == "FM"){
+            ret=MODE_FM;
+            p->n=n+1;
+            break;
+        }else if(p->command[n] == "CW" || p->command[n] == "continuous-wave"){
+            ret=MODE_CW;
+            p->n=n+1;
+            break;
+        }else if(p->command[n] == "upper"){
+             ret=MODE_USB;
+            if(p->command[n+1] == "sidband"){
+                p->n=n+2;
+            }else{
+                p->n=n+1;
+            }
+            break;
+       }else if(p->command[n] == "lower"){
+            ret=MODE_LSB;
+           if(p->command[n+1] == "sidband"){
+               p->n=n+2;
+           }else{
+               p->n=n+1;
+           }
+           break;
+        }else if(p->command[n] == "narrowband"){
+            if(p->command[n+1] == "FM"){
+                ret=MODE_NBFM;
+                p->n=n+2;
+                break;
+           }else if(p->command[n+1] == "am" || p->command[n+1] == "a.m."){
+               ret=MODE_NAM;
+               p->n=n+2;
+               break;
+           }
+            p->n=n+1;
+            break;
+        }
+    }
+    return ret;
+}
+
+int Radio::doUP()
+{
+    int length=rx->FFTcount;
+    voiceSpectrum=0;
+    int ifound[length];
+    
+    for(int n=0;n<length;++n){
+        if(magnitude3[n] > rx->cutOFF){
+            ifound[n]=1;
+        }else{
+            ifound[n]=0;
+        }
+    }
+    
+    double fsave = -1;
+    double flast = rx->f+rx->bw;
+    for(double ff=rx->f+rx->bw;ff<=rx->fc+rx->samplerate*0.5;ff += rx->bw)
+    {
+        flast=ff;
+        for(int n=0;n<length;++n){
+            if(range3[n] >= ff-0.5*rx->bw && range3[n] <= ff+0.5*rx->bw){
+                if(ifound[n]){
+                    fsave=ff;
+                    goto loopexit;
+                }
+            }
+        }
+
+    }
+loopexit:
+    flast += rx->bw;
+    if(fsave > 0)flast=fsave;
+//    printf("up flast %g min %g max %g ",flast,range3[0],range3[length-1]);
+    reset.frequency=flast;
+    reset.decodemode=rx->decodemode;
+    reset.reset=1;
+    return 1;
+}
+int Radio::doDown()
+{
+    
+    int length=rx->FFTcount;
+    voiceSpectrum=0;
+    int ifound[length];
+    for(int n=0;n<length;++n){
+        if(magnitude3[n] > rx->cutOFF){
+            ifound[n]=1;
+        }else{
+            ifound[n]=0;
+        }
+    }
+
+    double fsave = -1;
+    double flast = rx->f-rx->bw;
+    for(double ff=rx->f-rx->bw;ff>=rx->fc-rx->samplerate*0.5;ff -= rx->bw)
+    {
+        flast=ff;
+        for(int n=0;n<length;++n){
+            if(range3[n] >= ff-0.5*rx->bw && range3[n] <= ff+0.5*rx->bw){
+                if(ifound[n]){
+                    fsave=ff;
+                    goto loopexit;
+                }
+            }
+        }
+        
+    }
+loopexit:
+    flast -= rx->bw;
+    if(fsave > 0)flast=fsave;
+//    printf("down flast %g min %g max %g ",flast,range3[0],range3[length-1]);
+    reset.frequency=flast;
+    reset.decodemode=rx->decodemode;
+    reset.reset=1;
+    return 1;
+}
+
+struct stations{
+    string name;
+    double frequency;
+    int decodemode;
+};
+
 int Radio::doVoice()
 {
     struct CommandInfo p;
     char name[256];
     char data[256];
-    char *path=bb.text2;
+    char *path=vv.text2;
+    vector<struct stations> st;
+    
+    
+    string controlname="Sam";
+    string action="No action";
     
     sprintf(name,"python -u %s%c",path,0);
     fprintf(stderr,"Start Voice Control path %s\n",path);
@@ -959,28 +1131,144 @@ int Radio::doVoice()
             printf("read failed");
             goto Continue;
         }
+        
         data[count]=0;
+        if(data[count-1] != '\n'){
+            data[count++]='\n';
+            data[count]=0;
+        }
         
         getCommandv(data,&p);
         
-        if(p.nword < 1)goto Continue;;
+        if(p.nword < 1)goto Continue;
         
-        if(!mstrcmp((char *)p.command[0],(char *)"timeout")){
+        voiceSpectrum=1;
+        
+        action="No action - ";
+        
+        if(p.command[0] == "timeout"){
             //printf("Time out found\n");
             goto Continue;;
         }
+        
+        cleanTime(&p);
 
-        if(!mstrcmp((char *)p.command[0],(char *)"hey")){
-            printf("hey found\n");
+        if(p.command[0] == "hey" || p.command[0] == "he" ){
+            if(p.command[1] == controlname){
+                if(p.type[2] == BATCH_DOUBLE){
+                    reset.frequency=p.value[2];
+                    p.n=3;
+                    int type=getType(&p);
+                    if(type >= 0)reset.decodemode=type;
+                    //printf("frequency %g type %d\n",reset.frequency,reset.decodemode);
+                    reset.reset=1;
+                    action="Set Frequency - ";
+                }else if(p.command[2] ==  "up"){
+                       if(doUP())action="Scan up - ";
+                }else if(p.command[2] ==  "down"){
+                      if(doDown())action="Scan down - ";
+                }else if(p.command[2] ==  "set"){
+                    if(p.command[3] == "volume" || p.command[3] == "vol"){
+                        p.n=4;
+                        if(p.command[4] == "to")p.n=5;
+                        double vol=p.value[p.n];
+                        if(vol < 0.0)vol=0.00001;
+                        if(vol > 1.0)vol=1.0;
+                        //printf("vol %g\n",vol);
+                        rx->gain=vol;
+                        action="Set volume - ";
+                    }else if(p.command[3] == "as"){
+                        struct stations station;
+                        struct stations *sta;
+                        int insert=-1;
+                        for(int i=0;i<(int)st.size();++i){
+                            if(st[i].name == p.command[4]){
+                                insert=i;
+                            }
+                        }
+                        if(insert < 0){
+                            station.name=p.command[4];
+                            st.push_back(station);
+                            sta=(struct stations *)&st[st.size()-1].name;
+                        }else{
+                            sta=(struct stations *)&st[insert].name;
+                        }
+                        
+                        sta->frequency=rx->f;
+                        sta->decodemode=rx->decodemode;
+                        action="Set station from waterfall - "+sta->name+" - ";
+                    }else if(p.command[3] == "squelch"){
+                        p.n=4;
+                        if(p.command[4] == "to")p.n=5;
+                        double squelch=p.value[p.n];
+                        //printf("squelch %g\n",squelch);
+                        rx->cutOFF=squelch;
+                        action="Set squelch - ";
+                   }
+                }else if(p.command[2] ==  "tune" || p.command[2] ==  "play"){
+                    p.n=3;
+                    if(p.command[3] == "to")p.n=4;
+                    int insert=-1;
+                    for(int i=0;i<(int)st.size();++i){
+                        //printf("%s %s\n",st[i].name.c_str(),p.command[p.n].c_str());
+                        if(st[i].name == p.command[p.n]){
+                            insert=i;
+                        }
+                    }
+                    if(insert > 0){
+                        //printf("found %s\n",st[insert].name.c_str());
+                        reset.frequency=st[insert].frequency;
+                        reset.decodemode=st[insert].decodemode;
+                        reset.reset=1;
+                        action="Play - "+st[insert].name+" - ";
+                    }else{
+                        printf("station not found %s ",p.command[p.n].c_str());
+                    }
+                }else{
+                    struct stations station;
+                    struct stations *sta;
+                    if(p.command[3] != "is")continue;
+                    int insert=-1;
+                    for(int i=0;i<(int)st.size();++i){
+                        if(st[i].name == p.command[2]){
+                            insert=i;
+                        }
+                    }
+                    if(insert < 0){
+                        station.name=p.command[2];
+                        st.push_back(station);
+                        sta=(struct stations *)&st[st.size()-1].name;
+                   }else{
+                       sta=(struct stations *)&st[insert].name;
+                    }
+                    
+                    sta->frequency=p.value[4];
+                    p.n=5;
+                    int type=getType(&p);
+                    sta->decodemode=MODE_AM;
+                    if(type >= 0)sta->decodemode=type;
+                    action="Set station info - "+sta->name+" - ";
+
+                }
+            }
+        }
+        
+        if(p.command[0] == "control"){
+            if(p.command[1] == "is"){
+                //printf("found is\n");
+                controlname=p.command[2];
+                action="Set Control Name - ";
+            }
         }
 
-        printf("%s",data);
+        printf("%s%s",action.c_str(),data);
         
 Continue:
         Sleep2(100);
     }
     printf("Stop Voice Control\n");
     if(pipe)pclose(pipe);
+    voiceSpectrum=0;
     voicecontrol=0;
     return 0;
     

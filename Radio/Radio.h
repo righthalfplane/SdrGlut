@@ -112,6 +112,23 @@ struct DialogSendData{
     int frequencyFlag;
 };
 
+struct DialogSendVoice{
+    GLUI *glui;
+    char text1[255];
+    GLUI_EditText *edittext1;
+    char text2[255];
+    GLUI_EditText *edittext2;
+    char text3[255];
+    GLUI_EditText *edittext3;
+    struct Scene *sceneLocal;
+    int sub_window;
+    GLUI_RadioGroup *group2;
+    int datatype;
+    int sendmode;
+    int demodulationFlag;
+    int frequencyFlag;
+};
+
 struct DialogSendIQ{
     GLUI *glui;
     char text1[255];
@@ -293,6 +310,12 @@ struct RecordSoundStruct{
     char mode[5][16];
 };
 
+struct ResetInfo{
+    double frequency;
+    int decodemode;
+    int reset;
+};
+
 class CLines;
 
 class Radio;
@@ -317,9 +340,12 @@ public:
     int mMenuSelectl(struct Scene *scene,int item);
     int KillScene (struct Scene *scene);
     int dialogRadio (struct Scene *scene);
-    int dialogSend(struct Scene *scene);
+    //int dialogSend(struct Scene *scene);
     int dialogSendIQ(struct Scene *scene);
+    int doVoiceControl(struct Scene *scene);
     int doVoice();
+    int doUP();
+    int doDown();
     int setFrequency2(struct playData *play);
     int setFrequency3(struct playData *play);
     int setFrequencyDuo(struct playData *play);
@@ -394,9 +420,13 @@ public:
     
     struct DialogSendData bb;
     
+    struct DialogSendVoice vv;
+    
     struct DialogSendIQ qq;
 
     struct TransmitData tt;
+    
+    struct ResetInfo reset;
 
     double real[2*32768*sizeof(double)];
     double imag[2*32768*sizeof(double)];
@@ -407,8 +437,10 @@ public:
     CLines *lines2;
     struct Scene *scenel2;
     double *range;
+    double *range3;
     double *magnitude;
     double *magnitude2;
+    double *magnitude3;
     double *frequencies;
     double *ampitude;
     double lineTime;
@@ -459,6 +491,8 @@ public:
     unsigned char end;
     
     volatile int voicecontrol;
+    
+    volatile int voiceSpectrum;
 
     int junk11;
     

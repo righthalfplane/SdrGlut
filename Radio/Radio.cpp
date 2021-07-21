@@ -61,6 +61,7 @@ extern "C" int DrawLine(int x1, int y1, int x2, int y2);
 #define SdrSend                 105
 #define SdrReadFile             106
 #define SdrSendIQ               107
+#define SdrVoiceControl         108
 
 ALvoid DisplayALError(unsigned char *szText, ALint errorCode);
 
@@ -438,25 +439,31 @@ Radio::Radio(struct Scene *scene,SoapySDR::Kwargs deviceArgs): CWindow(scene)
     FFTlength=32768;
     
     range=NULL;
+    range3=NULL;
     magnitude=NULL;
     magnitude2=NULL;
+    magnitude3=NULL;
 
     frequencies=NULL;
     ampitude=NULL;
     
     
     range=(double *)cMalloc(FFTlength*sizeof(double),9851);
+    range3=(double *)cMalloc(FFTlength*sizeof(double),9851);
     magnitude=(double *)cMalloc(FFTlength*sizeof(double),9851);
     magnitude2=(double *)cMalloc(FFTlength*sizeof(double),9851);
+    magnitude3=(double *)cMalloc(FFTlength*sizeof(double),9851);
 
     frequencies=(double *)cMalloc(FFTlength*sizeof(double),9851);
     ampitude=(double *)cMalloc(FFTlength*sizeof(double),9851);
     
-    if(!range || !magnitude || !frequencies || !ampitude || !magnitude2)return;
+    if(!range || !magnitude || !frequencies || !ampitude || !magnitude2 || !range3 || !magnitude3)return;
     
     zerol((char *)range,FFTlength*sizeof(double));
+    zerol((char *)range3,FFTlength*sizeof(double));
     zerol((char *)magnitude,FFTlength*sizeof(double));
-    
+    zerol((char *)magnitude3,FFTlength*sizeof(double));
+
     zerol((char *)frequencies,FFTlength*sizeof(double));
     zerol((char *)ampitude,FFTlength*sizeof(double));
     
@@ -669,11 +676,17 @@ Radio::~Radio()
     if(range)cFree((char *)range);
     range=NULL;
     
+    if(range3)cFree((char *)range3);
+    range3=NULL;
+
     if(magnitude)cFree((char *)magnitude);
     magnitude=NULL;
     
     if(magnitude2)cFree((char *)magnitude2);
     magnitude2=NULL;
+    
+    if(magnitude3)cFree((char *)magnitude3);
+    magnitude3=NULL;
     
     if(frequencies)cFree((char *)frequencies);
     frequencies=NULL;
@@ -792,6 +805,7 @@ int Radio::updateLine()
     float dx=rx->samplerate;
     double ddx=(double)rx->samplerate/(double)(length);
     long nf=0;
+    int voice=voiceSpectrum;
     for(int n=0;n<length;++n){
         double r;
         r=rx->fc-0.5*rx->samplerate+n*ddx;
@@ -810,6 +824,10 @@ int Radio::updateLine()
         magnitude2[length-n-1]=v+rx->scaleFactor;
         if(v < amin)amin=v;
         if(v > amax)amax=v;
+        if(voice){
+            range3[n]=range[n];
+            magnitude3[n]=magnitude2[n];
+        }
     }
     
   //printf("a amin %g amax %g \n",amin,amax);
@@ -1028,6 +1046,43 @@ int Radio::BackGroundEvents(struct Scene *scene)
     if(!scene || !backGroundEvents)return 1;
     
     if(!rx)return 0;
+    
+    if(reset.reset){
+        
+        if(reset.frequency != rx->f){
+            float fl;
+            fl=rx->f=reset.frequency;
+            if(fabs(fl-rx->fc) > 0.5*rx->samplerate){
+                rx->fc=fl;
+               // fprintf(stderr,"shift f %g fc %g\n",rx->f,rx->fc);
+                setFrequency2(rx);
+                // fprintf(stderr,"setFrequency2\n");
+            }else{
+              //  fprintf(stderr,"no shift f %g fc %g\n",rx->f,rx->fc);
+                setDialogFrequency(rx->f);
+                
+                setFrequency(rx->f);
+                
+                setDialogFc(rx->fc);
+                
+                setFrequencyCoefficients(rx);
+                
+                if(FindScene(scenel2)){
+                    SetFrequencyGlobal(scenel2, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
+                }
+                
+                if(FindScene(scenel)){
+                    SetFrequencyGlobal(scenel, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
+                }
+            }
+            
+        }
+        
+        if(reset.decodemode != rx->decodemode){
+            setMode(reset.decodemode);
+        }
+        reset.reset=0;
+    }
         
     updateLine();
     
@@ -1772,9 +1827,9 @@ int Radio::OpenWindows(struct Scene *scene)
     
     glutAddMenuEntry("Scan Frequency File...", SdrReadFile);
     glutAddMenuEntry("SDR Dialog...", SdrDialog);
+    glutAddMenuEntry("VoiceControl...", SdrVoiceControl);
     if(rx->ntransmit)glutAddMenuEntry("Transmit...", SdrTransmit);
-    glutAddMenuEntry("Send...", SdrSend);
-    glutAddMenuEntry("Send I/Q...", SdrSendIQ);
+    glutAddMenuEntry("Send...", SdrSendIQ);
     glutAddMenuEntry("--------------------", -1);
     glutAddSubMenu("Palette", palette_menu);
     glutAddSubMenu("Mode", menu3);
@@ -2277,14 +2332,16 @@ int Radio::mMenuSelectl(struct Scene *scene,int item)
         case SdrTransmit:
             Transmit(scene);
             return 0;
-            
-        case SdrSend:
-            dialogSend(scene);
-            return 0;
-            
+                        
         case SdrSendIQ:
             dialogSendIQ(scene);
             return 0;
+            
+        case SdrVoiceControl:
+            doVoiceControl(scene);
+            return 0;
+
+            
 
 	case ControlGetSelectionBox:
 		return 0;
