@@ -1027,7 +1027,9 @@ int Radio::doUP()
 {
     int length=rx->FFTcount;
     voiceSpectrum=0;
-    int ifound[length];
+    
+    int *ifound=(int *)cMalloc(length*sizeof(int),9851);
+    if(!ifound)return 1;
     
     for(int n=0;n<length;++n){
         if(magnitude3[n] > rx->cutOFF){
@@ -1059,6 +1061,7 @@ loopexit:
     reset.frequency=flast;
     reset.decodemode=rx->decodemode;
     reset.reset=1;
+    cFree((char *)ifound);
     return 1;
 }
 int Radio::doDown()
@@ -1066,7 +1069,8 @@ int Radio::doDown()
     
     int length=rx->FFTcount;
     voiceSpectrum=0;
-    int ifound[length];
+    int *ifound=(int *)cMalloc(length*sizeof(int),9851);
+    if(!ifound)return 1;
     for(int n=0;n<length;++n){
         if(magnitude3[n] > rx->cutOFF){
             ifound[n]=1;
@@ -1097,6 +1101,7 @@ loopexit:
     reset.frequency=flast;
     reset.decodemode=rx->decodemode;
     reset.reset=1;
+    cFree((char *)ifound);
     return 1;
 }
 
@@ -1137,8 +1142,8 @@ int Radio::doVoice()
     while(voicecontrol == 1){
         int count=(int)read(filenum,data,256);
         if(count <= 0){
-            printf("read failed\n");
-            goto Continue;
+            printf("Voice Control error - read failed\n");
+            break;
         }
         
         data[count]=0;
