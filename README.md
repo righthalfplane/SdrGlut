@@ -7,27 +7,23 @@ A users group is just starting - you can ask questions there -
 
 https://groups.google.com/g/sdrglut-users
 
-SdrGlut V1.24 Adds a Help Window and Some Bug Fixes.
+SdrGlut V1.25 Adds a Voice Command Module
 
-Update - Fixed some problems with the Windows install versions.
+What is new ?
 
-What is new ? 
+SdrGlut has a new Voice Command Module.
+SdrGlut has a narrowed CW bandwidth a added tone.
+SdrGult has improved the waterfall display.
+SdrGlut has merged the send windows.
+SdrGlut has improved the scroll wheel operation.
 
-SdrGlut has a Help Window that covers the basic operation of the program. 
-SdrGlut can send I/Q data to other programs use TCP/IP or UDP modes. 
-SdrGlut has fixed the db read output in the Spectrum Window - removing the incorrect CSMeter routines. 
-SdrGlut has an extreme zoom for the Spectrum and Waterfall Windows. 
-SdrGlut has automated some of the input for the Audio Recording Window. 
-SdrGlut has fixed some data initialization errors that were causing random crashes. 
-SdrGlut has finally worked around a system bug in Ubuntu 20.04 that was causing a crash. 
-SdrGlut can set the VLC program mode for use with the decoding of real time TV. 
 
-https://github.com/righthalfplane/SdrGlut/releases/tag/v1.24
+https://github.com/righthalfplane/SdrGlut/releases/tag/v1.25
 
 SdrGlut is a simple software defined radio player. Using glut for drawing and glui for its dialogs makes it tiny compared to programs that use QT5 or wxWidgets. SdrGlut uses liquid-sdr and SoapySDR to preform the SDR calculations. The audio is handled by OpenAL and RtAudio.
 
 
-It can be programed to record any frequency in any mode at any time. Listen is an example of a program that receives the data. Listen can decode AM, FM, NBFM, USB, LSB and output the audio to the speakers or another program. SdrGlut now has digital filter design mode. It can do highpass, lowpass, bandpass and bandstop filters. Best of all - it generates a c++ program that implements and tests the filter - so there is no question about how to make it work. It adds Voltage bias for powered antennas and Direct Sample Mode for RTL devices. It adds a window that can use the transmit capable SDRs as a signal generator for testing AM, NBFM, USB, and LSB devices. It has a prebuild exe for macOS, a zipped folder for Windows and a zipped folder for Ubuntu 18.04 to unpack and run from
+SdrGlut has a new Voice Command Module. It can be programed to record any frequency in any mode at any time. Listen is an example of a program that receives the data. Listen can decode AM, FM, NBFM, USB, LSB and output the audio to the speakers or another program. SdrGlut now has digital filter design mode. It can do highpass, lowpass, bandpass and bandstop filters. Best of all - it generates a c++ program that implements and tests the filter - so there is no question about how to make it work. It adds Voltage bias for powered antennas and Direct Sample Mode for RTL devices. It adds a window that can use the transmit capable SDRs as a signal generator for testing AM, NBFM, USB, and LSB devices. It has a prebuild exe for macOS, a zipped folder for Windows and a zipped folder for Ubuntu 18.04 to unpack and run from
 
 ## Demo videos
 - [An Introduction to SdrGlut (A software defined radio)](https://youtu.be/JEXK-r6PvmA)
