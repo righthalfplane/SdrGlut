@@ -27,6 +27,7 @@ SdrGlut has a new Voice Command Module. It can be programed to record any freque
 
 ## Demo videos
 - [An Introduction to SdrGlut (A software defined radio)](https://youtu.be/JEXK-r6PvmA)
+- [SdrGlut (a Software Defined Radio) revisits CW on 40 meters](https://youtu.be/LFf3LfJNvAA)
 - [Software Defined Radios are Flaky](https://youtu.be/KaE-tjLuX40)
 - [SdrGlut shows real time TV using the SDRplay RSPduo](https://youtu.be/VrzVkWhv9kY)
 - [Installing Voice Recognition on the Raspberry Pi](https://youtu.be/ZcBeYBxeINY)
