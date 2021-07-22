@@ -86,6 +86,8 @@ struct playData4{
     //volatile int inDialog;
     double real[2*BLOCK_SIZE];
     double imag[2*BLOCK_SIZE];
+    double reals[2*BLOCK_SIZE];
+    double imags[2*BLOCK_SIZE];
     int FFTcount;
     int FFTfilter;
     int wShift;

@@ -656,24 +656,15 @@ int SdrFile::updateLine()
         return 1;
     }
     
-    real=play.real;
-    imag=play.imag;
-    
-    double average=0;
-    for(int k=0;k<play.FFTcount;++k){
-        average += sqrt(real[k]*real[k]+imag[k]*imag[k]);
-    }
-    average /= play.FFTcount;
-    
-    if(play.averageGlobal == 0)play.averageGlobal=average;
-    play.averageGlobal = 0.9*play.averageGlobal+0.1*average;
-    if(average < 0.1*play.averageGlobal){
-        //fprintf(stderr,"Drop out %g \n",average);
-        return 0;
-    }
-    // fprintf(stderr,"average %g averageGlobal %g\n",average,rx->averageGlobal);
-    
     int length=play.FFTcount;
+
+    for(int k=0;k<length;++k){
+        play.reals[k]=play.real[k];
+        play.imags[k]=play.imag[k];
+    }
+
+    real=play.reals;
+    imag=play.imags;
     
     doWindow(real,imag,length,play.FFTfilter);
     
