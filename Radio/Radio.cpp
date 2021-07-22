@@ -2382,12 +2382,7 @@ static void keys2(unsigned char key, int x, int y)
                 sdr->scanWait=0;
             }
         }else if(key == 'o'){
-            sdr->rx->output = !sdr->rx->output;
-            if(sdr->rx->output){
-                fprintf(stderr,"Device: '%s' Drop Print On\n",sdr->rx->driveName);
-            }else{
-                fprintf(stderr,"Device: '%s' Drop Print Off\n",sdr->rx->driveName);
-            }
+            ;
         }
     }
     
