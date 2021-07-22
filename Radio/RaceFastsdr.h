@@ -124,6 +124,8 @@ struct playData{
     ALCcontext *ctx;
     double real[2*32768*2];
     double imag[2*32768*2];
+    double reals[2*32768*2];
+    double imags[2*32768*2];
     int FFTcount;
     int FFTfilter;
     int wShift;

@@ -1677,6 +1677,7 @@ int rxBuffer(void *rxv)
     int ret = -1;
 	
     if(!rx)return 0;
+    
 
 	while(1)
 	{
@@ -1783,6 +1784,7 @@ int rxBuffer(void *rxv)
                 //printf("amin %g amax %g witch %d count %d\n",amin,amax,rx->witchRFBuffer,count);
                 if(ret != -1){
                     //double as=(double)rx->size/(double)rx->FFTcount;
+                    //double sum=0;
                     for(int k=0;k<rx->FFTcount;++k){
                         //int ks=k*as;
                         if(k < rx->size){
@@ -1794,7 +1796,14 @@ int rxBuffer(void *rxv)
                             rx->real[k]=0;
                             rx->imag[k]=0;
                         }
-                    }
+                        //sum += sqrt(rx->real[k]*rx->real[k]+rx->imag[k]*rx->imag[k]);
+                   }
+                    
+                    //sum /= (double)rx->FFTcount;
+
+                   //printf("b sum %g \n",sum);
+
+                   
                 }
              	++rx->witchRFBuffer;
 				//fprintf(stderr,"out rxBuffer rx->witch %d\n", rx->witch);
