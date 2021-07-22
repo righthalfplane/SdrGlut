@@ -1,12 +1,5 @@
 # SdrGlut
 
-If you are new to SdrGlut, please view the introduction video -
-- [An Introduction to SdrGlut (A software defined radio)](https://youtu.be/JEXK-r6PvmA)
-
-A users group is just starting - you can ask questions there -
-
-https://groups.google.com/g/sdrglut-users
-
 SdrGlut V1.25 Adds a Voice Command Module
 
 What is new ?
@@ -19,6 +12,13 @@ SdrGlut has improved the scroll wheel operation.
 
 
 https://github.com/righthalfplane/SdrGlut/releases/tag/v1.25
+
+If you are new to SdrGlut, please view the introduction video -
+- [An Introduction to SdrGlut (A software defined radio)](https://youtu.be/JEXK-r6PvmA)
+
+A users group is just starting - you can ask questions there -
+
+https://groups.google.com/g/sdrglut-users
 
 SdrGlut is a simple software defined radio player. Using glut for drawing and glui for its dialogs makes it tiny compared to programs that use QT5 or wxWidgets. SdrGlut uses liquid-sdr and SoapySDR to preform the SDR calculations. The audio is handled by OpenAL and RtAudio.
 
