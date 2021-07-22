@@ -1006,7 +1006,8 @@ static int getType(struct CommandInfo *p)
                p->n=n+1;
            }
            break;
-        }else if(p->command[n] == "narrowband"){
+        }else if(p->command[n] == "narrowband" || p->command[n] == "narrow"){
+            if(p->command[n+1] == "band")n=n+1;
             if(p->command[n+1] == "FM"){
                 ret=MODE_NBFM;
                 p->n=n+2;
@@ -1270,7 +1271,10 @@ PlayTag:
                     int type=getType(&p);
                     sta->decodemode=MODE_AM;
                     if(type >= 0)sta->decodemode=type;
-                    action="Set station info - "+sta->name+" - ";
+                    reset.frequency=sta->frequency;
+                    reset.decodemode=sta->decodemode;
+                    reset.reset=1;
+                   action="Set station info - "+sta->name+" - ";
 
                 }
             }

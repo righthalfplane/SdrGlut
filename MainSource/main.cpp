@@ -39,7 +39,7 @@ static void control_cb(int control);
 
 static void control_cb2(int control);
 
-char *ProgramVersion=(char *)"SdrGlut-910";
+char *ProgramVersion=(char *)"SdrGlut-911";
 
 extern "C" struct Scene *sceneRoot(void);
 
@@ -349,6 +349,40 @@ To Transfer the Frequency list to a Waterfall window for scanning.\n\
 Usage - When you hit the \"s\" key the Frequency information is written to the default Frequency file. \n\n\
 The third is a digital filter file - \"SdrGlut->misc->filters->filter-examples\".\n\
 The \"writefilter\" command, writes the filter out as a standalone program with testing.\n");
+    
+    WriteToHelpWindow((char *)"\n \
+                      The Voice Control\n\n");
+
+    WriteToHelpWindow((char *)"\
+            SdrGlut has a Voice Control Mode.\n\n\
+Right click on the waterfall and open the Voice Control Dialog.\n\
+The location points to speechcontrol.py file.\n\
+The \"Start Voice Conrol\" button starts the translation of voice to text.\n\
+The \"Stop Voice Conrol\" button stops the translation of voice to text.\n\
+The \"Close\" closes the Voice Control Dialog window\n\n\
+            SdrGlut the Voice Control Commands.\n\n");
+    WriteToHelpWindow((char *)"\
+            hey Sam, up - scan up in frequency for signals above squelch\n\
+            hey Sam, down - scan down in frequency for signals above squelch\n\
+            hey Sam, weather is 162.4 megahertz narrowband FM\n\
+            hey Sam, ABC is 600 kilohertz AM\n\
+            hey Sam, 760 kilohertz AM\n\
+            hey Sam, station is ABC - current frequency and mode applied to name ABC\n\
+            hey Sam, play ABC - tune to and play station ABC\n\
+            hey Sam, play weather - tune to and play station weather\n\
+            hey Sam, net is 7.199 megahertz lower sideband\n\
+            control is Barbara - set control name to Barbara\n\
+            hey Barbara, NBC is 101.5 megahertz FM\n\
+            hey Barbara, WWV is 10 megahertz narrowband am\n\
+            hey Sam, set squelch to -85 - set the auto scan squelch level\n\
+            hey Sam, set volume to 1 - set the volume to maximum\n\
+            hey Sam, set volume to 3/4 - set the volume to 3/4  maximum\n\
+            hey Sam, set volume to 2/3 - set the volume to 2/3 maximum\n\
+            hey Sam, set volume to 1/2 - set the volume to 1/2 maximum\n\
+            hey Sam, set volume to 1/3 - set the volume to 1/3 maximum\n\
+            hey Sam, set volume to 1/4 - set the volume to 1/4 maximum\n\
+            hey Sam, set volume to 1/16 - set the volume to 1/16 maximum\n\n");
+
     WriteToHelpTop();
     
     return 0;
