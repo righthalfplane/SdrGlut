@@ -297,6 +297,7 @@ int CLines::SetFrequency(struct Scene *scene,double f,double bw,int message)
     if(lines->sceneSource){
         lines->Frequency=f;
         lines->BandWidth=bw;
+        glutPostRedisplay();
     }
     return 0;
 }
