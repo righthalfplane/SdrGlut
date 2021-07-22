@@ -39,7 +39,7 @@ static void control_cb(int control);
 
 static void control_cb2(int control);
 
-char *ProgramVersion=(char *)"SdrGlut-914";
+char *ProgramVersion=(char *)"SdrGlut-915";
 
 extern "C" struct Scene *sceneRoot(void);
 
@@ -351,15 +351,16 @@ The third is a digital filter file - \"SdrGlut->misc->filters->filter-examples\"
 The \"writefilter\" command, writes the filter out as a standalone program with testing.\n");
     
     WriteToHelpWindow((char *)"\n \
-                      The Voice Control\n\n");
+                      The Voice Control Mode\n\n");
 
     WriteToHelpWindow((char *)"\
-            SdrGlut has a Voice Control Mode.\n\n\
-Right click on the waterfall and open the Voice Control Dialog.\n\
-The location points to speechcontrol.py file.\n\
+SpeechRecognition and pyaudio must be installed on the system for the Voice Control to work.\n\
+The translation of voice to text works best in a quiet environment.\n\
+Starting it up - right click on the waterfall and open the Voice Control Dialog.\n\
+The location points to speechcontrol.py, the python interface file.\n\
 The \"Start Voice Conrol\" button starts the translation of voice to text.\n\
 The \"Stop Voice Conrol\" button stops the translation of voice to text.\n\
-The \"Close\" closes the Voice Control Dialog window\n\n\
+The \"Close\" closes the Voice Control Dialog window.\n\n\
             SdrGlut the Voice Control Commands.\n\n");
     WriteToHelpWindow((char *)"\
             hey Sam, up - scan up in frequency for signals above squelch\n\

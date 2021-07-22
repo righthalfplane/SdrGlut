@@ -755,22 +755,7 @@ int Radio::updateLine()
 
     real=rx->reals;
     imag=rx->imags;
-/*
-    double average=0;
-    for(int k=0;k<length;++k){
-        average += sqrt(real[k]*real[k]+imag[k]*imag[k]);
-    }
-    average /= length;
     
-    if(rx->averageGlobal == 0)rx->drops=0;
-    if(rx->averageGlobal == 0)rx->averageGlobal=average;
-    rx->averageGlobal = 0.9*rx->averageGlobal+0.1*average;
-    if(average < 0.5*rx->averageGlobal){
-        ++rx->drops;
-        if(rx->output)printf("Device: '%s' drops: %d Drop out average: %g averageGlobal: %g Buffer: %d\n",rx->driveName,rx->drops,average,rx->averageGlobal,rx->witchRFBuffer);
-        return 0;
-    }
-*/
     doWindow(real,imag,length,rx->FFTfilter);
 
     for(int n=0;n<length;++n){
