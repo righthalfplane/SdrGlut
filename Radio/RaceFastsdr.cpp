@@ -3,6 +3,7 @@
 #include "Radio.h"
 #include "RaceFastsdr.h"
 #include "Utilities.h"
+#include <thread>
 /*
 g++ -O2 -Wno-deprecated -o raceFMCsdr raceFMCsdr.cpp mThread.cpp agc.cpp -pthread -lsndfile -framework OpenAL -lSoapySDR -lliquid -Wall
 
@@ -1433,9 +1434,10 @@ static int pushBuffa(int nbuffer,struct playData *rx)
     
 	rx->mutexa.lock();
     rx->bufftopa=0;
-    
-	//fprintf(stderr,"pushBuffa in %d\n",rx->bufftopa);
-	
+/*
+	printf("pushBuffa nbuffer %d in %d ",nbuffer,rx->bufftopa);
+    cout<<std::this_thread::get_id()<<endl;
+*/
     if(rx->bufftopa >= NUM_ABUFF5){
         rx->bufftopa=NUM_ABUFF5;
         int small2,ks;
