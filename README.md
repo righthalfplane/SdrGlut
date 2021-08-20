@@ -27,6 +27,7 @@ SdrGlut has a new Voice Command Module. It can be programed to record any freque
 
 ## Demo videos
 - [An Introduction to SdrGlut (A software defined radio)](https://youtu.be/JEXK-r6PvmA)
+- [Capturing SDR I/Q streams with SdrGlut.](https://youtu.be/N_384vv7IWY)
 - [The Icom IC-R8600 being controlled by SdrGlut.](https://youtu.be/PEzeFCsx7H8)
 - [SdrGlut (a Sofware Defined Radio) - Testing the Voice Control Module](https://youtu.be/pf-idEg8Hd8)
 - [SdrGlut (a Software Defined Radio) revisits CW on 40 meters](https://youtu.be/LFf3LfJNvAA)
