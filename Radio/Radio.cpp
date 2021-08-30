@@ -81,7 +81,7 @@ int DrawBox(uRect *box,int offset);
 
 static GLUI *glui;
 
-int doRadioOpenRA(void);
+int doRadioOpenRA(std::string argStr);
 
 static int doRadioOpen2(SoapySDR::Kwargs deviceArgs);
 
@@ -565,14 +565,17 @@ static int doRadioOpen2(SoapySDR::Kwargs deviceArgs)
    return 1;
 }
 
-int doRadioOpenRA(void)
+int doRadioOpenRA(std::string argStr)
 {
     
     size_t length;
-
-    std::string argStr;
     
-    results = SoapySDR::Device::enumerate();
+/*
+    std::string argStr="driver=redpitaya";
+    argStr="";
+ */
+    
+    results = SoapySDR::Device::enumerate(argStr);
     
     length=results.size();
     
@@ -615,6 +618,9 @@ int doRadioOpenRA(void)
         for (SoapySDR::Kwargs::const_iterator it = deviceArgs.begin(); it != deviceArgs.end(); ++it) {
             printf("%s=%s\n",it->first.c_str(),it->second.c_str());
             if (it->first == "driver") {
+                if(it->second == "redpitaya"){
+                    new GLUI_Button(obj_panel, (char *)it->second.c_str(), (int)(2+k), control_cb);
+                }
                 //dev->setDriver(it->second);
                 if(it->second == "audio")break;
             } else if (it->first == "device") {
@@ -762,7 +768,7 @@ int Radio::updateLine()
         real[n] *= pow(-1.0,n);
         imag[n] *= pow(-1.0,n);
     }
-    
+
     doFFT2(real,imag,length,1);
     
     amin =  0.0;

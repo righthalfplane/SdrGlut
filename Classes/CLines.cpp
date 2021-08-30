@@ -223,7 +223,7 @@ static void getMousel(int button, int state, int x, int y)
 
 void CLines::getMouse(int button, int state, int x, int y)
 {
-    
+
     if(button == 3){
         if(sceneSource){
             if(wShift == 0){
@@ -234,8 +234,8 @@ void CLines::getMouse(int button, int state, int x, int y)
             }
             SetFrequencyGlobal(sceneSource,Frequency,BandWidth,M_FREQUENCY);
         }
-        
         if(state == GLUT_DOWN)return;
+        return;
     }else if(button == 4){
         if(sceneSource){
             if(wShift == 0){
@@ -247,6 +247,7 @@ void CLines::getMouse(int button, int state, int x, int y)
             SetFrequencyGlobal(sceneSource,Frequency,BandWidth,M_FREQUENCY);
         }
         if(state == GLUT_DOWN)return;
+        return;
     }
 
     

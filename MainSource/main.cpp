@@ -39,7 +39,7 @@ static void control_cb(int control);
 
 static void control_cb2(int control);
 
-char *ProgramVersion=(char *)"SdrGlut-919";
+char *ProgramVersion=(char *)"SdrGlut-920";
 
 extern "C" struct Scene *sceneRoot(void);
 
@@ -57,7 +57,7 @@ int WindowToDestroy=0;
 
 extern "C" int glutMain(int argc, char *argv[]);
 
-int doRadioOpenRA(void);
+int doRadioOpenRA(std::string argStr);
 
 static int argcs;
 
@@ -72,6 +72,9 @@ static int doHelp1();
 int WriteToHelpWindow(char *message);
 
 int WriteToHelpTop();
+
+static GLUI_EditText *edittext1;
+static char text1[255];
 
 int mainClean(void)
 {
@@ -215,7 +218,7 @@ int dialogStart(void)
 			
     new GLUI_Button(glui, "Radio", 8, control_cb);
     
-    
+
     new GLUI_Button(glui, "Files", 5, control_cb);
     
     new GLUI_Button(glui, "Close", 3, control_cb);
@@ -225,7 +228,14 @@ int dialogStart(void)
     new GLUI_Button(glui, "Help", 2, control_cb);
 
 	new GLUI_Button(glui, "Quit", 4, control_cb);
-	
+
+    GLUI_Panel *obj_panel =  glui->add_panel( "Device String" );
+    
+    edittext1 =
+    glui->add_edittext_to_panel( obj_panel, "", GLUI_EDITTEXT_TEXT,text1);
+    edittext1->w=200;
+
+    
 	glui->set_main_gfx_window( glutGetWindow() );
 	
 	return 0;
@@ -245,7 +255,10 @@ static void control_cb(int control)
         dialogFunctionPtr=NULL;
         dialogFileOpen((struct Scene *)NULL);
     }else if(control == 8){
-        doRadioOpenRA();
+        std::string argStr;
+        sscanf(edittext1->get_text(),"%s",text1);
+        argStr=text1;
+        doRadioOpenRA(argStr);
 //    }else if(control == 9){
 //       int dialogTime(void);
 //        dialogTime();
