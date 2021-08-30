@@ -39,7 +39,7 @@ static void control_cb(int control);
 
 static void control_cb2(int control);
 
-char *ProgramVersion=(char *)"SdrGlut-920";
+char *ProgramVersion=(char *)"SdrGlut-921";
 
 extern "C" struct Scene *sceneRoot(void);
 
@@ -234,6 +234,7 @@ int dialogStart(void)
     edittext1 =
     glui->add_edittext_to_panel( obj_panel, "", GLUI_EDITTEXT_TEXT,text1);
     edittext1->w=200;
+    edittext1->text_x_offset=5;
 
     
 	glui->set_main_gfx_window( glutGetWindow() );
