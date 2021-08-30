@@ -1746,8 +1746,7 @@ int Radio::OpenWindows(struct Scene *scene)
     }
 
     int menu4=glutCreateMenu(doAudio);
-    glutAddMenuEntry("Start Audio Recording", START_AUDiO);
-    glutAddMenuEntry("Stop  Audio Recording", STOP_AUDiO);
+    glutAddMenuEntry("Audio Recording", START_AUDiO);
     glutAddMenuEntry("IQ Recording", START_IQ);
     
     int menu5=glutCreateMenu(doFFTMenu);
@@ -2247,11 +2246,7 @@ void doAudio(int item)
            // dialogSaveC(sdr->scene, AudioSave,0,NULL);
             sdr->dialogTime();
             break;
-        case STOP_AUDiO:
-            sdr->rx->pSetAudio(sdr->rx,NULL,START_AUDiO);
-            break;
         case START_IQ:
-            
             RecordIQ();
             break;
     }
