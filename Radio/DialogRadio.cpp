@@ -319,7 +319,7 @@ int Radio::setDialogFrequency(double frequency)
     
     if(!dd.edittext1 || !inDialog)return 0;
     
-    msprintf(value,sizeof(value),"%g",frequency);
+    msprintf(value,sizeof(value),"%g",frequency/1e6);
     
     dd.edittext1->set_text(value);
     
@@ -331,7 +331,7 @@ int Radio::setDialogFc(double frequency)
     
     if(!dd.edittext2 || !inDialog)return 0;
     
-    msprintf(value,sizeof(value),"%g",frequency);
+    msprintf(value,sizeof(value),"%g",frequency/1e6);
     
     dd.edittext2->set_text(value);
     
@@ -351,8 +351,8 @@ int Radio::dialogRadio(struct Scene *scene)
 	
 	dd.glui = GLUI_Master.create_glui(rx->driveName);
 			
-	msprintf(dd.text1,sizeof(dd.text1),"%g",rx->f);
-    msprintf(dd.text2,sizeof(dd.text2),"%g",rx->fc);
+	msprintf(dd.text1,sizeof(dd.text1),"%g",(rx->f/1.0e6));
+    msprintf(dd.text2,sizeof(dd.text2),"%g",(rx->fc/1.0e6));
     msprintf(dd.text22,sizeof(dd.text22),"%g",rx->foffset);
     msprintf(dd.text3,sizeof(dd.text3),"%g",rx->gain);
     msprintf(dd.text4,sizeof(dd.text4),"%g",lineAlpha);
@@ -367,11 +367,11 @@ int Radio::dialogRadio(struct Scene *scene)
     GLUI_Panel *obj_panel =  dd.glui->add_panel( "Parameters" );
 
     dd.edittext1 =
-	dd.glui->add_edittext_to_panel( obj_panel, "Frequency:", GLUI_EDITTEXT_TEXT, dd.text1 );
+	dd.glui->add_edittext_to_panel( obj_panel, "Frequency(MHZ):", GLUI_EDITTEXT_TEXT, dd.text1 );
 	dd.edittext1->w=200;
 	
     dd.edittext2 =
-    dd.glui->add_edittext_to_panel( obj_panel, "Center Frequency:", GLUI_EDITTEXT_TEXT, dd.text2 );
+    dd.glui->add_edittext_to_panel( obj_panel, "Center Frequency(MHZ):", GLUI_EDITTEXT_TEXT, dd.text2 );
     dd.edittext2->w=200;
     
     dd.edittext22 =
@@ -565,7 +565,8 @@ static void control_cb(int control)
     sscanf(s->dd.edittext8->get_text(),"%lg", &dmax);
     sscanf(s->dd.edittext20->get_text(),"%lg", &cutOFF);
     sscanf(s->dd.edittext21->get_text(),"%lg", &pauseTimeDelta);
-
+    f *= 1e6;
+    fc *= 1e6;
     
     if(control == 2222){
         if(s->rx->cutOFFSearch == 0){

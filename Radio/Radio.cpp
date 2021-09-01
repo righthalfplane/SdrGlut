@@ -344,7 +344,7 @@ int Radio::doSoundRecord()
                         if(rx->audioOutput)fclose(rx->audioOutput);
                         s->state[k]=0;
                         char buff1[256],buff2[256];
-                        sprintf(buff1,"%lf",s->frequency[kk]/1.0e6);
+                        sprintf(buff1,"%lf",s->frequency[kk]);
                         sprintf(buff2,"%s",s->mode[kk]);
                         sendMessageGlobal(&buff1[0],&buff2[0],M_SEND);
                         fprintf(stderr,"Open 2 Mode %s File %s\n",s->mode[kk],s->FilePath[kk]);
@@ -369,7 +369,7 @@ int Radio::doSoundRecord()
             if(rx->audioOutput)fclose(rx->audioOutput);
             fprintf(stderr,"Open 1 Mode %s File %s\n",s->mode[k],s->FilePath[k]);
             char buff1[256],buff2[256];
-            sprintf(buff1,"%lf",s->frequency[k]/1.0e6);
+            sprintf(buff1,"%lf",s->frequency[k]);
             sprintf(buff2,"%s",s->mode[k]);
             sendMessageGlobal(&buff1[0],&buff2[0],M_SEND);
             rx->audioOutput=fopen(s->FilePath[k],"wb");
@@ -480,7 +480,7 @@ Radio::Radio(struct Scene *scene,SoapySDR::Kwargs deviceArgs): CWindow(scene)
     sprintf(sdevice,"%d",device);
     
     {
-        char *list[]={NULL,(char *)"-fc",sfrequency ,(char *)"-fm" ,(char *)"-gain" ,(char *)"0.25",(char *)"-device",sdevice,
+        char *list[]={NULL,(char *)"-fc",sfrequency,(char *)"-fm" ,(char *)"-gain" ,(char *)"0.25",(char *)"-device",sdevice,
                       (char *)"-samplerate",ssamplerate};
         
         //char *list[]={NULL,"-fc","27.1e6" ,"-f" ,"27.3235e6" ,"-lsb" ,"-gain" ,"1","-device",sdevice};
@@ -596,14 +596,14 @@ int doRadioOpenRA(std::string argStr)
     
     glui = GLUI_Master.create_glui("Select Device");
     
-    msprintf(sfrequency,sizeof(sfrequency),"%g",100.0e6);
+    msprintf(sfrequency,sizeof(sfrequency),"%g",101.5);
     
     msprintf(ssamplerate,sizeof(ssamplerate),"%.0f",2000000.0);
     
     GLUI_Panel *obj_panel =  glui->add_panel( "Parameters" );
 
     edittext1 =
-    glui->add_edittext_to_panel( obj_panel,  "Frequency:", GLUI_EDITTEXT_TEXT, sfrequency );
+    glui->add_edittext_to_panel( obj_panel,  "Frequency(MHZ):", GLUI_EDITTEXT_TEXT, sfrequency );
     edittext1->w=200;
     
     edittext5 =

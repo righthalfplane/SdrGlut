@@ -269,14 +269,14 @@ int Radio::dialogTime()
     
     if(rs.frequency[0] == 0){
         char *Mode_Names[] = {(char *)"FM",(char *)"NBFM",(char *)"AM",(char *)"NAM",(char *)"USB",(char *)"LSB",(char *)"CW"};
-        rs.frequency[0]=rx->f;
+        rs.frequency[0]=rx->f/1e6;
         mstrncpy(rs.mode[0],Mode_Names[rx->decodemode],sizeof(rs.mode[0]));
     }
     
-    msprintf(freq[0],sizeof(freq[0]),"%ld",(long)rs.frequency[0]);
+    msprintf(freq[0],sizeof(freq[0]),"%g",rs.frequency[0]);
     
     frequency[0] =
-    glui->add_edittext_to_panel(panel3, "Frequency:", GLUI_EDITTEXT_TEXT, freq[0]);
+    glui->add_edittext_to_panel(panel3, "Frequency(MHZ):", GLUI_EDITTEXT_TEXT, freq[0]);
     frequency[0]->w=200;
     
     mode[0] =
@@ -295,10 +295,10 @@ int Radio::dialogTime()
     
     new GLUI_Button(panel3, "Set Record File", 101, control_cb);
     
-    msprintf(freq[1],sizeof(freq[0]),"%ld",(long)rs.frequency[1]);
+    msprintf(freq[1],sizeof(freq[0]),"%g",rs.frequency[1]);
     
     frequency[1] =
-    glui->add_edittext_to_panel(panel3, "Frequency:", GLUI_EDITTEXT_TEXT, freq[1]);
+    glui->add_edittext_to_panel(panel3, "Frequency(MHZ):", GLUI_EDITTEXT_TEXT, freq[1]);
     frequency[1]->w=200;
     
     mode[1] =
@@ -317,10 +317,10 @@ int Radio::dialogTime()
     
     new GLUI_Button(panel3, "Set Record File", 102, control_cb);
     
-    msprintf(freq[2],sizeof(freq[0]),"%ld",(long)rs.frequency[2]);
+    msprintf(freq[2],sizeof(freq[0]),"%g",rs.frequency[2]);
     
     frequency[2] =
-    glui->add_edittext_to_panel(panel3, "Frequency:", GLUI_EDITTEXT_TEXT, freq[2]);
+    glui->add_edittext_to_panel(panel3, "Frequency(MHZ):", GLUI_EDITTEXT_TEXT, freq[2]);
     frequency[2]->w=200;
     
     mode[2] =
@@ -335,6 +335,8 @@ int Radio::dialogTime()
     
     new GLUI_Button(glui, "Start Recording", 4, control_cb);
     
+    new GLUI_Button(glui, "Stop Recording", 5, control_cb);
+
     new GLUI_Button(glui, "Close", 2, control_cb);
     
     // glui->set_main_gfx_window( glutGetWindow() );
@@ -469,7 +471,11 @@ static void control_cb(int control)
         printf("tm_zone %s\n",dvr.tm_zone);
         
         */
-        
+    }else if(control == 5){
+        getValues();
+        sdr->rs.stop[0]=0;
+        sdr->rs.stop[1]=0;
+        sdr->rs.stop[3]=0;
     }
     else if(control == 2)
     {

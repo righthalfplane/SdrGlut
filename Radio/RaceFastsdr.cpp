@@ -120,7 +120,7 @@ int RadioStart(int argc, char * argv [],struct playData *rx)
 	    }else if(!strcmp(argv[n],"-gain")){
 	         rx->gain=atof(argv[++n]);
 	    }else if(!strcmp(argv[n],"-fc")){
-	         rx->fc=atof(argv[++n]);
+	         rx->fc=atof(argv[++n])*1e6;
              rx->f=rx->fc;
         }else if(!strcmp(argv[n],"-f")){
             rx->f=atof(argv[++n]);
