@@ -3,12 +3,6 @@
 SdrGlut V1.26 Adds the Device String to the start up Window.
 
 What is new ?
-SdrGlut
-sdsdfds
-sdsdfsdf
-
-
-
 
 SdrGlut has getter scroll control.
 
