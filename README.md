@@ -3,7 +3,6 @@
 SdrGlut V1.26 Adds the Device String to the start up Window.
 
 What is new ?
-
 ```
 SdrGlut has getter scroll control.
 SdrGlut has converted frequencies to MHZ.
