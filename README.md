@@ -5,10 +5,15 @@ SdrGlut V1.26 Adds the Device String to the start up Window.
 What is new ?
 
 SdrGlut has getter scroll control.
+
 SdrGlut has converted frequencies to MHZ.
+
 SdrGult has added a stop button to the Audio Recording window.
+
 SdrGlut has added the Device String to the start up window.
+
 SdrGlut has improved the scroll wheel operation.
+
 
 
 https://github.com/righthalfplane/SdrGlut/releases/tag/v1.26
