@@ -181,7 +181,7 @@ static void control_cb(int control)
         }
     }
 }
-void IQSave(struct Scene *scene,char *name)
+static  void IQSave(struct Scene *scene,char *name)
 {
     
     if(GetWorking(scene->FilePathIQ,sizeof(scene->FilePathIQ))){
