@@ -1339,12 +1339,12 @@ static int doFilter(struct playData *rx,float *wBuff,float *aBuff,struct Filters
  	
  	//fprintf(stderr,"doFilter witch %d ip %d start \n",witch,ip);
 	
-    float *buf=rx->buff[witch];
+    float *buf3=rx->buff[witch];
     float *buf2=wBuff;
     
-    doMix(rx,buf,buf2,f);
+    doMix(rx,buf3,buf2,f);
     
-	buf=aBuff;
+	float *buf=aBuff;
 		
     unsigned int num;
     unsigned int num2;
@@ -1352,8 +1352,56 @@ static int doFilter(struct playData *rx,float *wBuff,float *aBuff,struct Filters
     num=0;
     num2=0;
     
-    msresamp_crcf_execute(f->iqSampler, (liquid_float_complex *)buf2, rx->size, (liquid_float_complex *)buf, &num);  // decimate
-            
+     msresamp_crcf_execute(f->iqSampler, (liquid_float_complex *)buf2, rx->size, (liquid_float_complex *)buf, &num);  // decimate
+ /*
+    unsigned int ny=0;
+    unsigned int nw;
+    for (int i=0; i<rx->size; i++) {
+        msresamp_crcf_execute(f->iqSampler, ((liquid_float_complex *)buf2)+i, 1, ((liquid_float_complex *)buf)+ny, &nw);
+        ny += nw;
+    }
+    num=ny;
+*/
+    
+/*
+    double scale=pow(10.0,rx->scaleFactor/20.0);
+    
+    double sint,cost;
+    float rr[2];
+ 
+    unsigned int ny=0;
+    unsigned int nw;
+
+    for (int k = 0 ; k < rx->size ; k++){
+        float r = (float)(scale*buf3[k * 2]);
+        float i = (float)(scale*buf3[k * 2 + 1]);
+        if(rx->dt > 0){
+            rr[0] = (float)(r*rx->coso - i*rx->sino);
+            rr[1] = (float)(i*rx->coso + r*rx->sino);
+            sint=rx->sino*rx->cosdt+rx->coso*rx->sindt;
+            cost=rx->coso*rx->cosdt-rx->sino*rx->sindt;
+            rx->coso=cost;
+            rx->sino=sint;
+        }else{
+            rr[0] = r;
+            rr[1] = i;
+        }
+        msresamp_crcf_execute(f->iqSampler, (liquid_float_complex *)rr, 1, ((liquid_float_complex *)buf)+ny, &nw);
+        ny += nw;
+
+    }
+    num=ny;
+
+    double r=sqrt(rx->coso*rx->coso+rx->sino*rx->sino);
+    rx->coso /= r;
+    rx->sino /= r;
+
+ */
+    
+    
+    
+    
+    
     if(rx->decodemode < MODE_AM){
 		freqdem_demodulate_block(f->demod, (liquid_float_complex *)buf, (int)num, (float *)buf2);
         msresamp_rrrf_execute(f->iqSampler2, (float *)buf2, num, (float *)buf, &num2);  // interpolate

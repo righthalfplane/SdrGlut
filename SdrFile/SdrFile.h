@@ -237,6 +237,8 @@ public:
     int resetDemod();
     
     int updateLine(void);
+    
+    int fftIndex(double frequency);
 
     int setBuffers(struct playData4 *play);
     

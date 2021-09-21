@@ -398,6 +398,8 @@ public:
     int setDialogSampleRate(double power);
     
     int updateLine(void);
+    
+    int welch(double *real,double *imag,int *length);
         
     unsigned char start;
 

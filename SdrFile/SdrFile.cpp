@@ -641,6 +641,13 @@ SdrFile::~SdrFile()
     }
 
 }
+int SdrFile::fftIndex(double frequency)
+{
+    int index=(int)(0.5+play.FFTcount*((frequency - play.fc)+0.5*play.samplerate)/play.samplerate);
+    if(index >= 0 && index < play.FFTcount-1)return index;
+    return -1;
+}
+
 int SdrFile::updateLine()
 {
     
@@ -667,7 +674,7 @@ int SdrFile::updateLine()
     imag=play.imags;
     
     doWindow(real,imag,length,play.FFTfilter);
-    
+
     for(int n=0;n<length;++n){
         real[n] *= pow(-1.0,n);
         imag[n] *= pow(-1.0,n);
@@ -778,6 +785,11 @@ int SdrFile::updateLine()
     
     if(water.nline >= water.ysize)water.nline=0;
     
+    long n1=fftIndex(play.f-0.5*play.bw);
+    if(n1 > nf-5)n1=nf-5;
+    long n2=fftIndex(play.f+0.5*play.bw);
+    if(n2 < nf+5)n2=nf+5;
+
     double meterMax=lreal[nf];
     int nmin,nmax;
     nmin=length-1;
@@ -785,7 +797,7 @@ int SdrFile::updateLine()
     for(int n=0;n<length;++n){
         if(range[n] <= rmin)nmin=n;
         if(range[n] <= rmax)nmax=n;
-        if(n > nf-5 && n < nf+5){
+        if(n > n1 && n < n2){
             if(lreal[n] > meterMax)meterMax=lreal[n];
         }
     }

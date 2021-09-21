@@ -733,6 +733,57 @@ Radio::~Radio()
 //    fprintf(stderr,"~Radio() end\n");
 
 }
+int Radio::welch(double *real,double *imag,int *lengthi)
+{
+
+    int length=*lengthi;
+//#define WELCH
+#ifdef WELCH
+    double *rsum=range3;
+    double *isum=magnitude3;
+    for(int n=0;n<length;++n){
+        rsum[n]=0;
+        isum[n]=0;
+    }
+    int ncut=4;
+    
+    length=length/ncut;
+    
+    for(int k=0;k<ncut*2-1;++k){
+        doWindow(real+k*length/2,imag+k*length/2,length,rx->FFTfilter);
+        
+        for(int n=0;n<length;++n){
+            real[n+k*length/2] *= pow(-1.0,n);
+            imag[n+k*length/2] *= pow(-1.0,n);
+        }
+        
+        doFFT2(real+k*length/2,imag+k*length/2,length,1);
+
+        for(int n=0;n<length;++n){
+            rsum[n]+=real[n+k*length/2];
+            isum[n]+=imag[n+k*length/2];
+        }
+    }
+    
+    for(int n=0;n<length;++n){
+        real[n]=rsum[n]/(double)(2*ncut-1);
+        imag[n]=isum[n]/(double)(2*ncut-1);
+    }
+
+    *lengthi=length;
+    
+#else
+    doWindow(real,imag,length,rx->FFTfilter);
+    
+    for(int n=0;n<length;++n){
+        real[n] *= pow(-1.0,n);
+        imag[n] *= pow(-1.0,n);
+    }
+    
+    doFFT2(real,imag,length,1);
+#endif
+    return 0;
+}
 int Radio::updateLine()
 {
     
@@ -762,14 +813,7 @@ int Radio::updateLine()
     real=rx->reals;
     imag=rx->imags;
     
-    doWindow(real,imag,length,rx->FFTfilter);
-
-    for(int n=0;n<length;++n){
-        real[n] *= pow(-1.0,n);
-        imag[n] *= pow(-1.0,n);
-    }
-
-    doFFT2(real,imag,length,1);
+    welch(real,imag,&length);
     
     amin =  0.0;
     int nn=0;
@@ -942,6 +986,11 @@ FoundTime:
     
     // fprintf(stderr,"water length %ld\n",length);
     
+    long n1=fftIndex(rx->f-0.5*rx->bw);
+    if(n1 > nf-5)n1=nf-5;
+    long n2=fftIndex(rx->f+0.5*rx->bw);
+    if(n2 < nf+5)n2=nf+5;
+
     double meterMax=magnitude2[nf];
     int nmin,nmax;
     nmin=length-1;
@@ -949,7 +998,7 @@ FoundTime:
     for(int n=0;n<length;++n){
         if(range[n] <= rmin)nmin=n;
         if(range[n] <= rmax)nmax=n;
-        if(n > nf-5 && n < nf+5){
+        if(n >= n1 && n <= n2){
             if(magnitude2[n] > meterMax)meterMax=magnitude2[n];
         }
     }
@@ -2885,15 +2934,13 @@ int doWindow(double *x,double *y,long length,int type)
             }
             break;
     }
-                                 
+    
     for(i=0; i<length; i++){
         double amp;
         amp=w[i];
         x[i]=amp*x[i];
         y[i]=amp*y[i];
     }
-    
-    
     
     return 0;
     
