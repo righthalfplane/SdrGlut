@@ -986,10 +986,11 @@ FoundTime:
     
     // fprintf(stderr,"water length %ld\n",length);
     
+
     long n1=fftIndex(rx->f-0.5*rx->bw);
-    if(n1 > nf-5)n1=nf-5;
+    if(n1 < 0)n1=nf-5;
     long n2=fftIndex(rx->f+0.5*rx->bw);
-    if(n2 < nf+5)n2=nf+5;
+    if(n2 < 0)n2=nf+5;
 
     double meterMax=magnitude2[nf];
     int nmin,nmax;

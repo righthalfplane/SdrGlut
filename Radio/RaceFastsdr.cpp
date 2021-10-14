@@ -1311,9 +1311,9 @@ static int setFilters(struct playData *rx,struct Filters *f)
     
     //msresamp_crcf_print(f->iqSampler);
     
-    //rx->lowpass = iirfilt_crcf_create_lowpass(6,0.04);
+    f->lowpass = iirfilt_crcf_create_lowpass(6,0.04);
     //f->lowpass = iirfilt_crcf_create_lowpass(6,0.0625); // +- 3000 HZ
-    f->lowpass = iirfilt_crcf_create_lowpass(6,0.104f);    // +- 5000 HZ
+    //f->lowpass = iirfilt_crcf_create_lowpass(6,0.104f);    // +- 5000 HZ
     
     
     f->dcFilter = iirfilt_crcf_create_dc_blocker(0.0005f);
@@ -1351,8 +1351,9 @@ static int doFilter(struct playData *rx,float *wBuff,float *aBuff,struct Filters
     
     num=0;
     num2=0;
-    
+
      msresamp_crcf_execute(f->iqSampler, (liquid_float_complex *)buf2, rx->size, (liquid_float_complex *)buf, &num);  // decimate
+
  /*
     unsigned int ny=0;
     unsigned int nw;
@@ -1396,9 +1397,7 @@ static int doFilter(struct playData *rx,float *wBuff,float *aBuff,struct Filters
     rx->coso /= r;
     rx->sino /= r;
 
- */
-    
-    
+*/
     
     
     
@@ -1423,6 +1422,8 @@ static int doFilter(struct playData *rx,float *wBuff,float *aBuff,struct Filters
 	//iirfilt_crcf_execute_block(f->dcFilter, (liquid_float_complex *)buf, num, (liquid_float_complex *)buf);
 	
 	//iirfilt_crcf_execute_block(f->lowpass, (liquid_float_complex *)buf, num2, (liquid_float_complex *)buf);
+    
+    //printf("num2 %ld\n",(long)num2);
 
 	//fprintf(stderr,"doFilter witch %d end num %d Ratio %f size %d num2 %d \n",witch,num,rx->Ratio,rx->size,num2);
     

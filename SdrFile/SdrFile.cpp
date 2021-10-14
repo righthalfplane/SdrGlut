@@ -786,9 +786,9 @@ int SdrFile::updateLine()
     if(water.nline >= water.ysize)water.nline=0;
     
     long n1=fftIndex(play.f-0.5*play.bw);
-    if(n1 > nf-5)n1=nf-5;
+    if(n1 < 0)n1=nf-5;
     long n2=fftIndex(play.f+0.5*play.bw);
-    if(n2 < nf+5)n2=nf+5;
+    if(n2 < 0)n2=nf+5;
 
     double meterMax=lreal[nf];
     int nmin,nmax;

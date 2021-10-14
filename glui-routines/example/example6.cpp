@@ -15,7 +15,7 @@
 #include <GL/glui.h>
 
 /** These are the live variables passed into GLUI ***/
-extern int main_window;
+int main_window;
 int num_display  = 0;
 int num_format  = 0;
 int enable_textbox = 0;
@@ -276,6 +276,7 @@ int main(int argc, char* argv[])
 
   GLUI *edit = GLUI_Master.create_glui("Help on GLUI Widgets", 0);
   main_window = edit->get_glut_window_id();
+  fprintf(stderr,"main_window %d\n",main_window);
   GLUI_Panel *ep = new GLUI_Panel(edit,"",true);
   new GLUI_StaticText(ep,"Widget Information:");
   hah = new GLUI_List(ep,true,1,control_cb);
@@ -331,6 +332,8 @@ int main(int argc, char* argv[])
  
   edit->set_main_gfx_window(main_window); 
   tree->set_main_gfx_window(main_window); 
+  
+  fprintf(stderr,"Start Main Loop\n");
 
   glutMainLoop();
   return 0;

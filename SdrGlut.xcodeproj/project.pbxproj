@@ -62,6 +62,7 @@
 		469215B023EE7ADD009B2C34 /* librtaudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 469215AF23EE7ADD009B2C34 /* librtaudio.a */; };
 		4692982324CCBACF00AF1BB8 /* WriteToWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4692982224CCBACF00AF1BB8 /* WriteToWindow.cpp */; };
 		469445EF2436E12500F049C8 /* WriteToGLUIWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 469445EE2436E12500F049C8 /* WriteToGLUIWindow.cpp */; };
+		4694D62E271877E900EFD25E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4694D62D271877E900EFD25E /* main.cpp */; };
 		46963ED323D789A30059B4AA /* printInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46963ED223D789A30059B4AA /* printInfo.cpp */; };
 		46A5B3D6246D9F770071072C /* Poly.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46A5B3D4246D9F760071072C /* Poly.cpp */; };
 		46B4EB1B2212570900041F98 /* cMalloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 46B4EB192212570900041F98 /* cMalloc.c */; };
@@ -83,7 +84,6 @@
 		46CE01D92212669200140F6C /* GridPlot.c in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01D72212669200140F6C /* GridPlot.c */; };
 		46CE01DF22126AD100140F6C /* BackgroundQ.c in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01DD22126AD100140F6C /* BackgroundQ.c */; };
 		46DA4763248463CE0013FD0D /* send.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46DA4762248463CE0013FD0D /* send.cpp */; };
-		46E13AD11C2C48AF007FF424 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46E13AD01C2C48AF007FF424 /* main.cpp */; };
 		46E216E923EE4300002C059A /* Transmit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46E216E723EE4300002C059A /* Transmit.cpp */; };
 /* End PBXBuildFile section */
 
@@ -179,6 +179,7 @@
 		469215AF23EE7ADD009B2C34 /* librtaudio.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = librtaudio.a; sourceTree = "<group>"; };
 		4692982224CCBACF00AF1BB8 /* WriteToWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WriteToWindow.cpp; sourceTree = "<group>"; };
 		469445EE2436E12500F049C8 /* WriteToGLUIWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WriteToGLUIWindow.cpp; path = MainSource/WriteToGLUIWindow.cpp; sourceTree = "<group>"; };
+		4694D62D271877E900EFD25E /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = MainSource/main.cpp; sourceTree = "<group>"; };
 		46963ED223D789A30059B4AA /* printInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = printInfo.cpp; path = MainSource/printInfo.cpp; sourceTree = "<group>"; };
 		46A5B3D4246D9F760071072C /* Poly.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Poly.cpp; path = Digital/Poly.cpp; sourceTree = SOURCE_ROOT; };
 		46A5B3D5246D9F770071072C /* Poly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Poly.h; path = Digital/Poly.h; sourceTree = SOURCE_ROOT; };
@@ -219,7 +220,6 @@
 		46CE01DE22126AD100140F6C /* BackgroundQ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BackgroundQ.h; path = MainSource/BackgroundQ.h; sourceTree = "<group>"; };
 		46DA4761248461EA0013FD0D /* SocketDefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketDefs.h; sourceTree = "<group>"; };
 		46DA4762248463CE0013FD0D /* send.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = send.cpp; sourceTree = "<group>"; };
-		46E13AD01C2C48AF007FF424 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = MainSource/main.cpp; sourceTree = "<group>"; };
 		46E216E723EE4300002C059A /* Transmit.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Transmit.cpp; path = Classes/Transmit.cpp; sourceTree = SOURCE_ROOT; };
 		46E216E823EE4300002C059A /* Transmit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Transmit.h; path = Classes/Transmit.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -428,7 +428,7 @@
 				4626888A223360BE0074B5DF /* audiolib.h */,
 				461E83572228916B00220E94 /* DialogFileOpen.cpp */,
 				461E83562228916B00220E94 /* DialogFileOpen.h */,
-				46E13AD01C2C48AF007FF424 /* main.cpp */,
+				4694D62D271877E900EFD25E /* main.cpp */,
 				46CE01DD22126AD100140F6C /* BackgroundQ.c */,
 				46CE01DE22126AD100140F6C /* BackgroundQ.h */,
 				468120D0222597CD00926B96 /* DialogFolder.cpp */,
@@ -538,7 +538,6 @@
 				467FE3FC1C2C4F9B007D260F /* algebra3.cpp in Sources */,
 				469445EF2436E12500F049C8 /* WriteToGLUIWindow.cpp in Sources */,
 				4634C63C258684E100973620 /* dialogTime.cpp in Sources */,
-				46E13AD11C2C48AF007FF424 /* main.cpp in Sources */,
 				46543CC2246D9D77000DDD71 /* BatchFile.cpp in Sources */,
 				467FE3FD1C2C4F9B007D260F /* glui_add_controls.cpp in Sources */,
 				467FE40E1C2C4F9B007D260F /* glui_rotation.cpp in Sources */,
@@ -546,6 +545,7 @@
 				46CE01D5221265FB00140F6C /* CLinesPlotBox.cpp in Sources */,
 				46CE01A8221259BF00140F6C /* CWindow.cpp in Sources */,
 				4643CAC7222845F80059451C /* DialogSdrFile.cpp in Sources */,
+				4694D62E271877E900EFD25E /* main.cpp in Sources */,
 				467FE40F1C2C4F9B007D260F /* glui_scrollbar.cpp in Sources */,
 				46CE01D92212669200140F6C /* GridPlot.c in Sources */,
 				467FE4081C2C4F9B007D260F /* glui_listbox.cpp in Sources */,

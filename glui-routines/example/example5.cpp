@@ -27,7 +27,7 @@ int   light0_enabled = 1;
 int   light1_enabled = 1;
 float light0_intensity = 1.0;
 float light1_intensity = .4;
-extern int   main_window;
+int   main_window;
 float scale = 1.0;
 int   show_sphere=1;
 int   show_torus=1;
