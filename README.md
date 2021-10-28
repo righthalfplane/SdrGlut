@@ -28,6 +28,7 @@ SdrGlut has a new Voice Command Module. It can be programed to record any freque
 
 ## Demo videos
 - [An Introduction to SdrGlut (A software defined radio)](https://youtu.be/JEXK-r6PvmA)
+- [Sdrplay Rspduo Channel 0 vs. Channel 1 using SdrGlut.](https://youtu.be/_cbs6En1Tqc)
 - [Capturing SDR I/Q streams with SdrGlut.](https://youtu.be/N_384vv7IWY)
 - [The Icom IC-R8600 being controlled by SdrGlut.](https://youtu.be/PEzeFCsx7H8)
 - [Using Gmsh with the Mystic Finite Element Code](https://youtu.be/4uChJbdchbg)
