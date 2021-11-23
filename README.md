@@ -372,6 +372,11 @@ SDRplay_RSP_API-MacOSX-2.13.2.pkg
 
 # Install SdrGlut on Windows 7 and Windows 10
 
+
+## Install RtAudio
+See - above
+
+
 ## Install OpenAL -
 
 OpenAL must be loaded on to window. Get the two packages -
