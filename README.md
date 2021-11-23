@@ -370,7 +370,7 @@ SDRplay_RSP_API-MacOSX-2.13.2.pkg
 
 
 
-# Install SdrGlut on Windows 7
+# Install SdrGlut on Windows 7 and Windows 10
 
 ## Install OpenAL -
 
