@@ -96,9 +96,9 @@ static void keys2(unsigned char key, int x, int y);
 
 static int device;
 static GLUI_EditText *edittext1;
-static GLUI_EditText *edittext5;
 static char sfrequency[255]="1";
 static char ssamplerate[255]="2";
+static char ssmode[255]="AM";
 static std::vector<SoapySDR::Kwargs> results;
 
 
@@ -107,6 +107,16 @@ void doDirectSampleMode(int item);
 void doBiasMode(int item);
 void doFilterMenu(int item);
 
+#define Mode_Buttons   180
+
+int datatype[100];
+
+int boxnumber[100];
+
+static GLUI_Listbox  *box[100];
+
+static GLUI_Listbox  *boxmode;
+int modetype;
 
 int Radio::controlScan(struct playData *rx)
 {
@@ -426,7 +436,7 @@ Radio::Radio(struct Scene *scene,SoapySDR::Kwargs deviceArgs): CWindow(scene)
 	pd.sType = 2;
     
     backGroundEvents=0;
-        
+
     scanRun=0;
     
     scanWait=0;
@@ -480,8 +490,8 @@ Radio::Radio(struct Scene *scene,SoapySDR::Kwargs deviceArgs): CWindow(scene)
     sprintf(sdevice,"%d",device);
     
     {
-        char *list[]={NULL,(char *)"-fc",sfrequency,(char *)"-fm" ,(char *)"-gain" ,(char *)"0.25",(char *)"-device",sdevice,
-                      (char *)"-samplerate",ssamplerate};
+        char *list[]={NULL,(char *)"-fc",sfrequency,(char *)"-gain" ,(char *)"0.25",(char *)"-device",sdevice,
+                      (char *)"-samplerate",ssamplerate,ssmode};
         
         //char *list[]={NULL,"-fc","27.1e6" ,"-f" ,"27.3235e6" ,"-lsb" ,"-gain" ,"1","-device",sdevice};
 
@@ -606,30 +616,63 @@ int doRadioOpenRA(std::string argStr)
     glui->add_edittext_to_panel( obj_panel,  "Frequency(MHZ):", GLUI_EDITTEXT_TEXT, sfrequency );
     edittext1->w=200;
     
-    edittext5 =
-    glui->add_edittext_to_panel( obj_panel,  "Sample Rate:", GLUI_EDITTEXT_TEXT, ssamplerate);
-    edittext5->w=200;
+    modetype=0;
+    boxmode=glui->add_listbox_to_panel(obj_panel, "Mode : ",&modetype, Mode_Buttons-10, control_cb);
+    boxmode->add_item(0,"AM");
+    boxmode->add_item(1,"NAM");
+    boxmode->add_item(2,"FM");
+    boxmode->add_item(3,"NBFM");
+    boxmode->add_item(4,"USB");
+    boxmode->add_item(5,"LSB");
+    boxmode->add_item(6,"CW");
 
     obj_panel =  glui->add_panel( "Device" );
     
+    int nb=0;
+    
     for(size_t k=0;k<length;++k){
+        string name;
+        
+        name="";
         
         deviceArgs = results[k];
         for (SoapySDR::Kwargs::const_iterator it = deviceArgs.begin(); it != deviceArgs.end(); ++it) {
             printf("%s=%s\n",it->first.c_str(),it->second.c_str());
             if (it->first == "driver") {
-                if(it->second == "redpitaya"){
-                    new GLUI_Button(obj_panel, (char *)it->second.c_str(), (int)(2+k), control_cb);
-                }
-                //dev->setDriver(it->second);
                 if(it->second == "audio")break;
+                if(it->second == "redpitaya"){
+                    name=it->second;
+                }
             } else if (it->first == "device") {
                 if(it->second == "HackRF One")continue;
-                new GLUI_Button(obj_panel, (char *)it->second.c_str(), (int)(2+k), control_cb);
+                name=it->second;
             } else if (it->first == "label") {
-                new GLUI_Button(obj_panel, (char *)it->second.c_str(), (int)(2+k), control_cb);
-             //dev->setName(it->second);
+                name=it->second;
             }
+        }
+        if(name != ""){
+            
+            new GLUI_Button(obj_panel, (char *)name.c_str(), (int)(2+k), control_cb);
+            
+            datatype[nb]=0;
+            
+            box[nb]=glui->add_listbox_to_panel(obj_panel, "Sample Rate : ",&datatype[nb], Mode_Buttons+nb, control_cb);
+
+            boxnumber[k]=nb;
+            
+            SoapySDR::Device *devicer = SoapySDR::Device::make(deviceArgs);
+            std::vector<double> rate=devicer->listSampleRates(SOAPY_SDR_RX,0);
+            for (size_t j = 0; j < rate.size(); j++)
+            {
+                char data[256];
+                unsigned long long irate=rate[j];
+                sprintf(data,"%llu\n",irate);
+                box[nb]->add_item((int)j,data);
+
+            }
+            SoapySDR::Device::unmake(devicer);
+            ++nb;
+
         }
     }
     
@@ -646,14 +689,31 @@ int doRadioOpenRA(std::string argStr)
 
 static void control_cb(int control)
 {
-    glui->close();
-	glui = NULL;
     if(control == 1){
+        glui->close();
+        glui = NULL;
         return;
     }
     
+    // printf("control %d\n",control);
+    printf("modetype %d\n",modetype);
+
+    
+    if(control >= Mode_Buttons-10){
+        return;
+    }
+    
+    glui->close();
+    glui = NULL;
+    
     device = control-2;
     
+    int bn=boxnumber[device];
+    
+    msprintf(ssamplerate,sizeof(ssamplerate),"%s",box[bn]->get_item_ptr(datatype[bn])->text.c_str());
+    
+    msprintf(ssmode,sizeof(ssmode),"%s",boxmode->get_item_ptr(modetype)->text.c_str());
+
     SoapySDR::Kwargs deviceArgs=results[device];
 
     doRadioOpen2(deviceArgs);
@@ -828,12 +888,12 @@ int Radio::updateLine()
     amin /= nn;
     
     double shift=-90-amin;
-    
+    rx->shiftGlobal = amin;
     if(rx->aminGlobal3 == 0.0)rx->aminGlobal3=shift;
     rx->aminGlobal3 = 0.9*rx->aminGlobal3+0.1*shift;
  //   shift=rx->aminGlobal3;
 
-    //printf("shift %g amin %g ",shift,amin);
+   // printf("shift %g amin %g \n",shift,amin);
     
     amin =  1e33;
     amax = -1e33;
@@ -879,6 +939,8 @@ int Radio::updateLine()
         Plot=lines->lines->Plot;
         if(!Plot)return 1;
 
+        //printf("amin %g amax %g\n",amin,amax);
+        
        if(!Plot->xManualControl){
             Plot->xAutoMaximum=TRUE;
             Plot->xAutoMinimum=TRUE;
@@ -1609,11 +1671,14 @@ static void displayc(void)
     glColor3f(1.0,1.0,1.0);
     
     unsigned long f,fc;
+    double fs;
     
     f=(unsigned long)images->rx->f;
     
     fc=(unsigned long)images->rx->fc;
     
+    fs=images->rx->shiftGlobal;
+
     {
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
@@ -1628,9 +1693,9 @@ static void displayc(void)
         char value[256];
         
         if(images->rx->mute){
-            msprintf(value,sizeof(value),"Frequency: %010ld Hz   Center Frequency: %010ld Hz Power: %.0f db MUTE",f,fc,images->rx->meterMax);
+            msprintf(value,sizeof(value),"Frequency: %010ld Hz   Center Frequency: %010ld Hz Power: %.0f db Shift: %.1f db MUTE",f,fc,images->rx->meterMax,fs);
         }else{
-            msprintf(value,sizeof(value),"Frequency: %010ld Hz   Center Frequency: %010ld Hz Power: %.0f db",f,fc,images->rx->meterMax);
+            msprintf(value,sizeof(value),"Frequency: %010ld Hz   Center Frequency: %010ld Hz Power: %.0f db Shift: %.1f db ",f,fc,images->rx->meterMax,fs);
         }
         
         DrawString(20, (int)scene->yResolution-15, value);
@@ -2533,7 +2598,7 @@ void Radio::getMouse(int button, int state, int x, int y)
     if(!rx)return;
 
     if(button == 3){
-        float fl,bw;
+        double fl,bw;
         bw=rx->bw*0.5;
       //  if(rx->wShift != 0)bw /= 2;
         if(rx->wShift != 0)bw = 500;
@@ -2565,7 +2630,7 @@ void Radio::getMouse(int button, int state, int x, int y)
        }
         return;
     }else if(button == 4){
-        float fl,bw;
+        double fl,bw;
         bw=rx->bw*0.5;
         //if(rx->wShift != 0)bw /= 2;
         if(rx->wShift != 0)bw=500;

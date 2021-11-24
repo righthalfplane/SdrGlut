@@ -299,6 +299,23 @@ int sendMessageGlobal(char *m1,char *m2,int type)
     }
     return 0;
 }
+
+CWinPtr FindWindow2(int window)
+{
+    CWinPtr w;
+    
+
+    if(!Root)return NULL;
+    
+    w=Root;
+    while(w){
+        if(w->scene->window == window)return w;
+        w=w->CNext;
+    }
+    
+    return NULL;
+}
+
 CWinPtr FindScene(struct Scene *scene)
 {
 	CWinPtr w;
@@ -378,6 +395,6 @@ CWinPtr RemoveCWindow(CWinPtr i)
 	}
 	
 	delete p;
-	
+
 	return o;
 }

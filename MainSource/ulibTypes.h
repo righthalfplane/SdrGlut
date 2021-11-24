@@ -3,11 +3,16 @@
 
 
 typedef struct uRectStruct {
-   int x;
-   int y;
-   int xsize;
-   int ysize;
+    int x;
+    int y;
+    int xsize;
+    int ysize;
 } uRect;
+
+typedef struct uPointStruct {
+    int x;
+    int y;
+} uPoint;
 
 
 typedef struct uFontStruct {

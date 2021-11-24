@@ -255,6 +255,7 @@ struct playData{
     
     double aminGlobal3;
     double amaxGlobal3;
+    double shiftGlobal;
 
     
     double scaleFactor;
@@ -276,6 +277,8 @@ struct playData{
     size_t MTU;
     
     struct Info1 info1;
+    
+    double viewWindow;
     
     int junk22;
     

@@ -55,6 +55,10 @@ extern      "C"
 	int WriteRect24ToRect24(unsigned char *in, uRect *SRect,long xsize, long ysize,
 							unsigned char *out,uRect *DRect,long oxsize,long oysize);
 	unsigned long int TickCount(void);
+    int uSetRect(uRect *r,int x,int y,int xsize,int ysize);
+    int uPtInRect(uPoint *p,uRect *r);
+    int uInsetRect(uRect *r,int x,int y);
+
 
 #ifndef TRUE
 #define TRUE 1

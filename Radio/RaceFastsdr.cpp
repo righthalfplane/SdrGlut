@@ -103,20 +103,25 @@ int RadioStart(int argc, char * argv [],struct playData *rx)
     rx->controlSend = -1;
     rx->fillBuffer = -1;
     rx->Debug = 1;
+    
 
 	for(int n=1;n<argc;++n){
 	    if(!strcmp(argv[n],"-debug")){
 		   rx->Debug = 1;
-	    }else if(!strcmp(argv[n],"-am")){
+	    }else if(!strcmp(argv[n],"AM")){
 		   rx->decodemode = MODE_AM;
-	    }else if(!strcmp(argv[n],"-fm")){
+	    }else if(!strcmp(argv[n],"FM")){
 		   rx->decodemode = MODE_FM;
-        }else if(!strcmp(argv[n],"-nbfm")){
+        }else if(!strcmp(argv[n],"NBFM")){
             rx->decodemode = MODE_NBFM;
-        }else if(!strcmp(argv[n],"-usb")){
+        }else if(!strcmp(argv[n],"USB")){
             rx->decodemode = MODE_USB;
-        }else if(!strcmp(argv[n],"-lsb")){
+        }else if(!strcmp(argv[n],"LSB")){
             rx->decodemode = MODE_LSB;
+        }else if(!strcmp(argv[n],"NAM")){
+            rx->decodemode = MODE_NAM;
+        }else if(!strcmp(argv[n],"CW")){
+            rx->decodemode = MODE_CW;
 	    }else if(!strcmp(argv[n],"-gain")){
 	         rx->gain=atof(argv[++n]);
 	    }else if(!strcmp(argv[n],"-fc")){
@@ -1726,6 +1731,8 @@ int rxBuffer(void *rxv)
 	struct playData *rx=(struct playData *)rxv;
     
     int ret = -1;
+    
+    double time=0;
 	
     if(!rx)return 0;
     
@@ -1809,11 +1816,19 @@ int rxBuffer(void *rxv)
                 }
                 
                 if(file){
-                    printf("rx->witchRFBuffer %d rx->size %d\n",rx->witchRFBuffer,rx->size);
+                    static long long int ctime;
+                    if(time == 0){
+                        time = rtime();
+                        ctime=1;
+                    }
+                    printf("rx->witchRFBuffer %d rx->size %d Seconds %.2f Bytes %lld\n",rx->witchRFBuffer,rx->size,rtime()-time,ctime*2*sizeof(float)*rx->size);
                     size_t ret=fwrite(buff, 2*sizeof(float), rx->size,file);
                     if(ret == 0){
                         ;
                     }
+                    ++ctime;
+                }else{
+                    time=0;
                 }
 
                // double scale=pow(10.0,rx->scaleFactor/20.0);

@@ -537,6 +537,30 @@ int Radio::dialogRadio(struct Scene *scene)
 	
 	return 0;
 }
+static void setControls()
+{
+    struct playData *rx;
+    RadioPtr s=(RadioPtr)FindSceneRadio(glutGetWindow());
+    if(!s)return;
+    return;
+    rx=s->rx;
+
+    s->dd.iic=0;
+
+    for(size_t i=0;i<rx->gainsCount;++i){
+        double el =rx->device->getGain(SOAPY_SDR_RX, rx->channel,  rx->gains[s->dd.iic]);
+        printf("1 el %g\n",el);
+        s->dd.line_Index[s->dd.iic]=el;
+        ++s->dd.iic;
+        
+    }
+    
+    double el = rx->device->getGain(SOAPY_SDR_RX, rx->channel);
+    printf("2 el %g\n\n",el);
+    s->dd.line_Index[s->dd.iic]=el;
+    
+    return;
+}
 static void control_cb(int control)
 {
 	std::string file_name;
@@ -661,7 +685,8 @@ static void control_cb(int control)
         if(s->dd.line_Index_old[ind] != (int)s->dd.line_Index[ind]){
             s->rx->device->setGain(SOAPY_SDR_RX, s->rx->channel, s->rx->gains[ind], s->dd.line_Index[ind]);
             s->dd.line_Index[ind]=(int)s->dd.line_Index_old[ind];
-      }
+            setControls();
+     }
     }
     else if(control == 50)
     {
@@ -672,7 +697,8 @@ static void control_cb(int control)
         if(s->dd.line_Index_old[ind] != (int)s->dd.line_Index[ind]){
             s->rx->device->setGain(SOAPY_SDR_RX, s->rx->channel, s->dd.line_Index[ind]);
             s->dd.line_Index_old[ind]=(int)s->dd.line_Index[ind];
-        }
+            setControls();
+       }
     }
     else if(control == 8)
     {

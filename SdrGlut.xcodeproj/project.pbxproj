@@ -14,11 +14,13 @@
 		4623928F1C2C5A5A007F6B08 /* arcball.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4623928E1C2C5A5A007F6B08 /* arcball.cpp */; };
 		46266832239D9E8D002CCCF4 /* mThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46266831239D9E8D002CCCF4 /* mThread.cpp */; };
 		4626888B223360BE0074B5DF /* audiolib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46268889223360BD0074B5DF /* audiolib.cpp */; };
+		4629AB66272EEBAD00EA7253 /* sdrReceive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4629AB64272EEBAC00EA7253 /* sdrReceive.cpp */; };
 		4629CAAA23DD4E040059898D /* libglut.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4629CAA923DD4E040059898D /* libglut.3.dylib */; };
 		4634C63C258684E100973620 /* dialogTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4634C63B258684E100973620 /* dialogTime.cpp */; };
 		46371C8A1D12F31B002D3788 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46371C891D12F31B002D3788 /* OpenAL.framework */; };
 		46371C8C1D12F32A002D3788 /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46371C8B1D12F32A002D3788 /* OpenCL.framework */; };
 		46371C8E1D12F337002D3788 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46371C8D1D12F337002D3788 /* OpenGL.framework */; };
+		4637E2D4272EE5AF0061B09B /* dialogTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4637E2D3272EE5AF0061B09B /* dialogTest.cpp */; };
 		4643CAC6222845F80059451C /* SdrFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4643CAC3222845F70059451C /* SdrFile.cpp */; };
 		4643CAC7222845F80059451C /* DialogSdrFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4643CAC4222845F70059451C /* DialogSdrFile.cpp */; };
 		464918A220E53121008BDC72 /* libliquid.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 464918A120E53121008BDC72 /* libliquid.a */; };
@@ -113,6 +115,8 @@
 		46266831239D9E8D002CCCF4 /* mThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mThread.cpp; path = MainSource/mThread.cpp; sourceTree = "<group>"; };
 		46268889223360BD0074B5DF /* audiolib.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = audiolib.cpp; path = MainSource/audiolib.cpp; sourceTree = "<group>"; };
 		4626888A223360BE0074B5DF /* audiolib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = audiolib.h; path = MainSource/audiolib.h; sourceTree = "<group>"; };
+		4629AB64272EEBAC00EA7253 /* sdrReceive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sdrReceive.cpp; path = MainSource/sdrReceive.cpp; sourceTree = "<group>"; };
+		4629AB65272EEBAD00EA7253 /* sdrReceive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sdrReceive.h; path = MainSource/sdrReceive.h; sourceTree = "<group>"; };
 		4629CAA923DD4E040059898D /* libglut.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libglut.3.dylib; sourceTree = "<group>"; };
 		462DC5462428FBE70032466B /* firstFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = firstFile.h; path = MainSource/firstFile.h; sourceTree = "<group>"; };
 		462FB7F3220389830028D417 /* RaceFastsdr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RaceFastsdr.h; sourceTree = "<group>"; };
@@ -120,6 +124,7 @@
 		46371C891D12F31B002D3788 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = ../../../../../../System/Library/Frameworks/OpenAL.framework; sourceTree = "<group>"; };
 		46371C8B1D12F32A002D3788 /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = ../../../../../../System/Library/Frameworks/OpenCL.framework; sourceTree = "<group>"; };
 		46371C8D1D12F337002D3788 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = ../../../../../../System/Library/Frameworks/OpenGL.framework; sourceTree = "<group>"; };
+		4637E2D3272EE5AF0061B09B /* dialogTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = dialogTest.cpp; path = MainSource/dialogTest.cpp; sourceTree = "<group>"; };
 		4643CAC2222845F70059451C /* SdrFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SdrFile.h; sourceTree = "<group>"; };
 		4643CAC3222845F70059451C /* SdrFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SdrFile.cpp; sourceTree = "<group>"; };
 		4643CAC4222845F70059451C /* DialogSdrFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DialogSdrFile.cpp; sourceTree = "<group>"; };
@@ -413,6 +418,9 @@
 			isa = PBXGroup;
 			children = (
 				4634C63B258684E100973620 /* dialogTime.cpp */,
+				4629AB64272EEBAC00EA7253 /* sdrReceive.cpp */,
+				4629AB65272EEBAD00EA7253 /* sdrReceive.h */,
+				4637E2D3272EE5AF0061B09B /* dialogTest.cpp */,
 				4612027E2428655000A80820 /* ulibTypes.h */,
 				462DC5462428FBE70032466B /* firstFile.h */,
 				46CE01BE22125E9100140F6C /* mThread.h */,
@@ -528,6 +536,7 @@
 				46CE01D3221265FB00140F6C /* ClinesPlotAttributes.cpp in Sources */,
 				46266832239D9E8D002CCCF4 /* mThread.cpp in Sources */,
 				46CE01CA221265AC00140F6C /* CLines.cpp in Sources */,
+				4629AB66272EEBAD00EA7253 /* sdrReceive.cpp in Sources */,
 				467FE40C1C2C4F9B007D260F /* glui_radio.cpp in Sources */,
 				467FE4161C2C4F9B007D260F /* glui_tree.cpp in Sources */,
 				46CE01A52212597700140F6C /* SceneList.c in Sources */,
@@ -547,6 +556,7 @@
 				4643CAC7222845F80059451C /* DialogSdrFile.cpp in Sources */,
 				4694D62E271877E900EFD25E /* main.cpp in Sources */,
 				467FE40F1C2C4F9B007D260F /* glui_scrollbar.cpp in Sources */,
+				4637E2D4272EE5AF0061B09B /* dialogTest.cpp in Sources */,
 				46CE01D92212669200140F6C /* GridPlot.c in Sources */,
 				467FE4081C2C4F9B007D260F /* glui_listbox.cpp in Sources */,
 				46A5B3D6246D9F770071072C /* Poly.cpp in Sources */,

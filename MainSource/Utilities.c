@@ -393,3 +393,35 @@ int WriteRect24ToRect24(unsigned char *in, uRect *SRect,long xsize, long ysize,
 	
 	return 0;
 }
+int uSetRect(uRect *r,int x,int y,int xsize,int ysize)
+{
+    if(!r)return 1;
+    r->x=x;
+    r->y=y;
+    r->xsize=xsize;
+    r->ysize=ysize;
+    return 0;
+}
+int uPtInRect(uPoint *p,uRect *r)
+{
+    if(!r)return 0;
+    
+    //printf("\nx %d y %d \n",p->x,p->y);
+    
+    //printf("x %d y %d xsize %d ysize %d\n\n",r->x,r->y,r->xsize,r->ysize);
+
+    if((p->x < r->x) || (p->y > r->y))return 0;
+    if((p->x > r->x+r->xsize) || (p->y < r->y-r->ysize))return 0;
+    
+
+    return 1;
+}
+int uInsetRect(uRect *r,int x,int y)
+{
+    if(!r)return 1;
+    r->x += x;
+    r->y += y;
+    r->xsize -= x;
+    r->ysize -= y;
+    return 0;
+}

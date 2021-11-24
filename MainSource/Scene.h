@@ -132,6 +132,8 @@ struct Scene{
 	int stereoType;
 		
     int windowType;
+    
+    int window;
 };
 
 	int DefaultScene(struct Scene *scene);

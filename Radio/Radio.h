@@ -307,7 +307,7 @@ struct RecordSoundStruct{
     int on[5];
     int state[5];
     double frequency[5];
-    char mode[5][16];
+    char mode[5][16];;
 };
 
 struct ResetInfo{

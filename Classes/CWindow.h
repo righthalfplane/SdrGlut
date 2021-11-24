@@ -48,6 +48,8 @@ EXTERN CWinPtr Root,myAppl;
 
 CWinPtr FindScene(struct Scene *scene);
 
+CWinPtr FindWindow2(int window);
+
 CWinPtr RemoveCWindow(CWinPtr i);
 
 void AddWindowList(CWinPtr w);
@@ -60,8 +62,8 @@ extern "C" int SetFrequencyGlobal(struct Scene *scene,double f,double bw, int me
 
 #define KEY_OFFSET 1000
 
-#define ControlQuit                    9
-#define ControlClose               24
+#define ControlQuit        9
+#define ControlClose      24
 
 
 #define NoCommand	0

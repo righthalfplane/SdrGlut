@@ -39,7 +39,7 @@ static void control_cb(int control);
 
 static void control_cb2(int control);
 
-char *ProgramVersion=(char *)"SdrGlut-928";
+char *ProgramVersion=(char *)"SdrGlut-942";
 
 extern "C" struct Scene *sceneRoot(void);
 
@@ -223,7 +223,7 @@ int dialogStart(void)
     
     new GLUI_Button(glui, "Close", 3, control_cb);
 
-//    new GLUI_Button(glui, "Time", 9, control_cb);
+ //   new GLUI_Button(glui, "Test", 9, control_cb);
     
     new GLUI_Button(glui, "Help", 2, control_cb);
 
@@ -260,9 +260,9 @@ static void control_cb(int control)
         sscanf(edittext1->get_text(),"%s",text1);
         argStr=text1;
         doRadioOpenRA(argStr);
-//    }else if(control == 9){
-//       int dialogTime(void);
-//        dialogTime();
+    }else if(control == 9){
+        int dialogTest(void);
+//        dialogTest();
     } else if(control == 1)
 	{
 		

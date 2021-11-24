@@ -1497,7 +1497,7 @@ int findRadio(struct playData *rx)
       		}
 			for (size_t j = 0; j < rate.size(); j++)
         	{
-           		mprint(" %.2f ",rate[j]/1.0e6);
+           		mprint(" %.6f ",rate[j]/1.0e6);
          	}
             mprint("\n\n");
 
