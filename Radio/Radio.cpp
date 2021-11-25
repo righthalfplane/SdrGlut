@@ -1977,6 +1977,10 @@ int Radio::OpenWindows(struct Scene *scene)
     
     lines->sceneSource=sceneOpen;
     
+    lines->Frequency=rx->f;
+    
+    lines->BandWidth=rx->bw;
+
     lines->wShift=0;
     
 //    lines->sdr=NULL;
@@ -2018,6 +2022,11 @@ int Radio::OpenWindows(struct Scene *scene)
     lines2->lines->Plot->yLogScale=0;
     
     lines2->lines->Plot->gridHash=1;
+    
+    lines2->Frequency=rx->f;
+    
+    lines2->BandWidth=rx->bw;
+
 /*
     lines2->lines->Plot->yAutoMaximum=FALSE;
     lines2->lines->Plot->yAutoMinimum=FALSE;
@@ -2511,7 +2520,8 @@ static void getMousel(int button, int state, int x, int y)
     struct SceneList *list;
     RadioPtr sdr;
     
-
+    printf("button %d state %d\n",button,state);
+    
     list=SceneFindByNumber(glutGetWindow());
     if(!list){
         sdr=FindSdrRadioWindow(glutGetWindow());

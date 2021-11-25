@@ -270,12 +270,15 @@ void CLines::getMouse(int button, int state, int x, int y)
         lines->Plot->xAutoMinimum=FALSE;
         lines->Plot->xSetMinimum=lines->Plot->xMinimum;
     }else{
+    /*
         if(sceneSource){
            SetFrequencyGlobal(sceneSource,Frequency,BandWidth,M_FREQUENCY_BANDWIDTH);
         }
         lines->Plot->xAutoMaximum=TRUE;
         lines->Plot->xAutoMinimum=TRUE;
+     */
    }
+     
 }
 static void moveMouse(int x, int y)
 {
