@@ -36,7 +36,9 @@ public:
     int OpenWindows(struct Scene *scene,int parentWindow);
     
     void getMouse(int button, int state, int x, int y);
-	
+    
+    void passive(int x, int y);
+
 	void menu_select(struct Scene *scene,int item);
 	
 	void display(struct Scene *scene);
@@ -107,6 +109,15 @@ public:
     double Wait;
 
     int wShift;
+    
+    uRect boxMin;
+    
+    int inBoxMin;
+    
+    int inBoxMax;
+
+    uRect boxMax;
+
 
 };
 

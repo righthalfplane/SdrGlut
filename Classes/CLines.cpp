@@ -210,6 +210,56 @@ int CLines::OpenWindows(struct Scene *scene)
 {
     return 1;
 }
+
+void CLines::passive(int x, int y)
+{
+    uPoint p;
+    p.x=x;
+    p.y=lines->h-y;
+    
+ //   printf("CLines::passive\n");
+    
+    
+    inBoxMin=0;
+
+    if(uPtInRect(&p,&boxMin) ){
+        glutSetCursor( GLUT_CURSOR_UP_DOWN );
+        inBoxMin=1;
+        return;
+    }
+    
+    inBoxMax=0;
+    
+    if(uPtInRect(&p,&boxMax) ){
+        glutSetCursor( GLUT_CURSOR_UP_DOWN );
+        inBoxMax=1;
+        return;
+    }
+    
+    int window=glutGetWindow();
+    
+    RadioPtr sdr=FindSdrRadioWindow2(window);
+    
+    if(y > 0 && y < 15){
+        if(sdr)sdr->inAxis=1;
+        glutSetCursor( GLUT_CURSOR_LEFT_RIGHT );
+    }else{
+        if(sdr)sdr->inAxis=0;
+        glutSetCursor( GLUT_CURSOR_CROSSHAIR );
+    }
+
+}
+static void getMousePassive2(int x, int y)
+{
+    struct SceneList *list;
+    list=SceneFindByNumber(glutGetWindow());
+    if(!list)return;
+    
+    CLinesPtr myAppl=(CLinesPtr)FindScene(&list->scene);
+    
+    myAppl->passive(x, y);
+}
+
 static void getMousel(int button, int state, int x, int y)
 {
     struct SceneList *list;
@@ -224,8 +274,37 @@ static void getMousel(int button, int state, int x, int y)
 
 void CLines::getMouse(int button, int state, int x, int y)
 {
+    
+    if(inBoxMin){
+        if(state == GLUT_DOWN){
+            if(button == 3){
+                lines->Plot->ySetMaximum -= 5;
+                if(lines->Plot->ySetMaximum <= lines->Plot->ySetMinimum){
+                    lines->Plot->ySetMaximum = lines->Plot->ySetMinimum + 5;
+                }
+           }else if(button == 4){
+                lines->Plot->ySetMaximum += 5;
+            }
+        }
+        return;
+    }
+    
+    if(inBoxMax){
+        if(state == GLUT_DOWN){
+            if(button == 3){
+                lines->Plot->ySetMinimum -= 5;
+            }else if(button == 4){
+                lines->Plot->ySetMinimum += 5;
+                if(lines->Plot->ySetMinimum >= lines->Plot->ySetMaximum){
+                    lines->Plot->ySetMinimum = lines->Plot->ySetMaximum - 5;
+                }
+            }
+        }
+       return;
+    }
+    
     RadioPtr sdr=NULL;
-
+    
     sdr=(RadioPtr)FindScene(sceneSource);
     if(sceneSource){
         if(sdr && sdr->inAxis){
@@ -239,10 +318,8 @@ void CLines::getMouse(int button, int state, int x, int y)
             if(wShift == 0){
                 Frequency -= BandWidth*0.5;
             }else{
-                //Frequency -= BandWidth*0.25;
                 Frequency -= 500;
             }
-            //SetFrequencyGlobal(sceneSource,Frequency,BandWidth,M_FREQUENCY);
         }
         if(state == GLUT_DOWN)return;
         if(sceneSource){
@@ -256,11 +333,8 @@ void CLines::getMouse(int button, int state, int x, int y)
             if(wShift == 0){
                 Frequency += BandWidth*0.5;
             }else{
-               // Frequency += BandWidth*0.25;
                 Frequency += 500;
             }
-            //SetFrequencyGlobal(sceneSource,Frequency,BandWidth,M_FREQUENCY);
-            //printf("SetFrequencyGlobal 1\n");
         }
         if(state == GLUT_DOWN)return;
         if(sceneSource){
@@ -401,6 +475,8 @@ int CLines::OpenWindows(struct Scene *scene,int windowParent)
     glutMouseFunc(getMousel);
     
     glutMotionFunc(moveMouse);
+    
+    glutPassiveMotionFunc(getMousePassive2);
     
     glutKeyboardFunc(keys2);
 
@@ -594,6 +670,10 @@ void CLines::reshape(struct Scene *scene,int wscr,int hscr)
 */
 	lines->w=wscr; lines->h=hscr;
     
+    uSetRect(&boxMin,0,hscr,40,50);
+
+    uSetRect(&boxMax,0,50,40,50);
+
     //printf("CLines::reshape wscr %d hscr %d\n",wscr,hscr);
 	
 	glViewport(0,0,(GLsizei)lines->w,(GLsizei)lines->h);

@@ -75,7 +75,6 @@ static void getMousel(int button, int state, int x, int y);
 
 static void getMousePassive(int x, int y);
 
-static void getMousePassive2(int x, int y);
 
 static void getMousePassive3(int x, int y);
 
@@ -116,6 +115,8 @@ void doFilterMenu(int item);
 int datatype[100];
 
 int boxnumber[100];
+
+static int OpenZoomWindow;
 
 static GLUI_Listbox  *box[100];
 
@@ -568,8 +569,10 @@ static int doRadioOpen2(SoapySDR::Kwargs deviceArgs)
         
         AddWindowList(myAppl);
         
-        glutSetWindow(w->lines2->window);
-        glutSetWindowTitle(w->rx->driveName);
+        if(w->lines2){
+            glutSetWindow(w->lines2->window);
+            glutSetWindowTitle(w->rx->driveName);
+        }
         
         glutSetWindow(w->window);
         glutSetWindowTitle(w->rx->driveName);
@@ -629,6 +632,8 @@ int doRadioOpenRA(std::string argStr)
     boxmode->add_item(4,"USB");
     boxmode->add_item(5,"LSB");
     boxmode->add_item(6,"CW");
+
+    glui->add_checkbox_to_panel(obj_panel, "Open Zoom Window", &OpenZoomWindow, 999, control_cb);
 
     obj_panel =  glui->add_panel( "Device" );
     
@@ -2000,8 +2005,6 @@ int Radio::OpenWindows(struct Scene *scene)
 
     lines = CLines::CLinesOpen(scenel,window);
     
-    glutPassiveMotionFunc(getMousePassive2);
-
 
     lines->plotPutData(scenel,range,magnitude2,rx->FFTcount,-1L);
     
@@ -2025,52 +2028,42 @@ int Radio::OpenWindows(struct Scene *scene)
     lines->lines->Plot->ySetMaximum=-20;
     lines->lines->Plot->ySetMinimum=-130;
     lines->lines->Plot->yMajorStep=20;
+    if(OpenZoomWindow){
+        list=SceneNext();
+        if(list == NULL)
+        {
+            WarningPrint("FMRadio : Error Allocation Scene Memory File\n");
+            return 0;
+        }
+        
+        scenel2=&list->scene;
+        
+        zerol((char *)scenel2,sizeof(struct Scene));
+        
+        initScene(scenel2);
+        
+        lines2 = CLines::CLinesOpen(scenel2,-1000);
+        
+        lines2->plotPutData(scenel2,range,magnitude2,rx->FFTcount,-1L);
+        
+        lines2->sceneSource=sceneOpen;
+        
+        lines2->wShift=0;
 
-    
-    list=SceneNext();
-    if(list == NULL)
-    {
-        WarningPrint("FMRadio : Error Allocation Scene Memory File\n");
-        return 0;
+        lines2->lines->Plot->yLogScale=0;
+        
+        lines2->lines->Plot->gridHash=1;
+        
+        lines2->Frequency=rx->f;
+        
+        lines2->BandWidth=rx->bw;
+        
+        window3=list->window;
+
+        glutSetWindow(list->window);
+        glutPositionWindow(20,444);
+        glutReshapeWindow(600, 200);
     }
-    
-    scenel2=&list->scene;
-    zerol((char *)scenel2,sizeof(struct Scene));
-    
-    initScene(scenel2);
-    
-    lines2 = CLines::CLinesOpen(scenel2,-1000);
-    
-    lines2->plotPutData(scenel2,range,magnitude2,rx->FFTcount,-1L);
-    
-    lines2->sceneSource=sceneOpen;
-    
-    lines2->wShift=0;
-
-//    lines2->sdr=NULL;
-
-    lines2->lines->Plot->yLogScale=0;
-    
-    lines2->lines->Plot->gridHash=1;
-    
-    lines2->Frequency=rx->f;
-    
-    lines2->BandWidth=rx->bw;
-    
-    window3=list->window;
-
-/*
-    lines2->lines->Plot->yAutoMaximum=FALSE;
-    lines2->lines->Plot->yAutoMinimum=FALSE;
-    lines2->lines->Plot->ySetMaximum=-20;
-    lines2->lines->Plot->ySetMinimum=-120;
-    lines2->lines->Plot->yMajorStep=20;
-*/
-
-    glutSetWindow(list->window);
-    glutPositionWindow(20,444);
-    glutReshapeWindow(600, 200);
-
     return 0;
 }
 void antennaMenu(int item){
@@ -2169,7 +2162,7 @@ void setMode(int item)
     //fprintf(stderr,"2 setMode %d\n",item);
 
     sdr->lines->wShift = 0;
-    sdr->lines2->wShift = 0;
+    if(sdr->lines2)sdr->lines2->wShift = 0;
     sdr->rx->wShift = 0;
     
     switch(item){
@@ -2181,19 +2174,19 @@ void setMode(int item)
             break;
         case MODE_USB:
             sdr->lines->wShift = 1;
-            sdr->lines2->wShift = 1;
+            if(sdr->lines2)sdr->lines2->wShift = 1;
             sdr->rx->wShift = 1;
             sdr->rx->decodemode = MODE_USB;
             break;
         case MODE_LSB:
             sdr->lines->wShift  = -1;
-            sdr->lines2->wShift = -1;
+            if(sdr->lines2)sdr->lines2->wShift = -1;
             sdr->rx->wShift = -1;
             sdr->rx->decodemode = MODE_LSB;
             break;
         case MODE_CW:
             sdr->lines->wShift  = -1;
-            sdr->lines2->wShift = -1;
+            if(sdr->lines2)sdr->lines2->wShift = -1;
             sdr->rx->wShift = -1;
             sdr->rx->decodemode = MODE_CW;
             break;
@@ -2911,7 +2904,7 @@ static void getMousePassive3(int x, int y)
     
     if(!sdr)return;
     
-   // printf("getMousePassive3 %p list %p window %d\n",sdr,list,window);
+   //printf("getMousePassive3 %p list %p window %d\n",sdr,list,window);
     
     sdr->box.x=0;
     sdr->box.y=0;
@@ -2919,22 +2912,6 @@ static void getMousePassive3(int x, int y)
     sdr->box.ysize=0;
 
     glutSetCursor( GLUT_CURSOR_CROSSHAIR );
-}
-static void getMousePassive2(int x, int y)
-{
-    
-    int window=glutGetWindow();
-    
-    RadioPtr sdr=FindSdrRadioWindow2(window);;
-
-    if(y > 0 && y < 15){
-        if(sdr)sdr->inAxis=1;
-        glutSetCursor( GLUT_CURSOR_LEFT_RIGHT );
-    }else{
-        if(sdr)sdr->inAxis=0;
-        glutSetCursor( GLUT_CURSOR_CROSSHAIR );
-    }
-
 }
 static void getMousePassive(int x, int y)
 {
@@ -2952,7 +2929,7 @@ static void getMousePassive(int x, int y)
         
         if(!sdr)return;
 
-//        printf("getMousePassive %p list %p window %d\n",sdr,list,window);
+   // printf("getMousePassive %p list %p window %d\n",sdr,list,window);
 
     sdr->box.x=0;
     sdr->box.y=0;
