@@ -782,6 +782,26 @@ RadioPtr FindSdrRadioWindow(int window)
         if(w->scene->windowType == FileTypeSdrRadio){
             f=(RadioPtr)w;
             if(f->window1 == window)return f;
+            //if(f->window2 == window)return f;
+        }
+        w=w->CNext;
+    }
+    
+    return NULL;
+    
+}
+RadioPtr FindSdrRadioWindow2(int window)
+{
+    RadioPtr f;
+    CWinPtr w;
+    
+    if(!Root)return NULL;
+    
+    w=Root;
+    while(w){
+        if(w->scene->windowType == FileTypeSdrRadio){
+            f=(RadioPtr)w;
+            if(f->window2 == window)return f;
         }
         w=w->CNext;
     }

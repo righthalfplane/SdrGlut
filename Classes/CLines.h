@@ -103,7 +103,9 @@ public:
     double Frequency;
 
     double BandWidth;
-    
+ 
+    double Wait;
+
     int wShift;
 
 };

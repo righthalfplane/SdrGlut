@@ -12,6 +12,7 @@
 #include "CLines.h"
 #include "GridPlot.h"
 #include "Contours.h"
+#include "Radio.h"
 
 #define ControlLineAttributes	4
 #define ControlDialogSave		5
@@ -223,6 +224,15 @@ static void getMousel(int button, int state, int x, int y)
 
 void CLines::getMouse(int button, int state, int x, int y)
 {
+    RadioPtr sdr=NULL;
+
+    sdr=(RadioPtr)FindScene(sceneSource);
+    if(sceneSource){
+        if(sdr && sdr->inAxis){
+            sdr->getMouse(button,state,x,y);
+            return;
+        }
+    }
 
     if(button == 3){
         if(sceneSource){
@@ -232,11 +242,13 @@ void CLines::getMouse(int button, int state, int x, int y)
                 //Frequency -= BandWidth*0.25;
                 Frequency -= 500;
             }
-            SetFrequencyGlobal(sceneSource,Frequency,BandWidth,M_FREQUENCY);
+            //SetFrequencyGlobal(sceneSource,Frequency,BandWidth,M_FREQUENCY);
         }
         if(state == GLUT_DOWN)return;
         if(sceneSource){
             SetFrequencyGlobal(sceneSource,Frequency,BandWidth,M_FREQUENCY_BANDWIDTH);
+            SetFrequencyGlobal(sceneSource,Frequency,BandWidth,M_FREQUENCY);
+            Wait=1;
         }
         return;
     }else if(button == 4){
@@ -247,11 +259,14 @@ void CLines::getMouse(int button, int state, int x, int y)
                // Frequency += BandWidth*0.25;
                 Frequency += 500;
             }
-            SetFrequencyGlobal(sceneSource,Frequency,BandWidth,M_FREQUENCY);
+            //SetFrequencyGlobal(sceneSource,Frequency,BandWidth,M_FREQUENCY);
+            //printf("SetFrequencyGlobal 1\n");
         }
         if(state == GLUT_DOWN)return;
         if(sceneSource){
             SetFrequencyGlobal(sceneSource,Frequency,BandWidth,M_FREQUENCY_BANDWIDTH);
+            SetFrequencyGlobal(sceneSource,Frequency,BandWidth,M_FREQUENCY);
+            Wait=1;
         }
         return;
     }
@@ -270,13 +285,27 @@ void CLines::getMouse(int button, int state, int x, int y)
         lines->Plot->xAutoMinimum=FALSE;
         lines->Plot->xSetMinimum=lines->Plot->xMinimum;
     }else{
-    /*
         if(sceneSource){
-           SetFrequencyGlobal(sceneSource,Frequency,BandWidth,M_FREQUENCY_BANDWIDTH);
+            SetFrequencyGlobal(sceneSource,Frequency,BandWidth,M_FREQUENCY_BANDWIDTH);
+            if(sdr){
+              //printf("sdr %p %d %d %d %d\n",sdr,sdr->window1,sdr->window2,sdr->window3,lines->window);
+              if(sdr->window1 == lines->window){
+                  //printf("lines->window %d\n",lines->window);
+                    lines->Plot->xAutoMaximum=TRUE;
+                    lines->Plot->xAutoMinimum=TRUE;
+              }else if(sdr->window3 == lines->window){
+                  //printf("lines->window %d\n",lines->window);
+                   lines->Plot->xAutoMaximum=TRUE;
+                   lines->Plot->xAutoMinimum=TRUE;
+               }
+            }else{
+                lines->Plot->xAutoMaximum=FALSE;
+                lines->Plot->xAutoMinimum=FALSE;
+            }
+        }else{
+            lines->Plot->xAutoMaximum=TRUE;
+            lines->Plot->xAutoMinimum=TRUE;
         }
-        lines->Plot->xAutoMaximum=TRUE;
-        lines->Plot->xAutoMinimum=TRUE;
-     */
    }
      
 }
@@ -300,10 +329,14 @@ static void moveMouse(int x, int y)
 int CLines::SetFrequency(struct Scene *scene,double f,double bw,int message)
 {
     
+   // printf("CLines::SetFrequency %p f %g\n",scene,f);
+    
     CLinesPtr lines=(CLinesPtr)FindScene(scene);
     
     if(!lines)return 1;
     
+   // printf("CLines::SetFrequency lines %p sceneSource %p\n",lines,lines->sceneSource);
+
     if(lines->sceneSource){
         lines->Frequency=f;
         lines->BandWidth=bw;
@@ -610,8 +643,18 @@ void CLines::reshape(struct Scene *scene,int wscr,int hscr)
 
 void CLines::display(struct Scene *scene)
 {
-    
     if(!scene)return;
+    
+    RadioPtr sdr=(RadioPtr)FindScene(sceneSource);
+    if(sdr){
+        if(sdr->rx->samplerate != sdr->rx->viewWindow){
+         //  printf("%g %g %g %g %d\n",Frequency,sdr->rx->fv,sdr->rx->f,lines->Plot->xViewMin,lines->window);
+            if(Wait){
+                Wait=0;
+                return;
+            }
+       }
+    }
     
 	{
 		glPixelStorei(GL_UNPACK_ALIGNMENT,1);

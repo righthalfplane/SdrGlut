@@ -138,6 +138,9 @@ int RadioStart(int argc, char * argv [],struct playData *rx)
 		}
 	}
     
+    rx->fv=rx->fc;
+    rx->viewWindow=rx->samplerate;
+
     rx->channel=rx->deviceNumber;
 
     backgroundPlay(rx);
@@ -679,7 +682,9 @@ static int startPlay(struct playData *rx)
         // printf("fc %f f %f dt %g samplerate %.0f\n",rx->fc,rx->f,rx->dt,rx->samplerate);
     }
     
-    
+    rx->fv=rx->fc;
+    rx->viewWindow=rx->samplerate;
+
     if(findRadio(rx) || rx->device == NULL){
         fprintf(stderr,"Error No SDR Found\n");
         return 1;

@@ -142,6 +142,7 @@ struct playData{
     int channel;
     double foffset;
     double fc;
+    double fv;
     double f;
     double dt;
     double sino;
@@ -279,6 +280,9 @@ struct playData{
     struct Info1 info1;
     
     double viewWindow;
+    
+    double rmin;
+    double rmax;
     
     int junk22;
     

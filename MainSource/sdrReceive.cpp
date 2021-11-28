@@ -137,6 +137,8 @@ int SdrReceive::OpenWindows(struct Scene *scene)
     glutDisplayFunc(displayc);
     glutMotionFunc(moveMouse);
 
+    glutSetCursor( GLUT_CURSOR_TEXT );
+
     
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);

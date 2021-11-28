@@ -84,7 +84,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "307"
             endingLineNumber = "307"
-            landmarkName = "FindWindow(int window)"
+            landmarkName = "FindWindow2(int window)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

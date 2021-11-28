@@ -75,6 +75,10 @@ static void getMousel(int button, int state, int x, int y);
 
 static void getMousePassive(int x, int y);
 
+static void getMousePassive2(int x, int y);
+
+static void getMousePassive3(int x, int y);
+
 static int DrawString(int x, int y, char *out);
 
 int DrawBox(uRect *box,int offset);
@@ -953,6 +957,15 @@ int Radio::updateLine()
             Plot->xAutoMinimum=FALSE;
             Plot->xSetMaximum=rmax;
             Plot->xSetMinimum=rmin;
+            rmax=rx->fv+0.5*rx->viewWindow;
+            if(rmax > rx->fc+0.5*rx->samplerate)rmax=rx->fc+0.5*rx->samplerate;
+            rmin=rx->fv-0.5*rx->viewWindow;
+            if(rmin < rx->fc-0.5*rx->samplerate)rmin=rx->fc-0.5*rx->samplerate;
+            if(rmin < 0)rmin=0;
+            rx->rmin=rmin;
+            rx->rmax=rmax;
+            Plot->xSetMaximum=rmax;
+            Plot->xSetMinimum=rmin;
         }else{
             rmax=Plot->xSetMaximum;
             rmin=Plot->xSetMinimum;
@@ -1394,6 +1407,7 @@ int Radio::setFrequency2(struct playData *rx)
         }
         
         setFrequency3(rx);
+        adjustView(0);
         
     }
     catch (...)
@@ -1535,11 +1549,11 @@ int Radio::Display(struct Scene *scene)
     
     glRasterPos2i(0,0);		// Position at base of window
     
-    int nf=(int)(0.5+(scene->xResolution)*((rx->f-rx->fc)+0.5*rx->samplerate)/(double)rx->samplerate);
+    int nf=(int)(0.5+(scene->xResolution)*((rx->f-rx->rmin))/(rx->rmax-rx->rmin));
     
-    int nf1=(int)(0.5+(scene->xResolution)*((rx->f-rx->fc)+0.5*rx->samplerate+0.5*rx->bw)/(double)rx->samplerate);
+    int nf1=(int)(0.5+(scene->xResolution)*((rx->f-rx->rmin)+0.5*rx->bw)/(rx->rmax-rx->rmin));
 
-    int nf2=(int)(-0.5+(scene->xResolution)*((rx->f-rx->fc)+0.5*rx->samplerate-0.5*rx->bw)/(double)rx->samplerate);
+    int nf2=(int)(-0.5+(scene->xResolution)*((rx->f-rx->rmin)-0.5*rx->bw)/(rx->rmax-rx->rmin));
     
     if((nf1-nf2) < 6){
         nf1=nf+3;
@@ -1636,6 +1650,8 @@ static void reshape(struct Scene *scene,int wscr,int hscr)
     glutSetWindow(s->window2);
     glutPositionWindow(0,20);
     glutReshapeWindow(s->w, s->h/2-20);
+    
+    printf("s->window1 %d s->window2 %d s->window3 %d\n",s->window1,s->window2,s->window3);
 }
 
 static void displayc(void)
@@ -1726,7 +1742,9 @@ int DrawBox(uRect *box,int offset)
     
     glDisable(GL_BLEND);
     
-    //printf("DrawBox %d %d %d %d\n",box->x,box->x+box->xsize,box->y+offset,box->y-box->ysize+offset);
+    //static int count=0;
+    
+    //printf("count %d DrawBox %d %d %d %d\n",count++,box->x,box->x+box->xsize,box->y+offset,box->y-box->ysize+offset);
     
     //DrawLine(box->x, box->y+offset, box->x+box->xsize, box->y-box->ysize+offset);
 
@@ -1758,6 +1776,9 @@ int Radio::OpenWindows(struct Scene *scene)
     }else{
         glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     }
+    
+  //  printf("this %p\n",this);
+    
     glutInitWindowSize(960,340);
     window = glutCreateWindow(scene->WindowTitle);
     list->window=window;
@@ -1772,12 +1793,14 @@ int Radio::OpenWindows(struct Scene *scene)
 #endif
     glutDisplayFunc(displayc);
     
+    glutSetCursor( GLUT_CURSOR_CROSSHAIR );
+    
     window1 = glutCreateSubWindow(window,0,170,960,170);
     glutMouseFunc(getMousel);
     glutMotionFunc(moveMouse);
     glutDisplayFunc(displayc);
     glutKeyboardFunc(keys2);
-    //glutPassiveMotionFunc(getMousePassive);
+    glutPassiveMotionFunc(getMousePassive3);
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
@@ -1966,13 +1989,20 @@ int Radio::OpenWindows(struct Scene *scene)
         WarningPrint("FMRadio : Error Allocation Scene Memory File\n");
         return 0;
     }
+    
+    printf("1 list->window %d\n",list->window);
     scenel=&list->scene;
+    
     zerol((char *)scenel,sizeof(struct Scene));
     
     initScene(scenel);
     
+
     lines = CLines::CLinesOpen(scenel,window);
     
+    glutPassiveMotionFunc(getMousePassive2);
+
+
     lines->plotPutData(scenel,range,magnitude2,rx->FFTcount,-1L);
     
     lines->sceneSource=sceneOpen;
@@ -1984,7 +2014,7 @@ int Radio::OpenWindows(struct Scene *scene)
     lines->wShift=0;
     
 //    lines->sdr=NULL;
-
+    
     window2=list->window;
     
     lines->lines->Plot->yLogScale=0;
@@ -2026,6 +2056,8 @@ int Radio::OpenWindows(struct Scene *scene)
     lines2->Frequency=rx->f;
     
     lines2->BandWidth=rx->bw;
+    
+    window3=list->window;
 
 /*
     lines2->lines->Plot->yAutoMaximum=FALSE;
@@ -2520,7 +2552,7 @@ static void getMousel(int button, int state, int x, int y)
     struct SceneList *list;
     RadioPtr sdr;
     
-    printf("button %d state %d\n",button,state);
+    //printf("button %d state %d\n",button,state);
     
     list=SceneFindByNumber(glutGetWindow());
     if(!list){
@@ -2534,6 +2566,8 @@ static void getMousel(int button, int state, int x, int y)
     }
     
     if(!sdr)return;
+    
+    
 
     if(state == GLUT_DOWN)
     {
@@ -2603,10 +2637,39 @@ static void getMousel(int button, int state, int x, int y)
     
 }
 
+void Radio::adjustView(int button)
+{
+    
+    double dx=(rx->samplerate*0.01);
+    if(button == 3){
+        rx->viewWindow -= dx;
+    }else if( button == 4){
+        rx->viewWindow += dx;
+    }
+    
+    if(rx->viewWindow < dx)rx->viewWindow=dx;
+    
+    if(rx->viewWindow >= rx->samplerate){
+        rx->viewWindow=rx->samplerate;
+        rx->fv=rx->fc;
+    }else{
+       rx->fv=rx->f;
+    }
+    
+    //printf("f %g samplerate %g fv %g viewWindow %g\n",rx->f,rx->samplerate,rx->fv,rx->viewWindow);
+}
+
+
 void Radio::getMouse(int button, int state, int x, int y)
 {
     if(!rx)return;
 
+    
+    if(inAxis){
+        adjustView(button);
+        return;
+    }
+    
     if(button == 3){
         double fl,bw;
         bw=rx->bw*0.5;
@@ -2638,6 +2701,7 @@ void Radio::getMouse(int button, int state, int x, int y)
 
             //fprintf(stderr,"setFrequencyCoefficients\n");
        }
+        adjustView(0);
         return;
     }else if(button == 4){
         double fl,bw;
@@ -2670,6 +2734,7 @@ void Radio::getMouse(int button, int state, int x, int y)
 
             //fprintf(stderr,"setFrequencyCoefficients\n");
        }
+        adjustView(0);
         return;
     }else if(button != 0){
         return;
@@ -2680,15 +2745,15 @@ void Radio::getMouse(int button, int state, int x, int y)
     {
         double fclick;
         
-        fclick=rx->fc-0.5*rx->samplerate+x*(double)rx->samplerate/(scene->xResolution);
+        fclick=rx->rmin+x*(double)(rx->rmax-rx->rmin)/(scene->xResolution);
         
         rx->f=fclick;
         
         fdown=fclick;
         
-        fcdown=rx->fc;
+        fcdown=rx->fv;
         
-        fsave=rx->fc;
+        fsave=rx->fv;
         
         fcount=0;
 
@@ -2696,8 +2761,9 @@ void Radio::getMouse(int button, int state, int x, int y)
         
         // printf("fclick %f button %d state %d x %d y %d\n",fclick,button,state,x,y);
     }else{
-       if(fsave != rx->fc) setFrequency2(rx);
+       if(fsave != rx->fv) setFrequency2(rx);
     }
+    adjustView(0);
 }
 
 int Radio::FindPoint(struct Scene *scene,int x,int y)
@@ -2830,45 +2896,91 @@ static int DrawString(int x, int y, char *out)
     return 0;
 }
 
-static void getMousePassive(int x, int y)
+static void getMousePassive3(int x, int y)
 {
     struct SceneList *list;
     RadioPtr sdr;
-    
-    list=SceneFindByNumber(glutGetWindow());
+    int window=glutGetWindow();
+
+    list=SceneFindByNumber(window);
     if(!list){
-        sdr=FindSdrRadioWindow(glutGetWindow());
+        sdr=FindSdrRadioWindow(window);
     }else{
         sdr=(RadioPtr)FindScene(&list->scene);
     }
     
-    
     if(!sdr)return;
     
+   // printf("getMousePassive3 %p list %p window %d\n",sdr,list,window);
+    
+    sdr->box.x=0;
+    sdr->box.y=0;
+    sdr->box.xsize=0;
+    sdr->box.ysize=0;
+
+    glutSetCursor( GLUT_CURSOR_CROSSHAIR );
+}
+static void getMousePassive2(int x, int y)
+{
+    
+    int window=glutGetWindow();
+    
+    RadioPtr sdr=FindSdrRadioWindow2(window);;
+
+    if(y > 0 && y < 15){
+        if(sdr)sdr->inAxis=1;
+        glutSetCursor( GLUT_CURSOR_LEFT_RIGHT );
+    }else{
+        if(sdr)sdr->inAxis=0;
+        glutSetCursor( GLUT_CURSOR_CROSSHAIR );
+    }
+
+}
+static void getMousePassive(int x, int y)
+{
+        struct SceneList *list;
+        RadioPtr sdr;
+        
+        int window=glutGetWindow();
+        list=SceneFindByNumber(window);
+        if(!list){
+            sdr=FindSdrRadioWindow(window);
+        }else{
+            sdr=(RadioPtr)FindScene(&list->scene);
+        }
+        
+        
+        if(!sdr)return;
+
+//        printf("getMousePassive %p list %p window %d\n",sdr,list,window);
+
     sdr->box.x=0;
     sdr->box.y=0;
     sdr->box.xsize=0;
     sdr->box.ysize=0;
     
     int up;
-    
+        
+
     //fprintf(stderr,"p x %d y %d\n",x,y);
     
-    if(y > 20){
+    glutSetCursor(GLUT_CURSOR_RIGHT_ARROW);
+
+    if(y > 15){
         return;
     }else if(y > 10){
         up=0;
     }else{
         up=1;
     }
-    
-    
+        
+
     int start=119;
     
     for(int k=0;k<10;++k){
         if(x >= start+k*9 && x <= start+(k+1)*9){
             if(up == 1){
-                //printf("1 getMousePassive %d %d\n",x,y);
+               //printf("1 getMousePassive %d %d\n",x,y);
                 sdr->box.x=start+k*9;
                 sdr->box.y=20;
                 sdr->box.xsize=9;
@@ -2887,7 +2999,7 @@ static void getMousePassive(int x, int y)
     start=425;
     for(int k=0;k<10;++k){
         if(x >= start+k*9 && x <= start+(k+1)*9){
-            if(up == 1){
+          if(up == 1){
                 //printf("3 getMousePassive %d %d\n",x,y);
                 sdr->box.x=start+k*9;
                 sdr->box.y=20;

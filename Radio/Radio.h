@@ -358,6 +358,7 @@ public:
     virtual int FindPoint(struct Scene *scene,int x,int y);
     virtual int OpenWindows(struct Scene *scene);
     void getMouse(int button, int state, int x, int y);
+    void adjustView(int button);
     int Display(struct Scene *scene);
     int resetDemod();
     
@@ -467,6 +468,8 @@ public:
 
     int window2;
     
+    int window3;
+
     int *flagsmenu;
     int flagsflag;
     
@@ -495,6 +498,9 @@ public:
     volatile int voicecontrol;
     
     volatile int voiceSpectrum;
+    
+    
+    int inAxis;
 
     int junk11;
     
@@ -511,6 +517,8 @@ typedef Radio *RadioPtr;
 extern RadioPtr FindSceneRadio(int window);
 
 extern RadioPtr FindSdrRadioWindow(int window);
+
+extern RadioPtr FindSdrRadioWindow2(int window);
 
 extern RadioPtr FindSdrRadioWindow(struct playData *rx);
 
