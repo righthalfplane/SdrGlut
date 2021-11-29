@@ -1656,7 +1656,7 @@ static void reshape(struct Scene *scene,int wscr,int hscr)
     glutPositionWindow(0,20);
     glutReshapeWindow(s->w, s->h/2-20);
     
-    printf("s->window1 %d s->window2 %d s->window3 %d\n",s->window1,s->window2,s->window3);
+  //  printf("s->window1 %d s->window2 %d s->window3 %d\n",s->window1,s->window2,s->window3);
 }
 
 static void displayc(void)
@@ -1995,7 +1995,8 @@ int Radio::OpenWindows(struct Scene *scene)
         return 0;
     }
     
-    printf("1 list->window %d\n",list->window);
+    //printf("1 list->window %d\n",list->window);
+    
     scenel=&list->scene;
     
     zerol((char *)scenel,sizeof(struct Scene));
@@ -2657,12 +2658,6 @@ void Radio::getMouse(int button, int state, int x, int y)
 {
     if(!rx)return;
 
-    
-    if(inAxis){
-        adjustView(button);
-        return;
-    }
-    
     if(button == 3){
         double fl,bw;
         bw=rx->bw*0.5;

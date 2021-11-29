@@ -306,9 +306,10 @@ void CLines::getMouse(int button, int state, int x, int y)
     RadioPtr sdr=NULL;
     
     sdr=(RadioPtr)FindScene(sceneSource);
+
     if(sceneSource){
         if(sdr && sdr->inAxis){
-            sdr->getMouse(button,state,x,y);
+            sdr->adjustView(button);
             return;
         }
     }
