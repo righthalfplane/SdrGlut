@@ -3020,6 +3020,8 @@ static void moveMouse(int x, int y)
     
     sdr->rx->fc=sdr->fcdown-diff;
     
+    sdr->rx->fv=sdr->rx->fc;
+    
 }
  
 int doWindow(double *x,double *y,long length,int type)
