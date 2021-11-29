@@ -1,6 +1,6 @@
 # SdrGlut
 
-SdrGlut V1.27 Adds the Device String to the start up Window.
+SdrGlut V1.27  adds a zoom option for the Water Fall and Power Spectrum windows.
 
 What is new ?
 ```
