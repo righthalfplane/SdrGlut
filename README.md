@@ -1,18 +1,23 @@
 # SdrGlut
 
-SdrGlut V1.26 Adds the Device String to the start up Window.
+SdrGlut V1.27 Adds the Device String to the start up Window.
 
 What is new ?
 ```
-SdrGlut has getter scroll control.
-SdrGlut has converted frequencies to MHZ.
-SdrGult has added a stop button to the Audio Recording window.
-SdrGlut has added the Device String to the start up window.
-SdrGlut has improved the scroll wheel operation.
+SdrGlut has added a scroll wheel zoom option to the Power Spectrum window.
+SdrGlut has added scroll wheel adjustments to the range of the Power Spectrum.
+SdrGult has added mode selection to the start up window.
+SdrGult has added bandwidth selection to the start up window.
+SdrGult has added a option to open the seperate zoom window.
+SdrGult has added cursor changes as the mouse is moved into the various active regions.
+SdrGult has added a active scroll zoom region at the top of the Power Spectrum window..
+SdrGult has added a active scroll maximum region at the left top of the Power Spectrum window.
+SdrGult has added a active scroll minimum region at the left bottom of the Power Spectrum window.
+SdrGult has added a spectrum scroll about the frequency selected.
 ```
 
 
-https://github.com/righthalfplane/SdrGlut/releases/tag/v1.26
+https://github.com/righthalfplane/SdrGlut/releases/tag/v1.27
 
 If you are new to SdrGlut, please view the introduction video -
 - [An Introduction to SdrGlut (A software defined radio)](https://youtu.be/JEXK-r6PvmA)
