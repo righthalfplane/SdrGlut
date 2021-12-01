@@ -6,14 +6,14 @@ What is new ?
 ```
 SdrGlut has added a scroll wheel zoom option to the Power Spectrum window.
 SdrGlut has added scroll wheel adjustments to the range of the Power Spectrum.
-SdrGult has added mode selection to the start up window.
-SdrGult has added bandwidth selection to the start up window.
-SdrGult has added a option to open the seperate zoom window.
-SdrGult has added cursor changes as the mouse is moved into the various active regions.
-SdrGult has added a active scroll zoom region at the top of the Power Spectrum window..
-SdrGult has added a active scroll maximum region at the left top of the Power Spectrum window.
-SdrGult has added a active scroll minimum region at the left bottom of the Power Spectrum window.
-SdrGult has added a spectrum scroll about the frequency selected.
+SdrGlut has added mode selection to the start up window.
+SdrGlut has added bandwidth selection to the start up window.
+SdrGlut has added a option to open the seperate zoom window.
+SdrGlut has added cursor changes as the mouse is moved into the various active regions.
+SdrGlut has added a active scroll zoom region at the top of the Power Spectrum window..
+SdrGlut has added a active scroll maximum region at the left top of the Power Spectrum window.
+SdrGlut has added a active scroll minimum region at the left bottom of the Power Spectrum window.
+SdrGlut has added a spectrum scroll about the frequency selected.
 ```
 
 
