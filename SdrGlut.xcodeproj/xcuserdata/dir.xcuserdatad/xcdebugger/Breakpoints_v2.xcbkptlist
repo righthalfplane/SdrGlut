@@ -75,6 +75,7 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "62038EDE-A525-492B-9AAC-6D577984BC3A"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -84,7 +85,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "307"
             endingLineNumber = "307"
-            landmarkName = "FindWindow2(int window)"
+            landmarkName = "FindWindow2(window)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

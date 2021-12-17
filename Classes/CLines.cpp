@@ -721,7 +721,7 @@ void CLines::display(struct Scene *scene)
     if(!scene)return;
     
     RadioPtr sdr=(RadioPtr)FindScene(sceneSource);
-    if(sdr){
+    if(sdr && scene->windowType == FileTypeSdrRadio){
         if(sdr->rx->samplerate != sdr->rx->viewWindow){
          //  printf("%g %g %g %g %d\n",Frequency,sdr->rx->fv,sdr->rx->f,lines->Plot->xViewMin,lines->window);
             if(Wait){
