@@ -1721,6 +1721,10 @@ static int findRadio(struct playData *rx)
         return 1;
     }
     
+    rx->MTU=rx->device->getStreamMTU(rx->rxStream);
+    
+    fprintf(stderr,"MTU %ld\n",rx->MTU);
+    
     rx->device->activateStream(rx->rxStream, 0, 0, 0);
    
    // fprintf(stderr,"findRadio frequency %g channel %d\n",rx->fc,rx->channel);
@@ -2190,9 +2194,6 @@ int testRadio(struct playData *rx)
             }
         }
         
-        rx->MTU=rx->device->getStreamMTU(rx->rxStream);
-        
-        fprintf(stderr,"MTU %ld\n",rx->MTU);
 
         // printf("rx->directSampleMode %d\n",rx->directSampleMode);
 /*

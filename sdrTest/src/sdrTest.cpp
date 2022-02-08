@@ -349,6 +349,8 @@ int main (int argc, char * argv [])
 	         rx.fc=atof(argv[++n]);
 	    }else if(!strcmp(argv[n],"-f")){
 	         rx.f=atof(argv[++n]);
+	    }else if(!strcmp(argv[n],"-channel")){
+	         rx.channel=atof(argv[++n]);
 	    }else if(!strcmp(argv[n],"-file")){
 	         rx.out=fopen(argv[++n],"wb");
 	         if(rx.out == NULL){
