@@ -1,6 +1,6 @@
 # SdrGlut
 
-SdrGlut V1.28 adds support for the BladeRF 2.0 micro.
+SdrGlut V1.28 adds support for the BladeRF 2.0 micro and AirSPY HF+.
 
 What is new ?
 ```
