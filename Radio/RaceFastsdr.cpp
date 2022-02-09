@@ -2012,6 +2012,7 @@ static int doAudio(float *aBuff,struct playData *rx)
 }
 int testRadio(struct playData *rx)
 {
+    extern int iblade;
     if(!rx)return 0;
     
     rx->getRadioAttributes=1;
@@ -2026,6 +2027,12 @@ int testRadio(struct playData *rx)
         
         rx->ntransmit=(int)rx->device->getNumChannels(SOAPY_SDR_TX);
         
+        if(iblade){
+            rx->nreceive=1;
+            rx->ntransmit=1;
+            rx->channel=0;
+        }
+
         printf("receive channels %d transmit channels %d\n",rx->nreceive,rx->ntransmit);
 
         SoapySDR::Kwargs it=rx->device->getHardwareInfo();

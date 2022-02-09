@@ -123,6 +123,8 @@ static GLUI_Listbox  *box[100];
 static GLUI_Listbox  *boxmode;
 int modetype;
 
+int iblade;
+
 int Radio::controlScan(struct playData *rx)
 {
     return 0;
@@ -528,6 +530,11 @@ static int doRadioOpen2(SoapySDR::Kwargs deviceArgs)
     
     int ntransmit=(int)devicer->getNumChannels(SOAPY_SDR_TX);
     
+    if(iblade){
+        nreceive=1;
+        ntransmit=1;
+    }
+    
     printf("receive channels %d transmit channels %d\n",nreceive,ntransmit);
     
     SoapySDR::Device::unmake(devicer);
@@ -564,7 +571,7 @@ static int doRadioOpen2(SoapySDR::Kwargs deviceArgs)
         w->OpenWindows(scene);
         
         w->LoadFile(scene,NULL,FileType);
-        
+
         myAppl=(CWinPtr)w;
         
         AddWindowList(myAppl);
@@ -724,6 +731,17 @@ static void control_cb(int control)
     msprintf(ssmode,sizeof(ssmode),"%s",boxmode->get_item_ptr(modetype)->text.c_str());
 
     SoapySDR::Kwargs deviceArgs=results[device];
+    
+    iblade=0;
+    for (SoapySDR::Kwargs::const_iterator it = deviceArgs.begin(); it != deviceArgs.end(); ++it) {
+        if (it->first == "driver") {
+            if(it->second == "bladerf"){
+                printf("Blade Found\n");
+                iblade=1;
+            }
+        }
+    }
+
 
     doRadioOpen2(deviceArgs);
 }
