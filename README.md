@@ -1,23 +1,15 @@
 # SdrGlut
 
-SdrGlut V1.27  adds a zoom option for the Water Fall and Power Spectrum windows.
+SdrGlut V1.28 adds support for the BladeRF 2.0 micro.
 
 What is new ?
 ```
-SdrGlut has added a scroll wheel zoom option to the Power Spectrum window.
-SdrGlut has added scroll wheel adjustments to the range of the Power Spectrum.
-SdrGlut has added mode selection to the start up window.
-SdrGlut has added bandwidth selection to the start up window.
-SdrGlut has added a option to open the seperate zoom window.
-SdrGlut has added cursor changes as the mouse is moved into the various active regions.
-SdrGlut has added a active scroll zoom region at the top of the Power Spectrum window..
-SdrGlut has added a active scroll maximum region at the left top of the Power Spectrum window.
-SdrGlut has added a active scroll minimum region at the left bottom of the Power Spectrum window.
-SdrGlut has added a spectrum scroll about the frequency selected.
+SdrGlut has a few bug fixes.
+On faster machines, SdrGlut can receive with the BladeRF at the full 61.44 MSPS speed.
 ```
 
 
-https://github.com/righthalfplane/SdrGlut/releases/tag/v1.27
+https://github.com/righthalfplane/SdrGlut/releases/tag/v1.28
 
 If you are new to SdrGlut, please view the introduction video -
 - [An Introduction to SdrGlut (A software defined radio)](https://youtu.be/JEXK-r6PvmA)
