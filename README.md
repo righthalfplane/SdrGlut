@@ -27,6 +27,7 @@ SdrGlut has a new Voice Command Module. It can be programed to record any freque
 - [An Introduction to SdrGlut (A software defined radio)](https://youtu.be/JEXK-r6PvmA)
 - [SdrGlut V1.27 demonstrates the zoom frequency option with a SDRplay RSPduo.](https://youtu.be/83Iac8pRmZQ)
 - [CubicSDR v0.2.7 vs. SdrGlut v1.28 with A bladeRF 2.0 micro xa5.](https://youtu.be/aF8lEFgrQVY)
+- [BladeRF xA5 vs. HackRF One at FRS Frequencies with SdrGlut.](https://youtu.be/oFb1m-Fa2_g)
 - [Airspy HF+ vs. SDRplay RSPduo at CB Frequencies.](https://youtu.be/U_EnK4oW5aA)
 - [Airspy HF+ vs. SDRplay RSPduo at MURS Frequencies.](https://youtu.be/oZlzmqPGcwM)
 - [SDRplay RSPduo Channel 0 vs. Channel 1 using SdrGlut.](https://youtu.be/_cbs6En1Tqc)
