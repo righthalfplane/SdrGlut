@@ -646,54 +646,67 @@ int doRadioOpenRA(std::string argStr)
     
     int nb=0;
     
+    int iopen=0;
+    
     for(size_t k=0;k<length;++k){
         string name;
         
         name="";
-        
-        deviceArgs = results[k];
-        for (SoapySDR::Kwargs::const_iterator it = deviceArgs.begin(); it != deviceArgs.end(); ++it) {
-            printf("%s=%s\n",it->first.c_str(),it->second.c_str());
-            if (it->first == "driver") {
-                if(it->second == "audio")break;
-                if(it->second == "redpitaya"){
+        try {
+
+            deviceArgs = results[k];
+            for (SoapySDR::Kwargs::const_iterator it = deviceArgs.begin(); it != deviceArgs.end(); ++it) {
+                printf("%s=%s\n",it->first.c_str(),it->second.c_str());
+                if (it->first == "driver") {
+                    if(it->second == "audio")break;
+                    if(it->second == "redpitaya"){
+                        name=it->second;
+                    }
+                } else if (it->first == "device") {
+                    if(it->second == "HackRF One")continue;
+                    name=it->second;
+                } else if (it->first == "label") {
                     name=it->second;
                 }
-            } else if (it->first == "device") {
-                if(it->second == "HackRF One")continue;
-                name=it->second;
-            } else if (it->first == "label") {
-                name=it->second;
             }
-        }
-        if(name != ""){
-            
-            new GLUI_Button(obj_panel, (char *)name.c_str(), (int)(2+k), control_cb);
-            
-            datatype[nb]=0;
-            
-            box[nb]=glui->add_listbox_to_panel(obj_panel, "Sample Rate : ",&datatype[nb], Mode_Buttons+nb, control_cb);
+            if(name != ""){
+                
+                SoapySDR::Device *devicer = SoapySDR::Device::make(deviceArgs);
+                
+                ++iopen;
+                
+                new GLUI_Button(obj_panel, (char *)name.c_str(), (int)(2+k), control_cb);
+                
+                datatype[nb]=0;
+                
+                box[nb]=glui->add_listbox_to_panel(obj_panel, "Sample Rate : ",&datatype[nb], Mode_Buttons+nb, control_cb);
 
-            boxnumber[k]=nb;
-            
-            SoapySDR::Device *devicer = SoapySDR::Device::make(deviceArgs);
-            std::vector<double> rate=devicer->listSampleRates(SOAPY_SDR_RX,0);
-            for (size_t j = 0; j < rate.size(); j++)
-            {
-                char data[256];
-                unsigned long long irate=rate[j];
-                sprintf(data,"%llu\n",irate);
-                box[nb]->add_item((int)j,data);
+                boxnumber[k]=nb;
+                
+                std::vector<double> rate=devicer->listSampleRates(SOAPY_SDR_RX,0);
+                for (size_t j = 0; j < rate.size(); j++)
+                {
+                    char data[256];
+                    unsigned long long irate=rate[j];
+                    sprintf(data,"%llu\n",irate);
+                    box[nb]->add_item((int)j,data);
+
+                }
+                SoapySDR::Device::unmake(devicer);
+                ++nb;
 
             }
-            SoapySDR::Device::unmake(devicer);
-            ++nb;
-
+            
+        } catch(const std::exception &e) {
+            std::string streamExceptionStr = e.what();
+            printf("doRadioOpen Error: %s\n",streamExceptionStr.c_str());
         }
+
+            
     }
     
-    if(length == 0){
-        new GLUI_Button(glui, "Error Device not Found" , 2, control_cb);
+    if(iopen == 0){
+        new GLUI_Button(glui, "Error: No SDR Device Found" , 2, control_cb);
     }
     
     new GLUI_Button(glui, "Close", 1, control_cb);
@@ -705,7 +718,7 @@ int doRadioOpenRA(std::string argStr)
 
 static void control_cb(int control)
 {
-    if(control == 1){
+    if(control == 1 || control == 2){
         glui->close();
         glui = NULL;
         return;

@@ -39,7 +39,7 @@ static void control_cb(int control);
 
 static void control_cb2(int control);
 
-char *ProgramVersion=(char *)"SdrGlut-957";
+char *ProgramVersion=(char *)"SdrGlut-958";
 
 extern "C" struct Scene *sceneRoot(void);
 
@@ -256,10 +256,10 @@ static void control_cb(int control)
         dialogFunctionPtr=NULL;
         dialogFileOpen((struct Scene *)NULL);
     }else if(control == 8){
-        std::string argStr;
-        sscanf(edittext1->get_text(),"%s",text1);
-        argStr=text1;
-        doRadioOpenRA(argStr);
+          std::string argStr;
+          sscanf(edittext1->get_text(),"%s",text1);
+          argStr=text1;
+          doRadioOpenRA(argStr);
     }else if(control == 9){
         int dialogTest(void);
 //        dialogTest();

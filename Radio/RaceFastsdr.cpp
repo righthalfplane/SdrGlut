@@ -304,19 +304,13 @@ int rxSend(void *rxv)
                    if(writeLab(rx->send,(char *)"FLOA",size))return 1;
                    if(netWrite(rx->send,(char *)&rx->sendBuff2[rx->size],size))return 1;
                }else if(mode == 1){
-                   if(netWrite(rx->send,(char *)rx->sendBuff2,size))return 1;
-                   if(netWrite(rx->send,(char *)&rx->sendBuff2[rx->size],size))return 1;
+                  if(netWrite(rx->send,(char *)rx->sendBuff2,size))return 1;
+                  if(netWrite(rx->send,(char *)&rx->sendBuff2[rx->size],size))return 1;
             }else{
-/*
-                ret=sendto2(rx->send,(char *)rx->sendBuff1, size*2,
-                            (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
- */
-
                 ret=sendto2(rx->send,(char *)rx->sendBuff2, size,
                             (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
                 ret=sendto2(rx->send,(char *)&rx->sendBuff2[rx->size], size,
                             (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
- 
                }
             }else if(type == 1){
                 double amin =  1e33;

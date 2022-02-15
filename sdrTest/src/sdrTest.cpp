@@ -864,7 +864,7 @@ int playRadio(struct playData *rx)
                 
         for(int k=0;k<NUM_DATA_BUFF;++k){
         	if(rx->buff[k])cFree((char *)rx->buff[k]);
-        	rx->buff[k]=(float *)cMalloc(2*size*4,5789);
+        	rx->buff[k]=(float *)cMalloc(2*size*4*8,5789);
         	if(!rx->buff[k]){
         	    mprint("5 cMalloc Errror %ld\n",(long)(2*size*4));
        	     	return 1;
@@ -1521,7 +1521,11 @@ int findRadio(struct playData *rx)
 			
         	mprint("rx->samplerate %d\n",rx->samplerate);
 			
-			rx->rxStream = rx->device->setupStream(SOAPY_SDR_RX, SOAPY_SDR_CF32, (const std::vector<size_t>)0);
+			//const std::vector<size_t> channels = {(size_t)0,(size_t)1};
+			
+			const std::vector<size_t> channels = {(size_t)0};
+						
+			rx->rxStream = rx->device->setupStream(SOAPY_SDR_RX, SOAPY_SDR_CF32, channels);
 
 			rx->device->activateStream(rx->rxStream, 0, 0, 0); 
 
@@ -1565,8 +1569,9 @@ int rxBuffer(void *rxv)
         	long long timeNs=0;
            
             float *buff=rx->buff[rx->witch % NUM_DATA_BUFF];
+            float *buff2=buff+rx->size;
              
-            void *buffs[] = {buff};
+            void *buffs[] = {buff,buff2};
             
             int toRead=rx->size;
             
@@ -1577,6 +1582,7 @@ int rxBuffer(void *rxv)
 				int flags=0;
 				
 				buffs[0]=buff+2*count;
+				buffs[1]=buff2+2*count;
 				
 				int iread;
 				
@@ -1588,7 +1594,7 @@ int rxBuffer(void *rxv)
 				 timeNs++;
 						   
 				if(ret <= 0){
-				   mprint("ret=%d, flags=%d, timeNs=%lld b0 %f b1 %f \n", ret, flags, timeNs,buff[0],buff[1]);
+				   mprint("ret=%d, flags=%d, timeNs=%lld b0 %f b1 %f witch %d\n", ret, flags, timeNs,buff[0],buff[1],rx->witch);
 				   break;
 				}else if(ret < toRead){
                     count += ret;
