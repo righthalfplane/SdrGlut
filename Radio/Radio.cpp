@@ -706,7 +706,7 @@ int doRadioOpenRA(std::string argStr)
     }
     
     if(iopen == 0){
-        new GLUI_Button(glui, "Error: No SDR Device Found" , 2, control_cb);
+        new GLUI_Button(glui, "Error: No SDR Device Found" , 200, control_cb);
     }
     
     new GLUI_Button(glui, "Close", 1, control_cb);
@@ -718,7 +718,7 @@ int doRadioOpenRA(std::string argStr)
 
 static void control_cb(int control)
 {
-    if(control == 1 || control == 2){
+    if(control == 1 || control == 200){
         glui->close();
         glui = NULL;
         return;
