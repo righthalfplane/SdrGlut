@@ -25,6 +25,7 @@ SdrGlut has a new Voice Command Module. It can be programed to record any freque
 ## Demo videos
 - [An Introduction to SdrGlut (A software defined radio)](https://youtu.be/JEXK-r6PvmA)
 - [SdrGlut V1.27 demonstrates the zoom frequency option with a SDRplay RSPduo.](https://youtu.be/83Iac8pRmZQ)
+- [SdrGlut v1.29 vs. Gqrx 2.15.8 on MacOS Monterey with The BladeRF xA5](https://youtu.be/IvgDLU85edQ)
 - [CubicSDR v0.2.7 vs. SdrGlut v1.28 with A bladeRF 2.0 micro xa5.](https://youtu.be/aF8lEFgrQVY)
 - [Icom IC-R8600 vs. BladeRF xA5 at FRS Frequencies with SdrGlut.](https://youtu.be/X8vDfFUc77I)
 - [Icom IC-R8600 vs. SDRplay RSP2 at CB Frequencies with SdrGlut.](https://youtu.be/YOl3T4rkO_g)
