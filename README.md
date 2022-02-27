@@ -1,13 +1,12 @@
 # SdrGlut
 
-SdrGlut V1.28 adds support for the BladeRF 2.0 micro and AIRSPY HF+.
+SdrGlut V1.29 - Fixes a few bugs.
 
 What is new ?
 ```
-SdrGlut has a few bug fixes.
-On faster machines, SdrGlut can receive with the BladeRF at the full 61.44 MSPS speed.
+ It now captures a common Soapy exception.
+ It correctly passes control to all SDR devices.
 ```
-
 
 https://github.com/righthalfplane/SdrGlut/releases/tag/v1.28
 
