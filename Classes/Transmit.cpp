@@ -662,7 +662,7 @@ static int TransmitThread(void *rxv)
     
     //size_t MTU=device->getStreamMTU(txStream);
     
-    // fprintf(stderr,"MTU %ld\n",MTU);
+    //fprintf(stderr,"MTU %ld\n",MTU);
     
     
     //device->setHardwareTime(0); //clear HW time for easy debugging
@@ -921,7 +921,8 @@ int SendData(struct Info *info,unsigned int frames,short *bufin)
         buffs[0] = out;
         int ret = info->device->writeStream(info->txStream,  &buffs[0], tosend, flags);
         if(ret < 0){
-            std::cerr << "writeStream " << SoapySDR::errToStr(ret) << std::endl;
+            std::cerr << "writeStream " << ret << "  " << SoapySDR::errToStr(ret) << std::endl;
+            //if(ret == SOAPY_SDR_TIMEOUT)Sleep2(100);
             return 0;
         }
         
