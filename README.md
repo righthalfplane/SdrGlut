@@ -8,7 +8,7 @@ What is new ?
  It correctly passes control to all SDR devices.
 ```
 
-https://github.com/righthalfplane/SdrGlut/releases/tag/v1.28
+https://github.com/righthalfplane/SdrGlut/releases/tag/v1.29
 
 If you are new to SdrGlut, please view the introduction video -
 - [An Introduction to SdrGlut (A software defined radio)](https://youtu.be/JEXK-r6PvmA)
