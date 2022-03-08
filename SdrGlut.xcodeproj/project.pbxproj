@@ -58,6 +58,7 @@
 		467FE4191C2C4F9B007D260F /* glui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 467FE3FA1C2C4F9B007D260F /* glui.cpp */; };
 		467FE41A1C2C4F9B007D260F /* quaternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 467FE3FB1C2C4F9B007D260F /* quaternion.cpp */; };
 		468120D2222597CE00926B96 /* DialogFolder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 468120D0222597CD00926B96 /* DialogFolder.cpp */; };
+		4685011727D6D60900BEBC4B /* File8.c in Sources */ = {isa = PBXBuildFile; fileRef = 4685011627D6D60900BEBC4B /* File8.c */; };
 		4686063922028C1F0078D9F2 /* DialogRadio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4686063522028C1F0078D9F2 /* DialogRadio.cpp */; };
 		4686063A22028C1F0078D9F2 /* Radio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4686063822028C1F0078D9F2 /* Radio.cpp */; };
 		468D261C2238A04D005BE154 /* RecordIQ.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 468D261A2238A04D005BE154 /* RecordIQ.cpp */; };
@@ -175,6 +176,8 @@
 		467FE3FB1C2C4F9B007D260F /* quaternion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = quaternion.cpp; path = "glui-routines/quaternion.cpp"; sourceTree = "<group>"; };
 		468120D0222597CD00926B96 /* DialogFolder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DialogFolder.cpp; path = MainSource/DialogFolder.cpp; sourceTree = "<group>"; };
 		468120D1222597CE00926B96 /* DialogFolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DialogFolder.h; path = MainSource/DialogFolder.h; sourceTree = "<group>"; };
+		4685011527D6D60900BEBC4B /* File8.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = File8.h; path = MainSource/File8.h; sourceTree = "<group>"; };
+		4685011627D6D60900BEBC4B /* File8.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = File8.c; path = MainSource/File8.c; sourceTree = "<group>"; };
 		4686063522028C1F0078D9F2 /* DialogRadio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DialogRadio.cpp; sourceTree = "<group>"; };
 		4686063622028C1F0078D9F2 /* DialogRadio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DialogRadio.h; sourceTree = "<group>"; };
 		4686063722028C1F0078D9F2 /* Radio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Radio.h; sourceTree = "<group>"; };
@@ -418,6 +421,8 @@
 			isa = PBXGroup;
 			children = (
 				4634C63B258684E100973620 /* dialogTime.cpp */,
+				4685011627D6D60900BEBC4B /* File8.c */,
+				4685011527D6D60900BEBC4B /* File8.h */,
 				4629AB64272EEBAC00EA7253 /* sdrReceive.cpp */,
 				4629AB65272EEBAD00EA7253 /* sdrReceive.h */,
 				4637E2D3272EE5AF0061B09B /* dialogTest.cpp */,
@@ -576,6 +581,7 @@
 				467FE4001C2C4F9B007D260F /* glui_button.cpp in Sources */,
 				467FE4111C2C4F9B007D260F /* glui_spinner.cpp in Sources */,
 				461E83582228916B00220E94 /* DialogFileOpen.cpp in Sources */,
+				4685011727D6D60900BEBC4B /* File8.c in Sources */,
 				46CE01D4221265FB00140F6C /* ClinesAttributes.cpp in Sources */,
 				467FE4141C2C4F9B007D260F /* glui_textbox.cpp in Sources */,
 				4643CAC6222845F80059451C /* SdrFile.cpp in Sources */,

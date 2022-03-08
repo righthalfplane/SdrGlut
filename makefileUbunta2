@@ -33,6 +33,7 @@ COBJS= ./MainSource/Getpalette.o \
 	./MainSource/BackgroundQ.o  \
 	./MainSource/cMalloc.o \
 	./MainSource/SceneList.o \
+	./MainSource/File8.o \
 	./MainSource/sceneDisplay.o 
 	
 	

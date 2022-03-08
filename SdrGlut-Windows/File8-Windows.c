@@ -127,15 +127,15 @@ int fput8(FILE8 *file8,char *data,INT8_64 lengthin)
 	return 0;
 }
 
-int fget8(FILE8 *file8,char *data,INT8_64 lengthin)
+int fget8(FILE8 *file8,char *data, INT8_64 size,INT8_64 lengthin)
 {
 	if(!data)return -1;
 	if(!file8)return -1;
 	if(file8->ifile==-1)return -1;
-	if(_read(file8->ifile,(char *)data,(unsigned int)lengthin)!=(int)lengthin) return -1;
+	if(_read(file8->ifile,(char *)data,(unsigned int)lengthin*size)!=(int)lengthin*size) return -1;
 	++FileReads8;
 	FileReadBytes8 += lengthin;
-	return 0;
+	return (int)lengthin;
 }
 int getString8(unsigned char *s,INT8_64 n,FILE8 *in)
 {
@@ -143,7 +143,7 @@ int getString8(unsigned char *s,INT8_64 n,FILE8 *in)
 	
 	if(!s || !in || (n < 0))return 1;
 	
-	if(fget8(in,(char *)s,(INT8_64)n))return 1;
+	if(fget8(in,(char *)s,1,(INT8_64)n))return 1;
 	
 	if(in->saveCRC){
 		crcval=in->crcval;

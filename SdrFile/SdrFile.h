@@ -9,6 +9,7 @@
 #ifndef SdrFileRA_h
 #define SdrFileRA_h
 #include "ulibTypes.h"
+#include "File8.h"
 #include <GL/glui.h>
 #include <cstdlib>
 #include <cstddef>
@@ -77,7 +78,7 @@ struct playData4{
     ALuint buffers[NUM_BUFFERS];
     int bufferState[NUM_BUFFERS];
     ALuint source;
-    FILE *infile;
+    FILE8 *infile;
     double samplerate;
     double meterMax;
     short int data[2*BLOCK_SIZE];

@@ -295,7 +295,7 @@ static void control_cb(int control)
         
         s->water.nline=0;
         
-        fseek(s->play.infile, 0, SEEK_SET);
+        fseek8(s->play.infile, 0, SEEK_SET);
         
         s->play.frame=0;
         

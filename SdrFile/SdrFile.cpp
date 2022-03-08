@@ -258,10 +258,10 @@ int SdrFile::LoadFile(struct Scene *scene,char *filename, int fileType)
 {
     char name[512];
     
-    if(play.infile)fclose (play.infile) ;
+    if(play.infile)fclose8 (play.infile) ;
     play.infile=NULL;
     
-    if ((play.infile = fopen (filename, "rb")) == NULL)
+    if ((play.infile = fopen8 (filename, "rb")) == NULL)
     {
         printf ("Not able to open input file %s.\n", filename) ;
         return 1 ;
@@ -355,7 +355,7 @@ int SdrFile::StartIt(struct playData4 *play)
 
     play->frame = 0;
     
-    if(play->infile)fseek(play->infile, 0, SEEK_SET);
+    if(play->infile)fseek8(play->infile, 0, SEEK_SET);
 
     setBuffers(play);
     setBuffers(play);
@@ -391,7 +391,8 @@ int SdrFile::setBuffers(struct playData4 *play)
     float *buf2=filter.buf2;
     
     k=play->size;
-    readcount = fread(buf1, 2*sizeof(float),k,play->infile);
+    readcount = fget8(play->infile,(char *)buf1, 2*sizeof(float),k);
+ 
     if(k != readcount){
         //fprintf(stderr,"readcount %lu requested %lu buffer %d\n",(unsigned long)readcount,(unsigned long)k,buffer);
         for(size_t n=readcount;n<k;++n){
@@ -568,7 +569,7 @@ int SdrFile::setBuffers(struct playData4 *play)
         static int count=0;
         static FILE *out=NULL;
         if(out==NULL){
-            out=fopen("sound.raw","w");
+            out=fopen("sound.raw","wb");
         }
         
         fwrite(data, 2, 4800,out);
@@ -610,7 +611,7 @@ SdrFile::~SdrFile()
     
     stopPlay(&play);
     
-    if(play.infile)fclose (play.infile) ;
+    if(play.infile)fclose8(play.infile) ;
     play.infile=NULL;
 
     if(range)cFree((char *)range);
@@ -1050,7 +1051,7 @@ StartUp:
             if(sdr->setBuffers(play)){
                 //fprintf(stderr,"stopPlay frame %d - rewind SDR File\n",play->frame);
                 play->frame = 0;
-                fseek(play->infile, 0, SEEK_SET);
+                fseek8(play->infile, 0, SEEK_SET);
            }
             
          }else{
@@ -1077,9 +1078,9 @@ StartUp:
         goto StartUp;
     }else if(play->controlProcess == -3){
         play->controlProcess=0;
-        off_t location=(off_t)(play->setFrameNumber*2*sizeof(float)*play->samplerate/10);
+        size_t location=(size_t)(play->setFrameNumber*2*sizeof(float)*play->samplerate/10);
         play->frame = (int)play->setFrameNumber;
-        fseek(play->infile, location, SEEK_SET);
+        fseek8(play->infile, location, SEEK_SET);
        // fprintf(stderr,"location %lld ret = %d sizeof(long) %ld sizeof(long long) %ld\n",location,ret,sizeof(long),sizeof(long long));
         goto StartUp;
     }
