@@ -613,10 +613,9 @@ static int TransmitThread(void *rxv)
             }
             
         }
-        
+    
         device->deactivateStream(rx->rxStream);
-
-
+        
     }
 
     // fprintf(stderr,"getFullDuplex %d\n",device->getFullDuplex(SOAPY_SDR_TX,rx->channel));
@@ -733,7 +732,8 @@ static int TransmitThread(void *rxv)
     
     s->tt.info.mod=mod;
     
-    
+    s->tt.info.extraBytes=0;
+
     std::vector<void *> buffs(2);
     
     unsigned int bufferFrames = 2040;
@@ -772,6 +772,7 @@ cleanup:
     if(demodAM)ampmodem_destroy(demodAM);
     
     if(!device->getFullDuplex(SOAPY_SDR_TX, rx->channel)){
+
 /*
         extern int AudioReset(struct playData *rx);
         device->activateStream(rx->rxStream);
@@ -783,6 +784,8 @@ cleanup:
             launchThread((void *)rx,rxBuffer);
         }
 */
+        Sleep2(200);
+        
         device->deactivateStream(txStream);
         
         device->closeStream(txStream);
@@ -794,6 +797,8 @@ cleanup:
         s->playRadio(s->rx);
         
     }else{
+        Sleep2(200);
+        
         device->deactivateStream(txStream);
         
         device->closeStream(txStream);
@@ -897,6 +902,23 @@ int SendData(struct Info *info,unsigned int frames,short *bufin)
     
     float *out=buf2;
     
+    if(info->extraBytes > 0){
+        float *out2=buf;
+        for(int k=0;k<info->extraBytes ;++k){
+            out2[2*k]=r[2*k];
+            out2[2*k+1]=r[2*k+1];
+        }
+        int nn=info->extraBytes;
+        for(unsigned int k=0;k<num2 ;++k){
+            out2[2*nn]=out[2*k];
+            out2[2*nn+1]=out[2*k+1];
+            ++nn;
+        }
+        out=out2;
+        num2=nn;
+        info->extraBytes=0;
+    }
+    
     std::vector<void *> buffs(2);
     
     int flags(0);
@@ -905,28 +927,25 @@ int SendData(struct Info *info,unsigned int frames,short *bufin)
     unsigned int tosend;
     
     tosend=num2;
-/*
-    {
-        static FILE *out2;
-        if(out2 == NULL){
-            out2=fopen("data1a.raw","wb");
-        }
-        
-        if(out2){
-            fwrite(out,8,tosend,out2);
-        }
-    }
-*/
+    
     while(1){
         buffs[0] = out;
-        int ret = info->device->writeStream(info->txStream,  &buffs[0], tosend, flags);
+        if(tosend < 4096){
+            for(unsigned int k=0;k<tosend;++k){
+                r[2*k]=out[2*k];
+                r[2*k+1]=out[2*k+1];
+            }
+            info->extraBytes=tosend;
+            return 0;
+        }
+        int ret = info->device->writeStream(info->txStream,  &buffs[0], 4096, flags);
         if(ret < 0){
             std::cerr << "writeStream " << ret << "  " << SoapySDR::errToStr(ret) << std::endl;
             //if(ret == SOAPY_SDR_TIMEOUT)Sleep2(100);
             return 0;
         }
         
-        if(ret == (int)tosend)break;
+        if(ret >= (int)tosend)break;
         out += 2*ret;
         tosend -= ret;
         if(tosend <= 0){

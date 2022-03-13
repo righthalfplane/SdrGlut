@@ -211,6 +211,8 @@ struct Info{
     double coso;
     double sindt;
     double cosdt;
+    
+    int extraBytes;
 
 };
 
@@ -283,6 +285,7 @@ struct TransmitData{
     RtAudio *audio;
     
     volatile int doTransmit;
+    
     
     volatile double fc;
     double foffset;

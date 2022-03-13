@@ -303,6 +303,11 @@ int rxSend(void *rxv)
                    if(netWrite(rx->send,(char *)rx->sendBuff2,size))return 1;
                    if(writeLab(rx->send,(char *)"FLOA",size))return 1;
                    if(netWrite(rx->send,(char *)&rx->sendBuff2[rx->size],size))return 1;
+                  // {
+                  //     static FILE *out;
+                  //     if(!out)out=fopen("junk.raw","wb");
+                   //    if(out)fwrite(rx->sendBuff2,8,size,out);
+                  // }
                }else if(mode == 1){
                   if(netWrite(rx->send,(char *)rx->sendBuff2,size))return 1;
                   if(netWrite(rx->send,(char *)&rx->sendBuff2[rx->size],size))return 1;
@@ -1116,6 +1121,7 @@ static int setBuffers(struct playData *rx, int numBuff)
     }
     
     int mute=rx->mute+rx->muteScan;
+    
     if(mute)zerol((unsigned char *)rx->buffa[numBuff % NUM_ABUFF5],(long)(4800*sizeof(short)));
 
     alBufferData(buffer,
