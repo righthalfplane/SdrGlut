@@ -31,6 +31,7 @@ SdrGlut has a new Voice Command Module. It can be programed to record any freque
 - [Icom IC-R8600 vs. BladeRF xA5 at FRS Frequencies with SdrGlut.](https://youtu.be/X8vDfFUc77I)
 - [Icom IC-R8600 vs. SDRplay RSP2 at CB Frequencies with SdrGlut.](https://youtu.be/YOl3T4rkO_g)
 - [Icom IC-R8600 vs. SDRplay RSP2 at FRS Frequencies with SdrGlut.](https://youtu.be/q5jHIm74ztM)
+- [Using the BladeRF xA5 to Display Real Time TV](https://youtu.be/r1wbiAUUUDk)
 - [BladeRF xA5 vs. RTL-SDR.com at FRS Frequencies with SdrGlut.](https://youtu.be/h60fr9P4-U0)
 - [BladeRF xA5 vs. SDRplay RSP2 at FRS Frequencies with SdrGlut.](https://youtu.be/XxvjWbmtfPs)
 - [BladeRF xA5 vs. HackRF One at FRS Frequencies with SdrGlut.](https://youtu.be/oFb1m-Fa2_g)
