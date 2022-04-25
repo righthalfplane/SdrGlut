@@ -161,6 +161,7 @@ Video of RtAudio installation on:
 - [Windows 10](https://youtu.be/DyYIKiu2zVI)
 - [Ubuntu18.04](https://youtu.be/mOGWG1K52wA)
 - [Raspberry pi](https://youtu.be/YKyYXtv4aGw)
+- [Ubuntu22.04](https://youtu.be/uARzCMbZ1pA)
 
 ## Problems With libliquid
 
