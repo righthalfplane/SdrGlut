@@ -24,8 +24,10 @@ SdrGlut has a new Voice Command Module. It can be programed to record any freque
 
 ## Demo videos
 - [An Introduction to SdrGlut (A software defined radio)](https://youtu.be/JEXK-r6PvmA)
+- [How to Install RtAudio on Ubuntu 22.04](https://youtu.be/uARzCMbZ1pA)
 - [SdrGlut V1.27 demonstrates the zoom frequency option with a SDRplay RSPduo.](https://youtu.be/83Iac8pRmZQ)
 - [Build the Hoverman Over The Air TV antenna - Its the Best](https://youtu.be/G0M0Q0uGP4o)
+- [The BladeRF-xA5 - how to receive both channels simultaneously.](https://youtu.be/Cn9l2YkIV9U)
 - [Using the BladeRF xA5 to Display Real Time TV](https://youtu.be/r1wbiAUUUDk)
 - [SdrGlut v1.29 vs. Gqrx 2.15.8 on MacOS Monterey with The BladeRF xA5](https://youtu.be/IvgDLU85edQ)
 - [CubicSDR v0.2.7 vs. SdrGlut v1.28 with A bladeRF 2.0 micro xa5.](https://youtu.be/aF8lEFgrQVY)
@@ -159,6 +161,7 @@ Video of RtAudio installation on:
 - [Windows 10](https://youtu.be/DyYIKiu2zVI)
 - [Ubuntu18.04](https://youtu.be/mOGWG1K52wA)
 - [Raspberry pi](https://youtu.be/YKyYXtv4aGw)
+- [Ubuntu22.04](https://youtu.be/uARzCMbZ1pA)
 
 ## Problems With libliquid
 
