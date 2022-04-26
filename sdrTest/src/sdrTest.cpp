@@ -920,9 +920,9 @@ int playRadio(struct playData *rx)
         
         rx->frame=0;
         
-       // launchThread((void *)rx,Process);   	
+        launchThread((void *)rx,Process);   	
 
-       // launchThread((void *)rx,Process); 
+        launchThread((void *)rx,Process); 
           	
         launchThread((void *)rx,Process);   	        
         
@@ -1101,6 +1101,7 @@ int doFilter(struct playData *rx,float *wBuff,float *aBuff,struct Filters *f)
  	
  	int witch=ip % NUM_DATA_BUFF;
  	
+ //	printf("doFilter witch %d ip %d thread %d\n",witch,ip,f->thread);
  	
  	//mprint("doFilter witch %d ip %d start \n",witch,ip);
 	
@@ -1316,6 +1317,8 @@ int popBuff(struct playData *rx)
 	
  	if(rx->bufftop < 1)goto Out;
  	
+ 	//printf("popBuff bufftop %d ",rx->bufftop );
+ 	
  	if(rx->bufftop == 1){
  		ret=rx->buffStack[0];
  		rx->bufftop=0;
@@ -1331,7 +1334,8 @@ int popBuff(struct playData *rx)
              	ks=k;
              }
         }
-        
+  	//printf("ks %d \n",ks);
+       
         if(ks >= 0){
         	ret=rx->buffStack[ks];
         	int kk;

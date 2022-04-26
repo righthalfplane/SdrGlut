@@ -38,7 +38,15 @@ using namespace std;
 #include <AL/al.h>
 #endif
 
+#ifndef __has_include
+#error "Compiler missing __has_include macro!"
+#endif
+
+#if __has_include(<rtaudio/RtAudio.h>)
 #include <rtaudio/RtAudio.h>
+#else
+#include <RtAudio.h>
+#endif
 
 #include <time.h>
 
