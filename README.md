@@ -24,8 +24,9 @@ SdrGlut has a new Voice Command Module. It can be programed to record any freque
 
 ## Demo videos
 - [An Introduction to SdrGlut (A software defined radio)](https://youtu.be/JEXK-r6PvmA)
-- [CubicSDR v0.2.7 vs. SdrGlut v1.29 on Ubuntu 22.04.](https://youtu.be/3vVvpbkqy3Y)
+- [How to Install SdrGlut on Ubuntu 22.04.](https://youtu.be/7K2V2rC0PEA)
 - [How to Install RtAudio on Ubuntu 22.04](https://youtu.be/uARzCMbZ1pA)
+- [CubicSDR v0.2.7 vs. SdrGlut v1.29 on Ubuntu 22.04.](https://youtu.be/3vVvpbkqy3Y)
 - [SdrGlut V1.27 demonstrates the zoom frequency option with a SDRplay RSPduo.](https://youtu.be/83Iac8pRmZQ)
 - [Build the Hoverman Over The Air TV antenna - Its the Best](https://youtu.be/G0M0Q0uGP4o)
 - [The BladeRF-xA5 - how to receive both channels simultaneously.](https://youtu.be/Cn9l2YkIV9U)
