@@ -24,7 +24,8 @@ SdrGlut has a new Voice Command Module. It can be programed to record any freque
 
 ## Demo videos
 - [An Introduction to SdrGlut (A software defined radio)](https://youtu.be/JEXK-r6PvmA)
-- [How to Install the AirSpyHF+ Routines on Ubuntu 22.04.](https://youtu.be/EzILVYP_20U
+- [How to Build CubicSDR 0.2.7 on Ubuntu 22.04.](https://youtu.be/lsxtULKj_U4)
+- [How to Install the AirSpyHF+ Routines on Ubuntu 22.04.](https://youtu.be/EzILVYP_20U)
 - [How to Install SdrGlut on Ubuntu 22.04.](https://youtu.be/7K2V2rC0PEA)
 - [How to Install RtAudio on Ubuntu 22.04](https://youtu.be/uARzCMbZ1pA)
 - [CubicSDR v0.2.7 vs. SdrGlut v1.29 on Ubuntu 22.04.](https://youtu.be/3vVvpbkqy3Y)
