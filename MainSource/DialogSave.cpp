@@ -28,7 +28,7 @@ static int type;
 
 static int boxSelection;
 
-static char text1b[255]="saveAudio.raw";
+static char text1b[255]="saveAudio.wav";
 static char text2b[255]="savefile.iq";
 static char text3b[255]="saveFluence.fbl";
 static char text4b[255]="doc.kml";

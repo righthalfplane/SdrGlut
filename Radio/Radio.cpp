@@ -125,6 +125,29 @@ int modetype;
 
 int iblade;
 
+SNDFILE *sfopen(char *filename)
+{
+    char strbuffer[256];
+    static int pversion=1;
+    
+    sf_command (NULL, SFC_GET_LIB_VERSION, strbuffer, sizeof (strbuffer)) ;
+    
+    if(pversion == 1)printf("sndfile version %s\n",strbuffer);
+    pversion=0;
+    
+    SF_INFO sfinfo;
+    memset(&sfinfo, 0, sizeof (sfinfo));
+    sfinfo.samplerate = 48000;
+    sfinfo.channels   = 1; // mono
+    sfinfo.format     = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
+    
+    if(!filename)return NULL;
+    
+    SNDFILE * fid_wav = sf_open(filename, SFM_WRITE, &sfinfo);
+    
+    return fid_wav;
+}
+
 int Radio::controlScan(struct playData *rx)
 {
     return 0;
@@ -350,7 +373,7 @@ int Radio::doSoundRecord()
             if((s->start[k]+s->stop[k]) < now){
                 fprintf(stderr,"Close 3 Mode %s File %s\n",s->mode[k],s->FilePath[k]);
                 s->state[k]=0;
-                if(rx->audioOutput)fclose(rx->audioOutput);
+                if(rx->audioOutput)sf_close(rx->audioOutput);
                 rx->audioOutput=NULL;
                 break;
             }else{
@@ -358,14 +381,14 @@ int Radio::doSoundRecord()
                     if(!s->on[kk] || kk == k)continue;
                     if(s->start[kk] > s->start[k] && s->start[kk] < now && (s->start[kk]+s->stop[kk]) >= now){
                         fprintf(stderr,"Close 2 Mode %s File %s\n",s->mode[k],s->FilePath[k]);
-                        if(rx->audioOutput)fclose(rx->audioOutput);
+                        if(rx->audioOutput)sf_close(rx->audioOutput);
                         s->state[k]=0;
                         char buff1[256],buff2[256];
                         sprintf(buff1,"%lf",s->frequency[kk]);
                         sprintf(buff2,"%s",s->mode[kk]);
                         sendMessageGlobal(&buff1[0],&buff2[0],M_SEND);
                         fprintf(stderr,"Open 2 Mode %s File %s\n",s->mode[kk],s->FilePath[kk]);
-                        rx->audioOutput=fopen(s->FilePath[kk],"wb");
+                        rx->audioOutput=sfopen(s->FilePath[kk]);
                         if(!rx->audioOutput){
                             fprintf(stderr,"Error Opening %s To Write\n",s->FilePath[kk]);
                         }else{
@@ -383,13 +406,13 @@ int Radio::doSoundRecord()
         if(!s->on[k])continue;
         time(&now);
         if(s->start[k] <= now && (s->start[k]+s->stop[k]) >= now){
-            if(rx->audioOutput)fclose(rx->audioOutput);
+            if(rx->audioOutput)sf_close(rx->audioOutput);
             fprintf(stderr,"Open 1 Mode %s File %s\n",s->mode[k],s->FilePath[k]);
             char buff1[256],buff2[256];
             sprintf(buff1,"%lf",s->frequency[k]);
             sprintf(buff2,"%s",s->mode[k]);
             sendMessageGlobal(&buff1[0],&buff2[0],M_SEND);
-            rx->audioOutput=fopen(s->FilePath[k],"wb");
+            rx->audioOutput=sfopen(s->FilePath[k]);
             if(!rx->audioOutput){
                 fprintf(stderr,"Error Opening %s To Write\n",s->FilePath[k]);
             }else{
@@ -420,11 +443,11 @@ Radio::Radio(struct Scene *scene,SoapySDR::Kwargs deviceArgs): CWindow(scene)
     
     zerol((char *)&start,&end-&start+1);
     
-    mstrncpy(rs.FilePath[0],(char *)"sound01.raw",sizeof(rs.FilePath[0]));
-    mstrncpy(rs.FilePath[1],(char *)"sound02.raw",sizeof(rs.FilePath[1]));
-    mstrncpy(rs.FilePath[2],(char *)"sound03.raw",sizeof(rs.FilePath[2]));
-    mstrncpy(rs.FilePath[3],(char *)"sound04.raw",sizeof(rs.FilePath[3]));
-    mstrncpy(rs.FilePath[4],(char *)"sound05.raw",sizeof(rs.FilePath[4]));
+    mstrncpy(rs.FilePath[0],(char *)"sound01.wav",sizeof(rs.FilePath[0]));
+    mstrncpy(rs.FilePath[1],(char *)"sound02.wav",sizeof(rs.FilePath[1]));
+    mstrncpy(rs.FilePath[2],(char *)"sound03.wav",sizeof(rs.FilePath[2]));
+    mstrncpy(rs.FilePath[3],(char *)"sound04.wav",sizeof(rs.FilePath[3]));
+    mstrncpy(rs.FilePath[4],(char *)"sound05.wav",sizeof(rs.FilePath[4]));
 
     for(int k=0;k<5;++k){
         time(&rs.start[k]);

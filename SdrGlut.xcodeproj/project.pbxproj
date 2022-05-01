@@ -68,6 +68,7 @@
 		4694D62E271877E900EFD25E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4694D62D271877E900EFD25E /* main.cpp */; };
 		46963ED323D789A30059B4AA /* printInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46963ED223D789A30059B4AA /* printInfo.cpp */; };
 		46A5B3D6246D9F770071072C /* Poly.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46A5B3D4246D9F760071072C /* Poly.cpp */; };
+		46AA9828281DF9B300C1A84F /* libsndfile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46AA9827281DF9B300C1A84F /* libsndfile.a */; };
 		46B4EB1B2212570900041F98 /* cMalloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 46B4EB192212570900041F98 /* cMalloc.c */; };
 		46B4EB1C2212570900041F98 /* Utilities.c in Sources */ = {isa = PBXBuildFile; fileRef = 46B4EB1A2212570900041F98 /* Utilities.c */; };
 		46C36C52222596D90045691F /* DialogSave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46C36C51222596D90045691F /* DialogSave.cpp */; };
@@ -192,6 +193,7 @@
 		46A5B3D4246D9F760071072C /* Poly.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Poly.cpp; path = Digital/Poly.cpp; sourceTree = SOURCE_ROOT; };
 		46A5B3D5246D9F770071072C /* Poly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Poly.h; path = Digital/Poly.h; sourceTree = SOURCE_ROOT; };
 		46A5B3D7246DA3510071072C /* BatchFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BatchFile.h; path = Digital/BatchFile.h; sourceTree = SOURCE_ROOT; };
+		46AA9827281DF9B300C1A84F /* libsndfile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libsndfile.a; sourceTree = "<group>"; };
 		46B4EB182212570900041F98 /* Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Utilities.h; path = MainSource/Utilities.h; sourceTree = "<group>"; };
 		46B4EB192212570900041F98 /* cMalloc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cMalloc.c; path = MainSource/cMalloc.c; sourceTree = "<group>"; };
 		46B4EB1A2212570900041F98 /* Utilities.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Utilities.c; path = MainSource/Utilities.c; sourceTree = "<group>"; };
@@ -244,6 +246,7 @@
 				464918A220E53121008BDC72 /* libliquid.a in Frameworks */,
 				4664F28D1DA95E6E00BBF9EB /* libSoapySDR.dylib in Frameworks */,
 				4629CAAA23DD4E040059898D /* libglut.3.dylib in Frameworks */,
+				46AA9828281DF9B300C1A84F /* libsndfile.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -255,6 +258,7 @@
 			children = (
 				4664F28C1DA95E6E00BBF9EB /* libSoapySDR.dylib */,
 				464918A120E53121008BDC72 /* libliquid.a */,
+				46AA9827281DF9B300C1A84F /* libsndfile.a */,
 				469215AF23EE7ADD009B2C34 /* librtaudio.a */,
 				4629CAA923DD4E040059898D /* libglut.3.dylib */,
 				46371C891D12F31B002D3788 /* OpenAL.framework */,

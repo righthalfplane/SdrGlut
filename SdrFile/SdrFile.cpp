@@ -261,7 +261,7 @@ int SdrFile::LoadFile(struct Scene *scene,char *filename, int fileType)
     if(play.infile)fclose8 (play.infile) ;
     play.infile=NULL;
     
-    if ((play.infile = fopen8 (filename, "rb")) == NULL)
+    if ((play.infile = fopen8 (filename,(char *)"rb")) == NULL)
     {
         printf ("Not able to open input file %s.\n", filename) ;
         return 1 ;
@@ -374,7 +374,7 @@ int SdrFile::StartIt(struct playData4 *play)
 int SdrFile::setBuffers(struct playData4 *play)
 {
     ALenum error;
-    size_t readcount,k;
+    int readcount,k;
     int ret;
     
     ALuint buffer;
@@ -390,12 +390,20 @@ int SdrFile::setBuffers(struct playData4 *play)
     float *buf1=filter.buf1;
     float *buf2=filter.buf2;
     
-    k=play->size;
+    k=(int)play->size;
     readcount = fget8(play->infile,(char *)buf1, 2*sizeof(float),k);
+    
+    //printf(" play->frame %d readcount %d ftell8 %lld buffer %d\n", play->frame,readcount,ftell8(play->infile),(int)buffer);
  
     if(k != readcount){
+        /*
+        if(readcount < 1){
+            freebuffAudio(audio,buffer);
+            return 1;
+        }
+        */
         //fprintf(stderr,"readcount %lu requested %lu buffer %d\n",(unsigned long)readcount,(unsigned long)k,buffer);
-        for(size_t n=readcount;n<k;++n){
+        for(int n=0;n<k;++n){
             buf1[2*n]=0.0;
             buf1[2*n+1]=0.0;
         }
@@ -1043,20 +1051,19 @@ StartUp:
                 DisplayALError((unsigned char *)"alSourceUnqueueBuffers : ", error);
             }
             for(ALint k=0;k<processed;++k){
-                //fprintf(stderr,"finish bufferd %d\n",fbuff[k]);
+               // fprintf(stderr,"finish bufferd %d\n",fbuff[k]);
                 freebuffAudio(audio,fbuff[k]);
             }
             
-            
             if(sdr->setBuffers(play)){
-                //fprintf(stderr,"stopPlay frame %d - rewind SDR File\n",play->frame);
+                fprintf(stderr,"stopPlay frame %d - rewind SDR File ftell8 %lld\n",play->frame,ftell8(play->infile));
                 play->frame = 0;
                 fseek8(play->infile, 0, SEEK_SET);
            }
             
          }else{
             alGetSourcei(play->source, AL_SOURCE_STATE, &play->al_state);
-            //fprintf(stderr,"al state %d %x AL_STOPPED %d AL_INITIAL %d\n",rx->al_state,rx->al_state,AL_STOPPED,AL_INITIAL);
+            //fprintf(stderr,"al state %d %x AL_STOPPED %d AL_INITIAL %d AL_PLAYING %d\n",play->al_state,play->al_state,AL_STOPPED,AL_INITIAL,AL_PLAYING);
             if(play->al_state != AL_PLAYING && play->al_state != AL_INITIAL){
                 if(play->al_state == AL_STOPPED){
                    AudioReset(play,sdr);

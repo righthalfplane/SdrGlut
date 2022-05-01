@@ -25,7 +25,7 @@
 #include <sys/timeb.h>
 
 
-//#include <sndfile.h>
+#include <sndfile.h>
 
 
 #ifdef __APPLE__
@@ -231,7 +231,7 @@ struct playData{
 
     int getRadioAttributes;
     
-    FILE *audioOutput;
+    SNDFILE *audioOutput;
     volatile FILE *iqOutput;
 
     char driveName[256];
@@ -313,4 +313,5 @@ struct Filters{
 
 
 extern "C" int RadioStart(int argc, char *argv [],struct playData *rx);
+SNDFILE *sfopen(char *filename);
 #endif

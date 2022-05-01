@@ -76,15 +76,16 @@ int fput8(FILE8 *file,char *data,INT8_64 lengthin)
 
 int fget8(FILE8 *file,char *data,INT8_64 size,INT8_64 lengthin)
 {
-    size_t length;
+    size_t length,ret;
 
 	if(!data)return -1;
 	if(!file)return -1;
 	if(!file->file)return -1;
-	length=(long)lengthin;
+	length=(size_t)lengthin;
 	++FileReads8;
 	FileReadBytes8 += length;
-	if(fread((char *)data,size,length,file->file) != length){ 
+    ret=fread((char *)data,size,length,file->file);
+	if(ret != length){ 
 	    return -1;
 	}
 

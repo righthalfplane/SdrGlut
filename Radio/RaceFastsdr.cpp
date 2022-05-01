@@ -610,10 +610,10 @@ static int SetAudio(struct playData *rx,char *name,int type)
     if(!rx)return 0;
     
     if(type == START_AUDiO){
-        if(rx->audioOutput)fclose(rx->audioOutput);
+        if(rx->audioOutput)sf_close(rx->audioOutput);
         rx->audioOutput=NULL;
         if(name){
-            rx->audioOutput=fopen(name,"wb");
+            rx->audioOutput=sfopen(name);
             if(!rx->audioOutput){
                 fprintf(stderr,"Error Opening %s To Write\n",name);
             }
@@ -1114,7 +1114,7 @@ static int setBuffers(struct playData *rx, int numBuff)
     }
 
     if(rx->audioOutput && !rx->muteScan){
-        size_t ret=fwrite(rx->buffa[numBuff % NUM_ABUFF5], 2, 4800,rx->audioOutput);
+        size_t ret=sf_write_short(rx->audioOutput,rx->buffa[numBuff % NUM_ABUFF5],4800);
         if(ret == 0){
             ;
         }
