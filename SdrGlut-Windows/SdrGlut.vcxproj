@@ -182,7 +182,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>ws2_32.lib;rtaudio.lib;freeglut_staticd.lib;libliquid.lib; pthreadVC2.lib;OpenAL32.lib;SoapySDR.lib;winmm.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sndfile.lib;ws2_32.lib;rtaudio.lib;freeglut_staticd.lib;libliquid.lib; pthreadVC2.lib;OpenAL32.lib;SoapySDR.lib;winmm.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <TargetMachine>MachineX64</TargetMachine>
       <AdditionalLibraryDirectories>C:\Program Files (x86)/RtAudio/lib;C:\Program Files/RtAudio/lib;"../freeglut-3.2.1/lib";"C:/Program Files/PothosSDR/lib";"C:/Program Files (x86)/OpenAL 1.1 SDK/libs/Win64";</AdditionalLibraryDirectories>
@@ -305,6 +305,8 @@
     <ClInclude Include="..\Radio\Radio.h" />
     <ClInclude Include="..\Classes\CWindow.h" />
     <ClInclude Include="..\Radio\SocketDefs.h" />
+    <ClInclude Include="..\SdrFile\AudioFile.h" />
+    <ClInclude Include="..\SdrFile\DialogAudioFile.h" />
     <ClInclude Include="..\SdrFile\DialogSdrFile.h" />
     <ClInclude Include="..\SdrFile\SdrFile.h" />
     <ClInclude Include="resource.h" />
@@ -381,6 +383,8 @@
     <ClCompile Include="..\Radio\send.cpp" />
     <ClCompile Include="..\Classes\CWindow.cpp" />
     <ClCompile Include="..\Radio\WriteToWindow.cpp" />
+    <ClCompile Include="..\SdrFile\AudioFile.cpp" />
+    <ClCompile Include="..\SdrFile\DialogAudioFile.cpp" />
     <ClCompile Include="..\SdrFile\DialogSdrFile.cpp" />
     <ClCompile Include="..\SdrFile\SdrFile.cpp" />
     <ClCompile Include="File8-Windows.c" />

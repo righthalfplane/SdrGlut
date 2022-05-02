@@ -265,6 +265,12 @@
     <ClInclude Include="..\Classes\Transmit.h">
       <Filter>Radio</Filter>
     </ClInclude>
+    <ClInclude Include="..\SdrFile\AudioFile.h">
+      <Filter>sdrFile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SdrFile\DialogAudioFile.h">
+      <Filter>sdrFile</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\glui-routines\algebra3.cpp">
@@ -486,6 +492,12 @@
     </ClCompile>
     <ClCompile Include="..\MainSource\dialogTime.cpp">
       <Filter>MainSource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SdrFile\AudioFile.cpp">
+      <Filter>sdrFile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SdrFile\DialogAudioFile.cpp">
+      <Filter>sdrFile</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
