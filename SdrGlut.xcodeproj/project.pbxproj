@@ -21,6 +21,8 @@
 		46371C8C1D12F32A002D3788 /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46371C8B1D12F32A002D3788 /* OpenCL.framework */; };
 		46371C8E1D12F337002D3788 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46371C8D1D12F337002D3788 /* OpenGL.framework */; };
 		4637E2D4272EE5AF0061B09B /* dialogTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4637E2D3272EE5AF0061B09B /* dialogTest.cpp */; };
+		46401F62281EC6AF000EDDC2 /* AudioFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46401F5E281EC6AF000EDDC2 /* AudioFile.cpp */; };
+		46401F63281EC6AF000EDDC2 /* DialogAudioFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46401F60281EC6AF000EDDC2 /* DialogAudioFile.cpp */; };
 		4643CAC6222845F80059451C /* SdrFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4643CAC3222845F70059451C /* SdrFile.cpp */; };
 		4643CAC7222845F80059451C /* DialogSdrFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4643CAC4222845F70059451C /* DialogSdrFile.cpp */; };
 		464918A220E53121008BDC72 /* libliquid.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 464918A120E53121008BDC72 /* libliquid.a */; };
@@ -127,6 +129,10 @@
 		46371C8B1D12F32A002D3788 /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = ../../../../../../System/Library/Frameworks/OpenCL.framework; sourceTree = "<group>"; };
 		46371C8D1D12F337002D3788 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = ../../../../../../System/Library/Frameworks/OpenGL.framework; sourceTree = "<group>"; };
 		4637E2D3272EE5AF0061B09B /* dialogTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = dialogTest.cpp; path = MainSource/dialogTest.cpp; sourceTree = "<group>"; };
+		46401F5E281EC6AF000EDDC2 /* AudioFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioFile.cpp; sourceTree = "<group>"; };
+		46401F5F281EC6AF000EDDC2 /* DialogAudioFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DialogAudioFile.h; sourceTree = "<group>"; };
+		46401F60281EC6AF000EDDC2 /* DialogAudioFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DialogAudioFile.cpp; sourceTree = "<group>"; };
+		46401F61281EC6AF000EDDC2 /* AudioFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioFile.h; sourceTree = "<group>"; };
 		4643CAC2222845F70059451C /* SdrFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SdrFile.h; sourceTree = "<group>"; };
 		4643CAC3222845F70059451C /* SdrFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SdrFile.cpp; sourceTree = "<group>"; };
 		4643CAC4222845F70059451C /* DialogSdrFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DialogSdrFile.cpp; sourceTree = "<group>"; };
@@ -135,6 +141,7 @@
 		4644187922126CC800F625B7 /* Xappl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Xappl.h; path = CExpress/Xappl.h; sourceTree = "<group>"; };
 		464918A120E53121008BDC72 /* libliquid.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libliquid.a; sourceTree = "<group>"; };
 		46543CC0246D9D77000DDD71 /* BatchFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BatchFile.cpp; path = digital/BatchFile.cpp; sourceTree = SOURCE_ROOT; };
+		465F36E5281ECCD5006DD1CD /* LoadFiles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LoadFiles.h; path = MainSource/LoadFiles.h; sourceTree = "<group>"; };
 		4664F28C1DA95E6E00BBF9EB /* libSoapySDR.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libSoapySDR.dylib; path = ../../../../usr/local/lib/libSoapySDR.dylib; sourceTree = "<group>"; };
 		4672B31E22126D0D00668D72 /* Limits2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Limits2.h; path = CExpress/Limits2.h; sourceTree = "<group>"; };
 		4675AE981C2C43DE00FE0144 /* SdrGlut */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SdrGlut; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -271,6 +278,10 @@
 		462A2643222845730042A6BE /* SdrFile */ = {
 			isa = PBXGroup;
 			children = (
+				46401F5E281EC6AF000EDDC2 /* AudioFile.cpp */,
+				46401F61281EC6AF000EDDC2 /* AudioFile.h */,
+				46401F60281EC6AF000EDDC2 /* DialogAudioFile.cpp */,
+				46401F5F281EC6AF000EDDC2 /* DialogAudioFile.h */,
 				4643CAC4222845F70059451C /* DialogSdrFile.cpp */,
 				4643CAC5222845F70059451C /* DialogSdrFile.h */,
 				4643CAC3222845F70059451C /* SdrFile.cpp */,
@@ -424,6 +435,7 @@
 		46E13ACF1C2C47BC007FF424 /* MainSource */ = {
 			isa = PBXGroup;
 			children = (
+				465F36E5281ECCD5006DD1CD /* LoadFiles.h */,
 				4634C63B258684E100973620 /* dialogTime.cpp */,
 				4685011627D6D60900BEBC4B /* File8.c */,
 				4685011527D6D60900BEBC4B /* File8.h */,
@@ -551,6 +563,7 @@
 				46CE01A52212597700140F6C /* SceneList.c in Sources */,
 				467FE40A1C2C4F9B007D260F /* glui_node.cpp in Sources */,
 				467FE4101C2C4F9B007D260F /* glui_separator.cpp in Sources */,
+				46401F63281EC6AF000EDDC2 /* DialogAudioFile.cpp in Sources */,
 				46CE01AC22125C8400140F6C /* FFT2.c in Sources */,
 				467FE40B1C2C4F9B007D260F /* glui_panel.cpp in Sources */,
 				467FE3FC1C2C4F9B007D260F /* algebra3.cpp in Sources */,
@@ -567,6 +580,7 @@
 				467FE40F1C2C4F9B007D260F /* glui_scrollbar.cpp in Sources */,
 				4637E2D4272EE5AF0061B09B /* dialogTest.cpp in Sources */,
 				46CE01D92212669200140F6C /* GridPlot.c in Sources */,
+				46401F62281EC6AF000EDDC2 /* AudioFile.cpp in Sources */,
 				467FE4081C2C4F9B007D260F /* glui_listbox.cpp in Sources */,
 				46A5B3D6246D9F770071072C /* Poly.cpp in Sources */,
 				467FE4011C2C4F9B007D260F /* glui_checkbox.cpp in Sources */,

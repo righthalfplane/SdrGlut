@@ -42,6 +42,8 @@ extern "C" int SaveFluencePath(struct Scene *scene,char *path);
 
 int doSdrFileOpen(char *name);
 
+int doAudioFileOpen(char *name);
+
 int doFrequencyFile(char *name);
 
 RadioPtr dialogFunctionPtr=NULL;
@@ -87,6 +89,8 @@ int dialogFileOpen(struct Scene *scene)
     glui->add_radiobutton_to_group( group1, "FileType: Frequency File" );
     
     glui->add_radiobutton_to_group( group1, "FileType: Filter File" );
+    
+    glui->add_radiobutton_to_group( group1, "FileType: Audio File" );
 
 	GLUI_Button *b=new GLUI_Button(glui, "Open", 3, control_cb); 
 	b->set_w(120);
@@ -145,6 +149,8 @@ static void control_cb(int control)
             }
         }else if(type == 2){
             processFile((char *)file_name.c_str());
+        }else if(type == 3){
+            doAudioFileOpen((char *)file_name.c_str());
         }
         glui = GLUI_Master.find_glui_by_window_id(gluiID);
         glutSetWindow(glu);

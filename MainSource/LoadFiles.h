@@ -35,6 +35,7 @@
 #define FileTypeFMRadio            20
 #define FileTypeLines              21
 #define FileTypeSdrReceive         22
+#define FileTypeAudio              23
 
 #define DrawTypeNone 0
 #define DrawTypePixel 1
