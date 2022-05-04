@@ -108,6 +108,13 @@ AudioFile::AudioFile(struct Scene *scene): CWindow(scene)
     lreal=NULL;
     limag=NULL;
     
+    p1=NULL;
+    p2=NULL;
+    p3=NULL;
+    p4=NULL;
+    p5=NULL;
+    p6=NULL;
+    p7=NULL;
 
     range=(double *)cMalloc(FFTlength*sizeof(double),9851);
     dose=(double *)cMalloc(FFTlength*sizeof(double),9851);
@@ -216,6 +223,31 @@ int AudioFile::setInfo()
 
     return 0;
 }
+int AudioFile::doFliters(int samplerate)
+{
+    p1=new Poly(48000);
+    p1->Clowpass("butter",10,1.0,375);
+
+    p2=new Poly(48000);
+    p2->Cbandpass("butter",10,1.0,375,750);
+    
+    p3=new Poly(48000);
+    p3->Cbandpass("butter",10,1.0,750,1500);
+
+    p4=new Poly(48000);
+    p4->Cbandpass("butter",10,1.0,1500,3000);
+
+    p5=new Poly(48000);
+    p5->Cbandpass("butter",10,1.0,3000,6000);
+
+    p6=new Poly(48000);
+    p6->Cbandpass("butter",10,1.0,6000,12000);
+
+    p7=new Poly(48000);
+    p7->Chighpass("butter",10,1.0,12000);
+
+    return 0;
+}
 int AudioFile::LoadFile(struct Scene *scene,char *filename, int fileType)
 {
     char name[512];
@@ -229,12 +261,13 @@ int AudioFile::LoadFile(struct Scene *scene,char *filename, int fileType)
         return 1 ;
     }
     
-    sf_command (play.infile , SFC_GET_CURRENT_SF_INFO, &play.sfinfo, sizeof (&play.sfinfo));
+   // sf_command (play.infile , SFC_GET_CURRENT_SF_INFO, &play.sfinfo, sizeof (&play.sfinfo));
 
     printf("frames %lld samplerate %d channels %d format %x\n",
            play.sfinfo.frames,play.sfinfo.samplerate,
            play.sfinfo.channels,play.sfinfo.format);
     
+    doFliters(play.sfinfo.samplerate);
     
     mstrncpy(name,filename,sizeof(name));
     mstrncpy(windowName,filename,sizeof(windowName));
@@ -341,7 +374,7 @@ int AudioFile::setBuffers(struct playData4 *play)
         play->frame++;
     }
 
-    //printf(" play->frame %d readcount %d buffer %d play->size %d\n", play->frame,readcount,(int)buffer,play->size);
+    //printf(" play->frame %f readcount %d buffer %d play->size %d\n", play->frame,readcount,(int)buffer,play->size);
 
     short *buf3=(short *)buf1;
 
@@ -351,7 +384,6 @@ int AudioFile::setBuffers(struct playData4 *play)
             buf3[2*n+1]=0.0;
         }
         if(!wait)ret=1;
-        readcount=(int)k;
     }
     
     float gain=play->gain;
@@ -359,11 +391,11 @@ int AudioFile::setBuffers(struct playData4 *play)
         gain=0;
     }
     
-    for(int n=0;n<k;++n){
+    for(int n=(int)(k-1);n >= 0;--n){
         if(nchannels == 2){
-            buf3[n]=gain*(buf3[2*n]+buf3[2*n+1])*0.5;
+            buf1[n]=gain*(buf3[2*n]+buf3[2*n+1])*0.5;
         }else{
-            buf3[n] *= gain;
+            buf1[n] = gain*buf3[n];
         }
     }
     
@@ -379,21 +411,29 @@ int AudioFile::setBuffers(struct playData4 *play)
         }
     */
 
-    
-    
     unsigned int num=(unsigned int)k;
     unsigned int num2=0;
     if(filter.iqSampler2){
-        for(int n=(int)(num-1);n >= 0;n--){
-            buf1[n] = buf3[n];
-        }
         msresamp_rrrf_execute(filter.iqSampler2, (float *)buf1, num, (float *)buf2, &num2);  // interpolate
         for(unsigned int n=0;n<num2;++n){
-            buf3[n] = buf2[n];
+            buf1[n] = buf2[n];
         }
+        //printf("num %d num2 %d\n",num,num2);
         num=num2;
     }
     
+    p1->forceCascadeRun(buf1,buf2,num,0);
+    p2->forceCascadeRun(buf1,buf2,num,1);
+    p3->forceCascadeRun(buf1,buf2,num,1);
+    p4->forceCascadeRun(buf1,buf2,num,1);
+    p5->forceCascadeRun(buf1,buf2,num,1);
+    p6->forceCascadeRun(buf1,buf2,num,1);
+    p7->forceCascadeRun(buf1,buf2,num,1);
+
+    for(unsigned int n=0;n<num;++n){
+        buf3[n] = buf2[n];
+    }
+
   //  printf("play->frame %d\n",play->frame);
 
     alBufferData(buffer,
@@ -421,10 +461,19 @@ int AudioFile::setBuffers(struct playData4 *play)
 
 AudioFile::~AudioFile()
 {
-    fprintf(stderr,"~SdrFile \n");
+    fprintf(stderr,"~AudioFile \n");
     
     stopPlay(&play);
-    
+
+    if(p1)delete p1;
+    if(p2)delete p2;
+    if(p3)delete p3;
+    if(p4)delete p4;
+    if(p5)delete p5;
+    if(p6)delete p6;
+    if(p7)delete p7;
+
+  
     if(play.infile)sf_close(play.infile) ;
     play.infile=NULL;
 
@@ -558,7 +607,7 @@ int AudioFile::BackGroundEvents(struct Scene *scene)
 {
     if(!backGroundEvents)return 1;
     
-    setDialogFrame((int)(play.frame*play.size));
+    setDialogFrame((play.frame*play.size));
 
     updateLine();
     
@@ -630,7 +679,7 @@ StartUp:
     }else if(play->controlProcess == -3){
         play->controlProcess=0;
         sf_count_t location=(sf_count_t)(play->setFrameNumber*play->samplerate);
-        play->frame = (int)play->setFrameNumber*play->samplerate/play->size;
+        play->frame = play->setFrameNumber*play->samplerate/play->size;
         sf_seek(play->infile, location, SEEK_SET);
         //fprintf(stderr,"setFrameNumber %ld location %lld ret = %lld play->frame %d\n",play->setFrameNumber,location,ret,play->frame);
         //sdr->setDialogFrame((int)location);

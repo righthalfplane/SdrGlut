@@ -71,6 +71,7 @@
 #define FFT_16384 16384
 #define FFT_32768 32768
 
+#include "Poly.h"
 
 struct playData4{
     ALCdevice *dev;
@@ -103,8 +104,8 @@ struct playData4{
     double sindt;
     double cosdt;
     double w;
-    volatile int frame;
-    volatile long setFrameNumber;
+    volatile float frame;
+    volatile float setFrameNumber;
     int gainMode;
     int hasGainMode;
     int decodemode;
@@ -187,10 +188,24 @@ struct DialogSdrData{
     int useagc;
     int mute;
     float scroll;
+    float vscroll1;
+    float vscroll2;
+    float vscroll3;
+    float vscroll4;
+    float vscroll5;
+    float vscroll6;
+    float vscroll7;
     struct Scene *sceneLocal;
     GLUI_Checkbox *check_box;
     GLUI_Scrollbar *line_scroll;
-    
+    GLUI_Scrollbar *scroll1;
+    GLUI_Scrollbar *scroll2;
+    GLUI_Scrollbar *scroll3;
+    GLUI_Scrollbar *scroll4;
+    GLUI_Scrollbar *scroll5;
+    GLUI_Scrollbar *scroll6;
+    GLUI_Scrollbar *scroll7;
+
     int sub_window;
 };
 
@@ -235,7 +250,7 @@ public:
     
     int setDialogFc(double frequency);
     
-    int setDialogFrame(int frame);
+    int setDialogFrame(float frame);
 
     int setDialogRange(double pmin,double pmax);
     
@@ -252,6 +267,8 @@ public:
     int StartIt(struct playData4 *play);
     
     int setInfo();
+    
+    int doFliters(int sampleRate);
 
     unsigned char start;
     
@@ -312,6 +329,14 @@ public:
     unsigned char end;
     
     int junk11;
+    
+    class Poly *p1;
+    class Poly *p2;
+    class Poly *p3;
+    class Poly *p4;
+    class Poly *p5;
+    class Poly *p6;
+    class Poly *p7;
 
 };
 

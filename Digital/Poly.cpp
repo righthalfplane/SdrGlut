@@ -12,29 +12,138 @@
 
 int doFFT2(double *x,double *y,long length,int direction);
 
-Poly::Poly()
+Poly::Poly(int sampleRatei)
 {
-    np=0;
-    nz=0;
+    sampleRate=sampleRatei;
     con=1.0;
-    iprint=1;
+    iprint=0;
+    gain=0.25;
     iangle=0;
+    nz=0;
+    np=0;
+    nforces=0;
+    delay=NULL;
+    coef1=NULL;
+    coef2=NULL;
+    pz=NULL;
+    type=NULL;
+    nfore=0;
+    nback=0;
     poles=NULL;
     zeros=NULL;
     fore=NULL;
     back=NULL;
-    sampleRate=10000;
-    delay=NULL;
-    coef1=NULL;
-    coef2=NULL;
-    type=NULL;
-    pz=NULL;
-    FIRCount=0;
     FIRCoefficients=NULL;
-    cascade=0;
+    FIRCount=0;
+    thetaNorm=0;
     biquad=NULL;
-
+    cascade=0;
+    filterType=0;
+    lowCorner=0;
+    highCorner=0;
+}
+int Poly::Chighpass(string type,int order,double ripple,double fc)
+{
     
+    if(order & 1){
+        order++;
+        fprintf(stderr,"cascade filter order must be even - order set to %d\n",order);
+    }
+    if(type == "chev"){
+        doChev(order,ripple);
+    }else if(type == "butter"){
+        doButterWorth(order);
+    }else{
+        fprintf(stderr,"Chighpass Unknown Filter type: %s\n",type.c_str());
+        return 1;
+    }
+    
+    float pi=4.0*atan(1.0);
+
+    high(1.0/(2.0*pi),1);
+
+    bilinear(fc);
+
+    thetaNorm=0.9*3.1415926;
+
+    filterType=HIGHPASS;
+    
+    highCorner=fc;
+
+    cascadeEM();
+
+    forceCascadeStart();
+
+    return 0;
+}
+int Poly::Clowpass(string type,int order,double ripple,double fc)
+{
+    
+    if(order & 1){
+        order++;
+        fprintf(stderr,"cascade filter order must be even - order set to %d\n",order);
+    }
+    if(type == "chev"){
+        doChev(order,ripple);
+    }else if(type == "butter"){
+        doButterWorth(order);
+    }else{
+        fprintf(stderr,"Clowpass Unknown Filter type: %s\n",type.c_str());
+        return 1;
+    }
+
+    bilinear(fc);
+    thetaNorm=0.0;
+    cascadeEM();
+    filterType=LOWPASS;
+    lowCorner=fc;
+    forceCascadeStart();
+    
+    return 0;
+}
+int Poly::Cbandpass(string type,int order,double ripple,double fmin,double fmax)
+{
+    if(order & 1){
+        order++;
+        fprintf(stderr,"cascade filter order must be even - order set to %d\n",order);
+    }
+    if(type == "chev"){
+        doChev(order,ripple);
+    }else if(type == "butter"){
+        doButterWorth(order);
+    }else{
+        fprintf(stderr,"Cbandpass Unknown Filter type: %s\n",type.c_str());
+        return 1;
+    }
+    
+    float pi=4.0*atan(1.0);
+        
+    float w1=tan(pi*fmin/sampleRate);
+    
+    float w2=tan(pi*fmax/sampleRate);
+    
+    float wc=sqrt(w1*w2)/(2.0*pi);
+    
+    float w0=0.5*(w2-w1)/(2.0*pi);
+        
+    low(w0,1);
+    
+    filterType=BANDPASS;
+    
+    lowCorner=fmin;
+    highCorner=fmax;
+
+    band(wc,1,1e6);
+
+    bilinear(sampleRate/4.0);
+
+    thetaNorm=2*pi*sqrt(fmin*fmax)/sampleRate;
+    
+    cascadeEM();
+    
+    forceCascadeStart();
+
+    return 0;
 }
 Poly::~Poly()
 {
@@ -44,7 +153,6 @@ Poly::~Poly()
     
     if(poles)eFree(poles);
     if(zeros)eFree(zeros);
-    
     poles=NULL;
     zeros=NULL;
     
@@ -117,9 +225,7 @@ int Poly::forceFIR(double *input,int npoint)
         for(int k=0;k<FIRCount-1;++k){
             xn[FIRCount-k-1]=xn[FIRCount-k-2];
         }
-        
-        
-        
+
         xnp[n]=n*t;
         
         ynp[n]=y/scale;
@@ -139,6 +245,54 @@ int Poly::forceFIR(double *input,int npoint)
     if(xn)eFree(xn);
     xn=NULL;
     
+    return 0;
+}
+int Poly::forceCascadeRun(float *input,float *output,int npoint,int sum)
+{
+    
+    
+    double scale=1.0;  // normalize at 0 Hz
+    
+    for(int n=0;n<npoint;++n){
+        double y;
+        double x;
+        
+        x=input[n];
+        
+        y=0;
+        
+        for(int k=0;k<cascade;++k){
+            x=x*biquad[k].kk;
+            y=x*biquad[k].b0+biquad[k].dx1*biquad[k].b1+biquad[k].dx2*biquad[k].b2-
+                             biquad[k].dy1*biquad[k].a1-biquad[k].dy2*biquad[k].a2;
+            biquad[k].dx2=biquad[k].dx1;
+            biquad[k].dx1=x;
+            biquad[k].dy2=biquad[k].dy1;
+            biquad[k].dy1=y;
+            x=y;
+        }
+        
+        y *= gain;
+        
+        if(sum){
+            output[n] += y/scale;
+        }else{
+            output[n] = y/scale;
+        }
+        
+    }
+    
+    return 0;
+
+}
+int Poly::forceCascadeStart()
+{
+    for(int k=0;k<cascade;++k){
+        biquad[k].dx1=0.0;
+        biquad[k].dx2=0.0;
+        biquad[k].dy1=0.0;
+        biquad[k].dy2=0.0;
+    }
     return 0;
 }
 int Poly::forceCascade(double *input,int npoint)

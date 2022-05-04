@@ -83,11 +83,17 @@ public:
     int force(double *input,int npoint);
     int forceFIR(double *input,int npoint);
     int forceCascade(double *input,int npoint);
+    int forceCascadeStart();
+    int forceCascadeRun(float *input,float *output,int npoint,int sum);
     int forcepoleszeros(int);
-    Poly();
+    int Clowpass(string type,int order,double ripple,double fc);
+    int Chighpass(string type,int order,double ripple,double fc);
+    int Cbandpass(string type,int order,double ripple,double fmin,double fmax);
+    Poly(int sampleRate);
     ~Poly();
     double sampleRate;
     double con;
+    double gain;
     int iprint;
     int iangle;
     int nz;

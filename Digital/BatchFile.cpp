@@ -201,7 +201,7 @@ int processFile(char *pathname)
 	
 	zerol((char *)&Batch,sizeof(struct BatchInfo));
     
-    myIcon.pl=new Poly;
+    myIcon.pl=new Poly(10000);
 
 	Batch.myIcon=&myIcon;
 	

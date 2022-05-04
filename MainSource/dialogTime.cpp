@@ -43,9 +43,9 @@ static struct tm record1;
 static struct tm record2;
 static struct tm record3;
 
-static time_t record1time;
-static time_t record2time;
-static time_t record3time;
+static time_t record1time=5;
+static time_t record2time=5;
+static time_t record3time=5;
 
 static RadioPtr sdr;
 
@@ -213,17 +213,17 @@ int Radio::dialogTime()
     glui->add_edittext_to_panel(obj_panel, "Today:", GLUI_EDITTEXT_TEXT, tex[12]);
     edit[12]->w=80;
     
-    msprintf(tex[13],sizeof(tex[13]),"%d",record1.tm_min);
+    msprintf(tex[13],sizeof(tex[13]),"%d",record1.tm_min+1);
     edit[13] =
     glui->add_edittext_to_panel(obj_panel, "Record1:", GLUI_EDITTEXT_TEXT, tex[13]);
     edit[13]->w=80;
     
-    msprintf(tex[14],sizeof(tex[14]),"%d",record2.tm_min);
+    msprintf(tex[14],sizeof(tex[14]),"%d",record2.tm_min+6);
     edit[14] =
     glui->add_edittext_to_panel(obj_panel, "Record2:", GLUI_EDITTEXT_TEXT, tex[14]);
     edit[14]->w=80;
     
-    msprintf(tex[23],sizeof(tex[23]),"%d",record3.tm_min);
+    msprintf(tex[23],sizeof(tex[23]),"%d",record3.tm_min+11);
     edit[23] =
     glui->add_edittext_to_panel(obj_panel, "Record3:", GLUI_EDITTEXT_TEXT, tex[23]);
     edit[23]->w=80;
@@ -270,6 +270,8 @@ int Radio::dialogTime()
     if(rs.frequency[0] == 0){
         char *Mode_Names[] = {(char *)"FM",(char *)"NBFM",(char *)"AM",(char *)"NAM",(char *)"USB",(char *)"LSB",(char *)"CW"};
         rs.frequency[0]=rx->f/1e6;
+        rs.frequency[1]=rx->f/1e6;
+        rs.frequency[2]=rx->f/1e6;
         mstrncpy(rs.mode[0],Mode_Names[rx->decodemode],sizeof(rs.mode[0]));
     }
     
