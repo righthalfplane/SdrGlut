@@ -1,6 +1,6 @@
 # SdrGlut
 
-SdrGlut V1.30 - Fixes a few bugs.
+SdrGlut V1.30 - New Audio Window has Audio Equalization
 
 What is new ?
 ```
