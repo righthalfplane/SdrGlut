@@ -275,11 +275,7 @@ int AudioFile::LoadFile(struct Scene *scene,char *filename, int fileType)
     play.samplerate=play.sfinfo.samplerate;
     play.fc=play.samplerate/2;
     
-    glutSetWindowTitle(filename);
-    
-    glutSetWindow(this->window);
-    glutSetWindowTitle(filename);
-    
+    //glutSetWindowTitle(filename);
 
     if(initPlay(&play))return 1;
     
@@ -498,8 +494,8 @@ AudioFile::~AudioFile()
     if(inDialog){
         inDialog=0;
         if(dd.glui){
-            glutSetWindow(dd.sub_window);
-            dd.glui->close();
+           glutSetWindow(dd.sub_window);
+           dd.glui->close();
         }
         dd.glui=NULL;
     }
