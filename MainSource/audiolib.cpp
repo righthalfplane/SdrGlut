@@ -15,7 +15,7 @@ int checksourceAudio(struct audioInfo *audio,ALuint n)
     for(int k=0;k<audio->numsource;++k)
     {
         if(audio->source[k] == n){
-            fprintf(stderr,"checksourceAudio %d\n",n);
+            fprintf(stderr,"checksourceAudio closing source %d\n",n);
             return 1;
         }
     }
