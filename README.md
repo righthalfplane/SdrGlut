@@ -1,14 +1,16 @@
 # SdrGlut
 
-SdrGlut V1.29 - Fixes a few bugs.
+SdrGlut V1.30 - Fixes a few bugs.
 
 What is new ?
 ```
- It now captures a common Soapy exception.
- It correctly passes control to all SDR devices.
+It now saves audio in WAV format.
+It has a new audio window that reads and plays all of the audio types that the libsndfile library handles.
+The audio window has a seven channel audio equalizer.
+
 ```
 
-https://github.com/righthalfplane/SdrGlut/releases/tag/v1.29
+https://github.com/righthalfplane/SdrGlut/releases/tag/v1.30
 
 If you are new to SdrGlut, please view the introduction video -
 - [An Introduction to SdrGlut (A software defined radio)](https://youtu.be/JEXK-r6PvmA)
