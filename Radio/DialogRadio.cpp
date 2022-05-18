@@ -493,8 +493,8 @@ int Radio::dialogRadio(struct Scene *scene)
         
         dd.line_scroll[dd.iic] =
         new GLUI_Scrollbar( panel3, rx->gains[dd.iic], GLUI_SCROLL_HORIZONTAL,
-                           &dd.line_Index[dd.iic], 23+dd.iic,
-                           control_cb );
+                            &dd.line_Index[dd.iic], 23+dd.iic,
+                            control_cb );
         
         dd.line_scroll[dd.iic]->set_float_limits( rx->gainsMinimum[dd.iic], rx->gainsMaximum[dd.iic] );
 
@@ -518,6 +518,7 @@ int Radio::dialogRadio(struct Scene *scene)
     
     //fprintf(stderr,"el %g\n",el);
 
+
     dd.line_scroll[dd.iic] =
     new GLUI_Scrollbar( panel3, "gain", GLUI_SCROLL_HORIZONTAL,
                        &dd.line_Index[dd.iic], 50,
@@ -529,12 +530,33 @@ int Radio::dialogRadio(struct Scene *scene)
 
     //printf("%s min %g max %g\n", "gain",rx->gainsMin,rx->gainsMax);
 
+    
+    dd.glui->add_column(true);
+    
+ 
+    obj_panel =  dd.glui->add_panel( "Lowpass Filter" );
+
+    dd.lowpassvalue=14000;
+    msprintf(dd.text1z,sizeof(dd.text1z),"%.0f",dd.lowpassvalue);
+    dd.editlowpass=dd.glui->add_edittext_to_panel(obj_panel, "", GLUI_EDITTEXT_TEXT, dd.text1z );
+
+    dd.lowpass =
+    new GLUI_Scrollbar( obj_panel, "gain", GLUI_SCROLL_HORIZONTAL,
+                       &dd.lowpassvalue, 500,
+                       control_cb );
+    
+    dd.lowpass->set_float_limits( 300, 14000 );
+    
+    dd.lowpass->set_speed(1);
+
     dd.sub_window=glutGetWindow();
     
     //dd.sub_window=dd.glui->get_glut_window_id();
     
-	dd.glui->set_main_gfx_window(dd.sub_window);
-	
+    dd.glui->set_main_gfx_window(dd.sub_window);
+
+    
+    
 	return 0;
 }
 static void setControls()
@@ -700,6 +722,16 @@ static void control_cb(int control)
             setControls();
        }
     }
+    else if(control == 500)
+    {
+        char value[256];
+        msprintf(value,sizeof(value),"%0.f",s->dd.lowpassvalue);
+        s->dd.editlowpass->set_text(value);
+        printf("s->dd.lowpassvalue %f\n",s->dd.lowpassvalue);
+        
+        s->plowpass->Clowpass("butter",10,1.0,s->dd.lowpassvalue);
+
+    }
     else if(control == 8)
     {
         s->stopPlay(s->rx);
@@ -831,7 +863,7 @@ RadioPtr FindSdrRadioWindow(struct playData *rx)
     
 }
 
-typedef struct CommandInfo{
+typedef struct CommandInfo2{
     string command[256];
     double value[256];
     int count[256];
@@ -840,13 +872,13 @@ typedef struct CommandInfo{
     char *line;
     int nword;
     int n;
-} *CommandPtr;
+} *CommandPtr2;
 
 #define BATCH_DOUBLE    0
 #define BATCH_STRING    1
 #define BATCH_BYTES        2
 
-int getCommandv(char *line,CommandPtr cp)
+int getCommandv(char *line,CommandPtr2 cp)
 {
     static char number[]={
         '0','1','2','3','4','5','6','7','8','9',
@@ -940,7 +972,7 @@ int getCommandv(char *line,CommandPtr cp)
     
     return 0;
 }
-static int cleanTime(struct CommandInfo *p)
+static int cleanTime(struct CommandInfo2 *p)
 {
     for(int n=0;n<p->nword;++n){
         //printf("n %d type %d string \"%s\" \n",n,p->type[n],p->command[n].c_str());
@@ -1021,7 +1053,7 @@ static int cleanTime(struct CommandInfo *p)
 
     return 0;
 }
-static int getType(struct CommandInfo *p)
+static int getType(struct CommandInfo2 *p)
 {
     int ret = -1;
     for(int n=p->n;n<p->nword;++n){
@@ -1161,7 +1193,7 @@ struct stations{
 
 int Radio::doVoice()
 {
-    struct CommandInfo p;
+    struct CommandInfo2 p;
     char name[256];
     char data[256];
     char *path=vv.text2;

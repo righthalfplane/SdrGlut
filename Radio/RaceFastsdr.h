@@ -117,6 +117,7 @@ struct Info1{
     double cosdt;
 };
 
+class Radio;
 
 struct playData{
     unsigned char start;
@@ -284,6 +285,9 @@ struct playData{
     double rmin;
     double rmax;
     
+    class Radio *mRadio;
+
+    
     int junk22;
     
     SoapySDR::Kwargs deviceToOpen;
@@ -295,7 +299,7 @@ struct playData{
     std::mutex mutexo;
     
     std::string biasMode;
-
+    
 };
 
 struct Filters{

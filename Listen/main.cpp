@@ -176,7 +176,7 @@ int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
 
 		//fprintf(stderr,"2 rx->size %d num %u num2 %u\n",play->size,num,num2);
 
-		double dmin,dnom,gain;
+		double dnom,gain;
 	
 		double amin=1e30;
 		double amax=-1e30;
@@ -216,7 +216,7 @@ int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
 			dnom=65535.0;
 		}
 	
-		dmin=amin;
+		//dmin=amin;
 		//int short *data=filter.data;
 		for(size_t k=0;k<num2;++k){
 			short int vv;

@@ -250,9 +250,7 @@ int Poly::forceFIR(double *input,int npoint)
 int Poly::forceCascadeRun(float *input,float *output,int npoint,int sum)
 {
     
-    
-    double scale=1.0;  // normalize at 0 Hz
-    
+        
     for(int n=0;n<npoint;++n){
         double y;
         double x;
@@ -275,9 +273,9 @@ int Poly::forceCascadeRun(float *input,float *output,int npoint,int sum)
         y *= gain;
         
         if(sum){
-            output[n] += y/scale;
+            output[n] += y;
         }else{
-            output[n] = y/scale;
+            output[n] = y;
         }
         
     }
@@ -834,7 +832,7 @@ int Poly::cresponse(double steps)
 }
 int Poly::response(double steps)
 {
-    complex<double> sum,diff;
+    complex<double> sum;
     
     if(cascade > 0){
         return cresponse(steps);

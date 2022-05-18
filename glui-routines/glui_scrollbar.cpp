@@ -107,7 +107,7 @@ void GLUI_Scrollbar::common_init(void)
    int_max	= 0;
    associated_object = NULL;
    last_update_time=0;
-   velocity_limit=50.0; /* Change value by at most 50 per second */
+   velocity_limit=10000.0; /* Change value by at most 50 per second */
    box_length	      = 0;
    box_start_position = 0;
    box_end_position   = 0;
@@ -608,9 +608,9 @@ void    GLUI_Scrollbar::do_click( void )
 
   float modifier_factor = 1.0;
   float incr = growth * modifier_factor * user_speed ;
-  
   double frame_time=GLUI_Time()-last_update_time;
   double frame_limit=velocity_limit*frame_time;
+  //printf("incr %f frame_limit %f frame_time %f velocity_limit %f\n",incr,frame_limit,frame_time,velocity_limit);
   if (incr>frame_limit) incr=frame_limit; /* don't scroll faster than limit */
   last_update_time=GLUI_Time();
 

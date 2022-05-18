@@ -1429,14 +1429,11 @@ static int doFilter(struct playData *rx,float *wBuff,float *aBuff,struct Filters
         ampmodem_demodulate_block(f->demodAM,  (liquid_float_complex *)buf, (int)num, (float *)buf2);
         msresamp_rrrf_execute(f->iqSampler2, (float *)buf2, num, (float *)buf, &num2);  // interpolate
    }
-	//iirfilt_crcf_execute_block(f->dcFilter, (liquid_float_complex *)buf, num, (liquid_float_complex *)buf);
-	
-	//iirfilt_crcf_execute_block(f->lowpass, (liquid_float_complex *)buf, num2, (liquid_float_complex *)buf);
-    
-    //printf("num2 %ld\n",(long)num2);
 
-	//fprintf(stderr,"doFilter witch %d end num %d Ratio %f size %d num2 %d \n",witch,num,rx->Ratio,rx->size,num2);
-    
+    if(rx->mRadio){
+        //printf("rx->mRadio %p\n",rx->mRadio->plowpass);
+        rx->mRadio->plowpass->forceCascadeRun(buf,buf,num2,0);
+    }
 	return 0;
 }
 static int doMix(struct playData *rx,float *buf,float *buf2,struct Filters *f)

@@ -12,6 +12,8 @@
 #include "ulibTypes.h"
 #include <GL/glui.h>
 
+#include "Poly.h"
+
 #include "audiolib.h"
 
 #include <cstdlib>
@@ -193,6 +195,9 @@ struct DialogRadioData{
     char text1z[255];
     GLUI_EditText *edittext1z[20];
     GLUI_Scrollbar *line_scroll[20];
+    GLUI_EditText *editlowpass;
+    GLUI_Scrollbar *lowpass;
+    float lowpassvalue;
     float line_Index[20];
     float line_Index_old[20];
     int gain_Index;
@@ -520,6 +525,9 @@ public:
     SoapySDR::ArgInfoList flags;
     
     struct playData rxs;
+    
+    class Poly *plowpass;
+
 
 };
 

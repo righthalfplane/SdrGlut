@@ -10,8 +10,6 @@ static int DrawString(int x, int y, char *out,int which);
 
 int DrawBox(uRect *box,int offset);
 
-static double GridPlotpow10(int n);
-
 static void GridPlotNeat(double *xmnc,double *xmxc,double *Large,double *Small);
 
 static void getMousel(int button, int state, int x, int y);

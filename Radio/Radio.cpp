@@ -443,6 +443,10 @@ Radio::Radio(struct Scene *scene,SoapySDR::Kwargs deviceArgs): CWindow(scene)
     
     zerol((char *)&start,&end-&start+1);
     
+    plowpass=new Poly(48000);
+    plowpass->Clowpass("butter",10,1.0,14000);
+
+    
     mstrncpy(rs.FilePath[0],(char *)"sound01.wav",sizeof(rs.FilePath[0]));
     mstrncpy(rs.FilePath[1],(char *)"sound02.wav",sizeof(rs.FilePath[1]));
     mstrncpy(rs.FilePath[2],(char *)"sound03.wav",sizeof(rs.FilePath[2]));
@@ -456,6 +460,8 @@ Radio::Radio(struct Scene *scene,SoapySDR::Kwargs deviceArgs): CWindow(scene)
     }
 
     zerol((char *)&rxs,(&rxs.end-&rxs.start)+1);
+    
+    rxs.mRadio=this;
     
    // fprintf(stderr,"diff %ld %ld \n",(long)(&rxs.end-&rxs.start),(long)((char *)(&rxs.end)-(char *)(&rxs.start)));
     
@@ -530,6 +536,7 @@ Radio::Radio(struct Scene *scene,SoapySDR::Kwargs deviceArgs): CWindow(scene)
     }
 
     rx=&rxs;
+    
     
     if(!rx)return;
 
@@ -855,6 +862,7 @@ Radio::~Radio()
     }
 //    fprintf(stderr,"~Radio() end\n");
 
+    if(plowpass)delete plowpass;
 }
 int Radio::welch(double *real,double *imag,int *lengthi)
 {
