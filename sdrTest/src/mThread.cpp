@@ -63,10 +63,9 @@ void mprint(const char *fmt, ...)
 {
 	char buff[4096];
 	va_list arg;
-	int ret;
 	
     va_start(arg, fmt);
-    ret = vsnprintf((char *)buff, sizeof(buff)-1, fmt, arg);
+    vsnprintf((char *)buff, sizeof(buff)-1, fmt, arg);
     va_end(arg);
 	
 	/* if(!WriteToGLUIWindow(buff))return; */

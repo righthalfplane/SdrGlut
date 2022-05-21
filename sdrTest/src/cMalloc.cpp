@@ -170,7 +170,7 @@ void *cMalloc(unsigned long length,int tag)
 	char buff[256];
 	char *ret;
 	
-	tag=tag;
+	(void)tag;
 	
 	ret=(char *)calloc(length+8L,1);
 	if(ret == NULL){
@@ -186,7 +186,7 @@ void *cRealloc(char *p,unsigned long r,int tag)
 {
 	char *pn;
 
-	tag=tag;
+	(void)tag;
 	
 	if(!(pn=(char *)realloc(p,r))){
 	    return (char *)NULL;

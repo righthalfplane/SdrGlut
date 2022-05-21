@@ -1811,7 +1811,7 @@ int doAudio(float *aBuff,struct playData *rx)
 	float *buff=aBuff;
 
 	
-	double dmin,dnom,gain;
+	double dnom,gain;
 	
 	gain=rx->gain;
 	
@@ -1860,7 +1860,6 @@ int doAudio(float *aBuff,struct playData *rx)
         dnom=65535.0;
     }
 		
-	dmin=amin;
 
 	for(int k=0;k<rx->faudio;++k){
 		double v;
