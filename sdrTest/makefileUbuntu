@@ -1,0 +1,11 @@
+CXXFLAGS =  -std=c++11 -O2  -I/usr/include  -I/opt/X11/include -Wall -DGL_SILENCE_DEPRECATION -Wno-return-type-c-linkage -Wno-deprecated-declarations
+
+CCFILES= ./src/sdrTest.cpp ./src/mThread.cpp ./src/cMalloc.cpp ./src/Clisten.cpp
+ 
+CCOBJS = ./src/sdrTest.o ./src/mThread.o ./src/cMalloc.o ./src/Clisten.o
+
+fireball:  ${COBJS} ${CCOBJS}
+	${CXX} ${CFLAGS} -o sdrTest.x ${COBJS} ${CCOBJS}   -lrtaudio -lSoapySDR -lliquid
+	rm ./src/sdrTest.o ./src/mThread.o ./src/cMalloc.o ./src/Clisten.o
+
+
