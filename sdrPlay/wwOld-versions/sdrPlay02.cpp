@@ -14,12 +14,12 @@
 #include <RtAudio.h>
 #endif
 
-#include "Clisten.h"
-
 #include <iostream>
 #include <csignal>
 #include <mutex>
 #include <cstdio>
+#include <thread>
+
 
 
 #include <stdio.h>
@@ -44,6 +44,15 @@
 
 #include "mThread.h"
 
+void *cMalloc(unsigned long r, int tag);
+
+char *strsave(char *s,int tag);
+
+int cFree(char *p);
+
+int zerol(unsigned char *s,unsigned long n);
+
+
 #define MODE_FM   0
 #define MODE_NBFM 1
 #define MODE_AM   2
@@ -51,6 +60,12 @@
 #define MODE_USB  4
 #define MODE_LSB  5
 #define MODE_CW   6
+
+enum{
+	Wait,
+	Exit,
+	Work,
+};
 
 /*
 #define LIQUID_VERSION_4 1
@@ -66,7 +81,7 @@ g++ -O2 -std=c++11 -Wno-deprecated -o sdrTest sdrTest.cpp mThread.cpp cMalloc.cp
 
 ./sdrTest -fc 1e6 -f 0.6e6 -am -gain 1  -timeout 5
 
-./sdrTest -fc 1e6 -f 0.76e6 -am -gain 1
+./sdrPlay.x -fc 1e6 -f 0.76e6 -am -gain 1 -device 3
 
 ./sdrTest -fc 1e6 -f 1.17e6 -am -gain 1
 
@@ -74,13 +89,13 @@ g++ -O2 -std=c++11 -Wno-deprecated -o sdrTest sdrTest.cpp mThread.cpp cMalloc.cp
 
 ./sdrTest -fc 27.1e6 -f 27.185e6 -gain 1
 
-./sdrTest.x -fc 101.1e6 -f 101.5e6 -fm -gain 1 -device 3
+./sdrPlay.x -fc 101.1e6 -f 101.5e6 -fm -gain 1 -device 3
 
 ./sdrTest -fc 103.0e6 -f 103.7e6 -fm -gain 1
 
 ./sdrTest -fc 102.0e6 -f 102.1e6 -fm -gain 1
 
-./sdrTest -fc 162.0e6 -f 162.4e6 -nbfm -gain 1
+./sdrPlay.x -fc 162.0e6 -f 162.4e6 -nbfm -gain 1 -device 3
 
 ./sdrTest -fc 102.0e6 -f 102.1e6 -fm -gain 0.9 -faudio 12000 -file test.raw -timeout 10
 
@@ -146,6 +161,8 @@ struct playData{
     
     float faudio;
     
+    float faudioCount;
+    
     float Ratio;
 
     float *buff[NUM_DATA_BUFF];
@@ -178,7 +195,6 @@ struct playData{
  	
  	double timeout;
  	double timestart;
- 	FILE *out;
  	int dumpbyminute;
     int idump;
     
@@ -204,24 +220,252 @@ struct Filters{
 	double amHistory;
 };
 
-	 
+
+int pushBuff(int nbuffer,struct playData *rx);
+int popBuff(struct playData *rx);
+int AudioReset(struct playData *rx);
+
+int pushBuffa(int nbuffer,struct playData *rx);
+int popBuffa(struct playData *rx);
+int setFilters(struct playData *rx,struct Filters *f);
+
+
+
+
+class cDemod{
+public:
+    cDemod();
+	~cDemod();
+	int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
+         double streamTime, RtAudioStreamStatus status, void *userData );
+         
+	int rxBuffer(void *rxv);
+    int processBuffer(void *rxv);
+
+    int processSetUp(struct playData *rxi);
+	int process(struct playData *rxi);
+	void processAll();
+	volatile int doWhat1;
+	volatile int doWhat2;
+	volatile int doWhat3;
+	volatile int doWhat4;
+	struct playData *rx;
+	struct Filters f;
+	float *b4in,*b4out,*buff4a,*buff4b;
+	float *b3in,*b3out,*buff3a,*buff3b;
+	float *b2in,*b2out,*buff2a,*buff2b;
+	float *b1in,*buff1a;
+	unsigned int num;
+	unsigned int num2;
+
+};
+
+int cDemod::processSetUp(struct playData *rxi)
+{
+	rx=rxi;	
+	
+	zerol((char *)&f,sizeof(f));
+	
+	setFilters(rx,&f);
+
+	buff3a=(float *)cMalloc((size_t)(2*rx->faudio*4),9837);
+    if(!buff3a){
+        mprint("3 cMalloc Errror %ld\n",(long)(2*rx->faudio*4));
+       	return 1;
+    }
+    
+    b3in=buff3a;
+
+	buff2a=(float *)cMalloc(2*rx->size*4,4567);
+    if(!buff2a){
+        mprint("5 cMalloc Errror %ld\n",(long)(2*rx->size*4));
+       	return 1;
+    }
+    zerol((char *)buff2a,2*rx->size*4);
+
+	buff2b=(float *)cMalloc(2*rx->size*4,4567);
+    if(!buff2b){
+        mprint("5 cMalloc Errror %ld\n",(long)(2*rx->size*4));
+       	return 1;
+    }
+    zerol((char *)buff2b,2*rx->size*4);
+    
+	buff1a=(float *)cMalloc(2*rx->size*4,4567);
+    if(!buff1a){
+        mprint("5 cMalloc Errror %ld\n",(long)(2*rx->size*4));
+       	return 1;
+    }
+    zerol((char *)buff1a,2*rx->size*4);
+
+    b2in=buff2a;
+    
+    b2out=buff2b;
+    
+    b1in=buff1a;
+    
+    return 0;
+}
+int cDemod::processBuffer(void *rxv)
+{
+	while(1){
+		switch(doWhat1){
+			case Wait:
+			  Sleep2(5);
+			  break;
+			case Work:
+			  processAll();
+			  break;
+			case Exit:
+			  return 1;
+			  break;
+		}
+	}
+	return 0;
+}
+int cDemod::rxBuffer(void *rxv)
+{
+	struct playData *rx=(struct playData *)rxv;
+	
+	
+	class cDemod *dd = NULL;
+	
+	while(1)
+	{
+	     switch(rx->doWhat){
+	     case 0:
+	     	Sleep2(5);
+	        break;
+	     case 1:
+	        mprint("Exit rxBuffer\n");
+	        return 0;
+	     case 5:
+	        mprint("case %d \n",rx->doWhat);
+	        rx->doWhat=0;
+	        break;		     	        
+		 case 2:
+	       	if(dd == NULL){
+	       	 	dd=new cDemod();
+	       	 	dd->processSetUp(rx);
+	       	 	dd->doWhat1=Wait;
+	       	 	std::thread(&cDemod::processBuffer, dd, (void *)&rx).detach(); 
+
+	       	}
+        	long long timeNs=0;
+           
+            //float *buff=rx->buff[rx->witch % NUM_DATA_BUFF];
+            
+            float *buff=dd->b2out;
+            
+            void *buffs[] = {buff};
+
+            int toRead=rx->size;
+            
+            int count=0;
+                 
+            while(rx->doWhat == 2){
+				int flags=0;
+				
+				buffs[0]=buff+2*count;
+				
+				int iread;
+				
+				iread=toRead;
+				if(iread > 500000)iread=500000;
+				
+				int ret = rx->device->readStream(rx->rxStream, buffs, iread, flags, timeNs, 100000L);			 
+						   
+				if(ret <= 0){
+				   mprint("ret=%d, flags=%d, timeNs=%lld b0 %f b1 %f witch %d\n", ret, flags, timeNs,buff[0],buff[1],rx->witch);
+				   break;
+				}else if(ret < toRead){
+                    count += ret;
+                    toRead=toRead-ret;
+				}else{
+					break;
+				}
+            }
+	        if(rx->doWhat == 2){
+	            if(dd){
+	            	dd->doWhat1=Work;
+	            	while(dd->doWhat1 == Work)Sleep2(5);
+	            }else{
+	        		pushBuff(rx->witch,rx);
+             		++rx->witch;
+             	}
+	        }
+	        break;
+	     }
+	}
+	return 0;
+}
+cDemod::~cDemod()
+{
+	printf("cDemod::~cDemod\n");
+	if(buff4a)cFree((char *)buff4a);
+	if(buff4b)cFree((char *)buff4b);
+
+	if(buff3a)cFree((char *)buff3a);
+	if(buff3b)cFree((char *)buff3b);
+
+	if(buff2a)cFree((char *)buff2a);
+	if(buff2b)cFree((char *)buff2b);
+
+}
+cDemod::cDemod()
+{
+	doWhat1=Wait;
+	doWhat2=Wait;
+	doWhat3=Wait;
+	doWhat4=Wait;
+	rx=NULL;
+	buff4a=NULL;
+	buff4b=NULL;
+	buff3a=NULL;
+	buff3b=NULL;
+	buff2a=NULL;
+	buff2b=NULL;
+}
+
+int cDemod::sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
+         double streamTime, RtAudioStreamStatus status, void *userData){
+         
+  ;
+  
+  short int *buffer = (short int *) outputBuffer;
+    
+  struct playData *rx=(struct playData *)userData;
+  
+  if ( status )mprint("Stream underflow detected!\n");
+ 
+	int ibuff;
+	ibuff=popBuffa(rx);
+	if (ibuff >= 0){
+		short int *buff= rx->buffa[ibuff % NUM_ABUFF];
+	
+		int n=0;
+	
+		for (unsigned int i=0; i<nBufferFrames; i++ ) {
+			short int v=buff[i];
+			buffer[n++] = v;
+		}
+	}else{
+		for (unsigned int i=0; i<nBufferFrames; i++ ) {
+			  *buffer++ = 0;
+		}
+	}
+  
+  return 0;
+            
+}
+
 static std::mutex mutex1;
 	
 static std::mutex mutexa;
 	
 static std::mutex mutexo;
 
-
-
 //ALvoid DisplayALError(unsigned char *szText, ALint errorCode);
 
-void *cMalloc(unsigned long r, int tag);
-
-char *strsave(char *s,int tag);
-
-int cFree(char *p);
-
-int zerol(unsigned char *s,unsigned long n);
 
 static int initPlay(struct playData *rx);
 
@@ -231,27 +475,12 @@ int doFilter(struct playData *rx,float *wBuff,float *aBuff,struct Filters *f);
 
 int doAudio(float *aBuff,struct playData *rx);
 
-int setFilters(struct playData *rx,struct Filters *f);
 
 int findRadio(struct playData *rx);
 
 int playRadio(struct playData *rx);
 
-int rxBuffer(void *rxv);
-
 int Process(void *rxv);
-
-int pushBuff(int nbuffer,struct playData *rx);
-int popBuff(struct playData *rx);
-int AudioReset(struct playData *rx);
-
-int pushBuffa(int nbuffer,struct playData *rx);
-int popBuffa(struct playData *rx);
-
-
-int setBuffers(struct playData *rx, int numBuff);
-
-int StartIt(struct playData *rx);
 
 static int GetTime(long *Seconds,long *milliseconds);
 
@@ -279,9 +508,10 @@ void checkall(void);
 
 int ListenSocket(void *rxv);
 
-class Listen *l;	
-
 struct playData rx;
+
+
+class cDemod *d;
 
 int main (int argc, char * argv [])
 {	
@@ -299,7 +529,6 @@ int main (int argc, char * argv [])
     rx.channel=0;
     rx.setcount=0;
     rx.faudio=48000;
-    rx.out=NULL;
     rx.timeout=0;
     rx.timestart=0;
     rx.dumpbyminute=0;
@@ -314,24 +543,15 @@ int main (int argc, char * argv [])
     rx.rf_gain=0;
 
 	signal(SIGINT, signalHandler);  
-	
-	l=new Listen;
-	l->Debug=0;
-	
+		
 
 	for(int n=1;n<argc;++n){
 	    if(!strcmp(argv[n],"-debug")){
 		   rx.Debug = 1;
-		   l->Debug=1;
 	    }else if(!strcmp(argv[n],"-dumpbyminute")){
 		   char filename[256];
 		   sprintf(filename,"minute-%08d.raw",rx.idump++);
 		   mprint("filename %s\n",filename);
-		   rx.out=fopen(filename,"wb");
-		   if(rx.out == NULL){
-				mprint("Could Not Open %s to Write\n",filename);
-				exit(1);
-		   }
 		   rx.dumpbyminute = 1;
 	    }else if(!strcmp(argv[n],"-am")){
 		   rx.decodemode = MODE_AM;
@@ -356,10 +576,6 @@ int main (int argc, char * argv [])
 	    }else if(!strcmp(argv[n],"-channel")){
 	         rx.channel=atof(argv[++n]);
 	    }else if(!strcmp(argv[n],"-file")){
-	         rx.out=fopen(argv[++n],"wb");
-	         if(rx.out == NULL){
-	             mprint("Could Not Open %s to Write\n",argv[n]);
-	         }
 	    }else if(!strcmp(argv[n],"-faudio")){
 	         rx.faudio=(float)atof(argv[++n]);
 	    }else if(!strcmp(argv[n],"-device")){
@@ -383,7 +599,9 @@ int main (int argc, char * argv [])
 	
 	rx.channels=2;
 	
-    
+	d = new cDemod();
+	d->rx=&rx;
+
 	initPlay(&rx);
 		
 	if(findRadio(&rx) || rx.device == NULL){
@@ -393,11 +611,10 @@ int main (int argc, char * argv [])
 	
 	rx.doWhat = 0;
 	
-	launchThread((void *)&rx,rxBuffer);   	
+	std::thread(&cDemod::rxBuffer, d, (void *)&rx).detach(); 
 	
 	RtAudio dac;
 	
-	if(!rx.out){
 	
 		int deviceCount=dac.getDeviceCount();
 		
@@ -447,9 +664,7 @@ int main (int argc, char * argv [])
 		}
 	
 		mprint("\n");
-	
-//		list_audio();
-	
+		
 	
 		RtAudio::StreamParameters parameters;
 		parameters.deviceId = dac.getDefaultOutputDevice();
@@ -457,7 +672,9 @@ int main (int argc, char * argv [])
 		parameters.nChannels = 2;
 		parameters.nChannels = 1;
 		parameters.firstChannel = 0;
-		unsigned int bufferFrames = (unsigned int)(rx.faudio/rx.ncut);
+		
+		rx.faudioCount=rx.faudio/rx.ncut;
+		unsigned int bufferFrames = (unsigned int)(rx.faudioCount);
 
 
 		try {
@@ -469,14 +686,8 @@ int main (int argc, char * argv [])
 			e.printMessage();
 			exit( 0 );
 		}
-	}	
 	
-	
-	SOCKET ret = l->waitForService(argv[1]);
-	if(ret < 0){
-		return 1;
-	}
-	
+		
 	printInfo();
 	
 	playRadio(&rx);
@@ -488,264 +699,23 @@ int main (int argc, char * argv [])
 	stopPlay(&rx);
 	
 	
-	if(!rx.out){
-		  try {
-			// Stop the stream
-			dac.stopStream();
-		  }
-		  catch (RtAudioError& e) {
-			e.printMessage();
-		  }
-		  if ( dac.isStreamOpen() ) dac.closeStream();
+	try {
+	// Stop the stream
+		dac.stopStream();
 	}
+	catch (RtAudioError& e) {
+		e.printMessage();
+	}
+	if ( dac.isStreamOpen() ) dac.closeStream();
+
 	
-    	
-	if(rx.out)fclose(rx.out);
-	
-	if(l)delete l;
+    			
+	if(d)delete d;
 	
 	checkall();
 	
 	return 0 ;
 } /* main */
-static int setFrequencyFC(double frequency,struct playData *rx)
-{	
-
-	if(!rx)return 1;    	
-	
-	rx->fc=frequency;
-
-	if(rx->fc < 0.5*rx->samplerate)rx->fc=0.5*rx->samplerate;
-
-	rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc);
-
-	return 0;
-}
-static int setFrequency(double frequency,struct playData *rx)
-{	
-
-	if(!rx)return 1;
-		
-	rx->f=frequency;
-	
-	double pi;
-	pi=4.0*atan(1.0);
-	rx->dt=1.0/(double)rx->samplerate;
-	rx->sino=0;
-	rx->coso=1;
-	rx->w=2.0*pi*(rx->fc - rx->f);
-	rx->sindt=sin(rx->w*rx->dt);
-	rx->cosdt=cos(rx->w*rx->dt);
-	if(rx->Debug)mprint("fc %f f %f dt %g samplerate %d\n",rx->fc,rx->f,rx->dt,rx->samplerate);
-    
-	return 0;
-}
-static int setDecodeMode(double mode, struct playData *rx)
-{
-	if (!rx)return 1;
-
-	rx->decodemode = (int)mode;
-
-	rx->frame = -2;
-
-	while (rx->frame == -2) {
-		Sleep2(5);
-	}
-
-	rx->frame = 0;
-
-	launchThread((void *)rx, Process);
-
-
-	return 0;
-
-}
-
-int ListenSocket(void *rxv)
-{
-    
-    class Listen *l=(class Listen *)rxv;
-    
-	time_t start,total;
-	time_t ship;
-	char buff[256];
-	long size;
-	
-	//FILE *in=NULL;
-	
-	//if(!in)in=fopen("junk.raw","wb");
-
-	if(l->Debug)fprintf(stderr,"******************************************************\n");
-	if(l->Debug)fprintf(stderr,"**  listen 812 - COPYRIGHT 2020-2021. Start **\n");
-	if(l->Debug)fprintf(stderr,"******************************************************\n");
-
-	start=time(&ship);
-	
-	l->Bytes=0;
-	
-    l->ncommand=0;
-
-	while(1){
-	    if(l->readCommand(l->clientSocket,buff,&size))return 1;
-		if(l->Debug)fprintf(stderr,"buff %s size %ld ncommand %ld\n",buff,size,l->ncommand);
-		l->ncommand++;
-	    if(!strcmp(buff,"ENDT")){
-	        if(l->Debug){
-				fprintf(stderr,"ENDT\n");
-		    }
-	        break;
-	    }else if(!strcmp(buff,"STAT")){
-	        if(l->Debug){
-				fprintf(stderr,"STAT\n");
-		    }
-		    long n=2*sizeof(double);
-		    double buff[2];
-		    l->netRead(l->clientSocket,(char *)buff,n);
-		    l->setCenterFrequency(buff[0],buff[1]);
-		    if(l->Debug)fprintf(stderr,"fc %g samplerate %d\n",l->fc,l->samplerate);
-	    }else if(!strcmp(buff,"F   ")){
-	        if(l->Debug){
-				fprintf(stderr,"F   \n");
-		    }
-		    double buff[2];
-		    l->netRead(l->clientSocket,(char *)buff,size);
-		    setFrequency(buff[0],&rx);
-		    if(l->Debug)fprintf(stderr,"f %g \n",rx.f);
-	    }else if(!strcmp(buff,"FC  ")){
-	        if(l->Debug){
-				fprintf(stderr,"FC  \n");
-		    }
-		    double buff[2];
-		    l->netRead(l->clientSocket,(char *)buff,size);
-		    setFrequencyFC(buff[0],&rx);
-		    if(l->Debug)fprintf(stderr,"fc %g \n",rx.fc);
-	    }else if(!strcmp(buff,"DECO")){
-	        if(l->Debug){
-				fprintf(stderr,"DECO\n");
-		    }
-		    double buff[2];
-		    l->netRead(l->clientSocket,(char *)buff,size);
-		    setDecodeMode(buff[0],&rx);
-		    if(l->Debug)fprintf(stderr,"decodemode %d \n",rx.decodemode);
-	    }else if(!strcmp(buff,"FLOA")){
-	        if(l->Debug){
-				fprintf(stderr,"FLOA\n");
-		    }
-		    if(size > l->buffsize){
-		       if(l->output)free(l->output);
-		       l->output=(complex<float> *)malloc(size);
-		       if(l->buff1)free(l->buff1);
-		       l->buff1=(complex<float> *)malloc(size);
-		       l->buffsize=size;
-		    }
-		    l->Bytes += size;
-		    l->netRead(l->clientSocket,(char *)l->buff1,size);
-		    if(l->binary)fwrite((char *)l->buff1,size,1,stdout);
-		    l->size=size/(2*sizeof(float));
-            l->mix((float *)l->buff1,(float *)l->output);
-            l->ibuff=1;
-            while(l->ibuff==1)Sleep2(10);
-         }else if(!strcmp(buff,"SHOR")){
-            if(l->Debug){
-                fprintf(stderr,"SHOR\n");
-            }
-            if(size > l->buffsize){
-                if(l->output)free(l->output);
-                l->output=(complex<float> *)malloc(size*2);
-                if(l->buff1)free(l->buff1);
-                l->buff1=(complex<float> *)malloc(size*2);
-                l->buffsize=size;
-            }
-            l->Bytes += size;
-            l->netRead(l->clientSocket,(char *)l->buff1,size);
-		    if(l->binary)fwrite((char *)l->buff1,size,1,stdout);
-            l->size=size/(2*sizeof(short int));
-            short int *in=(short int *)l->buff1;
-            float *out=(float *)l->buff1;
-            for(int n=0;n<l->size*2;++n){
-                int kk=l->size*2-1-n;
-                out[kk]=in[kk];
-            }
-            l->mix((float *)l->buff1,(float *)l->output);
-            l->ibuff=1;
-            while(l->ibuff==1)Sleep2(10);
-       }else if(!strcmp(buff,"SIGN")){
-            if(l->Debug){
-                fprintf(stderr,"SIGN\n");
-           }
-            if(size > l->buffsize){
-                if(l->output)free(l->output);
-                l->output=(complex<float> *)malloc(size*8);
-                if(l->buff1)free(l->buff1);
-                l->buff1=(complex<float> *)malloc(size*8);
-                l->buffsize=size;
-            }
-            l->Bytes += size;
-            l->netRead(l->clientSocket,(char *)l->buff1,size);
- 		    if(l->binary)fwrite((char *)l->buff1,size,1,stdout);
-            l->size=size/(2*sizeof(signed char));
-            signed char *in=(signed char *)l->buff1;
-            float *out=(float *)l->buff1;
-            for(int n=0;n<l->size*2;++n){
-                int kk=l->size*2-1-n;
-                out[kk]=(float)(in[kk]*256.0+0.5);
-            }
-            l->mix((float *)l->buff1,(float *)l->output);
-            l->ibuff=1;
-            while(l->ibuff==1)Sleep2(10);            
-       }else if(!strcmp(buff,"USIG")){
-            if(l->Debug){
-                fprintf(stderr,"USIG\n");
-           }
-            if(size > l->buffsize){
-                if(l->output)free(l->output);
-                l->output=(complex<float> *)malloc(size*8);
-                if(l->buff1)free(l->buff1);
-                l->buff1=(complex<float> *)malloc(size*8);
-                l->buffsize=size;
-            }
-            l->Bytes += size;
-            l->netRead(l->clientSocket,(char *)l->buff1,size);
- 		    if(l->binary)fwrite((char *)l->buff1,size,1,stdout);
- 		   // if(in)fwrite((char *)l->buff1,size,1,in);
-            l->size=size/(2*sizeof(unsigned char));
-            unsigned char *in=(unsigned char *)l->buff1;
-            float *out=(float *)l->buff1;
-            for(int n=0;n<l->size*2;++n){
-                int kk=l->size*2-1-n;
-                float v=in[kk];
-                out[kk]=(float)((v-128.0)*256.0+0.5);
-            }
-            l->mix((float *)l->buff1,(float *)l->output);
-            l->ibuff=1;
-            while(l->ibuff==1)Sleep2(10);            
-	    }else{
-	        fprintf(stderr,"Unknown Command (%s) %d %d %d %d Skiping\n",
-	                buff,buff[0],buff[1],buff[2],buff[3]);
-	        if(size > l->buffsize){
-                if(l->output)free(l->output);
-                l->output=(complex<float> *)malloc(size*8);
-            }
-            l->Bytes += size;
-            l->netRead(l->clientSocket,(char *)l->output,size);
-	    }
-	}
-	
-	//if(in)fclose(in);
-
-	l->ibuff= -1;
-
-    total=time(&ship)-start;
-	if(!total)total=1;
-    if(l->Debug)fprintf(stderr,"%ld Seconds To Receive %ld Bytes (%ld Bytes/s)\n",
-                 (long)total,l->Bytes,(long)(l->Bytes/total));
-	if(l->Debug)fprintf(stderr,"******************************************************\n");
-	if(l->Debug)fprintf(stderr,"**  listen 803 - COPYRIGHT 2020-2021. Done  **\n");
-	if(l->Debug)fprintf(stderr,"******************************************************\n");
-
-    return 1;
-}
-
 int printInfo(void)
 {
 	mprint("%s\n","SoapySDR Library");
@@ -784,188 +754,70 @@ int printInfo(void)
 int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
          double streamTime, RtAudioStreamStatus status, void *userData )
 {
-  unsigned int i;
-  short int *buffer = (short int *) outputBuffer;
-    
-  struct playData *rx=(struct playData *)userData;
-  
-  if ( status )mprint("Stream underflow detected!\n");
- 
-	int ibuff;
-	ibuff=popBuffa(rx);
-	if (ibuff >= 0){
-
-		short int *buff= rx->buffa[ibuff % NUM_ABUFF];
-	    
-	    int n=0;
-	    
-		for ( i=0; i<nBufferFrames; i++ ) {
-		    short int v=buff[i];
-		/*
-            if(v > 1.0){
-            	v=1.0;
-            } else if(v < -1.0){
-           		v=-1.0;
-            }
-        */
- 		    //if(v < amin)amin=v;
-		    //if(v > amax)amax=v;
-			//for ( j=0; j<2; j++ ) {
-			  	buffer[n++] = v;
-			//}
-		}
-	}else{
-  
-	for ( i=0; i<nBufferFrames; i++ ) {
-		//for ( j=0; j<2; j++ ) {
-		  *buffer++ = 0;
-		//}
-	}
-  }
-  
- // mprint("streamTime %f nBufferFrames %d audioOut %d doWhat %d ibuff %d\n",
-  //     streamTime,nBufferFrames,rx->audioOut,rx->doWhat,ibuff);
-  
-  return 0;
-}
-
-int StartIt(struct playData *rx)
-{
-//	ALenum error;
-
-	for(int i=0;i<4;){
-		int ibuff;
-		ibuff=popBuffa(rx);
-		if (ibuff >= 0){
-			++i;
-			if(setBuffers(rx, ibuff)){
-				;
-			}
-		}
-   	}
-/*
- 	alSourcePlay(rx->source);
-	if ((error = alGetError()) != AL_NO_ERROR) 
-	{ 
-		DisplayALError((unsigned char *)"doAudio alSourcePlay : ", error); 
-	} 
-*/
-	return 0;
+	return d->sound(outputBuffer,inputBuffer,nBufferFrames,streamTime,status,userData);
 }
 
 int playRadio(struct playData *rx)
 {
 
-        double rate=rx->device->getSampleRate(SOAPY_SDR_RX, rx->channel);
-              
-		if(rx->out)rx->ncut=10;
-        
-		int size=(int)rate/rx->ncut;
-    
-        rx->size=size;
-        
-        mprint("rate %f rx->size %d\n",rate,rx->size);
-                
-        for(int k=0;k<NUM_DATA_BUFF;++k){
-        	if(rx->buff[k])cFree((char *)rx->buff[k]);
-        	rx->buff[k]=(float *)cMalloc(2*size*4*8,5789);
-        	if(!rx->buff[k]){
-        	    mprint("5 cMalloc Errror %ld\n",(long)(2*size*4));
-       	     	return 1;
-       		}
-        	zerol((char *)rx->buff[k],2*size*4);
-        	rx->buffStack[k]=-1;
-        }
+	double rate=rx->device->getSampleRate(SOAPY_SDR_RX, rx->channel);
+  
 
-        for(int k=0;k<NUM_ABUFF;++k){
-        	if(rx->buffa[k])cFree((char *)rx->buffa[k]);
-        	rx->buffa[k]=(short int *)cMalloc((size_t)(2*rx->faudio*4),5272);
-        	if(!rx->buffa[k]){
-        	    mprint("10 cMalloc Errror %ld\n",(long)(2*rx->faudio*4));
-       	     	return 1;
-       		}
-        	zerol((char *)rx->buffa[k],(unsigned long)(2*rx->faudio*4));
-        	rx->buffStacka[k]=-1;
-        }
-        
-        for(int k=0;k<NUM_BUFFERS;++k){
-        	rx->bufferState[k]=0;
-        }
-    
-    	if(rx->dumpbyminute){
-    		struct tm today;
-    		struct tm next;
-    		mprint("Waiting For Next Minute\n");
-    		time_t now;
-    		time(&now);
-    		today = *localtime(&now);
-    		do {
-    			Sleep2(5);
-      			time(&now);
-    			next = *localtime(&now);
-  			}while(today.tm_min == next.tm_min);
-  			
-    	    rx->doWhat=2;
+	int size=(int)rate/rx->ncut;
 
-    	    mprint("Start Time: ");
-    		mprint("year %d ",next.tm_year+1900);
-       		mprint("month %d ",next.tm_mon+1); 		
-      		mprint("day %d ",next.tm_mday);
-    		mprint("hour %d ",next.tm_hour);
-     		mprint("min %d ",next.tm_min);
-   	        mprint("sec %d \n",next.tm_sec);
+	rx->size=size;
 
+	mprint("rate %f rx->size %d\n",rate,rx->size);
+	
+	for(int k=0;k<NUM_DATA_BUFF;++k){
+		if(rx->buff[k])cFree((char *)rx->buff[k]);
+		rx->buff[k]=(float *)cMalloc(2*size*4*8,5789);
+		if(!rx->buff[k]){
+			mprint("5 cMalloc Errror %ld\n",(long)(2*size*4));
+			return 1;
+		}
+		zerol((char *)rx->buff[k],2*size*4);
+		rx->buffStack[k]=-1;
+	}
 
-    	}else{
-    	   rx->doWhat=2;
-    	}
-        
-        rx->witch=0;
-        
-        rx->frame=0;
-        
-        launchThread((void *)rx,Process);   	
+	for(int k=0;k<NUM_ABUFF;++k){
+		if(rx->buffa[k])cFree((char *)rx->buffa[k]);
+		rx->buffa[k]=(short int *)cMalloc((size_t)(2*rx->faudio*4),5272);
+		if(!rx->buffa[k]){
+			mprint("10 cMalloc Errror %ld\n",(long)(2*rx->faudio*4));
+			return 1;
+		}
+		zerol((char *)rx->buffa[k],(unsigned long)(2*rx->faudio*4));
+		rx->buffStacka[k]=-1;
+	}
 
-        launchThread((void *)rx,Process); 
-          	
-        launchThread((void *)rx,Process);   	        
-        
-		Sleep2(100);
+	for(int k=0;k<NUM_BUFFERS;++k){
+		rx->bufferState[k]=0;
+	}
+
+	rx->doWhat=2;
+
+	rx->witch=0;
+
+	rx->frame=0;
+
+	//launchThread((void *)rx,Process);   	
+
+	//launchThread((void *)rx,Process); 
+
+	//launchThread((void *)rx,Process);   	        
+
+	Sleep2(100);
  
-        mprint("Start playing\n");
+    mprint("Start playing\n");
         
-    int count=0;
 	rx->timestart=rtime();
   	while(!threadexit){
   		Sleep2(50);
-  		
+
 		if(rx->timeout > 0 && rtime() > rx->timeout+rx->timestart){
 			break;
 		}
-	
-		if(rx->out){
-			int ibuff;
-			ibuff=popBuffa(rx);
-			if (ibuff >= 0){
-			   	char filename[256];
-				short int *buff= rx->buffa[ibuff % NUM_ABUFF];
-				fwrite(buff, 2,(size_t) (rx->faudio/rx->ncut),rx->out);
-				if(rx->dumpbyminute){
-					if(++count == rx->ncut*60){
-						fclose(rx->out);
-						sprintf(filename,"minute-%08d.raw",rx->idump++);
-						mprint("filename %s\n",filename);
-						rx->out=fopen(filename,"wb");
-						if(rx->out == NULL){
-							mprint("Could Not Open %s to Write\n",filename);
-							exit(1);
-						}
-						count=0;
-					}
-				}
-			}
-		}
-		
 		
    	}      
     double end=rtime();
@@ -981,62 +833,224 @@ int playRadio(struct playData *rx)
 	Sleep2(100);
 
     return 0;
-  
-        
-       // StartIt(rx);
-/*  
-	double start=rtime();
-  	for(int i=0;i<100;){
-  		Sleep2(5);
-		int ibuff;
-		ibuff=popBuffa(rx);
-		if (ibuff >= 0){
-			++i;
-		}
-   	}      
-    double end=rtime();
-    
-    double total=end-start;
-    
-    mprint(" Seconds %.4f Seconds/frame %.4f\n",total,total/100);
-    
-    exit(1);
-*/   
 
 }
 
+int Process1(void *rxv);
 
-int setBuffers(struct playData *rx, int numBuff)
+int Process2(void *rxv);
+
+int Process(void *rxv)
 {
+	return Process2(rxv);
+}
+int Process2(void *rxv)
+{
+	struct playData *rx=(struct playData *)rxv;
+	
+	class cDemod *d = new cDemod();
+	
+	return d->process(rx);
+}
+
+int cDemod::process(struct playData *rxi)
+{
+	rx=rxi;	
+	
+	zerol((char *)&f,sizeof(f));
+	
+	setFilters(rx,&f);
+
+	buff3a=(float *)cMalloc((size_t)(2*rx->faudio*4),9837);
+    if(!buff3a){
+        mprint("3 cMalloc Errror %ld\n",(long)(2*rx->faudio*4));
+       	 return 1;
+    }
     
- 	for(int m=0;m<NUM_BUFFERS;++m){
-	    if(rx->bufferState[m] == 0){
-	        // buffer=rx->buffers[m];
-	         rx->bufferState[m]=1;
-	         break;
-	    }
+    b3in=buff3a;
+
+	buff2a=(float *)cMalloc(2*rx->size*4,4567);
+    if(!buff2a){
+        mprint("5 cMalloc Errror %ld\n",(long)(2*rx->size*4));
+       	 return 1;
+    }
+    zerol((char *)buff2a,2*rx->size*4);
+
+    b2in=buff2a;
+	
+	Sleep2(1000);
+	
+	doWhat1=Work;
+	
+	while(rx->frame >= 0){
+		processAll();
+		Sleep2(5);
 	}
 
-
-    {
-        static int count=0;
-        static FILE *out=NULL;
-        if(out==NULL){
-            out=fopen("sound.raw","w");
-        }
-        
-        fwrite(rx->buffa[numBuff % NUM_ABUFF], 2, 4800,out);
-        if(count++ > 100){
-            fclose(out);
-            exit(1);
-        }
- 
-    }
+	rx->frame=-1;
 
 	return 0;
 }
 
-int Process(void *rxv)
+void cDemod::processAll()
+{
+	float *buf=NULL;
+
+	if(b2out){
+		buf=b2out;
+	}else{
+ 		int ip=popBuff(rx);
+ 		if(ip < 0){
+ 	     return;
+ 		}
+  		int witch=ip % NUM_DATA_BUFF;
+		buf=rx->buff[witch];
+ 	}
+	
+	float *buf2=b2in;
+	b2in=b1in;
+	b1in=buf2;
+	doWhat1=Wait;
+	
+	double sint,cost;
+
+	for (int k = 0 ; k < rx->size ; k++){
+		float r = buf[k * rx->channels];
+		float i = buf[k * rx->channels + 1];
+		if(rx->dt > 0){
+			buf2[k * rx->channels] = (float)(r*rx->coso - i*rx->sino);
+			buf2[k * rx->channels + 1] = (float)(i*rx->coso + r*rx->sino);
+			sint=rx->sino*rx->cosdt+rx->coso*rx->sindt;
+			cost=rx->coso*rx->cosdt-rx->sino*rx->sindt;
+			rx->coso=cost;
+			rx->sino=sint;
+		 }else{
+			buf2[k * rx->channels] = r;
+			buf2[k * rx->channels + 1] = i;
+		}
+
+	}
+          
+    double r=sqrt(rx->coso*rx->coso+rx->sino*rx->sino);
+    rx->coso /= r;
+    rx->sino /= r;
+      
+
+	buf=b3in;
+		
+    unsigned int num;
+    unsigned int num2;
+    
+    num=0;
+    num2=0;
+    
+    msresamp_crcf_execute(f.iqSampler, (liquid_float_complex *)buf2, rx->size, (liquid_float_complex *)buf, &num);  // decimate
+        
+    if(rx->decodemode < MODE_AM){
+
+		freqdem_demodulate_block(f.demod, (liquid_float_complex *)buf, (int)num, (float *)buf2);
+
+    }else if(rx->decodemode < MODE_USB){
+        #define DC_ALPHA 0.99    //ALPHA for DC removal filter ~20Hz Fcut with 15625Hz Sample Rate
+
+        for(unsigned int n=0;n<num;++n){
+            double mag=sqrt(buf[2*n]*buf[2*n]+buf[2*n+1]*buf[2*n+1]);
+            double z0=mag + (f.amHistory * DC_ALPHA);
+            buf2[n]=(float)(z0-f.amHistory);
+            f.amHistory=z0;
+        }
+    }else{
+        ampmodem_demodulate_block(f.demodAM,  (liquid_float_complex *)buf, (int)num, (float *)buf2);
+   }
+
+   msresamp_rrrf_execute(f.iqSampler2, (float *)buf2, num, (float *)buf, &num2);  // interpolate
+   
+   
+	float *buff=b3in;
+
+	int short *data;
+	int audioOut;
+
+
+	mutexo.lock();
+	audioOut=rx->audioOut;
+	//mprint("audioOut %d\n",audioOut);
+	data=rx->buffa[rx->audioOut++ % NUM_ABUFF];
+	mutexo.unlock();
+
+	double amin=1e30;
+	double amax=-1e30;
+
+
+	double dnom,gain;
+
+	gain=rx->gain;
+
+	if(gain <= 0.0)gain=1.0;
+
+	double average=0;
+
+	for (int i=0; i<rx->faudioCount; i++ ) {
+		double v;
+		v=buff[i];
+		average += v;
+		if(v < amin)amin=v;
+		if(v > amax)amax=v;
+	}
+
+	average /= rx->faudio;
+
+	amin -= average;
+
+	amax -= average;
+
+
+	if(rx->aminGlobal == 0.0)rx->aminGlobal=amin;
+
+	rx->aminGlobal = 0.8*rx->aminGlobal+0.2*amin;
+
+	amin=rx->aminGlobal;
+
+	if(rx->amaxGlobal == 0.0)rx->amaxGlobal=amax;
+
+	rx->amaxGlobal = 0.8*rx->amaxGlobal+0.2*amax;
+
+	amax=rx->amaxGlobal;
+
+
+	//mprint("doAudio size %d amin %f amax %f audioOut %d\n",BLOCK_SIZE,amin,amax,audioOut);
+
+
+	if((amax-amin) > 0){
+
+		dnom=65535.0/(amax-amin);
+	}else{
+
+		dnom=65535.0;
+	}
+
+
+	for(int k=0;k<rx->faudioCount;++k){
+		double v;
+
+		v=buff[k];
+
+		v=gain*((v-average)*dnom);
+
+		if(v < -32765){
+			v = -32765;
+		}else if(v > 32765){
+			v=32765;
+		}
+
+		data[k]=(short int)v;
+	}	
+
+	pushBuffa(audioOut,rx);
+   
+   
+}
+int Process1(void *rxv)
 {
 	struct playData *rx=(struct playData *)rxv;
 	
@@ -1174,10 +1188,6 @@ int doFilter(struct playData *rx,float *wBuff,float *aBuff,struct Filters *f)
 
 		freqdem_demodulate_block(f->demod, (liquid_float_complex *)buf, (int)num, (float *)buf2);
 
-        msresamp_rrrf_execute(f->iqSampler2, (float *)buf2, num, (float *)buf, &num2);  // interpolate
-
-        //mprint("2 rx->size %d num %u num2 %u\n",rx->size,num,num2);
-
     }else if(rx->decodemode < MODE_USB){
         #define DC_ALPHA 0.99    //ALPHA for DC removal filter ~20Hz Fcut with 15625Hz Sample Rate
 
@@ -1187,13 +1197,14 @@ int doFilter(struct playData *rx,float *wBuff,float *aBuff,struct Filters *f)
             buf2[n]=(float)(z0-f->amHistory);
             f->amHistory=z0;
         }
-        msresamp_rrrf_execute(f->iqSampler2, (float *)buf2, num, (float *)buf, &num2);  // interpolate
     }else{
         ampmodem_demodulate_block(f->demodAM,  (liquid_float_complex *)buf, (int)num, (float *)buf2);
-        msresamp_rrrf_execute(f->iqSampler2, (float *)buf2, num, (float *)buf, &num2);  // interpolate
    }
 
-        
+   msresamp_rrrf_execute(f->iqSampler2, (float *)buf2, num, (float *)buf, &num2);  // interpolate
+   
+   // printf("num %d num2 %d faudioCount %g\n",num,num2,rx->faudioCount);
+      
 	return 0;
 }
 int pushBuffa(int nbuffer,struct playData *rx)
@@ -1546,9 +1557,6 @@ int findRadio(struct playData *rx)
 			if(hasFrequencyCorrection && rx->PPM){
 			    rx->device->setFrequencyCorrection(SOAPY_SDR_RX, rx->channel,rx->PPM);
 			}
-			
-		
-			
              
 		}
     
@@ -1557,79 +1565,9 @@ int findRadio(struct playData *rx)
     return 0;
     
 }
-int rxBuffer(void *rxv)
-{
-
-	struct playData *rx=(struct playData *)rxv;
-	
-	while(1)
-	{
-	     switch(rx->doWhat){
-	     case 0:
-	     	Sleep2(5);
-	        break;
-	     case 1:
-	        mprint("Exit rxBuffer\n");
-	        return 0;
-		 case 2:
-	       // mprint("rxBuffer case 2\n");
-	       	        
-        	long long timeNs=0;
-           
-            float *buff=rx->buff[rx->witch % NUM_DATA_BUFF];
-            float *buff2=buff+rx->size;
-             
-            void *buffs[] = {buff,buff2};
-            
-            int toRead=rx->size;
-            
-            
-            int count=0;
-                 
-            while(rx->doWhat == 2){
-				int flags=0;
-				
-				buffs[0]=buff+2*count;
-				buffs[1]=buff2+2*count;
-				
-				int iread;
-				
-				iread=toRead;
-				if(iread > 500000)iread=500000;
-				
-				int ret = rx->device->readStream(rx->rxStream, buffs, iread, flags, timeNs, 100000L);
-			 
-				 timeNs++;
-						   
-				if(ret <= 0){
-				   mprint("ret=%d, flags=%d, timeNs=%lld b0 %f b1 %f witch %d\n", ret, flags, timeNs,buff[0],buff[1],rx->witch);
-				   break;
-				}else if(ret < toRead){
-                    count += ret;
-                    toRead=toRead-ret;
-					//mprint("ret=%d, flags=%d, timeNs=%lld b0 %f b1 %f toRead %d witch %d\n", ret, flags, timeNs,buff[0],buff[1],toRead,rx->witch);
-				}else{
-					break;
-				}
-            }
-	        if(rx->doWhat == 2){
-	        	pushBuff(rx->witch,rx);
-             	++rx->witch;
-	        	//rx->doWhat=0;
-	        }
-	        break;
-		     
-	     }
-	     
-	     //mprint("rx->doWhat %d\n",rx->doWhat);
-	}
-	return 0;
-}
 
 int setFilters(struct playData *rx,struct Filters *f)
 {
-
-    // double shift=rx->f-rx->fc;
     
     if(!rx)return 0;
     
@@ -1668,7 +1606,10 @@ int setFilters(struct playData *rx,struct Filters *f)
     }
     
     rx->Ratio = (float)(rx->bw/ rx->samplerate);
+    
     ratio= (float)(rx->faudio/rx->bw);
+    
+    printf("rx->Ratio %g ratio %g\n",rx->Ratio,ratio);
     
     f->demod=freqdem_create(0.5);
     
@@ -1696,7 +1637,6 @@ int setFilters(struct playData *rx,struct Filters *f)
 
 static int initPlay(struct playData *rx)
 {
-//    ALenum error;
     
 	rx->doWhat=0;
 	
@@ -1823,7 +1763,7 @@ int doAudio(float *aBuff,struct playData *rx)
 	
 	double average=0;
 	
-	for (int i=0; i<rx->faudio; i++ ) {
+	for (int i=0; i<rx->faudioCount; i++ ) {
 		double v;
 		v=buff[i];
         average += v;
@@ -1831,7 +1771,7 @@ int doAudio(float *aBuff,struct playData *rx)
 		if(v > amax)amax=v;
 	}
 	
-	average /= rx->faudio;
+	average /= rx->faudioCount;
 	
     amin -= average;
 
@@ -1843,8 +1783,6 @@ int doAudio(float *aBuff,struct playData *rx)
     rx->aminGlobal = 0.8*rx->aminGlobal+0.2*amin;
 
     amin=rx->aminGlobal;
-
-    
 
     if(rx->amaxGlobal == 0.0)rx->amaxGlobal=amax;
 
@@ -1865,7 +1803,7 @@ int doAudio(float *aBuff,struct playData *rx)
     }
 		
 
-	for(int k=0;k<rx->faudio;++k){
+	for(int k=0;k<rx->faudioCount;++k){
 		double v;
 
         v=buff[k];

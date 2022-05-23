@@ -2,6 +2,7 @@
 
 #define __MTHREAD__
 
+#include <stdio.h>
 
 #if defined c_plusplus || defined __cplusplus
 extern      "C"
