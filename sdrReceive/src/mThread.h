@@ -12,8 +12,6 @@ extern      "C"
 	
 	int zerol(char *p,unsigned long n);
 	
-	void mprint(const char *fmt, ...);
-
 	int Sleep2(int ms);
 
 #if defined c_plusplus || defined __cplusplus
