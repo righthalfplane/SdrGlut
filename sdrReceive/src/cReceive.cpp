@@ -161,6 +161,9 @@ void cReceive::mprint(const char *fmt, ...)
 	char buff[4096];
 	va_list arg;
 	
+	
+	//fprintf(stderr,"mprint rx->Debug %d\n",rx->Debug);
+	
 	if(rx->Debug < 1)return;
 	
     va_start(arg, fmt);
@@ -525,8 +528,11 @@ int cReceive::playRadio(struct playData *rx)
 	if(!rx->muteAudio){
 
 		RtAudio::StreamParameters parameters;
-		parameters.deviceId = dac.getDefaultOutputDevice();
-		parameters.deviceId = rx->audiodevice;
+		if(rx->audiodevice > 0){
+			parameters.deviceId = rx->audiodevice;
+		}else{
+			parameters.deviceId = dac.getDefaultOutputDevice();
+		}
 		parameters.nChannels = 2;
 		parameters.nChannels = 1;
 		parameters.firstChannel = 0;
@@ -666,9 +672,10 @@ int cReceive::initPlay(struct playData *rxi)
 
 	std::thread(&cDemod::rxBuffer, d, (void *)rx).detach(); 
 
-	if(rx->Debug)printAudioInfo(rx);
-	
-	if(rx->Debug)printInfo(rx);
+	if(rx->Debug){
+		printAudioInfo(rx);
+		printInfo(rx);
+	}
     
 	return 0;
 }
@@ -720,6 +727,8 @@ cReceive::cReceive(int argc, char * argv [])
     rx->cutOFF=-70;
     rx->pipe=0;
     rx->muteAudio=0;
+    
+    rx->audiodevice=-1;
   
 		
 	struct frequencyStruct fs;
@@ -955,6 +964,7 @@ int doWindow(double *x,double *y,long length,int type)
 int cReceive::printAudioInfo(struct playData *rx)
 {
 	RtAudio dac;
+	
 	
 	if(rx->muteAudio)return 0;
 
