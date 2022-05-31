@@ -707,8 +707,8 @@ void usage()
 	fprintf(stderr,"  -nbfm          Select narrow band FM mode\n");
 	fprintf(stderr,"  -usb           Select upper side band\n");
 	fprintf(stderr,"  -lsb           Select lower side band\n");
-	fprintf(stderr,"  -cw            Select CW mode\n\n");
-	fprintf(stderr,"Adjustments:\n");
+	fprintf(stderr,"  -cw            Select CW mode\n");
+	fprintf(stderr,"\nAdjustments:\n");
 	fprintf(stderr,"  -gain 0.5          Set volume to one half maximum\n");
 	fprintf(stderr,"  -rf_gain 30        Set RF gain to 30\n");
 	fprintf(stderr,"  -fc 162.0e6        Set center frequency to 162.0 MHZ\n");
@@ -722,15 +722,21 @@ void usage()
 	fprintf(stderr,"  -faudio  48000     Set the audio sample rate to 48000 HZ\n");
 	fprintf(stderr,"  -antenna  Hi-z     Use the Hi-z antenna\n");
 	fprintf(stderr,"  -x  5              Skip frequency 5 from the frequency scan list\n");
-	fprintf(stderr,"Examples:\n");
+	fprintf(stderr,"\nExamples:\n");
 	fprintf(stderr,"  sdrReceive.x -f 101.5e6 -fm\n");
 	fprintf(stderr,"  sdrReceive.x -f 162.4e6 -nbfm\n");
 	fprintf(stderr,"  sdrReceive.x -f 10e6 -am\n");
 	fprintf(stderr,"  sdrReceive.x -fc 1e6 -f 0.6e6 -device 3 -am\n");
 	fprintf(stderr,"  sdrReceive.x -fc 854.0e6 -f 854.36e6 -f 854.636e6 -nbfm -samplerate 10e6\n");
-	fprintf(stderr,"Long Examples:\n");
-	fprintf(stderr,"  sdrReceive.x -fc 770e6 -f 769.31875e6 -f 769.50625e6 -f 769.55625e6 -f 769.75625e6 -f 769.81875e6 -f 770.01875e6 -f 770.25625e6 -f 770.26875e6 -f 770.51875e6 -f 770.75625e6 -f 770.76875e6 -f 771.05625e6 -f 771.06875e6 -f 771.26875e6  -nbfm -samplerate 10e6 -print 2 -cutoff -80 -pipe -mute -x 10 -x 7 | dsd -i - -o pa:1 > junk.out\n");
+	fprintf(stderr,"\nLong Examples:\n");
+	fprintf(stderr,"  sdrReceive.x -fc 770e6 -f 769.31875e6 -f 769.50625e6 -f 769.55625e6 -f 769.75625e6 -f 769.81875e6 -f 770.01875e6 -f 770.25625e6 -f 770.26875e6 -f 770.51875e6 -f 770.75625e6 -f 770.76875e6 -f 771.05625e6 -f 771.06875e6 -f 771.26875e6  -nbfm -samplerate 10e6 -print 2 -cutoff -80 -pipe -mute -x 10 -x 7 | dsd -i - -o pa:1 \n");
 	fprintf(stderr,"  sdrReceive.x -fc 854.0e6 -f 854.3600e6 -f 854.6360e6 -f 854.6608e6 -f 854.7360e6 -f 854.9620e6 -f 855.0620e6 -f 855.0860e6 -f 855.2620e6 -f 855.5850e6 -f 855.9120e6 -f 856.8360e6 -f 856.8380e6 -f 856.8860e6 -f 857.0860e6 -nbfm -gain 1 -samplerate 10e6\n");
+	fprintf(stderr,"  sdrReceive.x -fc 770e6 -f 769.31875e6 -f 769.50625e6 -f 769.55625e6 -f 769.75625e6 -f 769.81875e6 -f 770.01875e6 -f 770.25625e6 -f 770.26875e6 -f 770.51875e6 -f 770.75625e6 -f 770.76875e6 -f 771.05625e6 -f 771.06875e6 -f 771.26875e6  -nbfm -samplerate 10e6 -print 2 -cutoff -80 -pipe -mute -x 10 -x 7 | dsd -i - -o - | play -q -t s16 -r 8k -c 1 -\n");
+	fprintf(stderr,"\nI/O Redirection:\n");
+	fprintf(stderr,"   bash     > junk1.txt     Redirect stdout to junk1.txt\n");
+	fprintf(stderr,"   bash    2> junk2.txt     Redirect stderr to junk1.txt\n");
+	fprintf(stderr,"   tch      > junk1.txt     Redirect stdout to junk2.txt\n");
+	fprintf(stderr,"   tch     >& junk2.txt     Redirect stderr to junk2.txt\n");
 	fprintf(stderr,"End Usage\n");
 	
 }
