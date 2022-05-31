@@ -85,6 +85,9 @@ enum{
 
 
 /*
+
+this does not decode anything - dsdccx -i - -fa -o - | play -q -t s16 -r 8k -c 1 -
+
 g++ -O2 -std=c++11 -Wno-deprecated -o sdrReceive.x sdrReceive.x.cpp mThread.cpp cMalloc.cpp Clisten.cpp -lrtaudio -lSoapySDR -lliquid -framework OpenAL -Wno-return-type-c-linkage
 
 g++ -O2 -std=c++11 -Wno-deprecated -o sdrReceive.x sdrReceive.x.cpp mThread.cpp cMalloc.cpp  Clisten.cpp -lrtaudio -lSoapySDR -lliquid -lopenal -pthread
@@ -221,7 +224,7 @@ struct playData{
     char *antennaUse;
     int channel;
     
-    unsigned int deviceNumber;
+    int deviceNumber;
     
     volatile int frame;
     

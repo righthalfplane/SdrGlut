@@ -695,6 +695,46 @@ int cReceive::fftIndex(double frequency)
     return -1;
 }
 
+void usage()
+{
+	fprintf(stderr,"Usage:\n");
+	fprintf(stderr," sdrReceive.x [options]\n");
+	fprintf(stderr," sdrReceive.x -h\n\n");
+	fprintf(stderr,"Mode:\n");
+	fprintf(stderr,"  -am            Select AM mode\n");
+	fprintf(stderr,"  -nam           Select narrow band AM mode\n");
+	fprintf(stderr,"  -fm            Select FM mode\n");
+	fprintf(stderr,"  -nbfm          Select narrow band FM mode\n");
+	fprintf(stderr,"  -usb           Select upper side band\n");
+	fprintf(stderr,"  -lsb           Select lower side band\n");
+	fprintf(stderr,"  -cw            Select CW mode\n\n");
+	fprintf(stderr,"Adjustments:\n");
+	fprintf(stderr,"  -gain 0.5          Set volume to one half maximum\n");
+	fprintf(stderr,"  -rf_gain 30        Set RF gain to 30\n");
+	fprintf(stderr,"  -fc 162.0e6        Set center frequency to 162.0 MHZ\n");
+	fprintf(stderr,"  -f  162.4e6        Set radio frequency to  162.4 MHZ\n");
+	fprintf(stderr,"  -mute              Set the volume to zero\n");
+	fprintf(stderr,"  -samplerate 10e6   Set sample rate to 10 MHZ\n");
+	fprintf(stderr,"  -device 2          Use SDR device number two\n");
+	fprintf(stderr,"  -audiodevice 1     Use audio output device one\n");
+	fprintf(stderr,"  -cutoff -70        Set squelch level to -70 db (background -90)\n");
+	fprintf(stderr,"  -pipe              Pipe the audio output to sdtout\n");
+	fprintf(stderr,"  -faudio  48000     Set the audio sample rate to 48000 HZ\n");
+	fprintf(stderr,"  -antenna  Hi-z     Use the Hi-z antenna\n");
+	fprintf(stderr,"  -x  5              Skip frequency 5 from the frequency scan list\n");
+	fprintf(stderr,"Examples:\n");
+	fprintf(stderr,"  sdrReceive.x -f 101.5e6 -fm\n");
+	fprintf(stderr,"  sdrReceive.x -f 162.4e6 -nbfm\n");
+	fprintf(stderr,"  sdrReceive.x -f 10e6 -am\n");
+	fprintf(stderr,"  sdrReceive.x -fc 1e6 -f 0.6e6 -device 3 -am\n");
+	fprintf(stderr,"  sdrReceive.x -fc 854.0e6 -f 854.36e6 -f 854.636e6 -nbfm -samplerate 10e6\n");
+	fprintf(stderr,"Long Examples:\n");
+	fprintf(stderr,"  sdrReceive.x -fc 770e6 -f 769.31875e6 -f 769.50625e6 -f 769.55625e6 -f 769.75625e6 -f 769.81875e6 -f 770.01875e6 -f 770.25625e6 -f 770.26875e6 -f 770.51875e6 -f 770.75625e6 -f 770.76875e6 -f 771.05625e6 -f 771.06875e6 -f 771.26875e6  -nbfm -samplerate 10e6 -print 2 -cutoff -80 -pipe -mute -x 10 -x 7 | dsd -i - -o pa:1 > junk.out\n");
+	fprintf(stderr,"  sdrReceive.x -fc 854.0e6 -f 854.3600e6 -f 854.6360e6 -f 854.6608e6 -f 854.7360e6 -f 854.9620e6 -f 855.0620e6 -f 855.0860e6 -f 855.2620e6 -f 855.5850e6 -f 855.9120e6 -f 856.8360e6 -f 856.8380e6 -f 856.8860e6 -f 857.0860e6 -nbfm -gain 1 -samplerate 10e6\n");
+	fprintf(stderr,"End Usage\n");
+	
+}
+
 cReceive::cReceive(int argc, char * argv [])
 {	
 
@@ -703,10 +743,8 @@ cReceive::cReceive(int argc, char * argv [])
 	rx=&rxs;
 	
 	rx->samplerate=2000000;
-	rx->deviceNumber=0;
-	rx->audiodevice=0;
 	rx->gain=0.5;
-	rx->fc=1.0e6;
+	rx->fc=-1.0;
 	rx->f=0.6e6;
     rx->antennaUse=NULL;
     rx->channel=0;
@@ -729,6 +767,7 @@ cReceive::cReceive(int argc, char * argv [])
     rx->muteAudio=0;
     
     rx->audiodevice=-1;
+	rx->deviceNumber=-1;
   
 		
 	struct frequencyStruct fs;
@@ -757,6 +796,8 @@ cReceive::cReceive(int argc, char * argv [])
             rx->decodemode = MODE_USB;
         }else if(!strcmp(argv[n],"-lsb")){
             rx->decodemode = MODE_LSB;
+        }else if(!strcmp(argv[n],"-cw")){
+            rx->decodemode = MODE_CW;
 	    }else if(!strcmp(argv[n],"-gain")){
 	         rx->gain=atof(argv[++n]);
 	    }else if(!strcmp(argv[n],"-PPM")){
@@ -788,6 +829,9 @@ cReceive::cReceive(int argc, char * argv [])
             rx->timeout=atof(argv[++n]);
 	    }else if(!strcmp(argv[n],"-cutoff")){
             rx->cutOFF=atof(argv[++n]);
+	    }else if(!strcmp(argv[n],"-h")){
+	         usage();
+	         exit(0);
 	    }else if(!strcmp(argv[n],"-antenna")){
             rx->antennaUse=strsave(argv[++n],9870);
 	    }else if(!strcmp(argv[n],"-set")){
@@ -798,6 +842,8 @@ cReceive::cReceive(int argc, char * argv [])
 			// infilename = argv [n] ;
 		}
 	}
+	
+	if(rx->fc < 0)rx->fc=rx->f+20000;
 	
 	if(frequency.size() <= 0){
 		fs.frequency=rx->f;
@@ -1584,16 +1630,24 @@ int cReceive::findRadio(struct playData *rx)
     SoapySDR::Kwargs deviceArgs;
     
     for(unsigned int k=0;k<results.size();++k){
-    		mprint("SDR device =  %ld ",(long)k);
-			deviceArgs = results[k];
-			for (SoapySDR::Kwargs::const_iterator it = deviceArgs.begin(); it != deviceArgs.end(); ++it) {
-				if (it->first == "label")mprint(" %s = %s\n",it->first.c_str(), it->second.c_str());
+		deviceArgs = results[k];
+		for (SoapySDR::Kwargs::const_iterator it = deviceArgs.begin(); it != deviceArgs.end(); ++it) {
+		    if(it->first == "driver"){
+				// mprint("SDR device =  %ld ",(long)k);
+			    // mprint(" %s = %s\n",it->first.c_str(), it->second.c_str());
+		        if(it->second == "audio")break;
+		    }
+			if (it->first == "label"){
+				mprint("SDR device =  %ld ",(long)k);
+			    mprint(" %s = %s\n",it->first.c_str(), it->second.c_str());
+			    if(rx->deviceNumber < 0)rx->deviceNumber=k;
 			}
+		}
     }
     
     mprint("\n");
-
-    for(unsigned int k=0;k<results.size();++k){
+    
+    for(int k=0;k<(int)results.size();++k){
     
     	if(k == rx->deviceNumber){
         
