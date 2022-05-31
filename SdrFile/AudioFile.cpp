@@ -264,7 +264,7 @@ int AudioFile::LoadFile(struct Scene *scene,char *filename, int fileType)
    // sf_command (play.infile , SFC_GET_CURRENT_SF_INFO, &play.sfinfo, sizeof (&play.sfinfo));
 
     printf("frames %lld samplerate %d channels %d format %x\n",
-           play.sfinfo.frames,play.sfinfo.samplerate,
+           (long long)play.sfinfo.frames,play.sfinfo.samplerate,
            play.sfinfo.channels,play.sfinfo.format);
     
     doFliters(play.sfinfo.samplerate);
