@@ -1194,7 +1194,7 @@ struct stations{
 int Radio::doVoice()
 {
     struct CommandInfo2 p;
-    char name[256];
+    char name[512];
     char data[256];
     char *path=vv.text2;
     vector<struct stations> st;
