@@ -26,7 +26,7 @@ SdrGlut has a new Voice Command Module. It can be programed to record any freque
 
 ## Demo videos
 - [An Introduction to SdrGlut (A software defined radio)](https://youtu.be/JEXK-r6PvmA)
-- [A P25 reception contest - dsd-louis vs. dsd-dme](https://youtu.be/DVqu4Q2ILPM))
+- [A P25 reception contest - dsd-louis vs. dsd-dme](https://youtu.be/DVqu4Q2ILPM)
 - [sdrReceive vs. rx_tools](https://youtu.be/aYcU28W96lU)
 - [wxEqualizer a 10 channel audio equalizer using wxWidgets.](https://youtu.be/wcsD3ahMplg)
 - [SdrGlut V1.30 - The  New Audio Window with Audio Equalization](https://youtu.be/xaySmML95l8)
