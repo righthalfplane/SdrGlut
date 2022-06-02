@@ -268,6 +268,8 @@ struct playData{
 	
 	int pipe;
 	
+	int binary;
+	
 	long startSound;
 
  	unsigned char end;

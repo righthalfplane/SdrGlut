@@ -76,6 +76,13 @@ int cDemod::rxBuffer(void *rxv)
 	        	if(rx->cs)rx->cs->pushBuff(rx->witch,rx);
 	        	
               	float *buff=rx->buff[rx->witch % NUM_DATA_BUFF];
+              	if(rx->binary){
+					int filenum=fileno(stdout);
+					int count=(int)write(filenum,buff,rx->size*8);
+					if(count != (int)(rx->size*8)){
+						fprintf(stderr,"I/Q write error: count %ld rx->size*8 %ld\n",(long)count,(long)(rx->size*8));
+					}
+              	}
               	
 				for(int k=0;k<rx->FFTcount;++k){
 				    if(k < rx->size){
@@ -722,6 +729,7 @@ void usage()
 	fprintf(stderr,"  -faudio  48000           Set the audio sample rate to 48000 HZ\n");
 	fprintf(stderr,"  -antenna  Hi-z           Use the Hi-z antenna\n");
 	fprintf(stderr,"  -x  5                    Skip frequency 5 from the frequency scan list\n");
+	fprintf(stderr,"  -binary                  Write I/Q data to stdout\n");
 	fprintf(stderr,"\nSetting Info:\n");
 	fprintf(stderr,"  -set rfnotch_ctrl true   Turn on notch filter\n");
 	fprintf(stderr,"  -set biasT_ctrl true     Turn on voltage to line\n");
@@ -779,6 +787,7 @@ cReceive::cReceive(int argc, char * argv [])
     
     rx->audiodevice=-1;
 	rx->deviceNumber=-1;
+	rx->binary=0;
   
 		
 	struct frequencyStruct fs;
@@ -791,6 +800,8 @@ cReceive::cReceive(int argc, char * argv [])
 		   sprintf(filename,"minute-%08d.raw",rx->idump++);
 		   mprint("filename %s\n",filename);
 		   rx->dumpbyminute = 1;
+	    }else if(!strcmp(argv[n],"-binary")){
+    		rx->binary=1;
 	    }else if(!strcmp(argv[n],"-mute")){
     		rx->muteAudio=1;
 	    }else if(!strcmp(argv[n],"-pipe")){
@@ -857,6 +868,15 @@ cReceive::cReceive(int argc, char * argv [])
 	}
 	
 	if(rx->fc < 0)rx->fc=rx->f+20000;
+	
+	if(rx->binary){
+		if(rx->pipe){
+			fprintf(stderr,"-binary and -pipe conflict STOP\n");
+			exit(1);
+		}
+		fprintf(stderr,"Binary File Tag\n");
+		fprintf(stderr,"atag_IQ_%lu_%lu_fc.raw\n",(long)rx->fc,(long)rx->samplerate);
+	}
 	
 	if(frequency.size() <= 0){
 		fs.frequency=rx->f;
