@@ -433,7 +433,7 @@ FoundTime:
 		}
 
 		if(fmult[n].gain > 0){
-		   if(rx->Debug > 1)fprintf(stderr,"n %ld f %g MHZ meter %g ",(long)n,f/1e6,meterMax);
+		   if(rx->Debug > 1)fprintf(stderr,"n %ld f %g db %g ",(long)n,f/1e6,meterMax);
 		   ++rx->startSound;
 		   if(ip == 0){
 				setFrequency3(f);
@@ -1813,9 +1813,12 @@ int cReceive::findRadio(struct playData *rx)
 
            mprint("\n");
 
+			//rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc);
+			
+			rx->device->setFrequency(SOAPY_SDR_RX,rx->channel,"RF",rx->fc);
+				
 			rx->device->setSampleRate(SOAPY_SDR_RX, rx->channel, rx->samplerate);
 			
-			rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc);
 			
         	mprint("rx->samplerate %d\n",rx->samplerate);
 			

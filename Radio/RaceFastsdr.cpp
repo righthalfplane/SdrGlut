@@ -711,7 +711,9 @@ static int playRadio(struct playData *rx)
     
     
     fprintf(stderr,"playRadio frequency %g channel %d\n",rx->fc,rx->channel);
-    rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc-rx->foffset);
+    //rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc-rx->foffset);
+    rx->device->setFrequency(SOAPY_SDR_RX,0,"RF",rx->fc-rx->foffset);
+
     
     if(rx->bandwidth > 0){
         rx->device->setBandwidth( SOAPY_SDR_RX, rx->channel, rx->bandwidth);
@@ -1705,11 +1707,12 @@ static int findRadio(struct playData *rx)
    }
     
     testRadio(rx);
-    
+     
+   // rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc-rx->foffset);
+    rx->device->setFrequency(SOAPY_SDR_RX,0,"RF",rx->fc-rx->foffset);
+
     rx->device->setSampleRate(SOAPY_SDR_RX, rx->channel, rx->samplerate);
     
-    rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc-rx->foffset);
-
     const std::vector<size_t> channels = {(unsigned long)rx->channel};
 
      rx->rxStream=rx->device->setupStream(SOAPY_SDR_RX, SOAPY_SDR_CF32,channels);
@@ -2182,6 +2185,7 @@ int testRadio(struct playData *rx)
         
         printf("rx->biasMode '%s'\n",rx->biasMode.c_str());
         
+
         args = rx->device->getSettingInfo(SOAPY_SDR_RX,rx->channel);
         if (args.size()) {
             for (SoapySDR::ArgInfoList::const_iterator args_i = args.begin(); args_i != args.end(); args_i++) {
@@ -2199,6 +2203,7 @@ int testRadio(struct playData *rx)
         }
         
 
+        
         // printf("rx->directSampleMode %d\n",rx->directSampleMode);
 /*
  size_t length;
