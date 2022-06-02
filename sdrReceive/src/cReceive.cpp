@@ -211,7 +211,7 @@ int cReceive::processScan(struct playData *rx)
     
     fprintf(stderr,"Current Frequencies\n");
     
-    fprintf(stderr,"sdrplay.x -fc %g ",rx->fc/1e6);
+    fprintf(stderr,"sdrReceive.x -fc %g ",rx->fc/1e6);
     for(std::vector<double>::size_type k=0;k<frequency.size();++k){
     		if(frequency[k].flag)fprintf(stderr,"-f %g ",frequency[k].frequency/1e6);
 	}
@@ -709,19 +709,24 @@ void usage()
 	fprintf(stderr,"  -lsb           Select lower side band\n");
 	fprintf(stderr,"  -cw            Select CW mode\n");
 	fprintf(stderr,"\nAdjustments:\n");
-	fprintf(stderr,"  -gain 0.5          Set volume to one half maximum\n");
-	fprintf(stderr,"  -rf_gain 30        Set RF gain to 30\n");
-	fprintf(stderr,"  -fc 162.0          Set center frequency to 162.0 MHZ\n");
-	fprintf(stderr,"  -f  162.4          Set radio frequency to  162.4 MHZ\n");
-	fprintf(stderr,"  -mute              Set the volume to zero\n");
-	fprintf(stderr,"  -samplerate 10e6   Set sample rate to 10 MHZ\n");
-	fprintf(stderr,"  -device 2          Use SDR device number two\n");
-	fprintf(stderr,"  -audiodevice 1     Use audio output device one\n");
-	fprintf(stderr,"  -cutoff -70        Set squelch level to -70 db (background -90)\n");
-	fprintf(stderr,"  -pipe              Pipe the audio output to sdtout\n");
-	fprintf(stderr,"  -faudio  48000     Set the audio sample rate to 48000 HZ\n");
-	fprintf(stderr,"  -antenna  Hi-z     Use the Hi-z antenna\n");
-	fprintf(stderr,"  -x  5              Skip frequency 5 from the frequency scan list\n");
+	fprintf(stderr,"  -gain 0.5                Set volume to one half maximum\n");
+	fprintf(stderr,"  -rf_gain 30              Set RF gain to 30\n");
+	fprintf(stderr,"  -fc 162.0                Set center frequency to 162.0 MHZ\n");
+	fprintf(stderr,"  -f  162.4                Set radio frequency to  162.4 MHZ\n");
+	fprintf(stderr,"  -mute                    Set the volume to zero\n");
+	fprintf(stderr,"  -samplerate 10e6         Set sample rate to 10 MHZ\n");
+	fprintf(stderr,"  -device 2                Use SDR device number two\n");
+	fprintf(stderr,"  -audiodevice 1           Use audio output device one\n");
+	fprintf(stderr,"  -cutoff -70              Set squelch level to -70 db (background -90)\n");
+	fprintf(stderr,"  -pipe                    Pipe the audio output to sdtout\n");
+	fprintf(stderr,"  -faudio  48000           Set the audio sample rate to 48000 HZ\n");
+	fprintf(stderr,"  -antenna  Hi-z           Use the Hi-z antenna\n");
+	fprintf(stderr,"  -x  5                    Skip frequency 5 from the frequency scan list\n");
+	fprintf(stderr,"\nSetting Info:\n");
+	fprintf(stderr,"  -set rfnotch_ctrl true   Turn on notch filter\n");
+	fprintf(stderr,"  -set biasT_ctrl true     Turn on voltage to line\n");
+	fprintf(stderr,"  -set direct_samp 2       Enable direct sample mode for rtl devices\n");
+	fprintf(stderr,"  These values are from the Setting Info list\n");
 	fprintf(stderr,"\nExamples:\n");
 	fprintf(stderr,"  sdrReceive.x -f 101.5 -fm\n");
 	fprintf(stderr,"  sdrReceive.x -f 162.4 -nbfm\n");
@@ -734,8 +739,8 @@ void usage()
 	fprintf(stderr,"  sdrReceive.x -fc 770 -f 769.31875 -f 769.50625 -f 769.55625 -f 769.75625 -f 769.81875 -f 770.01875 -f 770.25625 -f 770.26875 -f 770.51875 -f 770.75625 -f 770.76875 -f 771.05625 -f 771.06875 -f 771.26875  -nbfm -samplerate 10e6 -print 2 -cutoff -80 -pipe -mute -x 10 -x 7 | dsd -i - -o - | play -q -t s16 -r 8k -c 1 -\n");
 	fprintf(stderr,"\nI/O Redirection:\n");
 	fprintf(stderr,"   bash     > junk1.txt     Redirect stdout to junk1.txt\n");
-	fprintf(stderr,"   bash    2> junk2.txt     Redirect stderr to junk1.txt\n");
-	fprintf(stderr,"   tch      > junk1.txt     Redirect stdout to junk2.txt\n");
+	fprintf(stderr,"   bash    2> junk2.txt     Redirect stderr to junk2.txt\n");
+	fprintf(stderr,"   tch      > junk1.txt     Redirect stdout to junk1.txt\n");
 	fprintf(stderr,"   tch     >& junk2.txt     Redirect stderr to junk2.txt\n");
 	fprintf(stderr,"End Usage\n");
 	
