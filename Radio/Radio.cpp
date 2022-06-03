@@ -318,7 +318,7 @@ int Radio::setFrequencyDuo(struct playData *rx)
   //  fprintf(stderr,"setFrequencyDuo frequency %g channel %d\n",rx->fc,rx->channel);
 
     //rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc-rx->foffset);
-    rx->device->setFrequency(SOAPY_SDR_RX,0,"RF",rx->fc-rx->foffset);
+    rx->device->setFrequency(SOAPY_SDR_RX,rx->channel,"RF",rx->fc-rx->foffset);
 
     rx->averageGlobal=0;
     
