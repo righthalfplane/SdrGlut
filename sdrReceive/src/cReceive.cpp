@@ -951,6 +951,8 @@ void usage()
 	fprintf(stderr,"  sdrReceive.x -f 10 -am\n");
 	fprintf(stderr,"  sdrReceive.x -fc 1 -f 0.6 -device 3 -am\n");
 	fprintf(stderr,"  sdrReceive.x -fc 854.0 -f 854.36 -f 854.636 -nbfm -samplerate 10e6\n");
+	fprintf(stderr,"  sdrReceive.x -sweep 96.5M:106.5M:10k  -file out.csv\n");
+	fprintf(stderr,"  heatmap.py out.csv out.png --palette rainbow\n");
 	fprintf(stderr,"\nLong Examples:\n");
 	fprintf(stderr,"  sdrReceive.x -fc 770 -f 769.31875 -f 769.50625 -f 769.55625 -f 769.75625 -f 769.81875 -f 770.01875 -f 770.25625 -f 770.26875 -f 770.51875 -f 770.75625 -f 770.76875 -f 771.05625 -f 771.06875 -f 771.26875  -nbfm -samplerate 10e6 -print 2 -cutoff -80 -pipe -mute -x 10 -x 7 | dsd -i - -o pa:1 \n");
 	fprintf(stderr,"  sdrReceive.x -fc 854.0 -f 854.3600 -f 854.6360 -f 854.6608 -f 854.7360 -f 854.9620 -f 855.0620 -f 855.0860 -f 855.2620 -f 855.5850 -f 855.9120 -f 856.8360 -f 856.8380 -f 856.8860 -f 857.0860 -nbfm -gain 1 -samplerate 10e6\n");
