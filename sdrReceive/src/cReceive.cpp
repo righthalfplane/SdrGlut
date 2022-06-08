@@ -1061,13 +1061,21 @@ cReceive::cReceive(int argc, char * argv [])
 	    }else if(!strcmp(argv[n],"-sweep")){
 	        char *arg,*stop,*step;
 	    	arg = strdup(argv[++n]);
-			stop = strchr(arg, ':') + 1;
-			stop[-1] = '\0';
-			step = strchr(stop, ':') + 1;
-			step[-1] = '\0';
+			stop = strchr(arg, ':');
+			if(stop == NULL){
+				fprintf(stderr,"Error in sweep frequency range\n");
+				exit(1);
+			} 
+			stop[0] = '\0';
+			step = strchr(stop+1, ':');
+			if(step == NULL){
+				fprintf(stderr,"Error in sweep frequency range\n");
+				exit(1);
+			} 
+			step[0] = '\0';
 			rx->sweepLower = atofs(arg);
-			rx->sweepUpper = atofs(stop);
-			rx->sweepSize = atofs(step);
+			rx->sweepUpper = atofs(stop+1);
+			rx->sweepSize = atofs(step+1);
 			rx->sweep=1;
 	    }else if(!strcmp(argv[n],"-x")){
 	         int nkill=(int)atof(argv[++n]);
