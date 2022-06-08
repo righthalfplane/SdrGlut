@@ -62,6 +62,10 @@ public:
 	int playRadio(struct playData *rx);
 	int stopPlay(struct playData *rx);
 	int updateLine();
+	int updateSweep1(double fmins,double fmaxs);
+	int updateSweep2(double fmins,double fmaxs);
+	int updateSweep3(double fmins,double fmaxs);
+	int sweepRadio();
 	int fftIndex(double frequency);
 	int setFrequency3(double frequency);
 	int processScan(struct playData *rx);

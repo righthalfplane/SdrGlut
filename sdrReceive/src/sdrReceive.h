@@ -271,6 +271,16 @@ struct playData{
 	int binary;
 	
 	long startSound;
+	
+	float *sweepBuff;
+	double sweepLower;
+	double sweepUpper;
+	double sweepSize;
+	double crop;
+	int sweepFound;
+	int sweep;
+	FILE *out;
+
 
  	unsigned char end;
  	

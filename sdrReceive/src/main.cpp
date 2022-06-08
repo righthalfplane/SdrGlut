@@ -18,7 +18,10 @@ int main (int argc, char * argv [])
 
 	class cReceive rec(argc,argv);
 	
-	rec.initPlay(rec.rx);
+	if(rec.initPlay(rec.rx)){
+		fprintf(stderr,"initPlay Failed\n");
+		return 1;
+	};
 		
 	rec.playRadio(rec.rx);
 

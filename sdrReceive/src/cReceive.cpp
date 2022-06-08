@@ -6,6 +6,8 @@
 
 #include <algorithm>
 
+#include <time.h>
+
 static int GetTime(long *Seconds,long *milliseconds);
 
 static class cDemod *dd;
@@ -17,6 +19,8 @@ int doFFT2(double *x,double *y,long length,int direction);
 int doWindow(double *x,double *y,long length,int type);
 
 int fft(double *data,int nn,int isign);
+
+double atofs(char *s);
 
 #ifndef TRUE
 #define TRUE 1
@@ -492,9 +496,215 @@ int cReceive::stopPlay(struct playData *rx)
 	    
 	return 0;
 }
+int cReceive::updateSweep1(double fmins,double fmaxs)
+{
+    double *real,*imag;
+    double amin,amax,v;
+    
+    if(!rx)return 0;
+    
+    if(rx->FFTcount > FFTlength){
+        fprintf(stderr," FFTlength %ld\n",FFTlength);
+        return 1;
+    }
+    
+    int length=rx->FFTcount;
+    
+    for(int k=0;k<length;++k){
+        rx->reals[k]=rx->real[k];
+        rx->imags[k]=rx->imag[k];
+    }
 
+    real=rx->reals;
+    imag=rx->imags;
+    
+     
+    doWindow(real,imag,length,rx->FFTfilter);
+    
+    for(int n=0;n<length;++n){
+        real[n] *= pow(-1.0,n);
+        imag[n] *= pow(-1.0,n);
+    }
+    
+    doFFT2(real,imag,length,1);
+       
+    amin =  1e33;
+    amax = -1e33;
+
+    
+     for(int n=0;n<length;++n){
+        v=(real[n]*real[n]+imag[n]*imag[n]);
+        if(v > 0.0)v=10*log10(v);
+        magnitude2[length-n-1] += v;
+        if(v < amin)amin=v;
+        if(v > amax)amax=v;
+    }
+    
+    
+   // fprintf(stderr,"fmins %g fmaxs %g amin %g amax %g\n",fmins/1e6,fmaxs/1e6,amin,amax);
+     
+    
+    return 0;
+}
+int cReceive::updateSweep2(double fmins,double fmaxs)
+{
+    
+    if(!rx)return 0;
+    
+    rx->sweepFound=0;
+	int counts=0;
+	for(long long n=(long long )rx->sweepLower;n<=(long long )rx->sweepUpper;n += (long long )rx->sweepSize){
+	    double ff=n+0.5*rx->sweepSize;
+		++counts;
+		if(ff < fmins || ff > fmaxs)continue;
+		
+		int n1=fftIndex(ff-0.3*rx->sweepSize);
+		int n2=fftIndex(ff+0.3*rx->sweepSize);
+		if(n1 < 0 || n2 < 0){
+			fprintf(stderr,"skip - ff %g n1 %d n2 %d\n",ff/1e6,n1,n2);
+		    continue;
+		}
+		double maxs=-160;
+		int nv=0;
+		for(int m=n1;m<=n2;++m){
+ 	//		maxs += magnitude2[m];
+ 	       // fprintf(stderr,"m %d magnitude2[m] %g maxs %g\n",m,magnitude2[m],maxs);
+			if(0.1*magnitude2[m] > maxs)maxs=0.1*magnitude2[m];
+ 			++nv;
+ 		}
+ 		
+ 		maxs=0.1*magnitude2[(n1+n2)/2];
+ 		
+		rx->sweepBuff[rx->sweepFound++]=maxs;
+		//fprintf(stderr,"ff %g maxs %g rx->sweepFound %d\n",ff/1e6,maxs,rx->sweepFound);
+	}
+	
+	//fprintf(stderr,"found %d\n",found);
+    
+    return 0;
+}
+int cReceive::sweepRadio()
+{
+
+
+	mprint("sweepLower %g MHZ sweepUpper %g MHZ sweepSize %g crop %g\n",rx->sweepLower/1e6,rx->sweepUpper/1e8,rx->sweepSize,rx->crop);
+	
+	
+	rx->device->setSampleRate(SOAPY_SDR_RX, rx->channel, rx->samplerate);
+	
+	double rate=rx->device->getSampleRate(SOAPY_SDR_RX, rx->channel);
+	
+	rx->samplerate=rate;
+	
+	int counts=0;
+	for(long long n=(long long )rx->sweepLower;n<=(long long )rx->sweepUpper;n += (long long )rx->sweepSize){
+		++counts;
+	}
+	
+	mprint("sweep Steps %d\n",counts);
+	
+	rx->sweepBuff=(float *)cMalloc(2*(counts+10),5789);
+	if(!rx->sweepBuff){
+		mprint("55 cMalloc Errror %ld\n",(long)(2*(counts+10)));
+		return 1;
+	}
+
+	zerol((char *)rx->sweepBuff,2*(counts+10));
+  
+
+	int size=(int)rate/rx->ncut;
+
+	rx->size=size;
+
+	mprint("rate %f rx->size %d\n",rate,rx->size);
+	
+	for(int k=0;k<NUM_DATA_BUFF;++k){
+		if(rx->buff[k])cFree((char *)rx->buff[k]);
+		rx->buff[k]=(float *)cMalloc(2*rx->size*4*8,5789);
+		if(!rx->buff[k]){
+			mprint("5 cMalloc Errror %ld\n",(long)(2*rx->size*4));
+			return 1;
+		}
+		zerol((char *)rx->buff[k],2*rx->size*4);
+		rx->buffStack[k]=-1;
+	}
+		
+
+	rx->witch=0;
+
+	rx->frame=0;
+	
+	rx->doWhat=Work;
+
+	int itWas=-1;
+	int pass=0;
+	rx->timestart=rtime();
+  	while(!threadexit){	
+		char t_str[50];
+		time_t time_now;
+		struct tm cal_time = {0};
+		time_now = time(NULL);
+		mprint("sweep %d\n",pass++);
+		for(long long n=(long long )rx->sweepLower;n<(long long )rx->sweepUpper;n += (long long )rx->samplerate*(1.0-rx->crop)){
+			localtime_r(&time_now, &cal_time);
+		    strftime(t_str, 50, "%Y-%m-%d, %H:%M:%S,", &cal_time);
+			double fc,fmins,fmaxs;
+			fc=n+rx->samplerate*0.5*(1.0-rx->crop);
+			fmins=fc-rx->samplerate*0.5*(1.0-rx->crop);
+			fmaxs=fc+rx->samplerate*0.5*(1.0-rx->crop);
+		    mprint("fc %g fmins %g fmaxs %g\n",fc/1e6,fmins/1e6,fmaxs/1e6);
+			rx->fc=fc;
+			rx->device->setFrequency(SOAPY_SDR_RX,rx->channel,"RF",rx->fc);
+			rx->aminGlobal3=0;
+			int pass=0;
+			zerol((char *)magnitude2,FFTlength*sizeof(double));
+			while(1){
+				if(itWas != rx->witch){
+					updateSweep1(fmins,fmaxs);
+					itWas=rx->witch;
+					if(++pass > 10)break;
+				}else{
+					Sleep2(5);
+				}
+			}
+			updateSweep2(fmins,fmaxs);
+			if(rx->out){
+			    //fprintf(stderr,"rx->sweepFound %d\n",rx->sweepFound);
+			    fprintf(rx->out,"%s ",t_str);
+			    fprintf(rx->out," %.0f, %.0f, %.2f, %.0f,",fmins,fmaxs,rx->sweepSize,(double)rx->samplerate/(double)rx->ncut);
+			    for(int n=0;n<rx->sweepFound;++n){
+			        fprintf(rx->out," %.2f, ",rx->sweepBuff[n]);
+			    }
+			    fprintf(rx->out,"\n");
+			}
+	
+		}
+ 	    mprint("\n");
+
+  	
+  	
+  		
+  		
+		if(rx->timeout > 0 && rtime() > rx->timeout+rx->timestart){
+			break;
+		}
+		
+   	}      
+
+    rx->doWhat=Wait;
+        
+    rx->frame=-1;
+
+	if(rx->sweepBuff)cFree((char *)rx->sweepBuff);
+
+	return 0;
+}
 int cReceive::playRadio(struct playData *rx)
 {
+
+	if(rx->sweep){
+		return sweepRadio();
+	}
 
 	double rate=rx->device->getSampleRate(SOAPY_SDR_RX, rx->channel);
   
@@ -504,7 +714,6 @@ int cReceive::playRadio(struct playData *rx)
 	rx->size=size;
 
 	mprint("rate %f rx->size %d\n",rate,rx->size);
-	
 	
 	for(int k=0;k<NUM_DATA_BUFF;++k){
 		if(rx->buff[k])cFree((char *)rx->buff[k]);
@@ -697,8 +906,9 @@ cReceive::~cReceive()
 int cReceive::fftIndex(double frequency)
 {
     if(!rx)return -1;
-    int index=(int)(0.5+rx->FFTcount*((frequency - rx->fc)+0.5*rx->samplerate)/rx->samplerate);
-    if(index >= 0 && index < rx->FFTcount-1)return index;
+    int index=(int)(0.5+(rx->FFTcount-1)*((frequency - rx->fc)+0.5*rx->samplerate)/rx->samplerate);
+    if(index >= 0 && index < rx->FFTcount)return index;
+    //fprintf(stderr,"index %d\n",index);
     return -1;
 }
 
@@ -750,6 +960,8 @@ void usage()
 	fprintf(stderr,"   bash    2> junk2.txt     Redirect stderr to junk2.txt\n");
 	fprintf(stderr,"   tch      > junk1.txt     Redirect stdout to junk1.txt\n");
 	fprintf(stderr,"   tch     >& junk2.txt     Redirect stderr to junk2.txt\n");
+	fprintf(stderr,"\nPath:\n");
+	fprintf(stderr,"SOAPY_SDR_ROOT\n");
 	fprintf(stderr,"End Usage\n");
 	
 }
@@ -789,6 +1001,13 @@ cReceive::cReceive(int argc, char * argv [])
 	rx->deviceNumber=-1;
 	rx->binary=0;
   
+	rx->sweepLower=0;
+	rx->sweepUpper=0;
+	rx->sweepSize=0;
+	rx->sweep=0;
+	rx->out=NULL;
+	rx->crop=0;
+
 		
 	struct frequencyStruct fs;
 
@@ -826,6 +1045,8 @@ cReceive::cReceive(int argc, char * argv [])
 	         rx->PPM=atof(argv[++n]);
 	    }else if(!strcmp(argv[n],"-rf_gain")){
 	         rx->rf_gain=atof(argv[++n]);
+	    }else if(!strcmp(argv[n],"-crop")){
+	         rx->crop=atof(argv[++n]);
 	    }else if(!strcmp(argv[n],"-fc")){
 	         rx->fc=atof(argv[++n]);
 	         rx->fc *= 1e6;
@@ -835,12 +1056,27 @@ cReceive::cReceive(int argc, char * argv [])
 	         fs.frequency=rx->f;
 	         fs.flag=1;
 	         frequency.push_back(fs);
+	    }else if(!strcmp(argv[n],"-sweep")){
+	        char *arg,*stop,*step;
+	    	arg = strdup(argv[++n]);
+			stop = strchr(arg, ':') + 1;
+			stop[-1] = '\0';
+			step = strchr(stop, ':') + 1;
+			step[-1] = '\0';
+			rx->sweepLower = atofs(arg);
+			rx->sweepUpper = atofs(stop);
+			rx->sweepSize = atofs(step);
+			rx->sweep=1;
 	    }else if(!strcmp(argv[n],"-x")){
 	         int nkill=(int)atof(argv[++n]);
 	         kill.push_back(nkill);
 	    }else if(!strcmp(argv[n],"-channel")){
 	         rx->channel=atof(argv[++n]);
 	    }else if(!strcmp(argv[n],"-file")){
+	         rx->out=fopen(argv[++n],"wb");
+	         if(rx->out == NULL){
+	             mprint("Could Not Open %s to Write\n",argv[n]);
+	         }
 	    }else if(!strcmp(argv[n],"-faudio")){
 	         rx->faudio=(float)atof(argv[++n]);
 	    }else if(!strcmp(argv[n],"-device")){
@@ -866,6 +1102,7 @@ cReceive::cReceive(int argc, char * argv [])
 			// infilename = argv [n] ;
 		}
 	}
+	
 	
 	if(rx->fc < 0)rx->fc=rx->f+20000;
 	
@@ -893,6 +1130,7 @@ cReceive::cReceive(int argc, char * argv [])
 			}
 		}
 	}
+	
 		
 	rx->FFTfilter=FILTER_BLACKMANHARRIS7;
 
@@ -906,7 +1144,7 @@ cReceive::cReceive(int argc, char * argv [])
 	lineDumpInterval=0.1;
     lineTime=rtime()+lineDumpInterval;
     
-    lineAlpha=0.25;
+    lineAlpha=0.1;
     
     FFTlength=32768;
     rx->FFTcount=4096;
@@ -930,6 +1168,7 @@ cReceive::cReceive(int argc, char * argv [])
     zerol((char *)range,FFTlength*sizeof(double));
     zerol((char *)range3,FFTlength*sizeof(double));
     zerol((char *)magnitude,FFTlength*sizeof(double));
+    zerol((char *)magnitude2,FFTlength*sizeof(double));
     zerol((char *)magnitude3,FFTlength*sizeof(double));
 
     zerol((char *)frequencies,FFTlength*sizeof(double));
@@ -1104,6 +1343,7 @@ int cReceive::printInfo(struct playData *rx)
 	mprint("Lib Version: v%s\n",SoapySDR::getLibVersion().c_str());
 	mprint("API Version: v%s\n",SoapySDR::getAPIVersion().c_str());
 	mprint("ABI Version: v%s\n",SoapySDR::getABIVersion().c_str());
+	mprint("SOAPY_SDR_ROOT\n");
 	mprint("Install root:  %s\n",SoapySDR::getRootPath().c_str());
     
     std::vector<std::string> path=SoapySDR::listSearchPaths();
@@ -1915,7 +2155,90 @@ int setFilters(struct playData *rx,struct Filters *f)
     return 0;
     	
 }
+int cReceive::updateSweep3(double fmins,double fmaxs)
+{
+    double *real,*imag;
+    double amin,amax,v;
+    
+    if(!rx)return 0;
+    
+    if(rx->FFTcount > FFTlength){
+        fprintf(stderr," FFTlength %ld\n",FFTlength);
+        return 1;
+    }
+    
+    int length=rx->FFTcount;
+    
+    for(int k=0;k<length;++k){
+        rx->reals[k]=rx->real[k];
+        rx->imags[k]=rx->imag[k];
+    }
 
+    real=rx->reals;
+    imag=rx->imags;
+    
+     
+    doWindow(real,imag,length,rx->FFTfilter);
+    
+    for(int n=0;n<length;++n){
+        real[n] *= pow(-1.0,n);
+        imag[n] *= pow(-1.0,n);
+    }
+    
+    doFFT2(real,imag,length,1);
+    
+    amin =  0.0;
+    int nn=0;
+    for(int n=10;n<length-10;++n){
+        v=(real[n]*real[n]+imag[n]*imag[n]);
+        if(v > 0.0)v=10*log10(v)+5;
+        double mag=(1.0-lineAlpha)*magnitude[length-n-1]+v*lineAlpha;
+        amin +=  mag;
+        ++nn;
+     }
+    
+    amin /= nn;
+    
+    double shift=-20-amin;
+    rx->shiftGlobal = amin;
+    if(rx->aminGlobal3 == 0.0)rx->aminGlobal3=0.25*shift;
+    rx->aminGlobal3 = 0.9*rx->aminGlobal3+0.1*shift;
+ //   shift=rx->aminGlobal3;
+
+   // fprintf(stderr,"shift %g amin %g \n",shift,amin);
+   
+    amin =  1e33;
+    amax = -1e33;
+
+    
+    float dx=rx->samplerate;
+    double ddx=(double)rx->samplerate/(double)(length);
+    long nf=0;
+    for(int n=0;n<length;++n){
+        double r;
+        r=rx->fc-0.5*rx->samplerate+n*ddx;
+        range[n]=r;
+        if(abs(range[n]-rx->f) < dx)
+        {
+            dx=abs(range[n]-rx->f);
+            nf=n;
+        }
+        v=(real[n]*real[n]+imag[n]*imag[n]);
+        if(v > 0.0)v=10*log10(v)+5;
+        magnitude[length-n-1]=((1.0-lineAlpha)*magnitude[length-n-1]+v*lineAlpha)+shift;
+        v=magnitude[length-n-1];
+        magnitude2[length-n-1]=v/*+rx->scaleFactor*/;
+        if(v < amin)amin=v;
+        if(v > amax)amax=v;
+    }
+    
+    
+    //fprintf(stderr,"fmins %g fmaxs %g amin %g amax %g\n",fmins/1e6,fmaxs/1e6,amin,amax);
+    (void)nf;
+     
+    
+    return 0;
+}
 
 
 double rtime(void)
@@ -2096,7 +2419,32 @@ L1000:
 	}
 	return 0;
 }
-
+double atofs(char *s)
+/* standard suffixes */
+{
+	char last;
+	int len;
+	double suff = 1.0;
+	len = strlen(s);
+	last = s[len-1];
+	s[len-1] = '\0';
+	switch (last) {
+		case 'g':
+		case 'G':
+			suff *= 1e3;
+		case 'm':
+		case 'M':
+			suff *= 1e3;
+		case 'k':
+		case 'K':
+			suff *= 1e3;
+			suff *= atof(s);
+			s[len-1] = last;
+			return suff;
+	}
+	s[len-1] = last;
+	return atof(s);
+}
 
 //ALvoid DisplayALError(unsigned char *szText, ALint errorCode);
 
