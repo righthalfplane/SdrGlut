@@ -534,7 +534,7 @@ int cReceive::updateSweep1(double fmins,double fmaxs)
     
      for(int n=0;n<length;++n){
         v=(real[n]*real[n]+imag[n]*imag[n]);
-        if(v > 0.0)v=10*log10(v);
+        //if(v > 0.0)v=10*log10(v);
         magnitude2[length-n-1] += v;
         if(v < amin)amin=v;
         if(v > amax)amax=v;
@@ -546,7 +546,7 @@ int cReceive::updateSweep1(double fmins,double fmaxs)
     
     return 0;
 }
-int cReceive::updateSweep2(double fmins,double fmaxs)
+int cReceive::updateSweep2(double fmins,double fmaxs,int pass)
 {
     
     if(!rx)return 0;
@@ -558,25 +558,24 @@ int cReceive::updateSweep2(double fmins,double fmaxs)
 		++counts;
 		if(ff < fmins || ff > fmaxs)continue;
 		
-		int n1=fftIndex(ff-0.3*rx->sweepSize);
-		int n2=fftIndex(ff+0.3*rx->sweepSize);
+		int n1=fftIndex(ff-0.5*rx->sweepSize);
+		int n2=fftIndex(ff+0.5*rx->sweepSize);
+		if(n1 == rx->FFTcount/2 || n2 == rx->FFTcount/2)continue;
 		if(n1 < 0 || n2 < 0){
 			fprintf(stderr,"skip - ff %g n1 %d n2 %d\n",ff/1e6,n1,n2);
 		    continue;
 		}
-		double maxs=-160;
+		double maxs=0.0;
 		int nv=0;
 		for(int m=n1;m<=n2;++m){
- 	//		maxs += magnitude2[m];
- 	       // fprintf(stderr,"m %d magnitude2[m] %g maxs %g\n",m,magnitude2[m],maxs);
-			if(0.1*magnitude2[m] > maxs)maxs=0.1*magnitude2[m];
+ 	    	maxs += magnitude2[m];
  			++nv;
  		}
  		
- 		maxs=0.1*magnitude2[(n1+n2)/2];
- 		
+ 		maxs=maxs/((double)pass*nv);
+ 		if(maxs > 0.0)maxs=10*log10(maxs); 		
 		rx->sweepBuff[rx->sweepFound++]=maxs;
-		//fprintf(stderr,"ff %g maxs %g rx->sweepFound %d\n",ff/1e6,maxs,rx->sweepFound);
+		//fprintf(stderr,"ff %g maxs %g rx->sweepFound %d pass*nv %d n1 %d n2 %d\n",ff/1e6,maxs,rx->sweepFound,pass*nv,n1,n2);
 	}
 	
 	//fprintf(stderr,"found %d\n",found);
@@ -662,12 +661,12 @@ int cReceive::sweepRadio()
 				if(itWas != rx->witch){
 					updateSweep1(fmins,fmaxs);
 					itWas=rx->witch;
-					if(++pass > 10)break;
+					if(pass++ >= 10)break;
 				}else{
 					Sleep2(5);
 				}
 			}
-			updateSweep2(fmins,fmaxs);
+			updateSweep2(fmins,fmaxs,pass);
 			if(rx->out){
 			    //fprintf(stderr,"rx->sweepFound %d\n",rx->sweepFound);
 			    fprintf(rx->out,"%s ",t_str);
@@ -978,7 +977,7 @@ cReceive::cReceive(int argc, char * argv [])
 	rx->samplerate=2000000;
 	rx->gain=0.5;
 	rx->fc=-1.0;
-	rx->f=0.6e6;
+	rx->f=101.5e6;
     rx->antennaUse=NULL;
     rx->channel=0;
     rx->setcount=0;
@@ -991,7 +990,7 @@ cReceive::cReceive(int argc, char * argv [])
     rx->aminGlobal=0;
     rx->amaxGlobal=0;
     rx->averageGlobal=0;
-    rx->decodemode = MODE_AM;
+    rx->decodemode = MODE_FM;
     rx->Debug = 1;
     rx->ncut = 20;
     rx->rf_gain=0;
@@ -1077,6 +1076,7 @@ cReceive::cReceive(int argc, char * argv [])
 			rx->sweepUpper = atofs(stop+1);
 			rx->sweepSize = atofs(step+1);
 			rx->sweep=1;
+			rx->f=rx->sweepLower;
 	    }else if(!strcmp(argv[n],"-x")){
 	         int nkill=(int)atof(argv[++n]);
 	         kill.push_back(nkill);
