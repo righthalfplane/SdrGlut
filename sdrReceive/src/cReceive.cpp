@@ -8,6 +8,67 @@
 
 #include <time.h>
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include <stdio.h>
+#include <ctype.h>
+#include <math.h>
+#include <string.h>
+#include <sys/types.h>
+#include <time.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <df.h>
+
+
+char WarningBuff[256];
+
+int DFerror;
+
+#define DATA_TYPE_DOUBLE 	0
+#define DATA_TYPE_FLOAT  	1
+#define DATA_TYPE_BYTE   	2
+#define DATA_TYPE_DOUBLE_3D 3
+#define DATA_TYPE_FLOAT_3D  4
+
+struct SDS2Dout{
+    char *path;
+    char *name;
+    char *pioName;
+    long ixmax;
+    long iymax;
+    long izmax;
+    double *data;
+    double xmin;
+    double xmax;
+    double ymin;
+    double ymax;
+    double zmin;
+    double zmax;
+    double vmin;
+    double vmax;
+    double time;
+    int type;
+    int n;
+};
+ 
+//char *cMalloc(unsigned long length,int tag);
+int zerol(char *s,unsigned long n);
+int Warning(char *mess);
+int cFree(char *ptr);
+int writeData(char *nameFile,int type);
+int writeData3d(char *nameFile,int type);
+int writesds(struct SDS2Dout *sdsout);
+static int writesds2dFloat(struct SDS2Dout *sdsout);
+static int writesds2dBytes(struct SDS2Dout *sdsout);
+static int writesds2dDouble(struct SDS2Dout *sdsout);
+static int writesds3dFloat(struct SDS2Dout *sdsout);
+static int writesds3dDouble(struct SDS2Dout *sdsout);
+
+
+
 static int GetTime(long *Seconds,long *milliseconds);
 
 static class cDemod *dd;
@@ -43,7 +104,12 @@ int cDemod::rxBuffer(void *rxv)
 	     case Exit:
 	        rx->r->mprint("Exit rxBuffer\n");
 	        return 0;
+	        
+	     case GoToSleep:
+	         goto StartWork;
+	         break;
 		 case Work:
+StartWork:
        		long long timeNs=0;
            
             float *buff=rx->buff[rx->witch % NUM_DATA_BUFF];
@@ -76,6 +142,7 @@ int cDemod::rxBuffer(void *rxv)
 					break;
 				}
             }
+            if(rx->doWhat == GoToSleep)goto StartWork;
 	        if(rx->doWhat == Work){
 	        	if(rx->cs)rx->cs->pushBuff(rx->witch,rx);
 	        	
@@ -87,7 +154,6 @@ int cDemod::rxBuffer(void *rxv)
 						fprintf(stderr,"I/Q write error: count %ld rx->size*8 %ld\n",(long)count,(long)(rx->size*8));
 					}
               	}
-              	
 				for(int k=0;k<rx->FFTcount;++k){
 				    if(k < rx->size){
 						rx->real[k]=buff[2*k];
@@ -494,6 +560,15 @@ int cReceive::stopPlay(struct playData *rx)
 	if(rx->cs)delete rx->cs;
 	rx->cs=NULL;
 	    
+	if(range)cFree((char *)range);
+	if(range3)cFree((char *)range3);
+	if(magnitude)cFree((char *)magnitude);
+	if(magnitude2)cFree((char *)magnitude2);
+	if(magnitude3)cFree((char *)magnitude3);
+	if(frequencies)cFree((char *)frequencies);
+	if(ampitude)cFree((char *)ampitude);
+	    
+	    
 	return 0;
 }
 int cReceive::updateSweep1(double fmins,double fmaxs)
@@ -540,7 +615,6 @@ int cReceive::updateSweep1(double fmins,double fmaxs)
         if(v > amax)amax=v;
     }
     
-    
    // fprintf(stderr,"fmins %g fmaxs %g amin %g amax %g\n",fmins/1e6,fmaxs/1e6,amin,amax);
      
     
@@ -562,7 +636,7 @@ int cReceive::updateSweep2(double fmins,double fmaxs,int pass)
 		int n2=fftIndex(ff+0.5*rx->sweepSize);
 		if(n1 == rx->FFTcount/2 || n2 == rx->FFTcount/2)continue;
 		if(n1 < 0 || n2 < 0){
-			fprintf(stderr,"skip - ff %g n1 %d n2 %d\n",ff/1e6,n1,n2);
+			fprintf(stderr,"skip - ff %g fc %g samplerate %d n1 %d n2 %d\n",ff/1e6,rx->fc/1e6,rx->samplerate,n1,n2);
 		    continue;
 		}
 		double maxs=0.0;
@@ -575,8 +649,18 @@ int cReceive::updateSweep2(double fmins,double fmaxs,int pass)
  		maxs=maxs/((double)pass*nv);
  		if(maxs > 0.0)maxs=10*log10(maxs); 		
 		rx->sweepBuff[rx->sweepFound++]=maxs;
+		//fprintf(stderr,"%lld %g n1 %d n2 %d maxs %g\n",n,ff/1e6,n1,n2,maxs);
 		//fprintf(stderr,"ff %g maxs %g rx->sweepFound %d pass*nv %d n1 %d n2 %d\n",ff/1e6,maxs,rx->sweepFound,pass*nv,n1,n2);
 	}
+/*
+    for(int n=0;n<rx->sweepFound;++n){
+        if(n != rx->sweepFound-1){
+            fprintf(stdout,"%0.2f\t",rx->sweepBuff[n]);
+        }else{
+            fprintf(stdout,"%0.2f\n",rx->sweepBuff[n]);
+        }
+    }    
+*/
 	
 	//fprintf(stderr,"found %d\n",found);
     
@@ -586,7 +670,7 @@ int cReceive::sweepRadio()
 {
 
 
-	mprint("sweepLower %g MHZ sweepUpper %g MHZ sweepSize %g crop %g\n",rx->sweepLower/1e6,rx->sweepUpper/1e8,rx->sweepSize,rx->crop);
+	mprint("sweepLower %g MHZ sweepUpper %g MHZ sweepSize %g crop %g\n",rx->sweepLower/1e6,rx->sweepUpper/1e6,rx->sweepSize,rx->crop);
 	
 	
 	rx->device->setSampleRate(SOAPY_SDR_RX, rx->channel, rx->samplerate);
@@ -602,13 +686,13 @@ int cReceive::sweepRadio()
 	
 	mprint("sweep Steps %d\n",counts);
 	
-	rx->sweepBuff=(float *)cMalloc(2*(counts+10),5789);
+	rx->sweepBuff=(float *)cMalloc(2*(counts+10)*sizeof(float),5790);
 	if(!rx->sweepBuff){
-		mprint("55 cMalloc Errror %ld\n",(long)(2*(counts+10)));
+		mprint("55 cMalloc Errror %ld\n",(long)(2*(counts+10)*sizeof(float)));
 		return 1;
 	}
 
-	zerol((char *)rx->sweepBuff,2*(counts+10));
+	zerol((char *)rx->sweepBuff,2*(counts+10)*sizeof(float));
   
 
 	int size=(int)rate/rx->ncut;
@@ -619,7 +703,7 @@ int cReceive::sweepRadio()
 	
 	for(int k=0;k<NUM_DATA_BUFF;++k){
 		if(rx->buff[k])cFree((char *)rx->buff[k]);
-		rx->buff[k]=(float *)cMalloc(2*rx->size*4*8,5789);
+		rx->buff[k]=(float *)cMalloc(2*rx->size*4*8,5791);
 		if(!rx->buff[k]){
 			mprint("5 cMalloc Errror %ld\n",(long)(2*rx->size*4));
 			return 1;
@@ -634,6 +718,12 @@ int cReceive::sweepRadio()
 	rx->frame=0;
 	
 	rx->doWhat=Work;
+	
+	Sleep2(100);
+
+	std::vector<float> db;
+	std::vector<std::vector<float>> list;
+	list.clear();
 
 	int itWas=-1;
 	int pass=0;
@@ -654,48 +744,129 @@ int cReceive::sweepRadio()
 		    mprint("fc %g fmins %g fmaxs %g\n",fc/1e6,fmins/1e6,fmaxs/1e6);
 			rx->fc=fc;
 			rx->device->setFrequency(SOAPY_SDR_RX,rx->channel,"RF",rx->fc);
+			Sleep2(100);
 			rx->aminGlobal3=0;
-			int pass=0;
+			int pass2=0;
+			db.clear();
 			zerol((char *)magnitude2,FFTlength*sizeof(double));
 			while(1){
 				if(itWas != rx->witch){
+				    //fprintf(stderr,"rx->witch %d\n",rx->witch);
 					updateSweep1(fmins,fmaxs);
 					itWas=rx->witch;
-					if(pass++ >= 10)break;
+					if(pass2++ >= 10)break;
 				}else{
 					Sleep2(5);
 				}
 			}
-			updateSweep2(fmins,fmaxs,pass);
+			//if(fc > 769e6 && fc < 771e6)zerol((char *)magnitude2,FFTlength*sizeof(double));
+			updateSweep2(fmins,fmaxs,pass2);
 			if(rx->out){
 			    //fprintf(stderr,"rx->sweepFound %d\n",rx->sweepFound);
 			    fprintf(rx->out,"%s ",t_str);
 			    fprintf(rx->out," %.0f, %.0f, %.2f, %.0f,",fmins,fmaxs,rx->sweepSize,(double)rx->samplerate/(double)rx->ncut);
 			    for(int n=0;n<rx->sweepFound;++n){
 			        fprintf(rx->out," %.2f, ",rx->sweepBuff[n]);
+			        db.push_back(rx->sweepBuff[n]);
 			    }
 			    fprintf(rx->out,"\n");
+			    list.push_back(db);
 			}
-	
+
 		}
  	    mprint("\n");
 
-  	
-  	
-  		
-  		
+ 
 		if(rx->timeout > 0 && rtime() > rx->timeout+rx->timestart){
 			break;
 		}
 		
    	}      
-
     rx->doWhat=Wait;
         
     rx->frame=-1;
 
 	if(rx->sweepBuff)cFree((char *)rx->sweepBuff);
+	
+	double *buffout=NULL;
+	
+	if(list.size() > 0){
+		long ysize=list.size();
+		long xsize=0;
+		for(int nl=0;nl<ysize;++nl){
+		  //  fprintf(stderr,"size %ld\n",(long)list[nl].size());
+			if(list[nl].size() > xsize)xsize=(long)list[nl].size();
+		}
+		
+		int shift=ysize/pass;
+		
+		fprintf(stderr,"xsize %ld ysize %ld pass %d shift %d\n",xsize,ysize,pass,shift);
+		
+		buffout=(double *)cMalloc(xsize*ysize*sizeof(double),7777);
+		if(!buffout){
+			fprintf(stderr,"Out of Memory\n");
+			return 1;
+		}
+		
+		double xmin=1e33;
+		double xmax=-1e33;
+		
+		int xsizel=xsize*shift;
+		int ysizel=ysize/shift;
+		int ny,nx;
+		
+		nx=0;
+		ny=0;
+		for(int nl=0;nl<ysize;++nl){
+		  //  fprintf(stderr,"size %ld\n",(long)list[nl].size());
+			for(int nc=0;nc<xsize;++nc){
+				double f;
+				f=0;
+				if(nc < list[nl].size()){
+					f=list[nl][nc];
+				}
+				//fprintf(stderr,"nx %d ny %d\n",nx,ny);
+				buffout[nx++ +ny*xsizel]=f;
+				
+				if(f > xmax)xmax=f;
+				if(f < xmin)xmin=f;
+			}
+			if(nx >= xsizel){
+			    nx=0;
+			    ny++;
+			}
+		}
+			
+		struct SDS2Dout sdsout;
+		zerol((char *)&sdsout,sizeof(struct SDS2Dout));
 
+		sdsout.data=buffout;
+		sdsout.path=rx->s2dName;
+		sdsout.name=(char *)"Power Sweep";
+		sdsout.ixmax=xsizel;
+		sdsout.iymax=ysizel;
+		sdsout.xmin=rx->sweepLower;
+		sdsout.xmax=rx->sweepUpper;
+		sdsout.ymin=0;
+		sdsout.ymax=ysizel;
+		sdsout.zmin=0;
+		sdsout.zmax=0;
+		sdsout.time=0.0;
+		sdsout.n=0;
+		sdsout.pioName=(char *)"Power(db)";	
+		sdsout.type=DATA_TYPE_FLOAT;	
+			
+		if(writesds(&sdsout))goto OutOfHere;
+		
+		if(buffout)cFree((char *)buffout);
+	
+	}
+ 	
+	
+OutOfHere:
+
+	if(buffout)cFree((char *)buffout);
+	
 	return 0;
 }
 int cReceive::playRadio(struct playData *rx)
@@ -716,7 +887,7 @@ int cReceive::playRadio(struct playData *rx)
 	
 	for(int k=0;k<NUM_DATA_BUFF;++k){
 		if(rx->buff[k])cFree((char *)rx->buff[k]);
-		rx->buff[k]=(float *)cMalloc(2*rx->size*4*8,5789);
+		rx->buff[k]=(float *)cMalloc(2*rx->size*4*8,5777);
 		if(!rx->buff[k]){
 			mprint("5 cMalloc Errror %ld\n",(long)(2*rx->size*4));
 			return 1;
@@ -898,6 +1069,8 @@ int cReceive::initPlay(struct playData *rxi)
 cReceive::~cReceive()
 {
 	//fprintf(stderr,"cReceive::~cReceive\n");
+	
+
 	if(d)delete d;
 
 }
@@ -905,9 +1078,10 @@ cReceive::~cReceive()
 int cReceive::fftIndex(double frequency)
 {
     if(!rx)return -1;
-    int index=(int)(0.5+(rx->FFTcount-1)*((frequency - rx->fc)+0.5*rx->samplerate)/rx->samplerate);
+    double fac=((frequency - rx->fc)+0.5*rx->samplerate)/((double)rx->samplerate);
+    int index=(int)(0.5+(rx->FFTcount-1)*fac);
     if(index >= 0 && index < rx->FFTcount)return index;
-    //fprintf(stderr,"index %d\n",index);
+    fprintf(stderr,"frequency %g fc %g index %d %g\n",frequency/1e6,rx->fc,index,fac);
     return -1;
 }
 
@@ -1008,7 +1182,7 @@ cReceive::cReceive(int argc, char * argv [])
 	rx->sweep=0;
 	rx->out=NULL;
 	rx->crop=0;
-
+	rx->s2dName=NULL;
 		
 	struct frequencyStruct fs;
 
@@ -1083,10 +1257,27 @@ cReceive::cReceive(int argc, char * argv [])
 	    }else if(!strcmp(argv[n],"-channel")){
 	         rx->channel=atof(argv[++n]);
 	    }else if(!strcmp(argv[n],"-file")){
+	         char name[4096],*bp;
 	         rx->out=fopen(argv[++n],"wb");
 	         if(rx->out == NULL){
 	             mprint("Could Not Open %s to Write\n",argv[n]);
 	         }
+	         bp=strrchr(argv[n],'/');
+	         if(bp){
+	         	strcpy(name,bp);
+	         }else{
+	         	strcpy(name,argv[n]);	         
+	         }
+	         bp=strrchr(name,'.');
+         
+	         if(bp){
+	         	strcpy(bp+1,"s2d");
+	         }else{
+	         	strcat(name,".s2d");	         
+	         }
+	         
+	         rx->s2dName=strdup(name);
+	         
 	    }else if(!strcmp(argv[n],"-faudio")){
 	         rx->faudio=(float)atof(argv[++n]);
 	    }else if(!strcmp(argv[n],"-device")){
@@ -1165,13 +1356,13 @@ cReceive::cReceive(int argc, char * argv [])
     
     
     range=(double *)cMalloc(FFTlength*sizeof(double),9851);
-    range3=(double *)cMalloc(FFTlength*sizeof(double),9851);
-    magnitude=(double *)cMalloc(FFTlength*sizeof(double),9851);
-    magnitude2=(double *)cMalloc(FFTlength*sizeof(double),9851);
-    magnitude3=(double *)cMalloc(FFTlength*sizeof(double),9851);
+    range3=(double *)cMalloc(FFTlength*sizeof(double),9852);
+    magnitude=(double *)cMalloc(FFTlength*sizeof(double),9853);
+    magnitude2=(double *)cMalloc(FFTlength*sizeof(double),9854);
+    magnitude3=(double *)cMalloc(FFTlength*sizeof(double),9855);
 
-    frequencies=(double *)cMalloc(FFTlength*sizeof(double),9851);
-    ampitude=(double *)cMalloc(FFTlength*sizeof(double),9851);
+    frequencies=(double *)cMalloc(FFTlength*sizeof(double),9856);
+    ampitude=(double *)cMalloc(FFTlength*sizeof(double),9857);
     
     if(!range || !magnitude || !frequencies || !ampitude || !magnitude2 || !range3 || !magnitude3)return;
     
@@ -2454,6 +2645,653 @@ double atofs(char *s)
 	}
 	s[len-1] = last;
 	return atof(s);
+}
+
+
+int writesds(struct SDS2Dout *sdsout)
+{
+
+	if(!sdsout){
+	    Warning((char *)"writesds2d Found NULL struct pointer\n");
+	    return 1;
+	}
+	
+	if(sdsout->xmin >= sdsout->xmax){
+	    sprintf(WarningBuff,(char *)"Warning            : Time %g\n",sdsout->time);
+	    Warning(WarningBuff);
+	    sprintf(WarningBuff,(char *)"Warning Bad Bounds : xmin %g xmax %g\n",sdsout->xmin,sdsout->xmax);
+	    Warning(WarningBuff);
+	    sdsout->xmax = sdsout->xmin+fabs(sdsout->xmin)+1.0;
+	    sprintf(WarningBuff,(char *)"Reset To           : xmin %g xmax %g\n\n",sdsout->xmin,sdsout->xmax);
+	    Warning(WarningBuff);
+	}
+	
+	if(sdsout->ymin >= sdsout->ymax){
+	    sprintf(WarningBuff,(char *)"Warning            : Time %g\n",sdsout->time);
+	    Warning(WarningBuff);
+	    sprintf(WarningBuff,(char *)"Warning Bad Bounds : ymin %g ymax %g\n",sdsout->ymin,sdsout->ymax);
+	    Warning(WarningBuff);
+	    sdsout->ymax = sdsout->ymin+fabs(sdsout->ymin)+1.0;
+	    sprintf(WarningBuff,(char *)"Reset To           : ymin %g ymax %g\n\n",sdsout->ymin,sdsout->ymax);
+	    Warning(WarningBuff);
+	}
+	
+	if(sdsout->type == DATA_TYPE_DOUBLE){
+		return writesds2dDouble(sdsout);
+	}else if(sdsout->type == DATA_TYPE_FLOAT){
+		return writesds2dFloat(sdsout);
+	}else if(sdsout->type == DATA_TYPE_BYTE){
+		return writesds2dBytes(sdsout);
+	}else if(sdsout->type == DATA_TYPE_FLOAT_3D){
+		return writesds3dFloat(sdsout);
+	}else if(sdsout->type == DATA_TYPE_DOUBLE_3D){
+		return writesds3dDouble(sdsout);
+	}
+	
+	sprintf(WarningBuff,(char *)"writesds2d Found Unknown data type %d\n",sdsout->type);
+	Warning(WarningBuff);
+
+	return 1;
+}
+static int writesds3dDouble(struct SDS2Dout *sdsout)
+{
+	extern int DFerror;
+	int32 rank,size[3];
+	double vmin,vmax;
+	char buff[256];
+	long n,length;
+	int lastref;
+	double v;
+	int ret;
+	
+	ret=1;
+	
+	if(!sdsout){
+	    Warning((char *)"writesds3dDouble Found NULL struct pointer\n");
+		goto OutOfHere;
+	}
+	
+	if(sdsout->type != DATA_TYPE_DOUBLE_3D){
+	    sprintf(WarningBuff,(char *)"writesds3dDouble Found Wrong data type %d\n",sdsout->type);
+	    Warning(WarningBuff);
+		goto OutOfHere;
+	}
+	
+	if(!sdsout->data){
+	    Warning((char *)"writesds3dDouble Found NULL data Pointer\n");
+		goto OutOfHere;
+	}
+	
+	length=sdsout->ixmax*sdsout->iymax*sdsout->izmax;
+	
+	if(length <= 0){
+	    Warning((char *)"writesds3dDouble Found data length less than one\n");
+		goto OutOfHere;
+	}
+	
+
+	vmin =  1e33;
+	vmax = -1e33;
+	for(n=0;n<length;++n){
+	    v=sdsout->data[n];
+	    if(v < vmin)vmin = v;
+	    if(v > vmax)vmax = v;
+	}
+	/*
+	fprintf(stderr,"writesds3dDouble dmin %g dmax %g\n",vmin,vmax);
+	*/
+	rank=3;
+	size[0]=(int)sdsout->izmax;
+	size[1]=(int)sdsout->iymax;
+	size[2]=(int)sdsout->ixmax;
+
+	if(sdsout->n == 0){
+	    unlink((char *)sdsout->path);
+	    DFSDclear();
+	    DFSDrestart();
+        DFSDsetNT(DFNT_FLOAT64);
+	    if(DFSDputdata((char *)sdsout->path,rank,size,(float *)sdsout->data)){
+	        sprintf(WarningBuff,(char *)"writesds3dDouble DFSDputdata error %d",DFerror);
+	        Warning(WarningBuff);
+	        goto OutOfHere;
+	    }
+	}else{
+	    if(DFSDadddata((char *)sdsout->path,rank,size,(float *)sdsout->data)){
+	        sprintf(WarningBuff,(char *)"writesds3dDouble DFSDadddata error %d",DFerror);
+	        Warning(WarningBuff);
+	        goto OutOfHere;
+	    }
+	}
+	
+
+	lastref=DFSDlastref();
+	if(lastref == -1){
+	    sprintf(WarningBuff,(char *)"writesds3dDouble DFSDlastref error %d",DFerror);
+	    Warning(WarningBuff);
+	    goto OutOfHere;
+	}
+
+	if(DFANputlabel(sdsout->path,DFTAG_SDG,lastref,sdsout->name) == -1){
+	    sprintf(WarningBuff,(char *)"writesds3dDouble DFANputlabel %s Name %s lastref %d error %d",
+		               sdsout->path,sdsout->name,lastref,DFerror);
+	    Warning(WarningBuff);
+	    goto OutOfHere;
+	}
+	if(sdsout->pioName){
+	    sprintf(buff,(char *)"xmin %g ymin %g zmin %g xmax %g ymax %g zmax %g vmin %g vmax %g time %g pioName \"%s\" ",
+	            sdsout->xmin,sdsout->ymin,sdsout->zmin,
+                sdsout->xmax,sdsout->ymax,sdsout->zmax,
+                vmin,vmax,sdsout->time,sdsout->pioName);
+	}else{
+	    sprintf(buff,(char *)"xmin %g ymin %g zmin %g xmax %g ymax %g zmax %g vmin %g vmax %g time %g",
+	            sdsout->xmin,sdsout->ymin,sdsout->zmin,
+                sdsout->xmax,sdsout->ymax,sdsout->zmax,
+                vmin,vmax,sdsout->time);
+	}
+	if(DFANputdesc(sdsout->path,DFTAG_SDG,lastref,(char *)buff,strlen((char *)buff)) == -1){
+	    sprintf(WarningBuff,(char *)"writesds3dDouble DFANputdesc %s Name %s lastref %d DFerror %d",
+		sdsout->path,sdsout->name,lastref,DFerror);
+	    Warning(WarningBuff);
+	    goto OutOfHere;
+	}
+	ret = 0;
+OutOfHere:
+	return ret;
+}
+static int writesds3dFloat(struct SDS2Dout *sdsout)
+{
+	extern int DFerror;
+	int32 rank,size[3];
+	double vmin,vmax;
+	char buff[256];
+	long n,length;
+	int lastref;
+	float *data;
+	double v;
+	int ret;
+	
+	ret=1;
+	
+	data=NULL;
+
+	if(!sdsout){
+	    Warning((char *)"writesds3dFloat Found NULL struct pointer\n");
+		goto OutOfHere;
+	}
+	
+	if(sdsout->type != DATA_TYPE_FLOAT_3D){
+	    sprintf(WarningBuff,(char *)"writesds3dFloat Found Wrong data type %d\n",sdsout->type);
+	    Warning(WarningBuff);
+		goto OutOfHere;
+	}
+	
+	if(!sdsout->data){
+	    Warning((char *)"writesds3dFloat Found NULL data Pointer\n");
+		goto OutOfHere;
+	}
+	
+	length=sdsout->ixmax*sdsout->iymax*sdsout->izmax;
+	
+	if(length <= 0){
+	    Warning((char *)"writesds3dFloat Found data length less than one\n");
+		goto OutOfHere;
+	}
+	
+	data=(float *)cMalloc(length*sizeof(float),1002);
+	if(!data){
+	    sprintf(WarningBuff,(char *)"writesds3dFloat error Trying To allocate %ld Bytes\n",length*sizeof(float));
+	    Warning(WarningBuff);
+		goto OutOfHere;
+	}
+
+
+	vmin =  1e33;
+	vmax = -1e33;
+	for(n=0;n<length;++n){
+	    v=sdsout->data[n];
+	    data[n]=(float)v;
+	    if(v < vmin)vmin = v;
+	    if(v > vmax)vmax = v;
+	}
+/*
+	fprintf(stderr,"writesds3dFloat dmin %g dmax %g\n",vmin,vmax);
+*/
+
+	rank=3;
+	size[0]=(int)sdsout->izmax;
+	size[1]=(int)sdsout->iymax;
+	size[2]=(int)sdsout->ixmax;
+
+	if(sdsout->n == 0){
+	    unlink((char *)sdsout->path);
+	    DFSDclear();
+	    DFSDrestart();
+        DFSDsetNT(DFNT_FLOAT32);
+	    if(DFSDputdata((char *)sdsout->path,rank,size,(float *)data)){
+	        sprintf(WarningBuff,(char *)"writesds3dFloat DFSDputdata error %d",DFerror);
+	        Warning(WarningBuff);
+	        goto OutOfHere;
+	    }
+	}else{
+	    if(DFSDadddata((char *)sdsout->path,rank,size,(float *)data)){
+	        sprintf(WarningBuff,(char *)"writesds3dFloat DFSDadddata error %d",DFerror);
+	        Warning(WarningBuff);
+	        goto OutOfHere;
+	    }
+	}
+	
+
+	lastref=DFSDlastref();
+	if(lastref == -1){
+	    sprintf(WarningBuff,(char *)"writesds3dFloat DFSDlastref error %d",DFerror);
+	    Warning(WarningBuff);
+	    goto OutOfHere;
+	}
+
+	if(DFANputlabel(sdsout->path,DFTAG_SDG,lastref,sdsout->name) == -1){
+	    sprintf(WarningBuff,(char *)"writesds3dFloat DFANputlabel %s Name %s lastref %d error %d",
+		               sdsout->path,sdsout->name,lastref,DFerror);
+	    Warning(WarningBuff);
+	    goto OutOfHere;
+	}
+	if(sdsout->pioName){
+	    sprintf(buff,(char *)"xmin %g ymin %g zmin %g xmax %g ymax %g zmax %g vmin %g vmax %g time %g pioName \"%s\" ",
+	            sdsout->xmin,sdsout->ymin,sdsout->zmin,
+                sdsout->xmax,sdsout->ymax,sdsout->zmax,
+                vmin,vmax,sdsout->time,sdsout->pioName);
+	}else{
+	    sprintf(buff,(char *)"xmin %g ymin %g zmin %g xmax %g ymax %g zmax %g vmin %g vmax %g time %g",
+	            sdsout->xmin,sdsout->ymin,sdsout->zmin,
+                sdsout->xmax,sdsout->ymax,sdsout->zmax,
+                vmin,vmax,sdsout->time);
+	}
+	if(DFANputdesc(sdsout->path,DFTAG_SDG,lastref,(char *)buff,strlen((char *)buff)) == -1){
+	    sprintf(WarningBuff,(char *)"writesds3dFloat DFANputdesc %s Name %s lastref %d DFerror %d",
+		sdsout->path,sdsout->name,lastref,DFerror);
+	    Warning(WarningBuff);
+	    goto OutOfHere;
+	}
+	ret = 0;
+OutOfHere:
+	if(data)cFree((char *)data);
+	data=NULL;
+	return ret;
+}
+static int writesds2dDouble(struct SDS2Dout *sdsout)
+{
+	extern int DFerror;
+	int32 rank,size[2];
+	double vmin,vmax;
+	char buff[256];
+	long n,length;
+	int lastref;
+	double v;
+	int ret;
+	
+	ret=1;
+	
+	if(!sdsout){
+	    Warning((char *)"writesds2dDouble Found NULL struct pointer\n");
+		goto OutOfHere;
+	}
+	
+	if(sdsout->type != DATA_TYPE_DOUBLE){
+	    sprintf(WarningBuff,(char *)"writesds2dDouble Found Wrong data type %d\n",sdsout->type);
+	    Warning(WarningBuff);
+		goto OutOfHere;
+	}
+	
+	if(!sdsout->data){
+	    Warning((char *)"writesds2dDouble Found NULL data Pointer\n");
+		goto OutOfHere;
+	}
+	
+	length=sdsout->ixmax*sdsout->iymax;
+	
+	if(length <= 0){
+	    Warning((char *)"writesds2dDouble Found data length less than one\n");
+		goto OutOfHere;
+	}
+	
+
+	vmin =  1e33;
+	vmax = -1e33;
+	for(n=0;n<length;++n){
+	    v=sdsout->data[n];
+	    if(v < vmin)vmin = v;
+	    if(v > vmax)vmax = v;
+	}
+	
+	rank=2;
+	size[0]=(int)sdsout->iymax;
+	size[1]=(int)sdsout->ixmax;
+
+	if(sdsout->n == 0){
+	    unlink((char *)sdsout->path);
+	    DFSDclear();
+	    DFSDrestart();
+        DFSDsetNT(DFNT_FLOAT64);
+	    if(DFSDputdata((char *)sdsout->path,rank,size,(float *)sdsout->data)){
+	        sprintf(WarningBuff,(char *)"writesds2dDouble DFSDputdata error %d",DFerror);
+	        Warning(WarningBuff);
+	        goto OutOfHere;
+	    }
+	}else{
+	    if(DFSDadddata((char *)sdsout->path,rank,size,(float *)sdsout->data)){
+	        sprintf(WarningBuff,(char *)"writesds2dDouble DFSDadddata error %d",DFerror);
+	        Warning(WarningBuff);
+	        goto OutOfHere;
+	    }
+	}
+	
+
+	lastref=DFSDlastref();
+	if(lastref == -1){
+	    sprintf(WarningBuff,(char *)"writesds2dDouble DFSDlastref error %d",DFerror);
+	    Warning(WarningBuff);
+	    goto OutOfHere;
+	}
+
+	if(DFANputlabel(sdsout->path,DFTAG_SDG,lastref,sdsout->name) == -1){
+	    sprintf(WarningBuff,(char *)"writesds2dDouble DFANputlabel %s Name %s lastref %d error %d",
+		               sdsout->path,sdsout->name,lastref,DFerror);
+	    Warning(WarningBuff);
+	    goto OutOfHere;
+	}
+	if(sdsout->pioName){
+	    sprintf(buff,(char *)"xmin %g ymin %g zmin %g xmax %g ymax %g zmax %g vmin %g vmax %g time %g pioName \"%s\" ",
+	            sdsout->xmin,sdsout->ymin,sdsout->zmin,
+                sdsout->xmax,sdsout->ymax,sdsout->zmax,
+                vmin,vmax,sdsout->time,sdsout->pioName);
+	}else{
+	    sprintf(buff,(char *)"xmin %g ymin %g zmin %g xmax %g ymax %g zmax %g vmin %g vmax %g time %g",
+	            sdsout->xmin,sdsout->ymin,sdsout->zmin,
+                sdsout->xmax,sdsout->ymax,sdsout->zmax,
+                vmin,vmax,sdsout->time);
+	}
+	if(DFANputdesc(sdsout->path,DFTAG_SDG,lastref,(char *)buff,strlen((char *)buff)) == -1){
+	    sprintf(WarningBuff,(char *)"writesds2dDouble DFANputdesc %s Name %s lastref %d DFerror %d",
+		sdsout->path,sdsout->name,lastref,DFerror);
+	    Warning(WarningBuff);
+	    goto OutOfHere;
+	}
+	ret = 0;
+OutOfHere:
+	return ret;
+}
+
+static int writesds2dBytes(struct SDS2Dout *sdsout)
+{
+	extern int DFerror;
+	double vmin,vmax;
+	char buff[256];
+	long n,length;
+	int lastref;
+	unsigned char *data;
+	double v;
+	int ret;
+	
+	ret=1;
+	
+	data=NULL;
+
+	if(!sdsout){
+	    Warning((char *)"writesds2dBytes Found NULL struct pointer\n");
+		goto OutOfHere;
+	}
+	
+	if(sdsout->type != DATA_TYPE_BYTE){
+	    sprintf(WarningBuff,(char *)"writesds2dBytes Found Wrong data type %d\n",sdsout->type);
+	    Warning(WarningBuff);
+		goto OutOfHere;
+	}
+	
+	if(!sdsout->data){
+	    Warning((char *)"writesds2dBytes Found NULL data Pointer\n");
+		goto OutOfHere;
+	}
+	
+	length=sdsout->ixmax*sdsout->iymax;
+	
+	if(length <= 0){
+	    Warning((char *)"writesds2dBytes Found data length less than one\n");
+		goto OutOfHere;
+	}
+	
+	data=(unsigned char *)cMalloc(length*sizeof(unsigned char),1001);
+	if(!data){
+	    sprintf(WarningBuff,(char *)"writesds2dBytes error Trying To allocate %ld Bytes\n",length*sizeof(unsigned char));
+	    Warning(WarningBuff);
+		goto OutOfHere;
+	}
+
+
+	vmin =  1e33;
+	vmax = -1e33;
+	for(n=0;n<length;++n){
+	    v=sdsout->data[n];
+	    if(v < vmin)vmin = v;
+	    if(v > vmax)vmax = v;
+	}
+	
+	if(vmax <= vmin){
+		vmax=vmin+1+2*fabs(vmin);
+		for(n=0;n<length;++n){
+		    data[n]=(unsigned char)(2);
+		}
+	}else{
+		for(n=0;n<length;++n){
+			v=sdsout->data[n];
+			data[n]=(unsigned char)(2+252.*(v-vmin)/(vmax-vmin));
+		}
+	}
+		
+	if(sdsout->n == 0){
+	    unlink((char *)sdsout->path);
+		DFR8restart();
+	    if(DFR8putimage((char *)sdsout->path,data,(int)sdsout->ixmax,(int)sdsout->iymax,11)){
+		    goto OutOfHere;
+	    }
+
+	}else{
+	    if(DFR8addimage((char *)sdsout->path,data,(int)sdsout->ixmax,(int)sdsout->iymax,11)){
+		    goto OutOfHere;
+	    }
+	}
+	
+
+	lastref=DFR8lastref();
+	if(lastref == -1){
+	    sprintf(WarningBuff,(char *)"writesds2dBytes DFR8lastref error %d",DFerror);
+	    Warning(WarningBuff);
+	    goto OutOfHere;
+	}
+
+	if(DFANputlabel(sdsout->path,DFTAG_SDG,lastref,sdsout->name) == -1){
+	    sprintf(WarningBuff,(char *)"writesds2dBytes DFANputlabel %s Name %s lastref %d error %d",
+		               sdsout->path,sdsout->name,lastref,DFerror);
+	    Warning(WarningBuff);
+	    goto OutOfHere;
+	}
+	if(sdsout->pioName){
+	    sprintf(buff,(char *)"xmin %g ymin %g zmin %g xmax %g ymax %g zmax %g vmin %g vmax %g time %g pioName \"%s\" ",
+	            sdsout->xmin,sdsout->ymin,sdsout->zmin,
+                sdsout->xmax,sdsout->ymax,sdsout->zmax,
+                vmin,vmax,sdsout->time,sdsout->pioName);
+	}else{
+	    sprintf(buff,(char *)"xmin %g ymin %g zmin %g xmax %g ymax %g zmax %g vmin %g vmax %g time %g",
+	            sdsout->xmin,sdsout->ymin,sdsout->zmin,
+                sdsout->xmax,sdsout->ymax,sdsout->zmax,
+                vmin,vmax,sdsout->time);
+	}
+	if(DFANputdesc(sdsout->path,DFTAG_SDG,lastref,(char *)buff,strlen((char *)buff)) == -1){
+	    sprintf(WarningBuff,(char *)"writesds2dBytes DFANputdesc %s Name %s lastref %d DFerror %d",
+		sdsout->path,sdsout->name,lastref,DFerror);
+	    Warning(WarningBuff);
+	    goto OutOfHere;
+	}
+	ret = 0;
+OutOfHere:
+	if(data)cFree((char *)data);
+	data=NULL;
+	return ret;
+}
+
+
+static int writesds2dFloat(struct SDS2Dout *sdsout)
+{
+	extern int DFerror;
+	int32 rank,size[2];
+	double vmin,vmax;
+	char buff[256];
+	long n,length;
+	int lastref;
+	float *data;
+	double v;
+	int ret;
+	
+	ret=1;
+	
+	data=NULL;
+
+	if(!sdsout){
+	    Warning((char *)"writesds2dFloat Found NULL struct pointer\n");
+		goto OutOfHere;
+	}
+	
+	if(sdsout->type != DATA_TYPE_FLOAT){
+	    sprintf(WarningBuff,(char *)"writesds2dFloat Found Wrong data type %d\n",sdsout->type);
+	    Warning(WarningBuff);
+		goto OutOfHere;
+	}
+	
+	if(!sdsout->data){
+	    Warning((char *)"writesds2dFloat Found NULL data Pointer\n");
+		goto OutOfHere;
+	}
+	
+	length=sdsout->ixmax*sdsout->iymax;
+	
+	if(length <= 0){
+	    Warning((char *)"writesds2dFloat Found data length less than one\n");
+		goto OutOfHere;
+	}
+	
+	data=(float *)cMalloc(length*sizeof(float),1002);
+	if(!data){
+	    sprintf(WarningBuff,(char *)"writesds2dFloat error Trying To allocate %ld Bytes\n",length*sizeof(float));
+	    Warning(WarningBuff);
+		goto OutOfHere;
+	}
+
+
+	vmin =  1e33;
+	vmax = -1e33;
+	for(n=0;n<length;++n){
+	    v=sdsout->data[n];
+	    data[n]=(float)v;
+	    if(v < vmin)vmin = v;
+	    if(v > vmax)vmax = v;
+	}
+	
+	rank=2;
+	size[0]=(int)sdsout->iymax;
+	size[1]=(int)sdsout->ixmax;
+
+	if(sdsout->n == 0){
+	    unlink((char *)sdsout->path);
+	    DFSDclear();
+	    DFSDrestart();
+        DFSDsetNT(DFNT_FLOAT32);
+	    if(DFSDputdata((char *)sdsout->path,rank,size,(float *)data)){
+	        sprintf(WarningBuff,(char *)"writesds2d DFSDputdata error %d",DFerror);
+	        Warning(WarningBuff);
+	        goto OutOfHere;
+	    }
+	}else{
+	    if(DFSDadddata((char *)sdsout->path,rank,size,(float *)data)){
+	        sprintf(WarningBuff,(char *)"writesds2d DFSDadddata error %d",DFerror);
+	        Warning(WarningBuff);
+	        goto OutOfHere;
+	    }
+	}
+	
+
+	lastref=DFSDlastref();
+	if(lastref == -1){
+	    sprintf(WarningBuff,(char *)"writesds2d DFSDlastref error %d",DFerror);
+	    Warning(WarningBuff);
+	    goto OutOfHere;
+	}
+
+	if(DFANputlabel(sdsout->path,DFTAG_SDG,lastref,sdsout->name) == -1){
+	    sprintf(WarningBuff,(char *)"writesds2d DFANputlabel %s Name %s lastref %d error %d",
+		               sdsout->path,sdsout->name,lastref,DFerror);
+	    Warning(WarningBuff);
+	    goto OutOfHere;
+	}
+	if(sdsout->pioName){
+	    sprintf(buff,(char *)"xmin %g ymin %g zmin %g xmax %g ymax %g zmax %g vmin %g vmax %g time %g pioName \"%s\" ",
+	            sdsout->xmin,sdsout->ymin,sdsout->zmin,
+                sdsout->xmax,sdsout->ymax,sdsout->zmax,
+                vmin,vmax,sdsout->time,sdsout->pioName);
+	}else{
+	    sprintf(buff,(char *)"xmin %g ymin %g zmin %g xmax %g ymax %g zmax %g vmin %g vmax %g time %g",
+	            sdsout->xmin,sdsout->ymin,sdsout->zmin,
+                sdsout->xmax,sdsout->ymax,sdsout->zmax,
+                vmin,vmax,sdsout->time);
+	}
+	if(DFANputdesc(sdsout->path,DFTAG_SDG,lastref,(char *)buff,strlen((char *)buff)) == -1){
+	    sprintf(WarningBuff,(char *)"DFANputdesc %s Name %s lastref %d DFerror %d",
+		sdsout->path,sdsout->name,lastref,DFerror);
+	    Warning(WarningBuff);
+	    goto OutOfHere;
+	}
+	ret = 0;
+OutOfHere:
+	if(data)cFree((char *)data);
+	data=NULL;
+	return ret;
+}
+/*
+char *cMalloc(unsigned long length,int tag)
+{
+        char *ret;
+
+		(void)tag;
+		
+        ret=(char *)malloc(length+4L);
+        if(ret == NULL){
+            sprintf(WarningBuff,(char *)"cMalloc Out of Memory Requested (%ld)",length);
+	    	Warning(WarningBuff);
+            return (char *)NULL;
+        }
+        return ret;
+}
+int cFree(char *ptr)
+{
+        if(ptr){
+            free(ptr);
+            return 0;
+        }
+        return 1;
+}
+
+int zerol(char *s,unsigned long n)
+{
+        unsigned long count;
+
+        if(s == NULL)return 1;
+        count=0;
+        while(count++ < n)*s++ = 0;
+        return 0;
+}
+*/
+int Warning(char *mess)
+{
+    if(!mess)return 1;
+    fprintf(stderr,"%s",mess);
+    return 0;
 }
 
 //ALvoid DisplayALError(unsigned char *szText, ALint errorCode);

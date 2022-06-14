@@ -69,6 +69,7 @@ enum{
 	Wait,
 	Exit,
 	Work,
+	GoToSleep,
 };
 
 
@@ -280,6 +281,7 @@ struct playData{
 	int sweepFound;
 	int sweep;
 	FILE *out;
+	char *s2dName;
 
 
  	unsigned char end;
