@@ -95,6 +95,9 @@ int cDemod::rxBuffer(void *rxv)
 {
 	struct playData *rx=(struct playData *)rxv;
 		
+		
+	int ret=0;
+	
 	while(1)
 	{
 	     switch(rx->doWhat){
@@ -130,7 +133,7 @@ StartWork:
 				iread=toRead;
 				if(iread > 500000)iread=500000;
 				
-				int ret = rx->device->readStream(rx->rxStream, buffs, iread, flags, timeNs, 100000L);			 
+				ret = rx->device->readStream(rx->rxStream, buffs, iread, flags, timeNs, 100000L);			 
 						   
 				if(ret <= 0){
 				   fprintf(stderr,"ret=%d, flags=%d, timeNs=%lld b0 %f b1 %f witch %d\n", ret, flags, timeNs,buff[0],buff[1],rx->witch);
@@ -142,7 +145,6 @@ StartWork:
 					break;
 				}
             }
-            if(rx->doWhat == GoToSleep)goto StartWork;
 	        if(rx->doWhat == Work){
 	        	if(rx->cs)rx->cs->pushBuff(rx->witch,rx);
 	        	
@@ -165,6 +167,7 @@ StartWork:
 				}
 				
             	++rx->witch; 
+            	rx->retFlag=ret;
 	        }
 	        break;
 	     }
@@ -627,14 +630,17 @@ int cReceive::updateSweep2(double fmins,double fmaxs,int pass)
     
     rx->sweepFound=0;
 	int counts=0;
-	for(long long n=(long long )rx->sweepLower;n<=(long long )rx->sweepUpper;n += (long long )rx->sweepSize){
+	for(double n=rx->sweepLower2;n<=rx->sweepUpper2;n += rx->sweepSize){
 	    double ff=n+0.5*rx->sweepSize;
 		++counts;
-		if(ff < fmins || ff > fmaxs)continue;
+		if(ff < fmins || ff > fmaxs){
+			//fprintf(stderr,"skip - ff %g fmins %g fmaxs %g \n",ff/1e6,fmins/1e6,fmaxs/1e6);
+			continue;
+		}
 		
 		int n1=fftIndex(ff-0.5*rx->sweepSize);
 		int n2=fftIndex(ff+0.5*rx->sweepSize);
-		if(n1 == rx->FFTcount/2 || n2 == rx->FFTcount/2)continue;
+		//if(n1 == rx->FFTcount/2 || n2 == rx->FFTcount/2)continue;
 		if(n1 < 0 || n2 < 0){
 			fprintf(stderr,"skip - ff %g fc %g samplerate %d n1 %d n2 %d\n",ff/1e6,rx->fc/1e6,rx->samplerate,n1,n2);
 		    continue;
@@ -679,16 +685,36 @@ int cReceive::sweepRadio()
 	
 	rx->samplerate=rate;
 	
+	
+	double lower=  1e33;
+	double upper= -1e33;
+	
+	for(double n=rx->sweepLower;n<=rx->sweepUpper;n += rx->samplerate*(1.0-rx->crop)){
+		double fc,fmins,fmaxs;
+		fc=n+rx->samplerate*0.5*(1.0-rx->crop);
+		fmins=fc-rx->samplerate*0.5*(1.0-rx->crop);
+		fmaxs=fc+rx->samplerate*0.5*(1.0-rx->crop);
+		if(fmins < lower)lower=fmins;
+		if(fmaxs > upper)upper=fmaxs;
+	}	
+	
+	rx->sweepLower2=lower;
+	rx->sweepUpper2=upper;
+	
+	
 	int counts=0;
-	for(long long n=(long long )rx->sweepLower;n<=(long long )rx->sweepUpper;n += (long long )rx->sweepSize){
+	for(double n=rx->sweepLower2;n<=rx->sweepUpper2;n += rx->sweepSize){
 		++counts;
 	}
 	
-	mprint("sweep Steps %d\n",counts);
+	fprintf(stderr,"steps %g counts %d\n",(upper-lower)/rx->sweepSize,counts);
+	
+
+	mprint("sweep Steps %d lower %g upper %g \n",counts,lower,upper);
 	
 	rx->sweepBuff=(float *)cMalloc(2*(counts+10)*sizeof(float),5790);
 	if(!rx->sweepBuff){
-		mprint("55 cMalloc Errror %ld\n",(long)(2*(counts+10)*sizeof(float)));
+		mprint("56 cMalloc Errror %ld\n",(long)(2*(counts+10)*sizeof(float)));
 		return 1;
 	}
 
@@ -705,7 +731,7 @@ int cReceive::sweepRadio()
 		if(rx->buff[k])cFree((char *)rx->buff[k]);
 		rx->buff[k]=(float *)cMalloc(2*rx->size*4*8,5791);
 		if(!rx->buff[k]){
-			mprint("5 cMalloc Errror %ld\n",(long)(2*rx->size*4));
+			mprint("56 cMalloc Errror %ld\n",(long)(2*rx->size*4));
 			return 1;
 		}
 		zerol((char *)rx->buff[k],2*rx->size*4);
@@ -724,8 +750,24 @@ int cReceive::sweepRadio()
 	std::vector<float> db;
 	std::vector<std::vector<float>> list;
 	list.clear();
-
+	
+	
+	rx->device->setFrequency(SOAPY_SDR_RX,rx->channel,"RF",lower);
+	
 	int itWas=-1;
+	int pass2=0;
+
+	while(1){
+		if(itWas != rx->witch){
+			itWas=rx->witch;
+			if(pass2++ >= 11)break;
+		}else{
+			Sleep2(5);
+		}
+	}
+
+
+	itWas=-1;
 	int pass=0;
 	rx->timestart=rtime();
   	while(!threadexit){	
@@ -734,7 +776,7 @@ int cReceive::sweepRadio()
 		struct tm cal_time = {0};
 		time_now = time(NULL);
 		mprint("sweep %d\n",pass++);
-		for(long long n=(long long )rx->sweepLower;n<(long long )rx->sweepUpper;n += (long long )rx->samplerate*(1.0-rx->crop)){
+		for(double n=rx->sweepLower;n<=rx->sweepUpper;n += rx->samplerate*(1.0-rx->crop)){
 			localtime_r(&time_now, &cal_time);
 		    strftime(t_str, 50, "%Y-%m-%d, %H:%M:%S,", &cal_time);
 			double fc,fmins,fmaxs;
@@ -742,6 +784,8 @@ int cReceive::sweepRadio()
 			fmins=fc-rx->samplerate*0.5*(1.0-rx->crop);
 			fmaxs=fc+rx->samplerate*0.5*(1.0-rx->crop);
 		    mprint("fc %g fmins %g fmaxs %g\n",fc/1e6,fmins/1e6,fmaxs/1e6);
+		    if(fmins < lower)lower=fmins;
+		    if(fmaxs > upper)upper=fmaxs;
 			rx->fc=fc;
 			rx->device->setFrequency(SOAPY_SDR_RX,rx->channel,"RF",rx->fc);
 			Sleep2(100);
@@ -752,8 +796,12 @@ int cReceive::sweepRadio()
 			while(1){
 				if(itWas != rx->witch){
 				    //fprintf(stderr,"rx->witch %d\n",rx->witch);
-					updateSweep1(fmins,fmaxs);
 					itWas=rx->witch;
+				    if(rx->retFlag <= 0){
+				        fprintf(stderr,"Skip Bad Read Data\n");
+				        continue;
+				    }
+					updateSweep1(fmins,fmaxs);
 					if(pass2++ >= 10)break;
 				}else{
 					Sleep2(5);
@@ -794,7 +842,7 @@ int cReceive::sweepRadio()
 		long ysize=list.size();
 		long xsize=0;
 		for(int nl=0;nl<ysize;++nl){
-		  //  fprintf(stderr,"size %ld\n",(long)list[nl].size());
+		   // fprintf(stderr,"size %ld\n",(long)list[nl].size());
 			if(list[nl].size() > xsize)xsize=(long)list[nl].size();
 		}
 		
@@ -821,13 +869,11 @@ int cReceive::sweepRadio()
 		  //  fprintf(stderr,"size %ld\n",(long)list[nl].size());
 			for(int nc=0;nc<xsize;++nc){
 				double f;
-				f=0;
+				if(nc == 0)f=0.0;
 				if(nc < list[nl].size()){
 					f=list[nl][nc];
 				}
-				//fprintf(stderr,"nx %d ny %d\n",nx,ny);
-				buffout[nx++ +ny*xsizel]=f;
-				
+				buffout[nx++ +ny*xsizel]=f;				
 				if(f > xmax)xmax=f;
 				if(f < xmin)xmin=f;
 			}
@@ -836,7 +882,6 @@ int cReceive::sweepRadio()
 			    ny++;
 			}
 		}
-			
 		struct SDS2Dout sdsout;
 		zerol((char *)&sdsout,sizeof(struct SDS2Dout));
 
@@ -845,8 +890,8 @@ int cReceive::sweepRadio()
 		sdsout.name=(char *)"Power Sweep";
 		sdsout.ixmax=xsizel;
 		sdsout.iymax=ysizel;
-		sdsout.xmin=rx->sweepLower;
-		sdsout.xmax=rx->sweepUpper;
+		sdsout.xmin=lower;
+		sdsout.xmax=upper;
 		sdsout.ymin=0;
 		sdsout.ymax=ysizel;
 		sdsout.zmin=0;
@@ -1079,7 +1124,7 @@ int cReceive::fftIndex(double frequency)
 {
     if(!rx)return -1;
     double fac=((frequency - rx->fc)+0.5*rx->samplerate)/((double)rx->samplerate);
-    int index=(int)(0.5+(rx->FFTcount-1)*fac);
+    int index=(int)((rx->FFTcount-1)*fac);
     if(index >= 0 && index < rx->FFTcount)return index;
     fprintf(stderr,"frequency %g fc %g index %d %g\n",frequency/1e6,rx->fc,index,fac);
     return -1;

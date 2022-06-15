@@ -199,6 +199,7 @@ struct playData{
 	
 	volatile int doWhat;
 	volatile int witch;
+	volatile int retFlag;
 	
     volatile int audioOut;
 
@@ -276,6 +277,8 @@ struct playData{
 	float *sweepBuff;
 	double sweepLower;
 	double sweepUpper;
+	double sweepLower2;
+	double sweepUpper2;
 	double sweepSize;
 	double crop;
 	int sweepFound;
