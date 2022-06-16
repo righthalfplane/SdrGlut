@@ -902,9 +902,7 @@ int cReceive::sweepRadio()
 		sdsout.type=DATA_TYPE_FLOAT;	
 			
 		if(writesds(&sdsout))goto OutOfHere;
-		
-		if(buffout)cFree((char *)buffout);
-	
+			
 	}
  	
 	
