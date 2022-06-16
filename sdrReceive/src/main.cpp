@@ -1,5 +1,7 @@
 #include "cReceive.h"
 
+#include <csignal>
+
 volatile int threadexit; 
 
 void signalHandler( int signum ) {
@@ -7,29 +9,34 @@ void signalHandler( int signum ) {
 	threadexit=1;
 }
 
-void checkall(void);
+void checkall();
 
-int main (int argc, char * argv [])
+
+int main(int argc, char * argv [])
 {	
 
-	signal(SIGINT, signalHandler);  
+	signal(SIGINT, signalHandler);										
+	
 
 	threadexit=0;
 
-	class cReceive rec(argc,argv);
+	class cReceive *rec2 = new cReceive(argc, argv);
 	
-	if(rec.initPlay(rec.rx)){
+
+	if(rec2->initPlay(rec2->rx)){
 		fprintf(stderr,"initPlay Failed\n");
 		return 1;
 	};
 		
-	rec.playRadio(rec.rx);
+	rec2->playRadio(rec2->rx);
 
-	rec.rx->doWhat=Exit;
+	rec2->rx->doWhat=Exit;
 	
 	Sleep2(100);
 		
-	rec.stopPlay(rec.rx);
+	rec2->stopPlay(rec2->rx);
+	
+	delete rec2;
 	
 	checkall();
 	

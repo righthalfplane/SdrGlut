@@ -2,7 +2,7 @@
 
 #include <stdarg.h>
 
-#include <unistd.h>
+//#include <unistd.h>
 
 #include <algorithm>
 
@@ -19,8 +19,18 @@
 #include <sys/types.h>
 #include <time.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <df.h>
+
+
+#ifndef _WIN32
+#include <unistd.h>
+#else
+#include <windows.h>
+#include <fcntl.h>
+#include <io.h>
+#define _USE_MATH_DEFINES
+#endif
+
 
 
 char WarningBuff[256];
@@ -571,7 +581,6 @@ int cReceive::stopPlay(struct playData *rx)
 	if(frequencies)cFree((char *)frequencies);
 	if(ampitude)cFree((char *)ampitude);
 	    
-	    
 	return 0;
 }
 int cReceive::updateSweep1(double fmins,double fmaxs)
@@ -672,6 +681,17 @@ int cReceive::updateSweep2(double fmins,double fmaxs,int pass)
     
     return 0;
 }
+
+#ifdef _MSC_VER
+struct tm *localtime_r (const time_t *timer, struct tm *result)
+{
+    struct tm *local_result = localtime (timer);
+    if (local_result == NULL || result == NULL) return NULL;
+    memcpy (result, local_result, sizeof (struct tm));
+    return result;
+}
+#endif
+
 int cReceive::sweepRadio()
 {
 
@@ -1453,7 +1473,7 @@ int doWindow(double *x,double *y,long length,int type)
 
             
         case FILTER_HANN:
-            
+#define WINDOWS_LONG_NAMES
             for(i=0; i<length; i++)  {
 #ifdef WINDOWS_LONG_NAMES
                 w[i]=liquid_hann(i, (int)length);

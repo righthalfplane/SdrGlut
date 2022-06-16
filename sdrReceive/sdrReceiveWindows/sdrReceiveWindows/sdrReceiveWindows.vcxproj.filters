@@ -1,0 +1,734 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{962a2b79-fbeb-4d4a-916e-82adbab4d3c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="jpeg">
+      <UniqueIdentifier>{20e4a0b1-6027-4082-b5f6-87fe3dc1bd1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="zlib">
+      <UniqueIdentifier>{c4a6edc6-96fd-46c6-aa3f-af631e21e52b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="hdf">
+      <UniqueIdentifier>{4bf83fc5-79ea-4fef-8d88-e1ab24f1c3fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{0788897a-f38b-4e34-9551-df38f1260af9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Library\include\jpeglib.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jpeg-6b\cderror.h">
+      <Filter>jpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jpeg-6b\cdjpeg.h">
+      <Filter>jpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jpeg-6b\jchuff.h">
+      <Filter>jpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jpeg-6b\jconfig.h">
+      <Filter>jpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jpeg-6b\jdct.h">
+      <Filter>jpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jpeg-6b\jdhuff.h">
+      <Filter>jpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jpeg-6b\jerror.h">
+      <Filter>jpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jpeg-6b\jinclude.h">
+      <Filter>jpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jpeg-6b\jmemsys.h">
+      <Filter>jpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jpeg-6b\jmorecfg.h">
+      <Filter>jpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jpeg-6b\jpegint.h">
+      <Filter>jpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jpeg-6b\jpeglib.h">
+      <Filter>jpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jpeg-6b\jversion.h">
+      <Filter>jpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jpeg-6b\transupp.h">
+      <Filter>jpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zlib-1.2.1\crc32.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zlib-1.2.1\deflate.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zlib-1.2.1\inffast.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zlib-1.2.1\inffixed.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zlib-1.2.1\inflate.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zlib-1.2.1\inftrees.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zlib-1.2.1\trees.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zlib-1.2.1\zconf.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zlib-1.2.1\zconf.in.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zlib-1.2.1\zlib.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zlib-1.2.1\zutil.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\atom.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\bitvect.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\cdeflate.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\cnbit.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\cnone.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\crle.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\cskphuff.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\cszip.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\df.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\dfan.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\dfconvrt.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\dfgr.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\dfi.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\dfivms.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\dfrig.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\dfsd.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\dfstubs.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\dfufp2i.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\dir_mac.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\dynarray.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\glist.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\h4config.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\hbitio.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\hchunks.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\hcomp.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\hcompi.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\hconv.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\hdf.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\hdfi.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\herr.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\hfile.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\hkit.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\hlimits.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\hntdefs.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\hproto.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\hproto_fortran.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\hqueue.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\htags.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\linklist.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\maldebug.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\mcache.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\mfan.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\mfgr.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\mstdio.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\patchlevel.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\sys_dir_mac.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\tbbt.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\trace.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\vattr.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\vg.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hdf-4.2.5\vgint.h">
+      <Filter>hdf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cReceive.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cStack.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\firstFile.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\mThread.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sdrReceive.h">
+      <Filter>src</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\jpeg-6b\cdjpeg.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jcapimin.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jcapistd.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jccoefct.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jccolor.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jcdctmgr.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jchuff.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jcinit.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jcmainct.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jcmarker.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jcmaster.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jcomapi.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jcparam.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jcphuff.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jcprepct.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jcsample.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jctrans.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jdapimin.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jdapistd.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jdatadst.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jdatasrc.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jdcoefct.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jdcolor.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jddctmgr.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jdhuff.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jdinput.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jdmainct.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jdmarker.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jdmaster.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jdmerge.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jdphuff.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jdpostct.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jdsample.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jdtrans.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jerror.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jfdctflt.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jfdctfst.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jfdctint.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jidctflt.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jidctfst.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jidctint.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jidctred.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jmemansi.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jmemmgr.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jquant1.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jquant2.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\jutils.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\rdbmp.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\rdcolmap.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\rdgif.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\rdppm.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\rdrle.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\rdswitch.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\rdtarga.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\transupp.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\wrbmp.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\wrgif.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\wrppm.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\wrrle.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jpeg-6b\wrtarga.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\zlib-1.2.1\adler32.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\zlib-1.2.1\compress.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\zlib-1.2.1\crc32.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\zlib-1.2.1\deflate.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\zlib-1.2.1\gzio.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\zlib-1.2.1\infback.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\zlib-1.2.1\inffast.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\zlib-1.2.1\inflate.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\zlib-1.2.1\inftrees.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\zlib-1.2.1\trees.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\zlib-1.2.1\uncompr.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\zlib-1.2.1\zutil.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\atom.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\bitvect.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\cdeflate.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\cnbit.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\cnone.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\crle.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\cskphuff.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\cszip.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\df24.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\df24f.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\dfan.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\dfanf.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\dfcomp.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\dfconv.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\dff.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\dfgr.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\dfgroup.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\dfimcomp.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\dfjpeg.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\dfkconv.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\dfkcray.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\dfkfuji.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\dfknat.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\dfkswap.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\dfkvms.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\dfp.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\dfpf.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\dfr8.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\dfr8f.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\dfrle.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\dfsd.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\dfsdf.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\dfstubs.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\dfufp2i.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\dfufp2if.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\dfunjpeg.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\dfutil.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\dfutilf.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\dir_mac.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\dynarray.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\glist.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\hbitio.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\hblocks.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\hbuffer.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\hchunks.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\hcomp.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\hcompri.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\hdfalloc.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\herr.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\herrf.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\hextelt.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\hfile.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\hfiledd.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\hfilef.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\hkit.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\linklist.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\mcache.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\mfan.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\mfanf.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\mfgr.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\mfgrf.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\mstdio.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\tbbt.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\vattr.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\vattrf.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\vconv.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\vg.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\vgf.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\vgp.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\vhi.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\vio.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\vparse.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\vrw.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hdf-4.2.5\vsfld.c">
+      <Filter>hdf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cMalloc.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cReceive.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cStack.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\mThread.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\hdf-4.2.5\dffunc.inc">
+      <Filter>hdf</Filter>
+    </None>
+    <None Include="..\hdf-4.2.5\hdf.inc">
+      <Filter>hdf</Filter>
+    </None>
+    <None Include="..\hdf-4.2.5\src.inc">
+      <Filter>hdf</Filter>
+    </None>
+  </ItemGroup>
+</Project>
