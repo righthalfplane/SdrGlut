@@ -26,6 +26,7 @@ SdrGlut has a new Voice Command Module. It can be programed to record any freque
 
 ## Demo videos
 - [An Introduction to SdrGlut (A software defined radio)](https://youtu.be/JEXK-r6PvmA)
+- [Icom IC-R8600 - Creating an all Frequency Power Spectrum](https://youtu.be/AHhqNU7o7PM)
 - [BladeRF xa5 - Creating an all Frequency Power Spectrum](https://youtu.be/Z2Fa7qzTfFQ)
 - [A P25 reception contest - dsd-louis vs. dsd-dme](https://youtu.be/DVqu4Q2ILPM)
 - [sdrReceive vs. rx_tools(rx_power)](https://youtu.be/k5QfcGDs_sU)
