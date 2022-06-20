@@ -4,6 +4,10 @@ SdrGlut V1.30 - New Audio Window has Audio Equalization
 
 What is new ?
 ```
+SdrGlut-1098-Windows.zip is a new Windows 10 zip file with sdrReceiveWindows.exe and mMysticPlot.exe programs. 
+These were added so that people can make and examine the Power Spectrum data from the Icom IC-R8600 and 
+various other SDR receivers.
+
 It now saves audio in WAV format.
 It has a new audio window that reads and plays all of the audio types that the libsndfile library handles.
 The audio window has a seven channel audio equalizer.
