@@ -366,17 +366,53 @@ To compile with the GUI envoke - SdrGlut.xcodeproj
 
 # Install on MacOS 12.4 (M1) with brew
 
-add at top of above -
+This is a copy of some of the instruction from -
+
+https://github.com/pothosware/homebrew-pothos/wiki
+
+brew tap pothosware/homebrew-pothos
+
+brew update
 
 brew install libusb
 
 cp /opt/homebrew/include/libusb-1.0/libusb.h /opt/homebrew/include/
 
-same as above down to "cd SdrGlut" then -
+brew install soapyremote
+
+brew install soapyrtlsdr
+
+brew install soapyhackrf
+
+brew install soapybladerf
+
+brew install soapyairspy
+
+brew install soapyairspyhf
+
+brew install soapyredpitaya
+
+brew install soapyiris
+
+brew install limesuite
+
+brew install liquid-dsp
+
+brew install rtaudio
+
+brew install libsndfile
+
+cd ~/Desktop
+
+git clone --depth 1 https://github.com/righthalfplane/SdrGlut.git
+
+cd SdrGlut
 
 make -f makefileM1Brew
 
 ./sdrglut.x
+
+To compile with the GUI envoke - SdrGlut.xcodeproj
 
 ## added support for NetSDR -
 
