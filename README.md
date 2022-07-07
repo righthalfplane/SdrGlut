@@ -332,8 +332,6 @@ brew update
 
 brew install soapyremote
 
-brew install soapyaudio
-
 brew install soapyrtlsdr
 
 brew install soapyhackrf
