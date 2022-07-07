@@ -317,7 +317,7 @@ make -j 4
 
 sudo make install
 
-# Install on MacOS 10.4 with brew
+# Install on MacOS 12.4 with brew
 
 This is a copy of some of the instruction from -
 
@@ -326,7 +326,6 @@ https://github.com/pothosware/homebrew-pothos/wiki
 
 brew tap pothosware/homebrew-pothos
 
-brew tap dholm/homebrew-sdr #other sdr apps
 
 brew update
 
@@ -353,7 +352,11 @@ brew install soapyiris
 
 brew install limesuite
 
-brew install cubicsdr
+brew install liquid-dsp
+
+brew install rtaudio
+
+brew install libsndfile
 
 cd ~/Desktop
 
@@ -364,10 +367,6 @@ cd SdrGlut
 make -f makefileMACINTOSH
 
 ./sdrglut.x
-
-Do not do the "brew install soapyuhd" suggested by the wiki as it generates an exception error when it is used.
-
-The install of cubicsdr fails, but it installs the needed liquid-sdr.
 
 To compile with the GUI envoke - SdrGlut.xcodeproj
 
