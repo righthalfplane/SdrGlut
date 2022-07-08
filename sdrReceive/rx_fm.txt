@@ -1,0 +1,166 @@
+sdrReceive.x -crop 0.2 -sweep 2M:16M:10K -file out.csv
+
+
+sdrReceive.x -crop 0.2 -sweep 5M:1997M:10K -file out.csv -samplerate 10e6
+
+rx_power -f 70M:5990M:10K fm_stations1.csv
+
+sdrReceive.x -crop 0.2 -sweep 70M:5990M:10K -file out.csv -samplerate 40e6
+
+
+
+
+sdrReceive.x -crop 0.2 -sweep 700M:924hM:10K -file out.csv -samplerate 40e6
+
+
+sdrReceive.x -crop 0.2 -samplerate 40e6 -sweep 80M:6G:10k -file out.csv
+heatmap.py out.csv out.png --palette rainbow
+heatmap.py out.csv out.pdf --palette rainbow
+
+rx_power -i 5  -d driver=bladerf -f 96.5M:106.5M:10k fm_stations1.csv
+heatmap.py fm_stations1.csv fm_stations1.png --palette rainbow
+
+
+
+sdrReceive.x -sweep 96.5M:106.5M:10k  -file out.csv -print 0
+heatmap.py out.csv out.png --palette rainbow
+
+rx_power -i 5 -d driver=rtlsdr  -f 96.5M:106.5M:10k fm_stations1.csv
+heatmap.py fm_stations1.csv fm_stations1.png --palette rainbow
+
+
+
+
+rtl_power -i 5 -f 96.5M:106.5M:10k  fm_stations2.csv
+heatmap.py fm_stations2.csv fm_stations2.png --palette rainbow
+
+
+
+rx_power -i 10 -d driver=rtlsdr  -f 96.5M:106.5M:10k fm_stations1.csv
+
+sdrReceive.x -crop 0.25 -sweep 96.5M:106.5M:10K -file out.csv
+
+rx_power -i 5 -crop 0.25  -d driver=hackrf -f 96.5M:106.5M:10k fm_stations.csv
+
+
+sdrReceive.x -samplerate 20e6 -sweep 494M:506M:10K -file out.csv
+
+sdrReceive.x -samplerate 20e6 -sweep 494M:506M:40K -file out.csv
+
+rx_power -i 5 -d driver=hackrf -f 494M:506M:40K fm_stations.csv
+
+rtl_power -i 5 -d driver=hackrf  -f 494M:506M:40K fm_stations.csv
+
+
+sdrReceive.x -sweep 96.5M:106.5M:10K -file out.csv
+
+
+sdrReceive.x -sweep 494M:506M:40K -file out.csv
+
+
+rtl_power -i 5 -f 494M:506M:40K fm_stations.csv
+
+
+sdrReceive.x -sweep 849M:859M:10K -file out.csv
+
+sdrReceive.x -sweep 96.5M:106.5M:10K -file out.csv
+
+sdrReceive.x -sweep 96.5M:106.5M:10K -file out.csv
+
+rtl_power -i 5 -f 849M:859M:10K fm_stations.csv
+
+rtl_power -i 5 -f 96.5M:106.5M:10k fm_stations.csv
+
+sdrReceive.x -sweep 98.5M:104.5M:10K -file out.csv
+
+rtl_power -i 5 -f 98.5M:104.5M:10k fm_stations.csv
+
+heatmap.py out.csv out.png --palette rainbow
+
+heatmap.py fm_stations.csv fm_stations.png --palette rainbow
+
+dsd LouisErigHerve
+
+dsd-fme
+
+
+
+sdrReceive.x -fc 770 -f 769.31875 -f 769.50625 -f 769.55625 -f 769.75625 -f 769.81875 -f 770.01875 -f 770.25625 -f 770.26875 -f 770.51875 -f 770.75625 -f 770.76875 -f 771.05625 -f 771.06875 -f 771.26875 -nbfm -samplerate 2e6 -print 0 -cutoff -80 -pipe -mute -device 6 | dsd -f1 -i - -o pa:0
+
+sdrReceive.x -fc 770 -f 769.31875 -f 769.50625 -f 769.55625 -f 769.75625 -f 769.81875 -f 770.01875 -f 770.25625 -f 770.26875 -f 770.51875 -f 770.75625 -f 770.76875 -f 771.05625 -f 771.06875 -f 771.26875 -nbfm -samplerate 2e6 -print 0 -cutoff -80 -pipe -mute | dsd2 -f1 -i - -o pa:1
+
+
+
+
+sdrReceive.x -fc 854 -f 854.1 -f 852.062 -f 852.386 -f 852.611 -f 852.638  -nbfm -samplerate 10e6 -print 2 -cutoff -80 -pipe -mute -device 3 | dsd -i - -o pa:0 2 > junk3.jnk
+
+sdrReceive.x -fc 770 -f 769.31875 -f 769.50625 -f 769.55625 -f 769.75625 -f 769.81875 -f 770.01875 -f 770.25625 -f 770.26875 -f 770.51875 -f 770.75625 -f 770.76875 -f 771.05625 -f 771.06875 -f 771.26875 -nbfm -samplerate 2e6 -print 2 -cutoff -80 -pipe -mute | dsd2 -f1 -i - -o pa:1
+
+
+sdrReceive.x -fc 770 -f 769.31875 -f 769.50625 -f 769.55625 -f 769.75625 -f 769.81875 -f 770.01875 -f 770.25625 -f 770.26875 -f 770.51875 -f 770.75625 -f 770.76875 -f 771.05625 -f 771.06875 -f 771.26875 -nbfm -samplerate 2e6 -print 2 -cutoff -80 -pipe -mute -device 6 | dsd -f1 -i - -o pa:0
+
+sdrReceive.x  -f 101.5 -fm
+
+sdrReceive.x  -f 101.5 -fm -mute -pipe -print 0 | play -q -t s16 -r 48k -c 1 -
+
+rx_fm -f 101500000 -M wbfm |   play -q -t s16 -r 48k -c 1 -
+
+rx_fm -f 101500000 -M wbfm -w 1536000 |  play -q -t s16 -r 48k -c 1 -
+
+
+sdrReceive.x -sweep 98.5M:104.5M:10K -file out.csv
+
+rtl_power -i 5 -f 98.5M:104.5M:10k fm_stations.csv
+
+rx_power -d driver:sdrplay -a "Antenna A" -f 96M:106M:10k fm_stations.csv
+
+rtl_power -i 5 -f 96M:106M:50k fm_stations.csv
+heatmap.py fm_stations.csv out.png --palette rainbow
+heatmap.py --db -14.760000, 22.290000 fm_stations.csv out.png --palette rainbow
+rtl_power -i 5 -f 96M:106M:20k fm_stations.csv
+heatmap.py --db 0 19 fm_stations.csv out.png --palette rainbow
+rtl_power -i 5 -f 96M:106M:10k fm_stations.csv
+
+
+
+sdrReceive.x -fc 770 -f 769.31875 -f 769.50625 -f 769.55625 -f 769.75625 -f 769.81875 -f 770.01875 -f 770.25625 -f 770.26875 -f 770.51875 -f 770.75625 -f 770.76875 -f 771.05625 -f 771.06875 -f 771.26875 -nbfm -samplerate 2e6 -print 0 -cutoff -80 -pipe -mute | dsd2 -i - -o pa:1
+
+sdrReceive.x -fc 770 -f 769.31875 -f 769.50625 -f 769.55625 -f 769.75625 -f 769.81875 -f 770.01875 -f 770.25625 -f 770.26875 -f 770.51875 -f 770.75625 -f 770.76875 -f 771.05625 -f 771.06875 -f 771.26875 -nbfm -samplerate 2e6 -print 0 -cutoff -80 -pipe -mute -device 6 | dsd -i - -o pa:0
+
+
+
+
+sdrReceive.x  -f 162.4 -nbfm
+
+rx_fm -f 162400000 |  play -q -t s16 -r 48k -c 1 -
+
+rx_fm -f 162400000 -w 1536000 |  play -q -t s16 -r 48k -c 1 -
+
+
+rx_fm -l 100 -f 854.3600M -f 854.6360M -f 854.6608M -f 854.7360M -f 854.9620M -f 855.0620M -f 855.0860M -f 855.2620M -f 855.5850M -f 855.9120M -f 856.8360M -f 856.8380M -f 856.8860M -f 857.0860M -w 1536000 |  play -q -t s16 -r 48k -c 1 -
+
+sdrReceive.x -print 2 -fc 854.0 -f 854.3600 -f 854.6360 -f 854.6608 -f 854.7360 -f 854.9620 -f 855.0620 -f 855.0860 -f 855.2620 -f 855.5850 -f 855.9120 -f 856.8360 -f 856.8380 -f 856.8860 -f 857.0860 -nbfm -samplerate 10e6
+
+sdrReceive.x -h
+
+
+
+rx_fm -f 10000000 | play -t raw -r 24k -es -b 16 -c 1 -V1 -
+
+rx_fm -f 999898 -a "Antenna A"| play -t raw -r 24k -es -b 16 -c 1 -V1 -
+
+rx_fm -f 900000 -a "Antenna A"| play -t raw -r 24k -es -b 16 -c 1 -V1 -
+
+rx_fm -f 800000 -a "Antenna A"| play -t raw -r 24k -es -b 16 -c 1 -V1 -
+
+rx_fm -f 763000 -d driver=sdrplay -w 2000000 -a  "Antenna A"| play -t raw -r 24k -es -b 16 -c 1 -V1 -
+
+rx_fm -f 101500000 -d driver=sdrplay -w 2000000 -a  "Antenna A"| play -t raw -r 24k -es -b 16 -c 1 -V1 -
+
+rx_fm -f 101500000 -s 24000 -M wbfm -d driver=sdrplay -w 2000000 -a  "Antenna A"| play -t raw -r 24k -es -b 16 -c 1 -V1 -
+
+rx_sdr -f 101500000  -d driver=sdrplay -a  "Antenna A" -n 100000000 - | play -t raw -r 24k -es -b 16 -c 1 -V1 -
+
+rx_sdr -f 101500000  -s 2000000 -d driver=sdrplay -a  "Antenna A" -n 100000000 - >out.raw
+
+rx_sdr -f 101500000  -F CF32 -s 2000000 -d driver=sdrplay -a  "Antenna A" -n 100000000 - >out.raw

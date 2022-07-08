@@ -2297,14 +2297,24 @@ int cReceive::findRadio(struct playData *rx)
 
 			std::vector<double> rate=rx->device->listSampleRates(SOAPY_SDR_RX, rx->channel);
         	if(rate.size()){
-                 mprint("SampleRates MHZ ");
+                 mprint("RX SampleRates MHZ ");
       		}
 			for (size_t j = 0; j < rate.size(); j++)
         	{
            		mprint(" %.6f ",rate[j]/1.0e6);
          	}
             mprint("\n\n");
-
+/*
+			rate=rx->device->listSampleRates(SOAPY_SDR_TX, rx->channel);
+        	if(rate.size()){
+                 mprint("TX SampleRates MHZ ");
+      		}
+			for (size_t j = 0; j < rate.size(); j++)
+        	{
+           		mprint(" %.6f ",rate[j]/1.0e6);
+         	}
+            mprint("\n\n");
+*/
             mprint("Gains: \n");  		
 			names=rx->device->listGains( SOAPY_SDR_RX, rx->channel);
 			for (size_t j = 0; j < names.size(); j++)
