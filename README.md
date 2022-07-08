@@ -436,11 +436,9 @@ sudo make install
 
 Get the sdrplay driver installer and install it -
 
-https://www.sdrplay.com/macdl.php
+https://www.sdrplay.com/downloads/
 
-SDRplay_RSP_API-MacOSX-2.13.2.pkg
-
-
+SDRplay_RSP_API-MacOSX-3.07.3
 
 
 # Install SdrGlut on Windows 7 and Windows 10
