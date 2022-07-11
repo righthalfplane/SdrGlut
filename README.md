@@ -191,44 +191,33 @@ There are recent versions of libliquid that have the same version number and nee
 
 can to be turned on or off as needed. The LIQUID_VERSION_NUMBER logic works correctly about 80 percent of the time.
   
-## Installation steps on Ubuntu 18.04
+## Installation steps on Ubuntu 22.04
 
-This is what I did to get SdrGlut running on a fresh install of Ubuntu 18.04.3
 
 ```
+In file "MainSource/firstFile.h" comment out the line -
+
+//#define WINDOWS_LONG_NAMES 1
+
+Then -
+
 bash
 sudo apt-get update
 sudo apt-get upgrade
 sudo apt-get install build-essential
-sudo apt-get install libsoapysdr0.6
 sudo apt-get install libsoapysdr-dev
 sudo apt-get install libopenal-dev
 sudo apt-get install libliquid-dev
-sudo apt-get install freeglut3
 sudo apt-get install freeglut3-dev
-sudo apt-get install libalut0
 sudo apt-get install libalut-dev
+sudo apt-get install librtaudio-dev
 sudo apt-get install git
 cd ~/Desktop
-git clone https://github.com/righthalfplane/SdrGlut.git
+git clone --depth=1 https//github.com/righthalfplane/SdrGlut.git
 cd SdrGlut
 make -f makefileUbunta
 ./sdrglut.x
 ```
-
-## Add SDRPlay to Ubuntu 18.04
-
-1. Go to https://www.sdrplay.com/downloads/
-2. Select to download: API/HW DRIVER – V2.13 (20TH JUN 2018)
-3. This will download SDRplay_RSP_API-Linux-2.13.1.run
-4. In the bash shell, install of the drivers by running ```./SDRplay_RSP_API-Linux-2.13.1.run```
-5. Append to the blacklist file (/etc/modprobe.d/blacklist.conf) the following 3 lines
-      ```txt
-        blacklist sdr_msi3101
-        blacklist msi001
-        blacklist msi2500
-      ```
-6. Reboot and you should be ready to go
 
 ## Install on Raspberry pi
 
