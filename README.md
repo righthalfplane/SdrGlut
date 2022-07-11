@@ -195,7 +195,7 @@ can to be turned on or off as needed. The LIQUID_VERSION_NUMBER logic works corr
 
 
 ```
-In file "MainSource/firstFile.h" comment out the line -
+In the file "MainSource/firstFile.h" comment out the line -
 
 //#define WINDOWS_LONG_NAMES 1
 
