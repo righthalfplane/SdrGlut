@@ -215,7 +215,7 @@ sudo apt-get install git
 cd ~/Desktop
 git clone --depth=1 https//github.com/righthalfplane/SdrGlut.git
 cd SdrGlut
-make -f makefileUbunta
+make -f makefileUbunta -j 4
 ./sdrglut.x
 ```
 
