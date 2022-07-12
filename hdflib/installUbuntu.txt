@@ -1,0 +1,27 @@
+#!/bin/tcsh
+tar -zxvf zlib-1.2.1.tar.gz
+cd zlib-1.2.1
+configure --prefix=/usr/local
+make -j 8
+sudo make install
+cd ..
+tar -zxvf jpegsrc.v6b.tar.gz
+cd jpeg-6b
+configure --prefix=/usr/local
+make -j 8
+sudo make install-lib
+cd ..
+setenv CFLAGS -Wno-implicit-function-declaration
+tar -zxvf hdf-4.2.15.tar.gz
+cd hdf-4.2.15
+configure --prefix=/usr/local --disable-fortran --with-jpeg=/usr/local --with-zlib=/usr/local
+make -j 8
+sudo make install
+cd ..
+tar -zxvf xShow17.0e5MPI.tgz
+cd xShow17.0e5MPI
+make -f makefileUbunta -j 8
+make -f makefileUbunta hdfsend
+cd ..
+
+
