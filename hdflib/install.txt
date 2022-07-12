@@ -18,10 +18,5 @@ configure --prefix=/usr/local --disable-fortran --with-jpeg=/usr/local --with-zl
 make -j 8
 sudo make install
 cd ..
-tar -zxvf xShow17.0e5MPI.tgz
-cd xShow17.0e5MPI
-make -f makefileDARWIN -j 8
-make -f makefileDARWIN hdfsend
-cd ..
 
 
