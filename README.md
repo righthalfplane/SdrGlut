@@ -33,6 +33,7 @@ SdrGlut has a new Voice Command Module. It can be programed to record any freque
 - [Icom IC-R8600 - Creating an all Frequency Power Spectrum](https://youtu.be/AHhqNU7o7PM)
 - [BladeRF xa5 - Creating an all Frequency Power Spectrum](https://youtu.be/Z2Fa7qzTfFQ)
 - [BladeRF xA5 Simultaneously Receiving 14 Channels](https://youtu.be/GpmKlCI4L9E)
+- [Receiving and Transmitting NBFM using gnuradio-companion.](https://youtu.be/L1x244p2eZo)
 - [Transmitting and Receiving OFDM Data with the gnuradio-companion](https://youtu.be/A3aJDPcvrHg)
 - [A P25 reception contest - dsd-louis vs. dsd-dme](https://youtu.be/DVqu4Q2ILPM)
 - [sdrReceive vs. rx_tools(rx_power)](https://youtu.be/k5QfcGDs_sU)
