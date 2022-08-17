@@ -296,6 +296,9 @@ struct playData{
 	std::mutex mutexo;
 	std::mutex mutex1;
 	std::mutex mutexa;
+	
+	std::string DeviceString;
+
 };
 
 struct Filters{

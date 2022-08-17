@@ -6,6 +6,8 @@
 #include <iostream>
 #include <vector>
 
+#include <string.h>
+
 
 int setFilters(struct playData *rx,struct Filters *f);
 
@@ -102,6 +104,7 @@ public:
     double pauseTime;
     double pauseTimeDelta;
     int pauseChannel;
+    
     
     int iplay;
 };

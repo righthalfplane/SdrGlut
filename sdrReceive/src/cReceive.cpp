@@ -1175,7 +1175,8 @@ void usage()
 	fprintf(stderr,"  -faudio  48000           Set the audio sample rate to 48000 HZ\n");
 	fprintf(stderr,"  -antenna  Hi-z           Use the Hi-z antenna\n");
 	fprintf(stderr,"  -x  5                    Skip frequency 5 from the frequency scan list\n");
-	fprintf(stderr,"  -binary                  Write I/Q data to stdout\n");
+	fprintf(stderr,"  -binary                  Write I/Q data to stdout\n\n");
+	fprintf(stderr,"  -devicestring \"host=192.168.0.8,port=5555\"    set device string\n");
 	fprintf(stderr,"\nSetting Info:\n");
 	fprintf(stderr,"  -set rfnotch_ctrl true   Turn on notch filter\n");
 	fprintf(stderr,"  -set biasT_ctrl true     Turn on voltage to line\n");
@@ -1356,6 +1357,8 @@ cReceive::cReceive(int argc, char * argv [])
 	    }else if(!strcmp(argv[n],"-h")){
 	         usage();
 	         exit(0);
+	    }else if(!strcmp(argv[n],"-devicestring")){
+	        rx->DeviceString=argv[++n];
 	    }else if(!strcmp(argv[n],"-antenna")){
             rx->antennaUse=strsave(argv[++n],9870);
 	    }else if(!strcmp(argv[n],"-set")){
@@ -2156,7 +2159,8 @@ int cReceive::findRadio(struct playData *rx)
         
     std::vector<SoapySDR::Kwargs> results;
     
-    results = SoapySDR::Device::enumerate();
+    
+    results = SoapySDR::Device::enumerate(rx->DeviceString);
     
     mprint("Number of Devices Found: %ld\n",(long)results.size());
     
@@ -2170,8 +2174,8 @@ int cReceive::findRadio(struct playData *rx)
 		deviceArgs = results[k];
 		for (SoapySDR::Kwargs::const_iterator it = deviceArgs.begin(); it != deviceArgs.end(); ++it) {
 		    if(it->first == "driver"){
-				// mprint("SDR device =  %ld ",(long)k);
-			    // mprint(" %s = %s\n",it->first.c_str(), it->second.c_str());
+				mprint("SDR device =  %ld ",(long)k);
+			    mprint(" %s = %s\n",it->first.c_str(), it->second.c_str());
 		        if(it->second == "audio")break;
 		    }
 			if (it->first == "label"){
@@ -2183,7 +2187,9 @@ int cReceive::findRadio(struct playData *rx)
     }
     
     mprint("\n");
-    
+ 
+ 	if(rx->deviceNumber < 0)rx->deviceNumber=0;
+       
     for(int k=0;k<(int)results.size();++k){
     
     	if(k == rx->deviceNumber){
