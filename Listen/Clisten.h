@@ -1,3 +1,6 @@
+#ifndef __CListen_h__
+#define __CListen_h__
+
 #ifndef _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS 1
 #endif
@@ -16,6 +19,10 @@
 
 #include <complex>
 
+#include <mutex>
+
+#include <signal.h>
+
 #include <iostream>
 
 #include <string.h>
@@ -30,6 +37,12 @@
 
 using namespace std;
 
+
+#define NUM_BUFFERS 5
+
+#define NUM_ABUFF 10
+
+#define NUM_DATA_BUFF 10
 
 struct SoapyNetSDR_SocketInit
 {
@@ -148,6 +161,25 @@ public:
 	int pipe;
 	
 	int binary;
+	
+    float *buff[NUM_DATA_BUFF];
+    int buffStack[NUM_DATA_BUFF];
+    int bufftop;
+    
+    short int *buffa[NUM_ABUFF];
+    int buffStacka[NUM_ABUFF];
+    int bufftopa;
+	
+	int bufferState[NUM_BUFFERS];
+
+	std::mutex mutexo;
+	std::mutex mutex1;
+	std::mutex mutexa;
+	
+	class cStack *cs;
+	
+	int faudio;
+	int audioOut;
 
 };
 
@@ -161,5 +193,5 @@ int ListenSocket(void *rxv);
 #define MODE_LSB  5
 #define MODE_CW   6
 #define MODE_NAM2 7
-
+#endif
 

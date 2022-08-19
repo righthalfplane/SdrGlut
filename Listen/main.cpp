@@ -1,5 +1,7 @@
 #include "Clisten.h"
+#include "cStack.h"
 
+#include <assert.h>
 
 /*
 c++ -O2 -o listen main.cpp Clisten.cpp mThread.cpp -lliquid -lrtaudio -lpthread
@@ -7,16 +9,41 @@ c++ -O2 -o listen main.cpp Clisten.cpp mThread.cpp -lliquid -lrtaudio -lpthread
 c++ -O2 -std=c++11 -Wno-deprecated -o listen main.cpp Clisten.cpp -lrtaudio -lSoapySDR -lliquid
 */
 
+int Sleep2(int ms);
 
 int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
          double streamTime, RtAudioStreamStatus status, void *userData );
 
+
+int doRemoteSpeakers(class Listen *l,unsigned int bufferFrames);
+
+int remoteSpeakers=0;
+
+int launchThread(void *data,int (*sageThread)(void *data));
+
+
+int zerol(char *p,unsigned long n);
+
+volatile int threadexit; 
+
+void signalHandler( int signum ) {
+	//mprint("signum %d\n",signum);
+	threadexit=1;
+	//exit(0);
+}
+
+
 int main(int argc,char *argv[])
 {
+
+	signal(SIGINT, signalHandler);		
+	
+	threadexit=0;								
 
     class Listen *l=new Listen;
     
     int device=-2;
+    
     
 	for(int n=1;n<argc;++n){
 	    if(!strcmp(argv[n],"-debug")){
@@ -39,6 +66,8 @@ int main(int argc,char *argv[])
             l->Port=(unsigned int)atof(argv[++n]);
         }else if(!strcmp(argv[n],"-device")){
             device=(int)atof(argv[++n]);
+        }else if(!strcmp(argv[n],"-remotespeakers")){
+            remoteSpeakers=1;
         }else if(!strcmp(argv[n],"-pipe")){
             l->pipe=1;
         }else if(!strcmp(argv[n],"-binary")){
@@ -103,16 +132,20 @@ int main(int argc,char *argv[])
 		e.printMessage();
 		exit( 0 );
 	}
-    
-
-	// l->Debug=0;
 	
-	SOCKET ret = l->waitForService(argv[1]);
-	if(ret < 0){
-		return 1;
-	}
+	
+	if(remoteSpeakers){
+	   doRemoteSpeakers(l,bufferFrames);
+	}else{
+    
+		// l->Debug=0;
+	
+		SOCKET ret = l->waitForService(argv[1]);
+		if(ret < 0){
+			return 1;
+		}
 		
-
+	}
 
 	try {
     	// Stop the stream
@@ -120,13 +153,164 @@ int main(int argc,char *argv[])
   	}
   	catch (RtAudioError& e) {
     	e.printMessage();
-  	}
+    }
   	
   	if ( dac.isStreamOpen() ) dac.closeStream();
-
+  	
     delete l;
 
 	return 0;
+}
+
+#define SERVER_PORT 5000
+
+int ListenAudio(void *rxv)
+{
+  unsigned char *data;
+  int audioOut;
+  int bytes;
+ // int nn;
+  
+  
+  unsigned slen=sizeof(sockaddr);
+
+
+    
+    class Listen *rx=(class Listen *)rxv;
+    
+    
+    
+    
+ 	struct sockaddr_in si_me, si_other;
+	int s;
+	assert((s=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP))!=-1);
+	int port=5000;
+	int broadcast=1;
+	//struct hostent *host;
+
+	setsockopt(s, SOL_SOCKET, SO_BROADCAST,
+				&broadcast, sizeof broadcast);
+				
+	 //host= (struct hostent *) gethostbyname((char *)"192.168.0.7");
+
+	memset(&si_me, 0, sizeof(si_me));
+	si_me.sin_family = AF_INET;
+	si_me.sin_port = htons(port);
+	si_me.sin_addr.s_addr = INADDR_ANY;
+//	si_me.sin_addr.s_addr =  *((struct in_addr *)host->h_addr);
+
+
+	assert(::bind(s, (sockaddr *)&si_me, sizeof(sockaddr))!=-1);
+	
+    if(!rx->cs){
+    	fprintf(stderr,"ListenAudio Error\n");
+    	return 1;
+	}
+	
+    rx->audioOut=0;
+    audioOut=0;
+    
+	rx->mutexo.lock();
+	data=(unsigned char *)rx->buffa[rx->audioOut++ % NUM_ABUFF];
+	rx->mutexo.unlock();
+	
+	
+	//nn=0;
+    int nc=0;
+	while(1)
+	{
+		char buf[10000];
+		int ret;
+		ret=recvfrom(s, buf, sizeof(buf)-1, 0, (sockaddr *)&si_other, &slen);
+
+		//printf("recv ret %d %d\n",ret,nn++);
+		bytes=ret;
+		for(int k=0;k<bytes;++k){
+			data[nc++]=buf[k];
+			if(nc >= (int)rx->samplerate*2){
+				nc=0;
+				rx->cs->pushBuffa(audioOut,rx);
+				
+				rx->mutexo.lock();
+				audioOut=rx->audioOut;
+				//printf("audioOut %d rx->samplerate %d\n",audioOut,rx->samplerate);
+				data=(unsigned char *)rx->buffa[rx->audioOut++ % NUM_ABUFF];
+				rx->mutexo.unlock();
+				
+			}
+		}
+		
+		if(threadexit){
+			//if(out)fclose(out);
+			//fprintf(stderr,"ListenAudio Return\n");
+			rx->ibuff=0;
+			return 0;
+		}
+		
+		
+	}
+ 
+ 
+    return 0;
+
+}
+int doRemoteSpeakers(class Listen *rx,unsigned int bufferFrames)
+{
+	fprintf(stderr,"doRemoteSpeakers bufferFrames %d\n",bufferFrames);
+	
+ 	printf("Listen activating.\n");
+ 
+ 	rx->faudio=48000;
+ 
+ 	rx->cs=new cStack(rx);
+		
+	for(int k=0;k<NUM_BUFFERS;++k){
+		rx->bufferState[k]=0;
+	}
+
+ 
+ 	rx->buff1=(complex<float> *)malloc(bufferFrames*2);
+ 	if(!rx->buff1){
+ 	    fprintf(stderr,"malloc error\n");
+ 	    exit(1);
+ 	}
+ 	
+ 	for(int k=0;k<NUM_ABUFF;++k){
+		if(rx->buffa[k])free((char *)rx->buffa[k]);
+		rx->buffa[k]=(short int *)malloc((size_t)(2*rx->faudio*4));
+		if(!rx->buffa[k]){
+			printf("10 cMalloc Errror %ld\n",(long)(2*rx->faudio*4));
+			return 1;
+		}
+		zerol((char *)rx->buffa[k],(unsigned long)(2*rx->faudio*4));
+		rx->buffStacka[k]=-1;
+	}
+	
+
+
+	
+	rx->samplerate=bufferFrames;
+
+	rx->ibuff=-2;
+	launchThread((void *)rx,ListenAudio);
+
+	while(rx->ibuff != -1){
+		Sleep2(10);
+	}
+
+  
+  
+  	for(int k=0;k<NUM_ABUFF;++k){
+		if(rx->buffa[k])free((char *)rx->buffa[k]);
+		rx->buffa[k]=NULL;
+	}
+
+	if(rx->cs)delete rx->cs;
+	rx->cs=NULL;
+
+	
+	return 0;
+	
 }
 
 int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
@@ -141,6 +325,42 @@ int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
   if ( status )fprintf(stderr,"Stream underflow detected!");
     
     //int nskip=rx->size/nBufferFrames;
+ 
+ 
+
+     	
+	if(threadexit){
+		fprintf(stderr,"Exit from sound\n");
+		exit(0);
+	}
+
+   
+    if(remoteSpeakers){
+       	    
+		int ibuff=-1;
+		if(rx->cs){
+			ibuff=rx->cs->popBuffa(rx);
+		}
+		//fprintf(stderr,"ibuff %d nBufferFrames %d\n",ibuff,nBufferFrames);
+		if (ibuff > 0){
+			short int *buff= rx->buffa[ibuff % NUM_ABUFF];
+	
+			int n=0;
+	
+			for (unsigned int i=0; i<nBufferFrames; i++ ) {
+				short int v=buff[i];
+				buffer[n++] = v;
+			}
+		
+		}else{
+			for (unsigned int i=0; i<nBufferFrames; i++ ) {
+				  *buffer++ = 0;
+			}
+		}
+   	    
+   	    return 0;
+    
+    }
   
 	if (rx->ibuff >= 0){
 	
@@ -243,3 +463,13 @@ int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
     
   return 0;
 }
+
+int zerol(char *p,unsigned long n)
+{
+	if(!p || !n)return 1;
+	
+	while(n-- > 0)*p++ = 0;
+	
+	return 0;
+}
+

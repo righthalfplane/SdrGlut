@@ -127,6 +127,7 @@ int Radio::dialogSendIQ(struct Scene *scene)
     qq.glui->add_radiobutton_to_group( qq.group2, "Listen Mode" );
     qq.glui->add_radiobutton_to_group( qq.group2, "TCP/IP" );
     qq.glui->add_radiobutton_to_group( qq.group2, "UDP" );
+    qq.glui->add_radiobutton_to_group( qq.group2, "Remote Speakers" );
 
     
     obj_panel =  qq.glui->add_panel( "Send Information" );
