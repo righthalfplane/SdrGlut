@@ -185,12 +185,10 @@ int ListenAudio(void *rxv)
 	int s;
 	s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	int port=5000;
-//	int broadcast=1;
+	int broadcast=1;
 	//struct hostent *host;
-/*
-	setsockopt(s, SOL_SOCKET, SO_BROADCAST,
-				&broadcast, sizeof broadcast);
-*/			
+
+	setsockopt(s, SOL_SOCKET, SO_BROADCAST, (const char *)&broadcast, sizeof broadcast);			
 	 //host= (struct hostent *) gethostbyname((char *)"192.168.0.7");
 
 	memset(&si_me, 0, sizeof(si_me));

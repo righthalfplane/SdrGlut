@@ -137,7 +137,7 @@ int Radio::dialogSendIQ(struct Scene *scene)
     
     new GLUI_Checkbox( obj_panel, "Demodulate Mode", &qq.demodulationFlag, 11, control_cb3 );
     
-    obj_panel =  qq.glui->add_panel( "Tcp-Address" );
+    obj_panel =  qq.glui->add_panel( "Net-Address" );
     
     
     qq.edittext1 =
@@ -195,7 +195,6 @@ static void control_cb3(int control)
     sscanf(s->qq.edittext3->get_text(),"%s",s->qq.text3);
     
     char *start=(char *)s->qq.edittext2->get_text();
-
 
     s->rx->demodulationFlag=s->qq.demodulationFlag;
     

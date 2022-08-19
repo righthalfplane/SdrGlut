@@ -180,10 +180,9 @@ static int StartSend(struct playData *rx,char *name,int type,int mode)
         }
         
         int broadcast=1;
- /*
+ 
         setsockopt(rx->send, SOL_SOCKET, SO_BROADCAST,
-                    &broadcast, sizeof broadcast);
-*/
+                   (const char *)&broadcast, sizeof broadcast);
 
         
         if(mode == 3)return 0;
@@ -1919,6 +1918,7 @@ static int zerol(unsigned char *s,unsigned long n)
 
 int sendAudio(int short *data,int length,struct playData *rx)
 {
+    char broadcastname[256];
     struct sockaddr_in server_addr;
     struct hostent *host;
     socklen_t sin_size;
@@ -1934,11 +1934,21 @@ int sendAudio(int short *data,int length,struct playData *rx)
         closesocket(rx->send);
         return 0;
     }
+    
+    if(rx->name && rx->name[0]){
+        mstrncpy(broadcastname,(char *)rx->name,sizeof(broadcastname));
+    }else{
+        mstrncpy(broadcastname,(char *)"0.0.0.0",sizeof(broadcastname));
+    }
 
-    host= (struct hostent *) gethostbyname((char *)"127.0.0.1");
+    host= (struct hostent *) gethostbyname((char *)broadcastname);
+    
+    //host= (struct hostent *) gethostbyname((char *)"127.0.0.1");
     //host= (struct hostent *) gethostbyname((char *)"0.0.0.0");
     // host= (struct hostent *) gethostbyname((char *)"192.255.255.255");
     //host= (struct hostent *) gethostbyname((char *)"192.168.0.255");
+    
+    
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(5000);
     server_addr.sin_addr = *((struct in_addr *)host->h_addr);
@@ -1953,11 +1963,11 @@ int sendAudio(int short *data,int length,struct playData *rx)
     //fprintf(stderr,"sendAudio length %d nn %ld\n",length,nn++);
     if(ret)fprintf(stderr,"sendto2 Error\n");
     
-    static FILE *out=NULL;
+    //static FILE *out=NULL;
 
-    if(!out)out=fopen("junk2.raw","wb");
+    //if(!out)out=fopen("junk2.raw","wb");
     
-    if(out)fwrite(data,2,length,out);
+    //if(out)fwrite(data,2,length,out);
 
     return 0;
 }
