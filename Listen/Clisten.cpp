@@ -460,7 +460,7 @@ SOCKET Listen::waitForService(char *name)
 		}
 	                                             
  	     shutdown(clientSocket,2);
-	     close(clientSocket);
+	     closesocket(clientSocket);
 	}
 	
 	return serverSocket;

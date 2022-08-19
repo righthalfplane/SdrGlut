@@ -10,9 +10,9 @@
 #define _WINSOCK_DEPRECATED_NO_WARNINGS  1
 #endif
 
-#include <stdlib.h>
-
 #include "SocketDefs.h"
+
+#include <stdlib.h>
 
 #include <cstdio>
 #include <chrono>

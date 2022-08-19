@@ -1,3 +1,4 @@
+#include "SocketDefs.h"
 #include "firstFile.h"
 #include <SoapySDR/Version.h>
 #include "Radio.h"
@@ -179,9 +180,10 @@ static int StartSend(struct playData *rx,char *name,int type,int mode)
         }
         
         int broadcast=1;
-        
+ /*
         setsockopt(rx->send, SOL_SOCKET, SO_BROADCAST,
                     &broadcast, sizeof broadcast);
+*/
 
         
         if(mode == 3)return 0;
@@ -1933,10 +1935,10 @@ int sendAudio(int short *data,int length,struct playData *rx)
         return 0;
     }
 
-    //host= (struct hostent *) gethostbyname((char *)"127.0.0.1");
+    host= (struct hostent *) gethostbyname((char *)"127.0.0.1");
     //host= (struct hostent *) gethostbyname((char *)"0.0.0.0");
     // host= (struct hostent *) gethostbyname((char *)"192.255.255.255");
-    host= (struct hostent *) gethostbyname((char *)"192.168.0.255");
+    //host= (struct hostent *) gethostbyname((char *)"192.168.0.255");
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(5000);
     server_addr.sin_addr = *((struct in_addr *)host->h_addr);

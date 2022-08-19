@@ -172,7 +172,7 @@ int ListenAudio(void *rxv)
  // int nn;
   
   
-  unsigned slen=sizeof(sockaddr);
+  socklen_t slen=sizeof(sockaddr);
 
 
     
@@ -183,14 +183,14 @@ int ListenAudio(void *rxv)
     
  	struct sockaddr_in si_me, si_other;
 	int s;
-	assert((s=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP))!=-1);
+	s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	int port=5000;
-	int broadcast=1;
+//	int broadcast=1;
 	//struct hostent *host;
-
+/*
 	setsockopt(s, SOL_SOCKET, SO_BROADCAST,
 				&broadcast, sizeof broadcast);
-				
+*/			
 	 //host= (struct hostent *) gethostbyname((char *)"192.168.0.7");
 
 	memset(&si_me, 0, sizeof(si_me));
@@ -200,7 +200,7 @@ int ListenAudio(void *rxv)
 //	si_me.sin_addr.s_addr =  *((struct in_addr *)host->h_addr);
 
 
-	assert(::bind(s, (sockaddr *)&si_me, sizeof(sockaddr))!=-1);
+	::bind(s, (sockaddr *)&si_me, sizeof(sockaddr));
 	
     if(!rx->cs){
     	fprintf(stderr,"ListenAudio Error\n");

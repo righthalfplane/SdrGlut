@@ -19,13 +19,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\listen.cpp" />
-    <ClCompile Include="..\..\mThreadPC.c">
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">WIN32;_WINDOWS;NOMINMAX;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
+    <ClCompile Include="..\..\Clisten.cpp" />
+    <ClCompile Include="..\..\cStack.cpp" />
+    <ClCompile Include="..\..\main.cpp" />
     <ClCompile Include="..\..\printInfo.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Clisten.h" />
+    <ClInclude Include="..\..\cStack.h" />
+    <ClInclude Include="..\..\firstFile.h" />
     <ClInclude Include="..\..\mThread.h" />
     <ClInclude Include="..\..\SocketDefs.h" />
   </ItemGroup>
