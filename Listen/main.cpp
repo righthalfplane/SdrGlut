@@ -32,6 +32,33 @@ void signalHandler( int signum ) {
 	//exit(0);
 }
 
+int Usage()
+{
+	fprintf(stderr,"Usage:\n");
+	fprintf(stderr," listen.x [options]\n");
+	fprintf(stderr," listen.x -h\n");
+	fprintf(stderr," control-c to stop program\n\n");
+	fprintf(stderr,"Mode:\n");
+	fprintf(stderr,"  -am               Select AM mode\n");
+	fprintf(stderr,"  -fm               Select FM mode\n");
+	fprintf(stderr,"  -nbfm             Select narrow band FM mode\n");
+	fprintf(stderr,"  -usb              Select upper side band\n");
+	fprintf(stderr,"  -lsb              Select lower side band\n");
+	fprintf(stderr,"  -cw               Select CW mode\n");
+	fprintf(stderr,"  -remotespeakers   Select remotespeakers mode\n");
+	fprintf(stderr,"\nAdjustments:\n");
+	fprintf(stderr,"  -debug                   Turn on debug output\n");
+	fprintf(stderr,"  -f  162.4                Set radio frequency to  162.4 MHZ\n");
+	fprintf(stderr,"  -pipe                    Pipe the audio output to sdtout\n");
+	fprintf(stderr,"  -audiodevice 1           Use audio output device one\n");
+	fprintf(stderr,"  -binary                  Write I/Q data to stdout\n\n");
+	fprintf(stderr,"  -p  3500                 listen on port 3500\n\n");
+	fprintf(stderr,"\nPath:\n");
+	fprintf(stderr,"SOAPY_SDR_ROOT\n");
+
+	return 0;
+}
+
 
 int main(int argc,char *argv[])
 {
@@ -64,14 +91,21 @@ int main(int argc,char *argv[])
             l->f=atof(argv[++n]);
         }else if(!strcmp(argv[n],"-p")){
             l->Port=(unsigned int)atof(argv[++n]);
-        }else if(!strcmp(argv[n],"-device")){
+        }else if(!strcmp(argv[n],"-audiodevice")){
             device=(int)atof(argv[++n]);
         }else if(!strcmp(argv[n],"-remotespeakers")){
             remoteSpeakers=1;
+        }else if(!strcmp(argv[n],"-h")){
+            Usage();
+            exit(0);
         }else if(!strcmp(argv[n],"-pipe")){
             l->pipe=1;
         }else if(!strcmp(argv[n],"-binary")){
             l->binary=1;
+        }else{
+            fprintf(stderr,"\nUnknown Command \'%s\'\n\n",argv[n]);
+        	Usage();
+        	exit(0);
 		}
 	}
        

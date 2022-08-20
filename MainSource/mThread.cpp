@@ -15,7 +15,7 @@ int Sleep2(int ms)
 int launchThread(void *data,int (*sageThread)(void *data))
 {
     
-    std::thread (sageThread,data).detach();
+    std::thread(sageThread,data).detach();
     
     return 0;
 }
