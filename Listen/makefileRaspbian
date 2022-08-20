@@ -1,0 +1,11 @@
+CXXFLAGS =  -std=c++11 -O2  -I/usr/include  -I/opt/X11/include -Wall -DGL_SILENCE_DEPRECATION -Wno-return-type-c-linkage -Wno-deprecated-declarations
+
+CCFILES= main.cpp	Clisten.cpp cStack.cpp
+ 
+CCOBJS = main.o	Clisten.o cStack.o
+
+fireball:  ${COBJS} ${CCOBJS}
+	${CXX} ${CFLAGS} -o listen.x ${COBJS} ${CCOBJS}  -lrtaudio -lSoapySDR -lliquid -lpthread
+	rm main.o Clisten.o cStack.o
+
+
