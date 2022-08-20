@@ -3,8 +3,12 @@
 SdrGlut V1.31 - New Remote Speaker Option
 
 What is new ?
+
 ```
-SdrGlut now has a remote speaker option where the audio can be send to any machine on the local network running the listen program. This permits shortwave programs from the SDR connected to an outside antenna to be heard in other rooms. sdrReceive now has a devicestring input for those devices that need it. listen now has the -remotespeakers option to get that mode running.
+SdrGlut now has a remote speaker option where the audio can be send to any machine on the local network running the listen program.
+This permits shortwave programs from the SDR connected to an outside antenna to be heard in other rooms.
+sdrReceive now has a devicestring input for those devices that need it.
+listen now has the -remotespeakers option to get that mode running.
 
 ```
 
