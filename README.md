@@ -1,20 +1,14 @@
 # SdrGlut
 
-SdrGlut V1.30 - New Audio Window has Audio Equalization
+SdrGlut V1.31 - New Remote Speaker Option
 
 What is new ?
 ```
-SdrGlut-1098-Windows.zip is a new Windows 10 zip file with sdrReceiveWindows.exe and mMysticPlot.exe programs. 
-These were added so that people can make and examine the Power Spectrum data from the Icom IC-R8600 and 
-various other SDR receivers.
-
-It now saves audio in WAV format.
-It has a new audio window that reads and plays all of the audio types that the libsndfile library handles.
-The audio window has a seven channel audio equalizer.
+SdrGlut now has a remote speaker option where the audio can be send to any machine on the local network running the listen program. This permits shortwave programs from the SDR connected to an outside antenna to be heard in other rooms. sdrReceive now has a devicestring input for those devices that need it. listen now has the -remotespeakers option to get that mode running.
 
 ```
 
-https://github.com/righthalfplane/SdrGlut/releases/tag/v1.30
+https://github.com/righthalfplane/SdrGlut/releases/tag/v1.31
 
 If you are new to SdrGlut, please view the introduction video -
 - [An Introduction to SdrGlut (A software defined radio)](https://youtu.be/JEXK-r6PvmA)
