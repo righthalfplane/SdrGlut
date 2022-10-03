@@ -28,6 +28,7 @@ SdrGlut has a new Voice Command Module. It can be programed to record any freque
 
 ## Demo videos
 - [An Introduction to SdrGlut (A software defined radio)](https://youtu.be/JEXK-r6PvmA)
+- [The Secret Songs of the Great Pyramid.](https://youtu.be/0uk-aIEWGmQ)
 - [A Small Black Hole passing low over Manhattan.](https://youtu.be/XjadKcJrCeE)
 - [The Secret to Time Travel.](https://youtu.be/TrnJNo5-SJ8)
 - [SdrGlut V1.31 - The New Remote Speaker Option.](https://youtu.be/UwEVdCotV5I)
