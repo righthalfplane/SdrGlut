@@ -474,7 +474,7 @@ int doPlot(BatchPtr Batch,double value,char *label)
     
     zerol((char *)&cp,sizeof(struct CommandInfo));
     
-    BatchNextLine(Batch,line,sizeof(line));
+//    BatchNextLine(Batch,line,sizeof(line));
                   
     for(int n=0;n<nf;++n){
         if(BatchNextLine(Batch,line,sizeof(line)))break;

@@ -17,6 +17,7 @@
 #else
 #include <RtAudio.h>
 #endif
+#include <liquid/liquid.h>
 
 #if __has_include(<hdf/df.h>)
 #include <hdf/df.h>
@@ -232,8 +233,6 @@ struct playData{
     
 
    	volatile int thread; 
-   	
-   	volatile int addItem;
 
  	int al_state;
  	

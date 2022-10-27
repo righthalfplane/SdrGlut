@@ -48,10 +48,12 @@ public:
 	~cDemod();
 	int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
          double streamTime, RtAudioStreamStatus status, void *userData );
-    int dumpCharacters(float *buf,int num);
+         
 	int rxBuffer(void *rxv);
 	int process(struct playData *rxi);
+	int process2(struct playData *rxi);
 	void processAll();
+	void processAll2();
 	struct playData *rx;
 	struct Filters f;
 	float *bAudio;

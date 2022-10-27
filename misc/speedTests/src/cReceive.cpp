@@ -128,9 +128,7 @@ StartWork:
                        
             void *buffs[] = {buff};
 
-            int toRead=rx->size+rx->addItem;
-            
-            rx->addItem=0;
+            int toRead=rx->size;
             
             int count=0;
                  
@@ -156,7 +154,6 @@ StartWork:
 					break;
 				}
             }
-            //fprintf(stderr,"count %ld size %ld ret %ld toRead %ld\n",(long)count,(long)rx->size,(long)ret,(long)toRead);
 	        if(rx->doWhat == Work){
 	        	rx->cs->pushBuff(rx->witch,rx);
 	        	
@@ -208,7 +205,8 @@ int cDemod::sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFr
   short int *buffer = (short int *) outputBuffer;
     
   struct playData *rx=(struct playData *)userData;
-    
+  
+  
   if ( status )fprintf(stderr,"Stream underflow detected!\n");
  
 	int ibuff=-1;
@@ -976,13 +974,11 @@ int cReceive::playRadio(struct playData *rx)
 	
 	//fprintf(stderr,"rx->faudioCount %f\n",rx->faudioCount);
 
-	//launchThread((void *)rx,Process);   	
+	launchThread((void *)rx,Process);   	
 
 	//launchThread((void *)rx,Process); 
 
-	//launchThread((void *)rx,Process);  
-	 	        
-	launchThread((void *)rx,Process);   	        
+	//launchThread((void *)rx,Process);   	        
 
 	Sleep2(100);
  
@@ -1041,7 +1037,7 @@ int cReceive::initPlay(struct playData *rxi)
     
     rx->audioOut=0;
     
-	if(rx->Debug > 1)mprint("    frequency.size %ld\n",(long)frequency.size());
+	printf("    frequency.size %ld\n",(long)frequency.size());
 
 	for (size_t n = 0; n < frequency.size(); n++)
 	{
@@ -1071,7 +1067,6 @@ int cReceive::initPlay(struct playData *rxi)
     	rx->w=2.0*pi*(rx->fc - rx->f);
     	rx->sindt=sin(rx->w*rx->dt);
     	rx->cosdt=cos(rx->w*rx->dt);
-    	if(rx->Debug > 1)mprint("fc %f f %f dt %g samplerate %d\n",rx->fc,rx->f,rx->dt,rx->samplerate);
     }
     
 	if(findRadio(rx) || rx->device == NULL){
@@ -1087,6 +1082,7 @@ int cReceive::initPlay(struct playData *rxi)
 		printAudioInfo(rx);
 		printInfo(rx);
 	}
+    
     
 	return 0;
 }
@@ -1192,7 +1188,7 @@ cReceive::cReceive(int argc, char * argv [])
     rx->amaxGlobal=0;
     rx->averageGlobal=0;
     rx->decodemode = MODE_FM;
-    rx->Debug = 1;
+    rx->Debug = 3;
     rx->ncut = 20;
     rx->rf_gain=0;
     rx->cutOFF=-70;
@@ -1675,75 +1671,7 @@ int cDemod::process(struct playData *rxi)
 	return 0;
 }
 
-int cDemod::dumpCharacters(float *buf,int num){
-    int length=512;
-    double real[length*2];
-    double imag[length*2];
-    
-    rx->addItem=0;
-    
-    for(int n=0;n<length;++n){
-    	real[n]=0.0;
-    	imag[n]=0.0;
-    	if(n >= num)continue;
-    	real[n]=buf[2*n];
-    	imag[n]=buf[2*n+1];
-    }
-    
-    doWindow(real,imag,length,FILTER_BLACKMANHARRIS7);
-    
-    
-   for(int n=0;n<length;++n){
-        real[n] *= pow(-1.0,n);
-        imag[n] *= pow(-1.0,n);
-	}
-    
-    
-    doFFT2(real,imag,length,1);
 
-	int c=0;
-    int found=0;
-	double amin,amax;
-	amin=1e33;
-	amax=-1e33;
-	//printf("plot %d data\n",length);
-	double dx=(double)10000/(double)length;
-    for(unsigned int n=0;n<length;++n){
-       	double v=real[n]*real[n]+imag[n]*imag[n];
-       	if(v > 0.0){
-           	v=sqrt(v);
-       		if(v > amax)amax=v;
-       		if(v < amin)amin=v;
-   		}else{
-    		continue;
-    	}
-    	int nc=-0.5*10000+n*dx;
-    	//printf("%d %f\n",nc,v);
-    
-		if(v > 0.004){
-			//printf(" %d ",nc);
-			if(nc > -2100 && nc < -1900)c |= 128;
-			if(nc > -1600 && nc < -1400)c |= 64;
-			if(nc > -1100 && nc < -900)c |= 32;
-			if(nc > -600 && nc < -400)c |= 16;
-			if(nc > 400 && nc < 600)c |= 8;
-			if(nc > 900 && nc < 1100)c |= 4;
-			if(nc > 1400 && nc < 1600)c |= 2;
-			if(nc > 1900 && nc < 2100)c |= 1;
-			found=1;
-		}
-    
-    	
- 	}
-
-	if(found){
-	   printf(" c %d \n",c);
-	}
-	
-	//printf("amin %f amax %f\n",amin,amax);
-	
-	return 1;
-}
 
 void cDemod::processAll()
 {
@@ -1813,7 +1741,7 @@ void cDemod::processAll()
 
     }else if(rx->decodemode < MODE_USB){
         #define DC_ALPHA 0.99    //ALPHA for DC removal filter ~20Hz Fcut with 15625Hz Sample Rate
-		//dumpCharacters(buf,num);
+
         for(unsigned int n=0;n<num;++n){
             double mag=sqrt(buf[2*n]*buf[2*n]+buf[2*n+1]*buf[2*n+1]);
             double z0=mag + (f.amHistory * DC_ALPHA);
@@ -1825,7 +1753,7 @@ void cDemod::processAll()
    }
    
    msresamp_rrrf_execute(f.iqSampler2, (float *)buf2, num, (float *)buf, &num2);  // interpolate
-      
+   
 /*
 	if(rx->decodemode == MODE_NBFM){
 		for(unsigned int n=0;n<num2;++n){
@@ -2438,7 +2366,7 @@ int setFilters(struct playData *rx,struct Filters *f)
         rx->bw=6000.0;
         mode=LIQUID_AMPMODEM_LSB;
         iflag=1;
-    }else if(rx->decodemode == MODE_CW){
+    }else if(rx->decodemode == MODE_CW){  // Below 10 MHZ
         rx->bw=3000.0;
         mode=LIQUID_AMPMODEM_LSB;
         iflag=1;
