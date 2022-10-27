@@ -128,9 +128,7 @@ StartWork:
                        
             void *buffs[] = {buff};
 
-            int toRead=rx->size+rx->addItem;
-            
-            rx->addItem=0;
+            int toRead=rx->size;
             
             int count=0;
                  
@@ -1737,7 +1735,16 @@ int cDemod::dumpCharacters(float *buf,int num){
  	}
 
 	if(found){
-	   printf(" c %d \n",c);
+	   static int count=0;
+	   if(c >= 33 and c <= 127){
+	       printf(" %c",c);
+	   }else{
+	      printf(" %d",c);
+	   }
+	   if(++count > 32){
+	      printf("\n");
+	      count=0;
+	   }
 	}
 	
 	//printf("amin %f amax %f\n",amin,amax);
