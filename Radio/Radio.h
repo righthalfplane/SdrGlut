@@ -96,7 +96,7 @@ struct playData4{
 
 struct WaterFall4{
     unsigned char *data;
-    unsigned char ic[2*32768];
+    unsigned char ic[2*131072];
     double amin,amax;
     uRect SRect;
     uRect DRect;
@@ -447,8 +447,8 @@ public:
     
     struct ResetInfo reset;
 
-    double real[2*32768*sizeof(double)];
-    double imag[2*32768*sizeof(double)];
+    double real[2*131072*sizeof(double)];
+    double imag[2*131072*sizeof(double)];
     long FFTlength;
 
     CLines *lines;

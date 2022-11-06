@@ -483,7 +483,7 @@ Radio::Radio(struct Scene *scene,SoapySDR::Kwargs deviceArgs): CWindow(scene)
     
     lineAlpha=0.1;
     
-    FFTlength=32768;
+    FFTlength=131072;
     
     range=NULL;
     range3=NULL;
@@ -929,7 +929,7 @@ int Radio::updateLine()
     lineTime=rtime()+lineDumpInterval;
     
     if(rx->controlRF != 2)return 0;
-    
+        
     if(rx->FFTcount > FFTlength){
         printf(" FFTlength %ld\n",FFTlength);
         return 1;
@@ -1962,6 +1962,8 @@ int Radio::OpenWindows(struct Scene *scene)
     glutAddMenuEntry("8192", FFT_8192);
     glutAddMenuEntry("16384", FFT_16384);
     glutAddMenuEntry("32768", FFT_32768);
+    glutAddMenuEntry("65536", FFT_65536);
+    glutAddMenuEntry("131072", FFT_131072);
     
     
     int menu6=glutCreateMenu(doFilterMenu);
@@ -2415,6 +2417,8 @@ void doFFTMenu(int item)
         case FFT_8192:
         case FFT_16384:
         case FFT_32768:
+        case FFT_65536:
+        case FFT_131072:
             ifft=item;
            break;
     }
@@ -2595,8 +2599,17 @@ static void keys2(unsigned char key, int x, int y)
             }else{
                 sdr->scanWait=0;
             }
-        }else if(key == 'o'){
-            ;
+        }else if(key == 't'){
+            float aBuff[6000];
+            for(int n=0;n<6000;++n)aBuff[n]=cos(3.1414*n/200.);
+            double start=rtime();
+            for(int n=0;n<1000;++n){
+              //  doAudio2(aBuff,sdr->rx);
+            }
+
+            double end=rtime();
+            
+            printf("Total Time in processFile %.2f Seconds\n",end-start);
         }
     }
     
@@ -3085,7 +3098,7 @@ static void moveMouse(int x, int y)
 int doWindow(double *x,double *y,long length,int type)
 {
     //double w[length];
-    double w[32768];
+    double w[131072];
     int i;
     
     if(!x || !y)return 1;

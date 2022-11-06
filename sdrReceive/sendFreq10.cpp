@@ -1,7 +1,7 @@
  
-// c++ -std=c++11 -o sendFreq08 sendFreq08.cpp -lSoapySDR -lsndfile -lliquid -Wall -Wno-return-type-c-linkage
-// sendFreq08 "driver=hackrf"
-// sendFreq08 "driver=bladerf"
+// c++ -std=c++11 -o sendFreq10 sendFreq10.cpp -lSoapySDR -lsndfile -lliquid -Wall -Wno-return-type-c-linkage
+// sendFreq10 "driver=hackrf"
+// sendFreq10 "driver=bladerf"
 #include <stdio.h>
 #include <SoapySDR/Device.hpp>
 #include <SoapySDR/Formats.hpp>
@@ -508,8 +508,8 @@ int main(int argc, char** argv)
 
      device->setFrequency(SOAPY_SDR_TX, 0, frequency);
     
-     device->setGain(SOAPY_SDR_TX, 0, 55.0);  // Hackrf
-     // device->setGain(SOAPY_SDR_TX, 0, 35.0);    // Bladerf
+       device->setGain(SOAPY_SDR_TX, 0, 55.0);  // BladeRF
+    // device->setGain(SOAPY_SDR_TX, 0, 60.0);    // Hackrf
 
     SoapySDR::Stream *txStream = device->setupStream(SOAPY_SDR_TX, SOAPY_SDR_CF32, channels);
     
@@ -561,6 +561,7 @@ int main(int argc, char** argv)
     for(int n=0;n<256;++n)letters[n]=n;
     
     int nc=0;
+    int ncc=0;
     
     int tick=1;
     loop = 1;
@@ -577,64 +578,71 @@ int main(int argc, char** argv)
 			}
 
 			if(count == 0){
-			    unsigned char l=letters[nc];
+			    unsigned char l;
 			    
 			    //if(nc++ >= strlen((char *)letters)){
-			    if(nc++ >= 256){
-			    	nc=0;
+			    if(ncc++ >= 255){
+			    	ncc=1;
 			    }
 			    
-			    printf("nc %d l %d\n",nc,l);
+			    nc = ncc;
+			    
+			    l=letters[nc];
+			    
+			    printf("nc %d l %d\n",ncc,l);
+			    
+			    double ton=0.125;
+			    double toff=ton/4.0;
 			    
 			    if(l & 1){
-			        st1->gainSet(0.125);
+			        st1->gainSet(ton);
 			    }else{
-			        st1->gainSet(0.0);			    
+			        st1->gainSet(toff);			    
 			    }
 			    
 			    if(l & 2){
-			        st2->gainSet(0.125);
+			        st2->gainSet(ton);
 			    }else{
-			        st2->gainSet(0.0);			    
+			        st2->gainSet(toff);			    
 			    }
 				
 			    if(l & 4){
-			        st3->gainSet(0.125);
+			        st3->gainSet(ton);
 			    }else{
-			        st3->gainSet(0.0);			    
+			        st3->gainSet(toff);			    
 			    }
 				
 			    if(l & 8){
-			        st4->gainSet(0.125);
+			        st4->gainSet(ton);
 			    }else{
-			        st4->gainSet(0.0);			    
+			        st4->gainSet(toff);			    
 			    }
 				
 			    if(l & 16){
-			        st5->gainSet(0.125);
+			        st5->gainSet(ton);
 			    }else{
-			        st5->gainSet(0.0);			    
+			        st5->gainSet(toff);			    
 			    }
 				
 			    if(l & 32){
-			        st6->gainSet(0.125);
+			        st6->gainSet(ton);
 			    }else{
-			        st6->gainSet(0.0);			    
+			        st6->gainSet(toff);			    
 			    }
 				
 			    if(l & 64){
-			        st7->gainSet(0.125);
+			        st7->gainSet(ton);
 			    }else{
-			        st7->gainSet(0.0);			    
+			        st7->gainSet(toff);			    
 			    }
 				
 			    if(l & 128){
-			        st8->gainSet(0.125);
+			        st8->gainSet(ton);
 			    }else{
-			        st8->gainSet(0.0);			    
+			        st8->gainSet(toff);			    
 			    }
 				
-			}else if(count > 19){
+			}else if(count > 9){
 			    count=-1;
 			}
 			

@@ -74,6 +74,8 @@
 #define FFT_8192 8192
 #define FFT_16384 16384
 #define FFT_32768 32768
+#define FFT_65536 65536
+#define FFT_131072 131072
 
 #define INPUT1 NULL
 //#define INPUT1 "Built-in Audio Digital Stereo (IEC958)"
@@ -123,10 +125,10 @@ struct playData{
     unsigned char start;
     ALCdevice *dev;
     ALCcontext *ctx;
-    double real[2*32768*2];
-    double imag[2*32768*2];
-    double reals[2*32768*2];
-    double imags[2*32768*2];
+    double real[2*131072*2];
+    double imag[2*131072*2];
+    double reals[2*131072*2];
+    double imags[2*131072*2];
     int FFTcount;
     int FFTfilter;
     int wShift;

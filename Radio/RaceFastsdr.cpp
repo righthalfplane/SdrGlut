@@ -30,7 +30,7 @@ static int startPlay(struct playData *rx);
 
 static int stopPlay(struct playData *rx);
 
-static int doFilter(struct playData *rx,float *wBuff,float *aBuff,struct Filters *f);
+int doFilter(struct playData *rx,float *wBuff,float *aBuff,struct Filters *f);
 
 static int doMix(struct playData *rx,float *wBuff,float *aBuff,struct Filters *f);
 
@@ -1194,11 +1194,16 @@ static int Process(void *rxv)
     zerol((unsigned char *)aBuff,2*rx->fOut*4);
 	
 	while(rx->controlAudio >= 0){
+         //double start=rtime();
+
 		if(doFilter(rx,wBuff,aBuff,&f)){
 			Sleep2(40);
 		}else{
 			doAudio(aBuff,rx);
+            //double end=rtime();
+           // printf("Total Time in doFilter %.3f Seconds\n",end-start);
 		}
+        
 	}
 	//printf("Process Done rx->frame %d Thread %d\n",rx->controlAudio,f.thread);
 	
@@ -1348,7 +1353,7 @@ static int setFilters(struct playData *rx,struct Filters *f)
     
 }
 
-static int doFilter(struct playData *rx,float *wBuff,float *aBuff,struct Filters *f)
+int doFilter(struct playData *rx,float *wBuff,float *aBuff,struct Filters *f)
 {
     if(!rx)return 0;
     

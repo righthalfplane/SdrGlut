@@ -1480,6 +1480,7 @@ static int GridPlotLineGrid(struct uGridPlot *b,DOListPtr d)
 		iMove=FALSE;
 	    xl=Line->xShift+Line->xScale*Line->xData[0];
 	    yl=Line->yShift+Line->yScale*Line->yData[0];
+
 		if(!CPlotrPoint(b,&xl,&yl,&xp,&yp)){
 			rMoveTo(xp,yp,d);
 			iMove=TRUE;
@@ -1888,6 +1889,7 @@ static int GridPlotRange(struct uGridPlot *Plot)
 			    if(xx > 0 && xx < xminPlus)xminPlus=xx;
 			    if(yy > 0 && yy < yminPlus)yminPlus=yy;
 		    }
+            //fprintf(stderr,"xmin %f xmax %f ymin %f ymax %f \n",xmin,xmax,ymin,ymax);
 		    if(Line->li.integrate){
 		        WarningPrint("Current Frame : %ld Line Number : %ld  Line Name : %s Line Integral : %g\n",
 		          Line->li.CurrentFrame,n+1,Line->save,Line->li.integral);

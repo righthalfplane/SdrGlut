@@ -1,0 +1,8 @@
+samplerate 10000
+cbandpass butter 8 2.0 500 1500
+response 201
+force sin 10 1000 400
+force sin 10 2500 400
+force sin 10 4000 400
+force ifft 4096 2
+exit

@@ -1698,14 +1698,16 @@ int cDemod::dumpCharacters(float *buf,int num){
     
     
     doFFT2(real,imag,length,1);
-
+    
+    double range=10000*length/(double)num;
+    //double range=9500*length/(double)(num-1);
 	int c=0;
     int found=0;
 	double amin,amax;
 	amin=1e33;
 	amax=-1e33;
 	//printf("plot %d data\n",length);
-	double dx=(double)10000/(double)length;
+	double dx=(double)range/(double)length;
     for(unsigned int n=0;n<length;++n){
        	double v=real[n]*real[n]+imag[n]*imag[n];
        	if(v > 0.0){
@@ -1715,11 +1717,23 @@ int cDemod::dumpCharacters(float *buf,int num){
    		}else{
     		continue;
     	}
-    	int nc=-0.5*10000+n*dx;
+    	int nc=-0.5*range+n*dx;
     	//printf("%d %f\n",nc,v);
-    
-		if(v > 0.004){
-			//printf(" %d ",nc);
+   /*
+		if(v > 0.001){
+			if(nc > -2100 && nc < -1900)c |= 1;
+			if(nc > -1850 && nc < -1650)c |= 2;
+			if(nc > -1600 && nc < -1400)c |= 4;
+			if(nc > -1350 && nc < -1150)c |= 8;
+			if(nc > -1100 && nc < -900)c |= 16;
+			if(nc > -850 && nc < -650)c |= 32;
+			if(nc > -600 && nc < -400)c |= 64;
+			if(nc > -250 && nc < -150)c |= 128;
+			found=1;
+		}
+*/
+
+		if(v > 0.002){
 			if(nc > -2100 && nc < -1900)c |= 128;
 			if(nc > -1600 && nc < -1400)c |= 64;
 			if(nc > -1100 && nc < -900)c |= 32;
@@ -1730,6 +1744,8 @@ int cDemod::dumpCharacters(float *buf,int num){
 			if(nc > 1900 && nc < 2100)c |= 1;
 			found=1;
 		}
+
+
     
     	
  	}
@@ -1737,12 +1753,12 @@ int cDemod::dumpCharacters(float *buf,int num){
 	if(found){
 	   static int count=0;
 	   if(c >= 33 and c <= 127){
-	       printf(" %c",c);
+	     printf(" %c",c);
 	   }else{
-	      printf(" %d",c);
+	     printf(" %d",c);
 	   }
 	   if(++count > 32){
-	      printf("\n");
+	    printf("\n");
 	      count=0;
 	   }
 	}
