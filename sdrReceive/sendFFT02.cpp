@@ -1,7 +1,7 @@
  
-// c++ -std=c++11 -o sendFreq09 sendFreq09.cpp -lSoapySDR -lsndfile -lliquid -Wall -Wno-return-type-c-linkage
-// sendFreq09 "driver=hackrf"
-// sendFreq09 "driver=bladerf"
+// c++ -std=c++11 -o sendFFT02 sendFFT02.cpp -lSoapySDR -lsndfile -lliquid -Wall -Wno-return-type-c-linkage
+// sendFFT02 "driver=hackrf"
+// sendFFT02 "driver=bladerf"
 #include <stdio.h>
 #include <SoapySDR/Device.hpp>
 #include <SoapySDR/Formats.hpp>
@@ -14,6 +14,16 @@
 #include <string.h>
 
 #include <liquid/liquid.h>
+
+#define FILTER_RECTANGULAR     0
+#define FILTER_HANN            1
+#define FILTER_HAMMING         2
+#define FILTER_FLATTOP         3
+#define FILTER_BLACKMANHARRIS  4
+#define FILTER_BLACKMANHARRIS7 5
+
+
+int doWindow(float *x,long length,int type);
 
 class sTone{
 public:
@@ -33,7 +43,7 @@ public:
 };
 sTone::~sTone()
 {
-	printf("~sTone\n");
+	fprintf(stderr,"~sTone\n");
 }
 int sTone::gainSet(double gaini)
 {
@@ -155,14 +165,109 @@ int sourceTone::doSource(short int *buffer,int frames)
 class sourceImpulse : public sourceBase{
 public:
     virtual int doSource(short int *buffer,int frames);
-    virtual ~sourceImpulse(){}
+    virtual ~sourceImpulse();
+    sourceImpulse(int nfft,double frequency);
+    int doFFT(float *buffer,int frames);
+    int forward_fft(float *buffer,long frames,int type);
     int doSource(float *buffer,int frames);
+    int set(double freqSet,double value);
     int fft(float *data,int nn,int isign);
     int d_nfft;
     int d_nend;
     int nrun;
+    double frequency;
+    double *freq;
+    float *out;
+    int nfft;
 
 };
+
+sourceImpulse::sourceImpulse(int nffti,double frequencyi)
+{
+	fprintf(stderr,"sourceImpulse\n");
+	nfft=nffti;
+	frequency=frequencyi;
+	freq=new double[nfft*2];
+	for(int n=0;n<nfft;++n){
+		freq[2*n]=0.0;
+		freq[2*n+1]=0.0;
+	}
+	
+	out=new float[nfft*2];
+
+}
+
+int sourceImpulse::set(double freqSet,double value)
+{
+	int np=(nfft-1)*freqSet/frequency;
+	if(np < 0)np=0;
+	if(np >= nfft)np=nfft-1;
+	freq[2*np]=value;
+	freq[2*np+1]=value;
+	//fprintf(stderr,"np %d freqSet %f value %f nfft %d frequency %f\n",np,freqSet,value,nfft,frequency);
+	return 0;
+}
+
+sourceImpulse::~sourceImpulse()
+{
+	fprintf(stderr,"~sourceImpulse\n");
+	if(freq)delete freq;
+	if(out)delete out;
+}
+
+int sourceImpulse::forward_fft(float *buffer,long length,int type)
+{
+	
+	doWindow(buffer,length,type);
+/*
+   for(int n=0;n<length;++n){
+        buffer[n*2] *= pow(-1.0,n);
+        buffer[n*2+1] *= pow(-1.0,n);
+	}
+*/
+	fft((float *)buffer,length,1);
+	 	  			
+	return length;
+}
+
+int sourceImpulse::doFFT(float *buffer,int frames)
+{
+         
+     if(frames != nfft){
+     	fprintf(stderr,"Error frames %d nfft %d\n",frames,nfft);
+     }
+ 
+ 	for(int n=0;n<nfft*2;++n){
+ 	    out[n]=freq[n];
+	}    
+	
+/*
+   for(int n=0;n<nfft;++n){
+        out[n*2] *= pow(-1.0,n);
+        out[n*2+1] *= pow(-1.0,n);
+	}
+*/	
+     
+	 fft((float *)out,nfft,-1);
+	 
+	 
+	double amin=1e33;
+	double amax=-1e33;
+		
+	for(int n=0;n<nfft;++n){
+	    double v=out[2*n];
+	    if(v > amax)amax=v;
+	    if(v < amin)amin=v;
+		buffer[2*n] = out[2*n];
+		buffer[2*n+1] = out[2*n+1];
+	}
+
+	//printf("amin %g amax %g\n",amin,amax);
+	
+	return frames;
+}
+
+
 int sourceImpulse::doSource(float *buffer,int frames)
 {
 	float out[2*32768];
@@ -374,7 +479,8 @@ public:
 		if(fabs(dmin) > average)average=fabs(dmin);
 				
 		for(int i=0;i<sample_rate;++i){
-			float v=(2.0f*average+mu*in[i]);
+			//float v=(2.0f*average+mu*in[i]);
+			float v=(2.0f*mu*in[i]);
 			
 	        sint=sino*cosdt+coso*sindt;
             cost=coso*cosdt-sino*sindt;
@@ -408,7 +514,7 @@ public:
 #define	BLOCK_SIZE 10000
 
 float buf [BLOCK_SIZE2],r[2*BLOCK_SIZE2];
-float buf2 [BLOCK_SIZE2],r2[2*BLOCK_SIZE2];
+float r2[2*BLOCK_SIZE2];
 float rsave[2*BLOCK_SIZE2],out2save[2*BLOCK_SIZE2];
 float *buffp,*out2;
 
@@ -440,54 +546,34 @@ int main(int argc, char** argv)
 	//if(!out11)exit(1);
 
 	
-	si=new sourceImpulse;
+
+	
+    const double frequency = 310e6;  //center frequency to 500 MHz
+    const double sample_rate = 2e6;    //sample rate to 5 MHz
+    //double freqSSB = 16384;
+    const double freqSSB = 8192;
+    //const double freqSSB = 4096;
+    const double freqAudio=8192;
+    float As = 60.0f;
+    const double level=0.125;
+    
+ 	si=new sourceImpulse(freqSSB,freqAudio);
 	
 	si->nrun=0;
+/*
+	si->set(250,level);
+	si->set(500,level);
+	si->set(750,level);
+	si->set(1000,level);
+	si->set(1250,level);
+	si->set(1500,level);
+	si->set(1750,level);
+	si->set(2000,level);
+*/
+     
+    float *buf2=(float *)malloc(2*sample_rate*10);
 	
-
-	
-    //const double frequency = 462.7125e6;
-    const double frequency = 310.0e6;
-    //const double frequency = 85.5e6;
-    const double sample_rate = 2.0e6;
-    float As = 60.0f;
     
-    //float *buf2=(float *)malloc(2*sample_rate);
-    
-    
-    class sourceTone *st1=new sourceTone;
- 	
- 	st1->tone= new sTone(-2000,sample_rate,0.125);
-
-	class sourceTone *st2=new sourceTone;
- 	
- 	st2->tone= new sTone(-1500,sample_rate,0.125);
- 	
-	class sourceTone *st3=new sourceTone;
- 	
- 	st3->tone= new sTone(-1000,sample_rate,0.125);
- 	
-	class sourceTone *st4=new sourceTone;
- 	
- 	st4->tone= new sTone(-500,sample_rate,0.125);
- 	
-	class sourceTone *st5=new sourceTone;
- 	
- 	st5->tone= new sTone(500,sample_rate,0.125);
- 	
-	class sourceTone *st6=new sourceTone;
- 	
- 	st6->tone= new sTone(1000,sample_rate,0.125);
- 	
-	class sourceTone *st7=new sourceTone;
- 	
- 	st7->tone= new sTone(1500,sample_rate,0.125);
- 	
-	class sourceTone *st8=new sourceTone;
- 	
- 	st8->tone= new sTone(2000,sample_rate,0.125);
- 	
- 	    
     std::string argStr(argv[1]);
     
     std::vector<size_t> channels;
@@ -497,45 +583,52 @@ int main(int argc, char** argv)
     SoapySDR::Device *device = SoapySDR::Device::make(argStr);
     if (device == NULL)
     {
-        printf("No device! Found\n");
+        fprintf(stderr,"No device!\n");
         return EXIT_FAILURE;
     }
 
 
-   device->setSampleRate(SOAPY_SDR_TX, 0, sample_rate);
+   	device->setSampleRate(SOAPY_SDR_TX, 0, sample_rate);
+   
+    fprintf(stderr,"Sample rate: %f MHz\n",sample_rate/1e6 );
 
-    fprintf(stderr,"Sample rate: %g MHZ\n",sample_rate/1e6);
-
-     device->setFrequency(SOAPY_SDR_TX, 0, frequency);
+    //Set center frequency
     
-       device->setGain(SOAPY_SDR_TX, 0, 55.0);  // BladeRF
+	device->setFrequency(SOAPY_SDR_TX, 0, frequency);
+    
+    
+    device->setGain(SOAPY_SDR_TX, 0, 55.0);  // BladeRF
     // device->setGain(SOAPY_SDR_TX, 0, 60.0);    // Hackrf
 
+     
     SoapySDR::Stream *txStream = device->setupStream(SOAPY_SDR_TX, SOAPY_SDR_CF32, channels);
+    //fprintf(stderr,"txStream %p\n",txStream);
     
+    
+    size_t MTU=device->getStreamMTU(txStream);
+    
+      fprintf(stderr,"MTU: %lld\n",(long long)MTU);
+ 
     int ret4=device->activateStream(txStream);
     if(ret4)fprintf(stderr,"ret4 %d\n",ret4);
     
-    size_t MTU=device->getStreamMTU(txStream);
-    fprintf(stderr,"MTU: %ld\n",(long)MTU);
-
 
 	freqmod mod = freqmod_create(0.5); 
 	
 
 	if ((infile = sf_open (infilename, SFM_READ, &sfinfo)) == NULL)
 	{	
-		printf ("Not able to open input file %s.\n", infilename) ;
+		fprintf(stderr,"Not able to open input file %s.\n", infilename) ;
 		puts (sf_strerror (NULL)) ;
 		return 1 ;
 	} ;
 	
-	fprintf(stderr, "Read from file %s.\n", infilename) ;
-	fprintf(stderr,"Number of Channels %d, Sample rate %d\n", sfinfo.channels, sfinfo.samplerate) ;
+	fprintf(stderr, "# Converted from file %s.\n", infilename) ;
+	fprintf(stderr, "# Channels %d, Sample rate %d\n", sfinfo.channels, sfinfo.samplerate) ;
 		
-	float Ratio1 = (float)(12500/ (float)sfinfo.samplerate);
+	float Ratio1 = (float)(freqSSB/ (float)sfinfo.samplerate);
 	
-	float Ratio2 = (float)(sample_rate/(float)12500);
+	float Ratio2 = (float)(sample_rate/(float)freqSSB);
 	
 	fprintf(stderr,"Ratio1 %g Ratio2 %g\n",Ratio1,Ratio2);
 	
@@ -543,181 +636,254 @@ int main(int argc, char** argv)
 	
 	msresamp_crcf iqSampler2  = msresamp_crcf_create(Ratio2, As);
 	
-	ampmodem demodAM = ampmodem_create(0.5, LIQUID_AMPMODEM_DSB, 0);
-	
-	AMmod modulation(0.5);
+	 ampmodem demodAM = ampmodem_create(0.5, LIQUID_AMPMODEM_DSB, 1);
+	 //ampmodem demodAM = ampmodem_create(0.5, LIQUID_AMPMODEM_USB, 1);
+	   //ampmodem demodAM = ampmodem_create(0.5, LIQUID_AMPMODEM_LSB, 1);
+	 
+	 AMmod modulation(0.5);
+	 
 	
 	std::vector<void *> buffs(2);
 	
     int flags(0);
 
-
     signal(SIGINT, sigIntHandler);
     
-    //unsigned char *letters=(unsigned char *)"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    
-    unsigned char letters[256];
+     unsigned char letters[256];
     
     for(int n=0;n<256;++n)letters[n]=n;
     
     int nc=0;
     int ncc=0;
-    
-    int tick=1;
+   
     loop = 1;
 	while(loop){
+			
 		if ((readcount = sf_readf_float (infile, buf, BLOCK_SIZE)) > 0){
 		
-				
-			float *buffp;
+			unsigned int num,num2;
 			
-			readcount=10000;
+			readcount=freqSSB;
 			
-			for(int n=0;n<readcount*2;++n){
-				buf[n]=0;
+			for(int n=0;n<readcount;++n){
+			    buf[2*n]=0;
+			    buf[2*n+1]=0;
 			}
-
-			if(count == 0){
+			
+			if(1){
+			//if(count == 0){
 			    unsigned char l;
-			    
-			    //if(nc++ >= strlen((char *)letters)){
+			
 			    if(ncc++ >= 255){
 			    	ncc=1;
 			    }
 			    
 			    nc = ncc;
 			    
+			    //nc=1;
+			    
 			    l=letters[nc];
 			    
-			    printf("nc %d l %d\n",ncc,l);
+			    fprintf(stderr,"nc %d l %d\n",ncc,l);
 			    
 			    double ton=0.125;
 			    double toff=ton/4.0;
 			    
 			    if(l & 1){
-			        st1->gainSet(ton);
+				    si->set(250,ton);
 			    }else{
-			        st1->gainSet(toff);			    
+			    	si->set(250,toff);
 			    }
 			    
 			    if(l & 2){
-			        st2->gainSet(ton);
+				    si->set(500,ton);
 			    }else{
-			        st2->gainSet(toff);			    
+			    	si->set(500,toff);
 			    }
-				
+			    				
 			    if(l & 4){
-			        st3->gainSet(ton);
+				    si->set(750,ton);
 			    }else{
-			        st3->gainSet(toff);			    
+			    	si->set(750,toff);
 			    }
-				
+			    				
 			    if(l & 8){
-			        st4->gainSet(ton);
+				    si->set(1000,ton);
 			    }else{
-			        st4->gainSet(toff);			    
+			    	si->set(1000,toff);
 			    }
-				
+			    				
 			    if(l & 16){
-			        st5->gainSet(ton);
+				    si->set(1250,ton);
 			    }else{
-			        st5->gainSet(toff);			    
+			    	si->set(1250,toff);
 			    }
-				
+			    				
 			    if(l & 32){
-			        st6->gainSet(ton);
+				    si->set(1500,ton);
 			    }else{
-			        st6->gainSet(toff);			    
+			    	si->set(1500,toff);
 			    }
-				
+			    				
 			    if(l & 64){
-			        st7->gainSet(ton);
+				    si->set(1750,ton);
 			    }else{
-			        st7->gainSet(toff);			    
+			    	si->set(1750,toff);
 			    }
-				
+			    				
 			    if(l & 128){
-			        st8->gainSet(ton);
+				    si->set(2000,ton);
 			    }else{
-			        st8->gainSet(toff);			    
+			    	si->set(2000,toff);
 			    }
-				
-			}else if(count > 9){
+			    								
+			}else if(count > 0){
 			    count=-1;
 			}
+						
+		
+			si->doFFT(buf,readcount);
 			
-				st2->doSource(buf,readcount);
-				st1->doSource(buf,readcount);
-				st3->doSource(buf,readcount);
-				st4->doSource(buf,readcount);
-				st5->doSource(buf,readcount);
-				st6->doSource(buf,readcount);
-				st7->doSource(buf,readcount);
-				st8->doSource(buf,readcount);
+			num=readcount;
+					    
+		    msresamp_crcf_execute(iqSampler2, (liquid_float_complex *)buf, num, (liquid_float_complex *)buf2, &num2);  // decimate
 			
+		    //fprintf(stderr,"num %d num2 %d\n",num,num2);
 			
+			int numcount=num2;
 			
-			//fwrite(buf,8,readcount,out11);
-
-			if(tick == 0){
-			    double dt=1.0/sample_rate;
-			    printf("plot %d signal\n",readcount);
-			    for(int n=0;n<readcount;++n){
-			        printf("%f %f\n",n*dt,buf[2*n]);
-				}
-				tick=1;
-			}
-
-			int numcount=readcount;
-			
-			buffp=buf;
+			float *buffp=buf2;
 			
 			while(numcount > 0){
 				buffs[0] = buffp;
-				int numsend;
-				
-				numsend=numcount;
-				
-				//if(numsend > MTU)numsend=MTU;
 		
-				int ret = device->writeStream(txStream,  &buffs[0], numsend, flags);
+				int ret = device->writeStream(txStream,  &buffs[0], numcount, flags);
 				if (ret <= 0){
-				     printf("writeStream Error ret %d\n",ret);
-					 continue;
+					 printf("writeStream Error ret %d\n",ret);
 				}
-							
+			
 				numcount -= ret;
 				buffp += 2*ret;
 
 			}
-			//printf("count %ld\n",(long)count);
 			count++;
 		}else{
 		     sf_seek(infile,(sf_count_t)0,SEEK_SET);
 		}
 	}
-	
 	fprintf(stderr,"count %ld\n",count);
 
 	sf_close (infile) ;
 	
     freqmod_destroy(mod);
     
-    if(demodAM)ampmodem_destroy(demodAM);
 
-    if(iqSampler)msresamp_rrrf_destroy(iqSampler);
     
-    if(iqSampler2)msresamp_crcf_destroy(iqSampler2);
-
     device->deactivateStream(txStream);
 
     device->closeStream(txStream);
     
     SoapySDR::Device::unmake(device);
     
+    if(demodAM)ampmodem_destroy(demodAM);
+    
+    if(iqSampler)msresamp_rrrf_destroy(iqSampler);
+    
+    if(iqSampler2)msresamp_crcf_destroy(iqSampler2);
+
+    if(si)delete si;
+    
     return 0;
 }
 
+int doWindow(float *x,long length,int type)
+{
+    double w[length];
+    //double w[32768];
+    int i;
+    
+    if(!x)return 1;
+    
+    switch(type){
+            
+        case FILTER_RECTANGULAR:
+
+            for(i=0; i<length; i++)
+                w[i] = 1.0;
+            
+            break;
+            
+
+            
+        case FILTER_HANN:
+            
+            for(i=0; i<length; i++)  {
+#ifdef WINDOWS_LONG_NAMES
+                w[i]=liquid_hann(i, (int)length);
+#else
+                w[i]=hann(i, (int)length);
+#endif
+            }
+            break;
+
+            
+            
+        case FILTER_HAMMING:
+            
+            for(i=0; i<length; i++)  {
+#ifdef WINDOWS_LONG_NAMES
+                w[i]=liquid_hamming(i, (int)length);
+#else
+                w[i]=hamming(i, (int)length);
+#endif
+            }
+            break;
+            
+        case FILTER_FLATTOP:
+            
+            for(i=0; i<length; i++)  {
+#ifdef WINDOWS_LONG_NAMES
+                w[i]=liquid_flattop(i, (int)length);
+#else
+                w[i]=flattop(i, (int)length);
+#endif
+            }
+            break;
+            
+            
+        case FILTER_BLACKMANHARRIS:
+            
+            for(i=0; i<length; i++)  {
+#ifdef WINDOWS_LONG_NAMES
+                w[i]=liquid_blackmanharris(i, (int)length);
+#else
+                w[i]=blackmanharris(i, (int)length);
+#endif
+            }
+            break;
+            
+        case FILTER_BLACKMANHARRIS7:
+            
+            for(i=0; i<length; i++)  {
+#ifdef WINDOWS_LONG_NAMES
+                w[i]=liquid_blackmanharris7(i, (int)length);
+#else
+                w[i]=blackmanharris7(i, (int)length);
+#endif
+            }
+            break;
+    }
+    
+    for(i=0; i<length; i++){
+        double amp;
+        amp=w[i];
+        x[2*i]=amp*x[2*i];
+        x[2*i+1]=amp*x[2*i+1];
+    }
+    
+    return 0;
+    
+}
 
 int Sleep2(int ms)
 

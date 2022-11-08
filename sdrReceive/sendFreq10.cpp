@@ -587,6 +587,8 @@ int main(int argc, char** argv)
 			    
 			    nc = ncc;
 			    
+			    //nc=1;
+			    
 			    l=letters[nc];
 			    
 			    printf("nc %d l %d\n",ncc,l);
