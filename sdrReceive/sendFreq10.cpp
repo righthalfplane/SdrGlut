@@ -2,6 +2,7 @@
 // c++ -std=c++11 -o sendFreq10 sendFreq10.cpp -lSoapySDR -lsndfile -lliquid -Wall -Wno-return-type-c-linkage
 // sendFreq10 "driver=hackrf"
 // sendFreq10 "driver=bladerf"
+// sdrReceive.x -f 230 -am -PPM -0.15 -cutoff -100 -device 2
 #include <stdio.h>
 #include <SoapySDR/Device.hpp>
 #include <SoapySDR/Formats.hpp>
@@ -447,7 +448,7 @@ int main(int argc, char** argv)
 
 	
     //const double frequency = 462.7125e6;
-    const double frequency = 310.0e6;
+    const double frequency = 230.0e6;
     //const double frequency = 85.5e6;
     const double sample_rate = 2.0e6;
     float As = 60.0f;
@@ -508,7 +509,7 @@ int main(int argc, char** argv)
 
      device->setFrequency(SOAPY_SDR_TX, 0, frequency);
     
-       device->setGain(SOAPY_SDR_TX, 0, 55.0);  // BladeRF
+       device->setGain(SOAPY_SDR_TX, 0, 50.0);  // BladeRF
     // device->setGain(SOAPY_SDR_TX, 0, 60.0);    // Hackrf
 
     SoapySDR::Stream *txStream = device->setupStream(SOAPY_SDR_TX, SOAPY_SDR_CF32, channels);

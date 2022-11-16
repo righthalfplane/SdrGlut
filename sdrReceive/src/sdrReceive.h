@@ -288,7 +288,8 @@ struct playData{
 	FILE *out;
 	char *s2dName;
 
-
+	int ichar;
+	
  	unsigned char end;
  	
  	int muteAudio;

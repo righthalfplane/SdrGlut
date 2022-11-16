@@ -541,7 +541,7 @@ int main(int argc, char** argv)
 	
 
 	
-    const double frequency = 310e6;  //center frequency to 500 MHz
+    const double frequency = 230e6;  //center frequency to 500 MHz
     const double sample_rate = 2e6;    //sample rate to 5 MHz
     //double freqSSB = 16384;
     const double freqSSB = 8192;

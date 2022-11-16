@@ -1243,6 +1243,8 @@ cReceive::cReceive(int argc, char * argv [])
 	         rx->gain=atof(argv[++n]);
 	    }else if(!strcmp(argv[n],"-PPM")){
 	         rx->PPM=atof(argv[++n]);
+	    }else if(!strcmp(argv[n],"-ichar")){
+	         rx->ichar=atof(argv[++n]);
 	    }else if(!strcmp(argv[n],"-rf_gain")){
 	         rx->rf_gain=atof(argv[++n]);
 	    }else if(!strcmp(argv[n],"-crop")){
@@ -1678,6 +1680,9 @@ int cDemod::dumpCharacters(float *buf,int num){
     double real[length*2];
     double imag[length*2];
     
+        
+    if(rx->ichar == 0)return 0;
+    
     rx->addItem=0;
     
     for(int n=0;n<length;++n){
@@ -1699,6 +1704,21 @@ int cDemod::dumpCharacters(float *buf,int num){
     
     doFFT2(real,imag,length,1);
     
+     double amax55=-1e33;
+     for(int n=0;n<length;++n){
+        double v=real[n]*real[n]+imag[n]*imag[n];
+        if(v > 0)v=sqrt(v);
+        if(v > amax55)amax55=v;
+ 	}
+
+     for(int n=0;n<length;++n){
+        if(amax55 > 0){
+        	real[n]=real[n]/amax55;
+        	imag[n]=imag[n]/amax55;
+        }
+	}
+  
+    
     double range=10000;
     //double range=9500*length/(double)(num-1);
 	int c=0;
@@ -1719,11 +1739,11 @@ int cDemod::dumpCharacters(float *buf,int num){
     		continue;
     	}
      	if(np == 0){
-     		//printf("plot %d data\n",length);
+     		if(rx->ichar == 2)printf("plot %d data\n",length);
      		np=1;
      	}
-   		float nc=-0.5*range+n*dx;
-    	//printf("%f %f\n",nc,v);
+   		float nc=-0.5*range+n*dx+rx->PPM;
+    	if(rx->ichar == 2)printf("%f %f\n",nc,v);
    /*
 		if(v > 0.001){
 			if(nc > -2100 && nc < -1900)c |= 1;
@@ -1738,7 +1758,7 @@ int cDemod::dumpCharacters(float *buf,int num){
 		}
 */
 
-		if(v > 0.002){
+		if(v > 0.4){
 			if(nc > -2100 && nc < -1900)c |= 128;
 			if(nc > -1600 && nc < -1400)c |= 64;
 			if(nc > -1100 && nc < -900)c |= 32;
@@ -1769,12 +1789,12 @@ int cDemod::dumpCharacters(float *buf,int num){
 	if(found){
 	   static int count=0;
 	   if(c >= 33 and c <= 127){
-	     printf(" %c",c);
+	     if(rx->ichar == 1)printf(" %c",c);
 	   }else{
-	     printf(" %d",c);
+	     if(rx->ichar == 1)printf(" %d",c);
 	   }
 	   if(++count > 32){
-	     printf("\n");
+	     if(rx->ichar == 1)printf("\n");
 	      count=0;
 	   }
 	}
@@ -1845,6 +1865,8 @@ void cDemod::processAll()
     num2=0;
     
     msresamp_crcf_execute(f.iqSampler, (liquid_float_complex *)buf2, rx->size, (liquid_float_complex *)buf, &num);  // decimate
+
+	dumpCharacters(buf,num);
         
     if(rx->decodemode < MODE_AM){
 
@@ -1852,7 +1874,6 @@ void cDemod::processAll()
 
     }else if(rx->decodemode < MODE_USB){
         #define DC_ALPHA 0.99    //ALPHA for DC removal filter ~20Hz Fcut with 15625Hz Sample Rate
-		//dumpCharacters(buf,num);
         for(unsigned int n=0;n<num;++n){
             double mag=sqrt(buf[2*n]*buf[2*n]+buf[2*n+1]*buf[2*n+1]);
             double z0=mag + (f.amHistory * DC_ALPHA);

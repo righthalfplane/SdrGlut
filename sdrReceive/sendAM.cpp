@@ -220,7 +220,7 @@ int main(int argc, char** argv)
 	int readcount;
 	
     //const double frequency = 85.6e6;  //center frequency to 500 MHz
-    const double frequency = 310e6;  //center frequency to 500 MHz
+    const double frequency = 430e6;  //center frequency to 500 MHz
     const double sample_rate = 2e6;    //sample rate to 5 MHz
     const double freqSSB = 10000;
     const double freqAudio=48000;
