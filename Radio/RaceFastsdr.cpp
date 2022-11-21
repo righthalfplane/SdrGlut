@@ -1948,6 +1948,11 @@ int sendAudio(int short *data,int length,struct playData *rx)
 
     host= (struct hostent *) gethostbyname((char *)broadcastname);
     
+    if(!host){
+        fprintf(stderr,"Host %s Not Found - sendAudio uses port 5000 no port should be specified\n",broadcastname);
+        return 1;
+    }
+    
     //host= (struct hostent *) gethostbyname((char *)"127.0.0.1");
     //host= (struct hostent *) gethostbyname((char *)"0.0.0.0");
     // host= (struct hostent *) gethostbyname((char *)"192.255.255.255");
