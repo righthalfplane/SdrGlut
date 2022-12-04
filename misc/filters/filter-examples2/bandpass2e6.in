@@ -1,0 +1,13 @@
+samplerate 2000000
+bandpass butter 14 2.0 495000 505000
+response 201
+force sin 10 400000 2000
+force sin 10 500000 2000
+force sin 10 600000 2000
+exit
+
+bandpass butter 14 2.0 455000 555000
+
+diff
+force impulse 501
+exit

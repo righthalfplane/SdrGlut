@@ -564,6 +564,7 @@ int main(int argc, char** argv)
     int nc=0;
     int ncc=0;
     
+    long int loopCount=0;
     int tick=1;
     loop = 1;
 	while(loop){
@@ -592,7 +593,8 @@ int main(int argc, char** argv)
 			    
 			    l=letters[nc];
 			    
-			    printf("nc %d l %d\n",ncc,l);
+			    printf("nc %d l %d loopCount %ld\n",ncc,l,loopCount);
+				loopCount++;
 			    
 			    double ton=0.125;
 			    double toff=ton/4.0;

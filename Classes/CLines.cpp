@@ -398,17 +398,20 @@ static void moveMouse(int x, int y)
 int CLines::SetFrequency(struct Scene *scene,double f,double bw,int message)
 {
     
-   // printf("CLines::SetFrequency %p f %g\n",scene,f);
     
     CLinesPtr lines=(CLinesPtr)FindScene(scene);
     
     if(!lines)return 1;
     
+   // printf("CLines::SetFrequency %p f %g this %p lines %p bw %f\n",scene,f,this,lines,bw);
+
    // printf("CLines::SetFrequency lines %p sceneSource %p\n",lines,lines->sceneSource);
 
     if(lines->sceneSource){
         lines->Frequency=f;
         lines->BandWidth=bw;
+        //scene->window;
+        glutSetWindow(lines->lines->window);
         glutPostRedisplay();
     }
     return 0;
@@ -759,6 +762,7 @@ void CLines::display(struct Scene *scene)
             
             x=0.5+dpi*lines->Plot->box.x+(Frequency-lines->Plot->xViewMin)*(dpi*lines->Plot->box.xsize)/(lines->Plot->xViewMax-lines->Plot->xViewMin);
             
+           // fprintf(stderr,"BandWidth %f\n",BandWidth);
             box.xsize=6;
             if(BandWidth > 0){
                 int x2;

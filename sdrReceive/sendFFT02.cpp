@@ -415,16 +415,7 @@ L1000:
 		double v=data[i];
 		if(v > amax)amax=v;
 		if(v < amin)amin=v;
-	}
-/*		
-	static int p=0;
-	
-	if(++p > 20){
-	   fprintf(stderr,"amin %g amax %g\n",amin,amax);
-	   p=0;
-	}
-*/		
-	
+	}	
 	return 0;
 }
 
@@ -607,7 +598,7 @@ int main(int argc, char** argv)
     
     size_t MTU=device->getStreamMTU(txStream);
     
-      fprintf(stderr,"MTU: %lld\n",(long long)MTU);
+    fprintf(stderr,"MTU: %lld\n",(long long)MTU);
  
     int ret4=device->activateStream(txStream);
     if(ret4)fprintf(stderr,"ret4 %d\n",ret4);
@@ -746,7 +737,7 @@ int main(int argc, char** argv)
 			
 			num=readcount;
 					    
-		    msresamp_crcf_execute(iqSampler2, (liquid_float_complex *)buf, num, (liquid_float_complex *)buf2, &num2);  // decimate
+		    msresamp_crcf_execute(iqSampler2, (liquid_float_complex *)buf, num, (liquid_float_complex *)buf2, &num2); 
 			
 		    //fprintf(stderr,"num %d num2 %d\n",num,num2);
 			

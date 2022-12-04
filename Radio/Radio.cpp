@@ -1475,6 +1475,7 @@ int Radio::setFrequency2(struct playData *rx)
         }
         
         setFrequency3(rx);
+        
         adjustView(0);
         
     }
@@ -2234,34 +2235,41 @@ void setMode(int item)
     switch(item){
         case MODE_AM:
             sdr->rx->decodemode = MODE_AM;
+            sdr->rx->bw = 10000;
             break;
         case MODE_NAM:
             sdr->rx->decodemode = MODE_NAM;
-            break;
+            sdr->rx->bw = 5000;
+          break;
         case MODE_USB:
             sdr->lines->wShift = 1;
             if(sdr->lines2)sdr->lines2->wShift = 1;
             sdr->rx->wShift = 1;
             sdr->rx->decodemode = MODE_USB;
+            sdr->rx->bw = 6000;
             break;
         case MODE_LSB:
             sdr->lines->wShift  = -1;
             if(sdr->lines2)sdr->lines2->wShift = -1;
             sdr->rx->wShift = -1;
             sdr->rx->decodemode = MODE_LSB;
+            sdr->rx->bw = 6000;
             break;
         case MODE_CW:
             sdr->lines->wShift  = -1;
             if(sdr->lines2)sdr->lines2->wShift = -1;
             sdr->rx->wShift = -1;
             sdr->rx->decodemode = MODE_CW;
+            sdr->rx->bw = 500;
             break;
         case MODE_FM:
             sdr->rx->decodemode = MODE_FM;
+            sdr->rx->bw = 200000;
              break;
         case MODE_NBFM:
             sdr->rx->decodemode = MODE_NBFM;
-            break;
+            sdr->rx->bw = 12500;
+           break;
     }
     sdr->resetDemod();
 
@@ -2506,16 +2514,20 @@ int Radio::resetDemod()
     }
     
     myAppl->rx->psdrSetMode(myAppl->rx);
-
-    myAppl->setFrequency2(myAppl->rx);
-    
-   // myAppl->rx->pstopPlay(myAppl->rx);
-    
-   // myAppl->rx->pstartPlay(myAppl->rx);
-    
-    //myAppl->rx->pplayRadio(myAppl->rx);
-    
+        
     myAppl->water.nline=0;
+        
+    setFrequency(rx->f);
+        
+    if(FindScene(scenel2)){
+        SetFrequencyGlobal(scenel2, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
+    }
+    
+    if(FindScene(scenel)){
+        SetFrequencyGlobal(scenel, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
+    }
+    
+    adjustView(0);
     
     return 0;
 }
