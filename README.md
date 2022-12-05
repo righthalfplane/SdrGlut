@@ -28,7 +28,7 @@ SdrGlut has a new Voice Command Module. It can be programed to record any freque
 
 ## Demo videos
 - [An Introduction to SdrGlut (A software defined radio)](https://youtu.be/JEXK-r6PvmA)
-- [Transmitting and Receiving NBFM using SoapySDR](https://youtu.be/CUta4OpZc00)
+- [Sending Two Or More Data Streams With gnuradio-companion.](https://youtu.be/g0wN2VcWnA4)
 - [Music from the ASCII Character Set and a Challenge.](https://youtu.be/RjL23ykfkYo)
 - [The Secret Songs of the Great Pyramid.](https://youtu.be/0uk-aIEWGmQ)
 - [A Small Black Hole passing low over Manhattan.](https://youtu.be/XjadKcJrCeE)
@@ -107,7 +107,6 @@ SdrGlut has a new Voice Command Module. It can be programed to record any freque
 - [SdrGlut sends I/Q data over the internet to the Listen program](https://youtu.be/xxTIfCEYSug)
 - [Designing Digital Filters using SdrGlut - Part 1](https://youtu.be/MM7lI3RyWxg)
 - [SdrGlut scans SDRs to look for and save stations for playback](https://youtu.be/HGv9suKBJU8)
-- [SdrGlut Looks at signals around 450MHZ - What Are They ?](https://youtu.be/zt7G_6yNRcE)
 - [SdrGlut captures GPS data for playback and analysis.](https://youtu.be/gAJw4ciOgQY)
 - [Installing  gnss-sdr a software radio for processing satellite signal data](https://youtu.be/qfOcMfVFw3k)
 - [SdrGlut uses SoapyRemote to play a remote Software Defined Radio](https://youtu.be/Z6yNH2zKDRo)
