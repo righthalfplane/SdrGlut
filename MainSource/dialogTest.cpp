@@ -8,8 +8,7 @@ int dialogTest(void);
      struct SceneList *list;
      struct Scene *scene;
      int FileType;
-     
-
+          
      FileType=FileTypeSdrReceive;
      list=SceneNext();
      if(list == NULL)

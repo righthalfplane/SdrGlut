@@ -39,7 +39,7 @@ static void control_cb(int control);
 
 static void control_cb2(int control);
 
-char *ProgramVersion=(char *)"SdrGlut-1138";
+char *ProgramVersion=(char *)"SdrGlut-1139";
 
 extern "C" struct Scene *sceneRoot(void);
 
@@ -223,7 +223,7 @@ int dialogStart(void)
     
     new GLUI_Button(glui, "Close", 3, control_cb);
 
- //   new GLUI_Button(glui, "Test", 9, control_cb);
+    //new GLUI_Button(glui, "Test", 9, control_cb);
     
     new GLUI_Button(glui, "Help", 2, control_cb);
 
@@ -262,7 +262,7 @@ static void control_cb(int control)
           doRadioOpenRA(argStr);
     }else if(control == 9){
         int dialogTest(void);
-//        dialogTest();
+        dialogTest();
     } else if(control == 1)
 	{
 		
@@ -297,7 +297,7 @@ static int doAbout(void)
 	p->set_alignment(GLUI_ALIGN_CENTER);
 		
 	new GLUI_StaticText(glui2, ""); 
-	p = new GLUI_StaticText(glui2, "Copyright 2011-2022 Dale Ranta. All rights reserved."); 
+	p = new GLUI_StaticText(glui2, "Copyright 2011-2023 Dale Ranta. All rights reserved.");
 	p->set_alignment(GLUI_ALIGN_CENTER);
 	
 	new GLUI_Button(glui2, "Close", 3, control_cb2); 

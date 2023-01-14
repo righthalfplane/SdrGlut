@@ -1461,6 +1461,8 @@ static int doMix(struct playData *rx,float *buf,float *buf2,struct Filters *f)
 
     double sint,cost;
     
+    static double t=0;
+    
     for (int k = 0 ; k < rx->size ; k++){
         float r = (float)(scale*buf[k * 2]);
         float i = (float)(scale*buf[k * 2 + 1]);
