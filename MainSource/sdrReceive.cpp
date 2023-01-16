@@ -150,6 +150,8 @@ int SdrReceive::OpenWindows(struct Scene *scene)
     glShadeModel(GL_SMOOTH);
     
     testEM();
+    
+    glutPostRedisplay();
 
    return 0;
 }
@@ -282,7 +284,7 @@ static void displayc(void)
     SdrReceivePtr s = (SdrReceivePtr)FindWindow2(window);
     if(!s)return;
     
-    //fprintf(stderr,"glut %d win1 %d win %d\n",glutGetWindow(),images->window1,list->window);
+    fprintf(stderr,"glut %d s->width %d\n",glutGetWindow(),s->width);
     
    // s->Display(scene);
     
@@ -315,7 +317,7 @@ static void displayc(void)
         
         char value[256];
         
-            msprintf(value,sizeof(value),"F: %010ld Hz CF: %010ld Hz Power: %.0f db",f,fc,0);
+        msprintf(value,sizeof(value),"F: %010ld Hz CF: %010ld Hz Power: %.0f db",f,fc,0);
 
         uSetRect(&s->boxFrequency,0,s->height,s->width,28);
         
@@ -376,6 +378,8 @@ static void myReshape(int wscr, int hscr)
     
     SdrReceivePtr s = (SdrReceivePtr)FindWindow2(window);
     if(!s)return;
+    
+    fprintf(stderr,"myReshape\n");
     
     s->width=wscr; s->height=hscr;
     glViewport(0,0,(GLsizei)s->width,(GLsizei)s->height);

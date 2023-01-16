@@ -14,8 +14,8 @@
             filePath = "Radio/RaceFastsdr.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1724"
-            endingLineNumber = "1724"
+            startingLineNumber = "1722"
+            endingLineNumber = "1722"
             landmarkName = "findRadio(rx)"
             landmarkType = "9">
          </BreakpointContent>
@@ -46,8 +46,8 @@
             filePath = "Radio/RaceFastsdr.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1964"
-            endingLineNumber = "1964"
+            startingLineNumber = "1962"
+            endingLineNumber = "1962"
             landmarkName = "sendAudio(data, length, rx)"
             landmarkType = "9">
          </BreakpointContent>

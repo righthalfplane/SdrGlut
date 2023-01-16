@@ -39,7 +39,7 @@ static void control_cb(int control);
 
 static void control_cb2(int control);
 
-char *ProgramVersion=(char *)"SdrGlut-1139";
+char *ProgramVersion=(char *)"SdrGlut-1140";
 
 extern "C" struct Scene *sceneRoot(void);
 
@@ -262,7 +262,7 @@ static void control_cb(int control)
           doRadioOpenRA(argStr);
     }else if(control == 9){
         int dialogTest(void);
-        dialogTest();
+       // dialogTest();
     } else if(control == 1)
 	{
 		
