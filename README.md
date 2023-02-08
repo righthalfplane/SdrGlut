@@ -28,6 +28,7 @@ SdrGlut has a new Voice Command Module. It can be programed to record any freque
 
 ## Demo videos
 - [An Introduction to SdrGlut (A software defined radio)](https://youtu.be/JEXK-r6PvmA)
+- [The World's Best Fly Swatter.](https://youtu.be/cStW4t8zLOk)
 - [Sending Two Or More Data Streams With gnuradio-companion.](https://youtu.be/g0wN2VcWnA4)
 - [Music from the ASCII Character Set and a Challenge.](https://youtu.be/RjL23ykfkYo)
 - [The Secret Songs of the Great Pyramid.](https://youtu.be/0uk-aIEWGmQ)
