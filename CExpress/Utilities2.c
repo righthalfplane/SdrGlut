@@ -300,7 +300,6 @@ int FloatToImage(double *d,long length,struct paletteDraw *pd,unsigned char *bp)
         dmin=pd->sPmin;
         dmax=pd->sPmax;
 
-
         dolog = 0;
 
         if(pd->sType == 0){
@@ -365,6 +364,7 @@ int FloatToImage(double *d,long length,struct paletteDraw *pd,unsigned char *bp)
                     }
 
                     v=(int)(a*r+b);
+                    
 
                     if(v < 2){
                         v=2;

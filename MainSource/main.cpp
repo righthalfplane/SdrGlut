@@ -39,7 +39,7 @@ static void control_cb(int control);
 
 static void control_cb2(int control);
 
-char *ProgramVersion=(char *)"SdrGlut-1140";
+char *ProgramVersion=(char *)"SdrGlut-1154";
 
 extern "C" struct Scene *sceneRoot(void);
 
@@ -70,6 +70,8 @@ struct audioInfo audioStruct;
 static int doHelp1();
 
 int WriteToHelpWindow(char *message);
+
+int dialogFileOpenAres(Scene *name);
 
 int WriteToHelpTop();
 
@@ -218,12 +220,12 @@ int dialogStart(void)
 			
     new GLUI_Button(glui, "Radio", 8, control_cb);
     
+   // new GLUI_Button(glui, "Audio", 9, control_cb);
 
     new GLUI_Button(glui, "Files", 5, control_cb);
     
     new GLUI_Button(glui, "Close", 3, control_cb);
 
-    //new GLUI_Button(glui, "Test", 9, control_cb);
     
     new GLUI_Button(glui, "Help", 2, control_cb);
 
@@ -261,8 +263,9 @@ static void control_cb(int control)
           argStr=text1;
           doRadioOpenRA(argStr);
     }else if(control == 9){
-        int dialogTest(void);
-       // dialogTest();
+        //int dialogTest(void);
+        //dialogTest();
+       // dialogFileOpenAres(NULL);
     } else if(control == 1)
 	{
 		
@@ -447,8 +450,7 @@ int main (int argc, char *argv[]) {
     if(!GetWorking(ApplicationDirectory,sizeof(ApplicationDirectory))){
         WarningPrint("scan_dir  Working directory error %s\n",ApplicationDirectory);
     }
-    
-    
+        
     dialogStart();
     
     glutTimerFunc(50,timer,50);

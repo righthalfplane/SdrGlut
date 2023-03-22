@@ -21,7 +21,11 @@ public:
     virtual ~SdrReceive();
     virtual int OpenWindows(struct Scene *scene);
     int getMouse(int button, int state, int x, int y);
+    int Reshape(int wscr, int hscr);
+    int BackGroundEvents(struct Scene *scene);
+    int moveMouse(int x, int y);
     int drawAxis();
+    int display();
     int backGroundEvents;
     int width,height;
     uRect boxFrequency;

@@ -36,6 +36,7 @@
 #define FileTypeLines              21
 #define FileTypeSdrReceive         22
 #define FileTypeAudio              23
+#define FileTypeAudio2             24
 
 #define DrawTypeNone 0
 #define DrawTypePixel 1

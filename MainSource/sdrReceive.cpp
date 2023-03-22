@@ -18,10 +18,11 @@ int testEM(void);
 
 int DrawLine3(int x1, int y1, int x2, int y2);
 
-static void moveMouse(int x, int y);
+static void moveMousec(int x, int y);
 
 extern "C" int DrawLine(int x1, int y1, int x2, int y2);
-
+#define close 30
+#define quit 31
 SdrReceive::SdrReceive(struct Scene *scene,SoapySDR::Kwargs deviceArgs): CWindow(scene)
 {
     OpenError=TRUE;
@@ -73,6 +74,11 @@ int SdrReceive::drawAxis()
 
     }
     
+    int length=rx->FFTcount;
+ //   unsigned char *wateric=(unsigned char *)dose;
+
+
+    
     DrawLine3(70, (int)scene->yResolution-height/2+20, width, (int)scene->yResolution-height/2+20);
     DrawLine3(70, (int)scene->yResolution-height/2+50, width, (int)scene->yResolution-height/2+50);
     DrawLine3(70, (int)scene->yResolution-height/2+80, width, (int)scene->yResolution-height/2+80);
@@ -101,6 +107,21 @@ int DrawLine3(int x1, int y1, int x2, int y2)
     return 0;
 }
 
+static void palette_select(int item)
+{
+    
+    int window=glutGetWindow();
+    SdrReceivePtr s = (SdrReceivePtr)FindWindow2(window);
+    if(!s)return;
+
+    printf("item %d\n",item);
+    
+    if(item == close){
+      //  s->closeScenes();
+    }
+    if(item == quit)dialogQuitC();
+
+}
 
 int SdrReceive::OpenWindows(struct Scene *scene)
 {
@@ -133,7 +154,50 @@ int SdrReceive::OpenWindows(struct Scene *scene)
     glutReshapeFunc(myReshape);
     glutMouseFunc(getMousel);
     glutDisplayFunc(displayc);
-    glutMotionFunc(moveMouse);
+    glutMotionFunc(moveMousec);
+
+    int palette_menu=glutCreateMenu(palette_select);
+    
+    glutAddMenuEntry("Apricot Blue->Pink", 0);
+    glutAddMenuEntry("Carnation Red->White", 1);
+    glutAddMenuEntry("Ether Blue->Yellow", 2);
+    glutAddMenuEntry("GrayScale", 3);
+    glutAddMenuEntry("GrayScale-Banded", 4);
+    glutAddMenuEntry("GrayScale-Inverted", 5);
+    glutAddMenuEntry("Hot Metal", 6);
+    glutAddMenuEntry("Lava Waves", 7);
+    glutAddMenuEntry("Macintosh System Table", 8);
+    glutAddMenuEntry("Malachite Green->Blue", 9);
+    glutAddMenuEntry("Morning Glory Blue->Tan", 10);
+    glutAddMenuEntry("PeanutButter&Jelly", 11);
+    glutAddMenuEntry("Ps", 12);
+    glutAddMenuEntry("Purple Haze", 13);
+    glutAddMenuEntry("Rainbow", 14);
+    glutAddMenuEntry("Rainbow-Banded", 15);
+    glutAddMenuEntry("Rainbow-High Black", 16);
+    glutAddMenuEntry("Rainbow-Inverted", 17);
+    glutAddMenuEntry("Rainbow-Low Black", 18);
+    glutAddMenuEntry("Rainbow-Striped", 19);
+    glutAddMenuEntry("Saturn PastelYellow->Purple", 20);
+    glutAddMenuEntry("Seismic Blue->White->Red", 21);
+    glutAddMenuEntry("Space Black->Purple->Yellow", 22);
+    glutAddMenuEntry("Supernova Green->Purple->Yellow", 23);
+    glutAddMenuEntry("System", 24);
+    glutAddMenuEntry("Green-White", 27);
+
+    int menu3=glutCreateMenu(palette_select);
+    glutAddMenuEntry("About", 28);
+
+    glutAddSubMenu("Palette", palette_menu);
+
+    
+
+    glutAddMenuEntry("--------------------", -1);
+    glutAddMenuEntry("Close", close);
+    glutAddMenuEntry("Quit", quit);
+
+
+    glutAttachMenu(GLUT_RIGHT_BUTTON);
 
     glutSetCursor( GLUT_CURSOR_TEXT );
 
@@ -247,11 +311,11 @@ int SdrReceive::getMouse(int button, int state, int x, int y)
     glutPostRedisplay();
     return 0;
 }
-static void moveMouse(int x, int y)
+
+int SdrReceive::moveMouse(int x, int y)
 {
-    int window=glutGetWindow();
-    SdrReceivePtr s = (SdrReceivePtr)FindWindow2(window);
-    if(!s)return;
+    SdrReceivePtr s = this;
+    if(!s)return 1;
     
     printf("moveMouse x %d y %d\n",x,y);
 
@@ -263,7 +327,7 @@ static void moveMouse(int x, int y)
     
     scene=s->scene;
     
-    if(!scene)return;
+    if(!scene)return 1;
     
     if(uPtInRect(&p,&s->xAxis)){
 
@@ -277,26 +341,32 @@ static void moveMouse(int x, int y)
         
         printf("fc %g\n",s->rx->fc);
     }
+    
+    return 0;
 }
-static void displayc(void)
+int SdrReceive::BackGroundEvents(struct Scene *scene)
 {
-    int window=glutGetWindow();
-    SdrReceivePtr s = (SdrReceivePtr)FindWindow2(window);
-    if(!s)return;
+    if(!scene || !backGroundEvents)return 1;
+    //fprintf(stderr,"BackGroundEvents %d \n",backGroundEvents);
+    if(backGroundEvents == 1)display();
+    backGroundEvents=2;
+   return 0;
+}
+
+int SdrReceive::display(void)
+{
+    SdrReceivePtr s = (SdrReceivePtr)this;
+    if(!s)return 1;
     
     fprintf(stderr,"glut %d s->width %d\n",glutGetWindow(),s->width);
-    
-   // s->Display(scene);
-    
-    //glPixelStorei(GL_UNPACK_ALIGNMENT,1);
-    
+        
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
-    glClearColor(0.0, 0.0, 1.0, 0.0);
+    //glClearColor(1.0, 0.0, 0.0, 0.0);
     
     glRasterPos2i(0,0);
     
-    glColor3f(1.0,1.0,1.0);
+    glColor3f(0.0,0.0,0.0);
     
     unsigned long f,fc;
     
@@ -317,23 +387,29 @@ static void displayc(void)
         
         char value[256];
         
+
+        
         msprintf(value,sizeof(value),"F: %010ld Hz CF: %010ld Hz Power: %.0f db",f,fc,0);
 
         uSetRect(&s->boxFrequency,0,s->height,s->width,28);
         
-        DrawBox(&s->boxFrequency,(int)0);
+        //DrawBox(&s->boxFrequency,(int)0);
 
         DrawString(20, (int)s->scene->yResolution-20, value, 0);
         
         uSetRect(&s->xAxis,0,s->height/2,s->width,20);
         
-        DrawBox(&s->xAxis,(int)0);
+        //DrawBox(&s->xAxis,(int)0);
         
  //       DrawString(20, (int)s->scene->yResolution-s->height/2-15, value, 3);
         
-        uSetRect(&s->yAxis,0,s->height-28,70,s->height/2-27);
-        DrawBox(&s->yAxis,(int)0);
+        glColor3f(1.0,0.0,0.0);
         
+        uSetRect(&s->yAxis,0,s->height-28,70,s->height/2-27);
+  //      DrawBox(&s->yAxis,(int)0);
+        
+        glColor3f(0.0,0.0,0.0);
+
         s->drawAxis();
 
     }
@@ -341,6 +417,7 @@ static void displayc(void)
     
     glutSwapBuffers();
     
+    return 0;
 }
 
 static int DrawString(int x, int y, char *out,int which)
@@ -371,15 +448,14 @@ static int DrawString(int x, int y, char *out,int which)
     return 0;
 }
 
-static void myReshape(int wscr, int hscr)
+int SdrReceive::Reshape(int wscr, int hscr)
 {
     double xmin,ymin,xmax,ymax;
-    int window=glutGetWindow();
     
-    SdrReceivePtr s = (SdrReceivePtr)FindWindow2(window);
-    if(!s)return;
+    SdrReceivePtr s = this;
+    if(!s)return 1;
     
-    fprintf(stderr,"myReshape\n");
+    fprintf(stderr,"Reshape\n");
     
     s->width=wscr; s->height=hscr;
     glViewport(0,0,(GLsizei)s->width,(GLsizei)s->height);
@@ -401,7 +477,10 @@ static void myReshape(int wscr, int hscr)
     s->scene->xResolution=s->width;
     
     s->scene->yResolution=s->height;
+    
+    return 0;
 }
+
 static void GridPlotNeat(double *xmnc,double *xmxc,double *Large,double *Small)
 {
     
@@ -449,6 +528,30 @@ static void GridPlotNeat(double *xmnc,double *xmxc,double *Large,double *Small)
     
     *xmxc=xmax;
 
+}
+static void moveMousec(int x, int y)
+{
+    int window=glutGetWindow();
+    SdrReceivePtr s = (SdrReceivePtr)FindWindow2(window);
+    if(!s)return;
+    s->moveMouse(x,y);
+}
+static void displayc(void)
+{
+    int window=glutGetWindow();
+    SdrReceivePtr s = (SdrReceivePtr)FindWindow2(window);
+    if(!s)return;
+    s->display();
+}
+
+static void myReshape(int wscr, int hscr)
+{
+    int window=glutGetWindow();
+    
+    SdrReceivePtr s = (SdrReceivePtr)FindWindow2(window);
+    if(!s)return;
+    
+    s->Reshape(wscr,hscr);
 }
 
 static void getMousel(int button, int state, int x, int y)

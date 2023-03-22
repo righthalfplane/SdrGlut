@@ -74,6 +74,7 @@
 		46B4EB1B2212570900041F98 /* cMalloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 46B4EB192212570900041F98 /* cMalloc.c */; };
 		46B4EB1C2212570900041F98 /* Utilities.c in Sources */ = {isa = PBXBuildFile; fileRef = 46B4EB1A2212570900041F98 /* Utilities.c */; };
 		46C36C52222596D90045691F /* DialogSave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46C36C51222596D90045691F /* DialogSave.cpp */; };
+		46CDCD6929A7CB4500D7FB0C /* DialogFileOpenAres.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 465991E629A7CA3700B9D2CF /* DialogFileOpenAres.cpp */; };
 		46CE01A52212597700140F6C /* SceneList.c in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01A42212597700140F6C /* SceneList.c */; };
 		46CE01A8221259BF00140F6C /* CWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01A6221259BF00140F6C /* CWindow.cpp */; };
 		46CE01AC22125C8400140F6C /* FFT2.c in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01A922125C8400140F6C /* FFT2.c */; };
@@ -91,6 +92,7 @@
 		46CE01DF22126AD100140F6C /* BackgroundQ.c in Sources */ = {isa = PBXBuildFile; fileRef = 46CE01DD22126AD100140F6C /* BackgroundQ.c */; };
 		46DA4763248463CE0013FD0D /* send.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46DA4762248463CE0013FD0D /* send.cpp */; };
 		46E216E923EE4300002C059A /* Transmit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46E216E723EE4300002C059A /* Transmit.cpp */; };
+		46FA18A129A7C07600367A15 /* Audio2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46FA18A029A7C07600367A15 /* Audio2.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -142,6 +144,7 @@
 		4644187922126CC800F625B7 /* Xappl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Xappl.h; path = CExpress/Xappl.h; sourceTree = "<group>"; };
 		464918A120E53121008BDC72 /* libliquid.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libliquid.a; sourceTree = "<group>"; };
 		46543CC0246D9D77000DDD71 /* BatchFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BatchFile.cpp; path = digital/BatchFile.cpp; sourceTree = SOURCE_ROOT; };
+		465991E629A7CA3700B9D2CF /* DialogFileOpenAres.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DialogFileOpenAres.cpp; sourceTree = "<group>"; };
 		465F36E5281ECCD5006DD1CD /* LoadFiles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LoadFiles.h; path = MainSource/LoadFiles.h; sourceTree = "<group>"; };
 		4664F28C1DA95E6E00BBF9EB /* libSoapySDR.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libSoapySDR.dylib; path = ../../../../usr/local/lib/libSoapySDR.dylib; sourceTree = "<group>"; };
 		4672B31E22126D0D00668D72 /* Limits2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Limits2.h; path = CExpress/Limits2.h; sourceTree = "<group>"; };
@@ -239,6 +242,8 @@
 		46DA4762248463CE0013FD0D /* send.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = send.cpp; sourceTree = "<group>"; };
 		46E216E723EE4300002C059A /* Transmit.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Transmit.cpp; path = Classes/Transmit.cpp; sourceTree = SOURCE_ROOT; };
 		46E216E823EE4300002C059A /* Transmit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Transmit.h; path = Classes/Transmit.h; sourceTree = SOURCE_ROOT; };
+		46FA189F29A7C07600367A15 /* Audio2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Audio2.h; sourceTree = "<group>"; };
+		46FA18A029A7C07600367A15 /* Audio2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Audio2.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -278,7 +283,10 @@
 		462A2643222845730042A6BE /* SdrFile */ = {
 			isa = PBXGroup;
 			children = (
+				465991E629A7CA3700B9D2CF /* DialogFileOpenAres.cpp */,
 				46401F5E281EC6AF000EDDC2 /* AudioFile.cpp */,
+				46FA18A029A7C07600367A15 /* Audio2.cpp */,
+				46FA189F29A7C07600367A15 /* Audio2.h */,
 				46401F61281EC6AF000EDDC2 /* AudioFile.h */,
 				46401F60281EC6AF000EDDC2 /* DialogAudioFile.cpp */,
 				46401F5F281EC6AF000EDDC2 /* DialogAudioFile.h */,
@@ -537,6 +545,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				46CDCD6929A7CB4500D7FB0C /* DialogFileOpenAres.cpp in Sources */,
 				468D261C2238A04D005BE154 /* RecordIQ.cpp in Sources */,
 				467FE4041C2C4F9B007D260F /* glui_control.cpp in Sources */,
 				468120D2222597CE00926B96 /* DialogFolder.cpp in Sources */,
@@ -595,6 +604,7 @@
 				46CE01B622125D8400140F6C /* Scene.c in Sources */,
 				467FE4121C2C4F9B007D260F /* glui_statictext.cpp in Sources */,
 				467FE3FF1C2C4F9B007D260F /* glui_bitmaps.cpp in Sources */,
+				46FA18A129A7C07600367A15 /* Audio2.cpp in Sources */,
 				46B4EB1C2212570900041F98 /* Utilities.c in Sources */,
 				467FE4001C2C4F9B007D260F /* glui_button.cpp in Sources */,
 				467FE4111C2C4F9B007D260F /* glui_spinner.cpp in Sources */,
@@ -755,6 +765,7 @@
 					/usr/local/lib,
 					"$(PROJECT_DIR)",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
@@ -780,6 +791,7 @@
 					/usr/local/lib,
 					"$(PROJECT_DIR)",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",

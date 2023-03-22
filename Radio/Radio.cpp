@@ -1911,7 +1911,7 @@ int Radio::OpenWindows(struct Scene *scene)
     glutAddMenuEntry("Supernova Green->Purple->Yellow", 23);
     glutAddMenuEntry("System", 24);
     glutAddMenuEntry("Green-White", 27);
-    
+
     
     int menu3=glutCreateMenu(setMode);
     glutAddMenuEntry("AM", MODE_AM);
@@ -3109,8 +3109,8 @@ static void moveMouse(int x, int y)
  
 int doWindow(double *x,double *y,long length,int type)
 {
-    //double w[length];
-    double w[131072];
+    double w[length];
+    
     int i;
     
     if(!x || !y)return 1;
