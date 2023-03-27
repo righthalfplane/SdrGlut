@@ -3109,9 +3109,17 @@ static void moveMouse(int x, int y)
  
 int doWindow(double *x,double *y,long length,int type)
 {
-    double w[length];
+    static double *w;
     
     int i;
+    
+    if(!w){
+        w=(double *)cMalloc(131072,66666);
+        if(!w){
+            fprintf(stderr,"doWindow out of memory\n");
+            return 1;
+        }
+    }
     
     if(!x || !y)return 1;
     
