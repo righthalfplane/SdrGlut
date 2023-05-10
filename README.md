@@ -28,6 +28,7 @@ SdrGlut has a new Voice Command Module. It can be programed to record any freque
 
 ## Demo videos
 - [An Introduction to SdrGlut (A software defined radio)](https://youtu.be/JEXK-r6PvmA)
+- [The Fastest wxWidgets OpenGL Graphics for uBuntu 23.04](https://youtu.be/aNU_7ST0lMw)
 - [The Fastest wxWidgets OpenGL Graphics for MacOS Monterey](https://youtu.be/U51RqlkZRKQ)
 - [The Fastest OpenGL Graphic for Ubuntu 22.04.](https://youtu.be/M0-jAKARte0)
 - [A three way carpet cleaner shoot out with a big time winner.](https://youtu.be/HHVo2jPRg9M)
