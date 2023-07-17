@@ -1,0 +1,18 @@
+#
+#  Generate some bilinear cascaded band pass filters
+#
+samplerate 10000
+cbandpass butter 14 0.2 1000 2000
+savefilter
+cbandpass butter 14 2.0 2000 3000
+savefilter
+cbandpass butter 14 0.2 3000 4000
+savefilter
+cbandpass chev 14 0.2 2000 4000
+savefilter
+exit
+
+
+diff
+force impulse 501
+exit

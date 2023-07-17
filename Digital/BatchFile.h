@@ -2,6 +2,11 @@
 #define __BATCHFILE__
 
 #include <stdio.h>
+#include <vector>
+
+using namespace std;
+
+
 
 typedef struct Icon {
     class Poly *pl;

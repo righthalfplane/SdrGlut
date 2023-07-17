@@ -1183,11 +1183,11 @@ int SdrFile::setFrequency(struct playData4 *play)
     play->averageGlobal=0;
     
     if(FindScene(scenel2)){
-        SetFrequencyGlobal(scenel2, play->f, play->bw,M_FREQUENCY_BANDWIDTH);
+        SetFrequencyScene(scenel2, play->f, play->bw,M_FREQUENCY_BANDWIDTH);
     }
     
     if(FindScene(scenel)){
-        SetFrequencyGlobal(scenel, play->f,  play->bw, M_FREQUENCY_BANDWIDTH);
+        SetFrequencyScene(scenel, play->f,  play->bw, M_FREQUENCY_BANDWIDTH);
     }
     
     return 0;

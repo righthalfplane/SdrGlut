@@ -41,7 +41,25 @@ Poly::Poly(int sampleRatei)
     filterType=0;
     lowCorner=0;
     highCorner=0;
+    printf("Poly sampleRatei %d\n",sampleRatei);
 }
+int Poly::freePointers()
+{
+    delay=NULL;
+    coef1=NULL;
+    coef2=NULL;
+    pz=NULL;
+    type=NULL;
+    poles=NULL;
+    zeros=NULL;
+    fore=NULL;
+    back=NULL;
+    FIRCoefficients=NULL;
+    biquad=NULL;
+
+    return 0;
+}
+
 int Poly::Chighpass(string type,int order,double ripple,double fc)
 {
     
@@ -58,7 +76,7 @@ int Poly::Chighpass(string type,int order,double ripple,double fc)
         return 1;
     }
     
-    float pi=4.0*atan(1.0);
+    double pi=4.0*atan(1.0);
 
     high(1.0/(2.0*pi),1);
 
@@ -116,15 +134,15 @@ int Poly::Cbandpass(string type,int order,double ripple,double fmin,double fmax)
         return 1;
     }
     
-    float pi=4.0*atan(1.0);
+    double pi=4.0*atan(1.0);
         
-    float w1=tan(pi*fmin/sampleRate);
+    double w1=tan(pi*fmin/sampleRate);
     
-    float w2=tan(pi*fmax/sampleRate);
+    double w2=tan(pi*fmax/sampleRate);
     
-    float wc=sqrt(w1*w2)/(2.0*pi);
+    double wc=sqrt(w1*w2)/(2.0*pi);
     
-    float w0=0.5*(w2-w1)/(2.0*pi);
+    double w0=0.5*(w2-w1)/(2.0*pi);
         
     low(w0,1);
     

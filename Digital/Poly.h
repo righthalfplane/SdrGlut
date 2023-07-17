@@ -89,6 +89,7 @@ public:
     int Clowpass(string type,int order,double ripple,double fc);
     int Chighpass(string type,int order,double ripple,double fc);
     int Cbandpass(string type,int order,double ripple,double fmin,double fmax);
+    int freePointers();
     Poly(int sampleRate);
     ~Poly();
     double sampleRate;

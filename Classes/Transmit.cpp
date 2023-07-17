@@ -164,13 +164,9 @@ int Radio::Transmit(struct Scene *scene)
          //printf("Gains %lu %s ",j, tt.gains[j]);
     
         SoapySDR::Range range3=rx->device->getGainRange(SOAPY_SDR_TX, rx->channel, tt.gains[j]);
-        //double el=SoapySDRDevice_getGainElement(rx->device, SOAPY_SDR_TX, rx->channel, rx->gains[j]);
-       // printf("range max %g min %g\n",range3.maximum(),range3.minimum());
         tt.gainsMinimum[j]=range3.minimum();
         tt.gainsMaximum[j]=range3.maximum();
     }
-    
-    
     
     SoapySDR::Range range=rx->device->getGainRange(SOAPY_SDR_TX, rx->channel);
     

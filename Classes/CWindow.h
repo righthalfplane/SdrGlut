@@ -58,7 +58,7 @@ extern "C" int InvalRectMyWindow(struct Scene *scene);
 
 extern "C" int BackGroundEvents(struct Scene *scene);
 
-extern "C" int SetFrequencyGlobal(struct Scene *scene,double f,double bw, int messageType);
+extern "C" int SetFrequencyScene(struct Scene *scene,double f,double bw, int messageType);
 
 #define KEY_OFFSET 1000
 

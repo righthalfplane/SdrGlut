@@ -321,8 +321,8 @@ void CLines::getMouse(int button, int state, int x, int y)
             }else{
                 Frequency -= 500;
             }
-            SetFrequencyGlobal(sceneSource,Frequency,BandWidth,M_FREQUENCY_BANDWIDTH);
-            SetFrequencyGlobal(sceneSource,Frequency,BandWidth,M_FREQUENCY);
+            SetFrequencyScene(sceneSource,Frequency,BandWidth,M_FREQUENCY_BANDWIDTH);
+            SetFrequencyScene(sceneSource,Frequency,BandWidth,M_FREQUENCY);
             Wait=1;
         }
         return;
@@ -333,8 +333,8 @@ void CLines::getMouse(int button, int state, int x, int y)
             }else{
                 Frequency += 500;
             }
-            SetFrequencyGlobal(sceneSource,Frequency,BandWidth,M_FREQUENCY_BANDWIDTH);
-            SetFrequencyGlobal(sceneSource,Frequency,BandWidth,M_FREQUENCY);
+            SetFrequencyScene(sceneSource,Frequency,BandWidth,M_FREQUENCY_BANDWIDTH);
+            SetFrequencyScene(sceneSource,Frequency,BandWidth,M_FREQUENCY);
             Wait=1;
         }
         return;
@@ -346,7 +346,7 @@ void CLines::getMouse(int button, int state, int x, int y)
         double dpi=lines->l.dpi;
         if(sceneSource){
             Frequency=lines->Plot->xViewMin+(x-dpi*lines->Plot->box.x)*(lines->Plot->xViewMax-lines->Plot->xViewMin)/(dpi*lines->Plot->box.xsize);
-            SetFrequencyGlobal(sceneSource,Frequency,BandWidth,M_FREQUENCY);
+            SetFrequencyScene(sceneSource,Frequency,BandWidth,M_FREQUENCY);
         }
         lines->Plot->xAutoMaximum=FALSE;
         lines->Plot->xSetMaximum=lines->Plot->xMaximum;
@@ -355,7 +355,7 @@ void CLines::getMouse(int button, int state, int x, int y)
         lines->Plot->xSetMinimum=lines->Plot->xMinimum;
     }else{
         if(sceneSource){
-            SetFrequencyGlobal(sceneSource,Frequency,BandWidth,M_FREQUENCY_BANDWIDTH);
+            SetFrequencyScene(sceneSource,Frequency,BandWidth,M_FREQUENCY_BANDWIDTH);
             if(sdr){
               //printf("sdr %p %d %d %d %d\n",sdr,sdr->window1,sdr->window2,sdr->window3,lines->window);
               if(sdr->window1 == lines->window){
@@ -392,7 +392,7 @@ static void moveMouse(int x, int y)
     
     if(myAppl->sceneSource){
         myAppl->Frequency=lines->Plot->xViewMin+(x-dpi*lines->Plot->box.x)*(lines->Plot->xViewMax-lines->Plot->xViewMin)/(dpi*lines->Plot->box.xsize);
-        SetFrequencyGlobal(myAppl->sceneSource,myAppl->Frequency,myAppl->BandWidth,M_FREQUENCY);
+        SetFrequencyScene(myAppl->sceneSource,myAppl->Frequency,myAppl->BandWidth,M_FREQUENCY);
     }
 }
 int CLines::SetFrequency(struct Scene *scene,double f,double bw,int message)
@@ -539,11 +539,11 @@ static void keys2(unsigned char key, int x, int y)
     CLinesPtr l=FindLinesWindow(glutGetWindow());
     
     if(key == 'm'){
-        if(l->sceneSource)SetFrequencyGlobal(l->sceneSource,l->Frequency,l->BandWidth,M_MUTE);
+        if(l->sceneSource)SetFrequencyScene(l->sceneSource,l->Frequency,l->BandWidth,M_MUTE);
     }else if(key == 's'){
-        if(l->sceneSource)SetFrequencyGlobal(l->sceneSource,l->Frequency,l->BandWidth,M_SAVE);
+        if(l->sceneSource)SetFrequencyScene(l->sceneSource,l->Frequency,l->BandWidth,M_SAVE);
     }else if(key == ' '){
-        if(l->sceneSource)SetFrequencyGlobal(l->sceneSource,l->Frequency,l->BandWidth,M_SCAN);
+        if(l->sceneSource)SetFrequencyScene(l->sceneSource,l->Frequency,l->BandWidth,M_SCAN);
      }
    // fprintf(stderr,"Clines keys - key %d key %c lines %p\n",key,key,l);
     

@@ -716,9 +716,7 @@ static int playRadio(struct playData *rx)
     //double rate=rx->samplerate;
     
     double rate=rx->device->getSampleRate(SOAPY_SDR_RX, rx->channel);
-    
-    // SoapySDRDevice_setSampleRate(rx->device,SOAPY_SDR_RX, rx->channel, rate);
-    
+        
     
     fprintf(stderr,"playRadio frequency %g channel %d\n",rx->fc,rx->channel);
     //rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc-rx->foffset);
@@ -727,8 +725,7 @@ static int playRadio(struct playData *rx)
     
     if(rx->bandwidth > 0){
         rx->device->setBandwidth( SOAPY_SDR_RX, rx->channel, rx->bandwidth);
-        //if(retv > 0)printf("SoapySDRDevice_setBandwidth returned %d\n",retv);
-    }
+     }
     
     double bw=rx->device->getBandwidth(SOAPY_SDR_RX, rx->channel);
     int size=(int)(0.5+rate/10.0);
@@ -2098,9 +2095,6 @@ int testRadio(struct playData *rx)
     
     try
     {
-        //std::cout << "driver=" << SoapySDRDevice_getDriverKey(rx->device) << std::endl;
-        
-        //std::cout << "hardware=" << SoapySDRDevice_getHardwareKey(rx->device) << std::endl;
         
         rx->nreceive=(int)rx->device->getNumChannels(SOAPY_SDR_RX);
         
@@ -2148,7 +2142,6 @@ int testRadio(struct playData *rx)
             //printf("Gains %lu %s ",j, rx->gains[j]);
             
             SoapySDR::Range range3=rx->device->getGainRange(SOAPY_SDR_RX, rx->channel, rx->gains[j]);
-            //double el=SoapySDRDevice_getGainElement(rx->device, SOAPY_SDR_RX, rx->channel, rx->gains[j]);
             //printf("range max %g min %g\n",range3.maximum(),range3.minimum());
             rx->gainsMinimum[j]=range3.minimum();
             rx->gainsMaximum[j]=range3.maximum();
@@ -2204,16 +2197,7 @@ int testRadio(struct playData *rx)
             rx->bandwidths[j]=band[j];
         }
 
-        
-        
-/*
-        rlist=SoapySDRDevice_getBandwidthRange(rx->device, SOAPY_SDR_RX, rx->channel, &length);
-        for (size_t j = 0; j < length; j++)
-        {
-            printf("getBandwidthRange max %g min %g\n",rlist[j].maximum,rlist[j].minimum);
-        }
-*/
-        
+    
         std::vector<std::string> list=rx->device->getStreamFormats(SOAPY_SDR_RX, rx->channel);
         rx->streamFormatCount=list.size();
         rx->streamFormat=(char **)cMalloc((unsigned long)(rx->streamFormatCount*sizeof(double)),8898);
@@ -2224,18 +2208,7 @@ int testRadio(struct playData *rx)
         }
 
         
-        
-/*
-        bool hasIQBalance=SoapySDRDevice_hasIQBalance(rx->device, SOAPY_SDR_RX, rx->channel);
-        printf("hasIQBalance %d\n",hasIQBalance);
-        if(hasIQBalance){
-            double balanceI;
-            double balanceQ;
-            int ret=SoapySDRDevice_getIQBalance(rx->device, SOAPY_SDR_RX, rx->channel, &balanceI, &balanceQ);
-            printf("ret %d balanceI %g balanceQ %g\n",ret,balanceI,balanceQ);
-        }
-*/
-        
+
         std::vector<double> rate=rx->device->listSampleRates(SOAPY_SDR_RX, rx->channel);
         rx->sampleRatesCount=rate.size();
         rx->sampleRates=(double *)cMalloc((unsigned long)(rx->sampleRatesCount*sizeof(double)),8890);

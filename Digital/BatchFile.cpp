@@ -70,6 +70,8 @@ static char fname[256];
 
 static struct Icon myIcon;
 
+vector<class Poly> Filters;
+
 static int initScene(struct Scene *scene)
 {
     
@@ -202,6 +204,8 @@ int processFile(char *pathname)
 	zerol((char *)&Batch,sizeof(struct BatchInfo));
     
     myIcon.pl=new Poly(10000);
+    
+    Filters.clear();
 
 	Batch.myIcon=&myIcon;
 	
@@ -233,8 +237,13 @@ int processFile(char *pathname)
             if(ProcessLine(line,&Batch))break;
         }
         
-        delete myIcon.pl;
+        printf("Exit1 Filters.size() %ld %p \n",(long)Filters.size(),myIcon.pl[0].biquad);
+
+        // delete myIcon.pl;
         
+        printf("Exit2 Filters.size() %ld %p \n",(long)Filters.size(),myIcon.pl[0].biquad);
+
+
     }
     catch(...)
     {
@@ -417,6 +426,13 @@ int doBatch(BatchPtr Batch,CommandPtr cp)
         doBandPass(Batch,cp,0,1);
     }else if(!mstrcmp((char *)"cbandstop",command)){
         doBandPass(Batch,cp,1,1);
+    }else if(!mstrcmp((char *)"savefilter",command)){
+        //class Poly pll=Batch->myIcon->pl[0];
+        //Filters.push_back(pll);
+        Filters.push_back(Batch->myIcon->pl[0]);
+        Batch->myIcon->pl->freePointers();
+        printf("Filters.size() %ld %p \n",(long)Filters.size(),Batch->myIcon->pl[0].biquad);
+        ++(cp->n);
     }else if(!mstrcmp((char *)"samplerate",command)){
         class Poly *pl=Batch->myIcon->pl;
         ++(cp->n);

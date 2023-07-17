@@ -57,7 +57,7 @@ int CWindow::SetFrequency(struct Scene *scene,double f,double bw,int messageType
     if(!scene)return 1;
     return 0;
 }
-int SetFrequencyGlobal(struct Scene *scene,double f,double bw,int messageType)
+int SetFrequencyScene(struct Scene *scene,double f,double bw,int messageType)
 {
     if(!scene)return 1;
     

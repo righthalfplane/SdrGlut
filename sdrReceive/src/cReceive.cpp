@@ -1113,7 +1113,7 @@ void usage()
 	fprintf(stderr,"Usage:\n");
 	fprintf(stderr," sdrReceive.x [options]\n");
 	fprintf(stderr," sdrReceive.x -h\n");
-	fprintf(stderr," control-c to stop program\n\n");
+	fprintf(stderr," control-c to stop program (Do It Only Once !)\n\n");
 	fprintf(stderr,"Mode:\n");
 	fprintf(stderr,"  -am            Select AM mode\n");
 	fprintf(stderr,"  -nam           Select narrow band AM mode\n");

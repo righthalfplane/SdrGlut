@@ -637,7 +637,7 @@ int doRadioOpenRA(std::string argStr)
     device=0;
 
     if(length == 0){
-        fprintf(stderr,"Error: SoapySDRDevice_enumerate Found No Devices - Try Again !\n");
+        fprintf(stderr,"Error: enumerate Found No Devices - Try Again !\n");
         return 0;
     }
     
@@ -1256,11 +1256,11 @@ int Radio::BackGroundEvents(struct Scene *scene)
                 setFrequencyCoefficients(rx);
                 
                 if(FindScene(scenel2)){
-                    SetFrequencyGlobal(scenel2, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
+                    SetFrequencyScene(scenel2, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
                 }
                 
                 if(FindScene(scenel)){
-                    SetFrequencyGlobal(scenel, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
+                    SetFrequencyScene(scenel, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
                 }
             }
             
@@ -1452,11 +1452,11 @@ int Radio::setFrequency3(struct playData *rx)
     rx->averageGlobal=0;
         
     if(FindScene(scenel2)){
-        SetFrequencyGlobal(scenel2, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
+        SetFrequencyScene(scenel2, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
     }
     
     if(FindScene(scenel)){
-        SetFrequencyGlobal(scenel, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
+        SetFrequencyScene(scenel, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
     }
 
     return 0;
@@ -2520,11 +2520,11 @@ int Radio::resetDemod()
     setFrequency(rx->f);
         
     if(FindScene(scenel2)){
-        SetFrequencyGlobal(scenel2, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
+        SetFrequencyScene(scenel2, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
     }
     
     if(FindScene(scenel)){
-        SetFrequencyGlobal(scenel, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
+        SetFrequencyScene(scenel, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
     }
     
     adjustView(0);
@@ -2535,7 +2535,7 @@ int Radio::mMenuSelectl(struct Scene *scene,int item)
 {
     
     if(!scene)return 1;
-    
+
 	switch (item)
 	{
             
@@ -2768,11 +2768,11 @@ void Radio::getMouse(int button, int state, int x, int y)
             setFrequencyCoefficients(rx);
             
             if(FindScene(scenel2)){
-                SetFrequencyGlobal(scenel2, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
+                SetFrequencyScene(scenel2, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
             }
             
             if(FindScene(scenel)){
-                SetFrequencyGlobal(scenel, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
+                SetFrequencyScene(scenel, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
             }
 
             //fprintf(stderr,"setFrequencyCoefficients\n");
@@ -2801,11 +2801,11 @@ void Radio::getMouse(int button, int state, int x, int y)
             setFrequencyCoefficients(rx);
            
            if(FindScene(scenel2)){
-               SetFrequencyGlobal(scenel2, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
+               SetFrequencyScene(scenel2, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
            }
            
            if(FindScene(scenel)){
-               SetFrequencyGlobal(scenel, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
+               SetFrequencyScene(scenel, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
            }
 
             //fprintf(stderr,"setFrequencyCoefficients\n");
