@@ -125,6 +125,8 @@ int modetype;
 
 int iblade;
 
+RadioPtr RadioWindowSetFrequency(struct playData *rx);
+
 SNDFILE *sfopen(char *filename)
 {
     char strbuffer[256];
@@ -315,9 +317,6 @@ int Radio::setFrequencyDuo(struct playData *rx)
     
     if(rx->fc < 0.5*rx->samplerate)rx->fc=0.5*rx->samplerate;
     
-  //  fprintf(stderr,"setFrequencyDuo frequency %g channel %d\n",rx->fc,rx->channel);
-
-    //rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc-rx->foffset);
     rx->device->setFrequency(SOAPY_SDR_RX,rx->channel,"RF",rx->fc-rx->foffset);
 
     rx->averageGlobal=0;
@@ -1271,6 +1270,12 @@ int Radio::BackGroundEvents(struct Scene *scene)
         }
         reset.reset=0;
     }
+    
+    if(rx->matchFrequencies){
+        fprintf(stderr,"matchFrequencies this %p\n",this);
+        RadioWindowSetFrequency(rx);
+        rx->matchFrequencies=0;
+    }
         
     updateLine();
     
@@ -1388,10 +1393,14 @@ int Radio::SetFrequency(struct Scene *scene,double f,double bw, int message)
             rx->fc=f;
             setFrequency2(rx);
            // fprintf(stderr,"M_FREQUENCY setFrequency2\n");
+            
+            rx->matchFrequencies=1;
+
             return 0;
        }
         setFrequencyCoefficients(rx);
        //fprintf(stderr,"M_FREQUENCY setFrequencyCoefficients\n");
+        rx->matchFrequencies=1;
         return 0;
     }
     
@@ -2776,7 +2785,11 @@ void Radio::getMouse(int button, int state, int x, int y)
             }
 
             //fprintf(stderr,"setFrequencyCoefficients\n");
+            rx->matchFrequencies=1;
+            
        }
+        
+
         adjustView(0);
         return;
     }else if(button == 4){
@@ -2807,6 +2820,8 @@ void Radio::getMouse(int button, int state, int x, int y)
            if(FindScene(scenel)){
                SetFrequencyScene(scenel, rx->f, rx->bw, M_FREQUENCY_BANDWIDTH);
            }
+           
+           rx->matchFrequencies=1;
 
             //fprintf(stderr,"setFrequencyCoefficients\n");
        }

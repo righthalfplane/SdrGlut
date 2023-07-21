@@ -862,6 +862,60 @@ RadioPtr FindSdrRadioWindow(struct playData *rx)
     return NULL;
     
 }
+RadioPtr RadioWindowSetFrequency(struct playData *rx)
+{
+    RadioPtr f;
+    CWinPtr w;
+    
+    if(!Root)return NULL;
+    
+    if(!rx)return NULL;
+    
+    w=Root;
+    while(w){
+        if(w->scene->windowType == FileTypeSdrRadio){
+            f=(RadioPtr)w;
+            if(f->rx != rx){
+                //SetFrequencyScene(w->scene,rx->f,rx->bw,M_FREQUENCY);
+                fprintf(stderr,"setFrequency3 %g\n",rx->f);
+               // f->rx->f=rx->f;
+               // f->setFrequency2(f->rx);
+                
+                float fl;
+                fl=f->rx->f=rx->f;
+                if(fabs(fl-f->rx->fc) > 0.5*f->rx->samplerate){
+                    f->rx->fc=fl;
+                   // fprintf(stderr,"shift f %g fc %g\n",rx->f,rx->fc);
+                    f->setFrequency2(f->rx);
+                    // fprintf(stderr,"setFrequency2\n");
+                }else{
+                    //  fprintf(stderr,"no shift f %g fc %g\n",rx->f,rx->fc);
+                    f->setDialogFrequency(f->rx->f);
+                    
+                    f->setFrequency(f->rx->f);
+                    
+                    f->setDialogFc(f->rx->fc);
+                    
+                    f->setFrequencyCoefficients(f->rx);
+                    
+                    if(FindScene(f->scenel2)){
+                        SetFrequencyScene(f->scenel2, f->rx->f, f->rx->bw, M_FREQUENCY_BANDWIDTH);
+                    }
+                    
+                    if(FindScene(f->scenel)){
+                        SetFrequencyScene(f->scenel, f->rx->f, f->rx->bw, M_FREQUENCY_BANDWIDTH);
+                    }
+                }
+                f->rx->matchFrequencies=0;
+
+            }
+        }
+        w=w->CNext;
+    }
+    
+    return NULL;
+    
+}
 
 typedef struct CommandInfo2{
     string command[256];
