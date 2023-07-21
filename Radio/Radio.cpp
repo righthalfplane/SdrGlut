@@ -1272,7 +1272,7 @@ int Radio::BackGroundEvents(struct Scene *scene)
     }
     
     if(rx->matchFrequencies){
-        fprintf(stderr,"matchFrequencies this %p\n",this);
+      //  fprintf(stderr,"matchFrequencies this %p\n",this);
         RadioWindowSetFrequency(rx);
         rx->matchFrequencies=0;
     }
@@ -2755,9 +2755,9 @@ void Radio::getMouse(int button, int state, int x, int y)
 {
     if(!rx)return;
 
-    if(button == 3){
+    if(button == 3  && state == 0){
         double fl,bw;
-        bw=rx->bw*0.5;
+        bw=rx->bw;
       //  if(rx->wShift != 0)bw /= 2;
         if(rx->wShift != 0)bw = 500;
         fl=rx->f-bw;
@@ -2792,9 +2792,9 @@ void Radio::getMouse(int button, int state, int x, int y)
 
         adjustView(0);
         return;
-    }else if(button == 4){
+    }else if(button == 4 && state == 0){
         double fl,bw;
-        bw=rx->bw*0.5;
+        bw=rx->bw;
         //if(rx->wShift != 0)bw /= 2;
         if(rx->wShift != 0)bw=500;
         fl=rx->f+bw;

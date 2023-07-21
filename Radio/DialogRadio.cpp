@@ -877,7 +877,7 @@ RadioPtr RadioWindowSetFrequency(struct playData *rx)
             f=(RadioPtr)w;
             if(f->rx != rx){
                 //SetFrequencyScene(w->scene,rx->f,rx->bw,M_FREQUENCY);
-                fprintf(stderr,"setFrequency3 %g\n",rx->f);
+                //fprintf(stderr,"setFrequency3 %g\n",rx->f);
                // f->rx->f=rx->f;
                // f->setFrequency2(f->rx);
                 
