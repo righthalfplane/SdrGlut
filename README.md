@@ -5,14 +5,11 @@ SdrGlut V1.32 - New Remote Speaker Option
 What is new ?
 
 ```
-SdrGlut now has a remote speaker option where the audio can be send to any machine on the local network running the listen program.
-This permits shortwave programs from the SDR connected to an outside antenna to be heard in other rooms.
-sdrReceive now has a devicestring input for those devices that need it.
-listen now has the -remotespeakers option to get that mode running.
-
+SdrGlut now has a device sync option where all open device windows track to the same frequency.
+SdeGlut can now use more points in the FFT display
 ```
 
-https://github.com/righthalfplane/SdrGlut/releases/tag/v1.31
+https://github.com/righthalfplane/SdrGlut/releases/tag/v1.32
 
 If you are new to SdrGlut, please view the introduction video -
 - [An Introduction to SdrGlut (A software defined radio)](https://youtu.be/JEXK-r6PvmA)
