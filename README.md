@@ -28,6 +28,7 @@ SdrGlut has a new Voice Command Module. It can be programed to record any freque
 
 ## Demo videos
 - [An Introduction to SdrGlut (A software defined radio)](https://youtu.be/JEXK-r6PvmA)
+- [Ham It Up (Plus) vs HackRF One reception tests.](https://youtu.be/jZtyk8VPHDA)
 - [How to Install SdrGlut on Ubuntu 23.04.](https://youtu.be/lxZ4seB3ss0)
 - [The Fastest wxWidgets OpenGL Graphics for uBuntu 23.04](https://youtu.be/aNU_7ST0lMw)
 - [The Fastest wxWidgets OpenGL Graphics for MacOS Monterey](https://youtu.be/U51RqlkZRKQ)
