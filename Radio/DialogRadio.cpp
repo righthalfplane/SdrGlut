@@ -38,6 +38,8 @@ extern "C" int doFFT2(double *x,double *y,long length,int direction);
 #define Mode_Buttons   180
 
 
+
+
 int Radio::doVoiceControl(struct Scene *scene)
 {
     if(!scene)return 1;
@@ -548,6 +550,8 @@ int Radio::dialogRadio(struct Scene *scene)
     dd.lowpass->set_float_limits( 300, 14000 );
     
     dd.lowpass->set_speed(1);
+    
+    check_box = new GLUI_Checkbox( dd.glui, "Broadcast Frequencies", &gf.broadCastFrequency, 777, control_cb );
 
     dd.sub_window=glutGetWindow();
     

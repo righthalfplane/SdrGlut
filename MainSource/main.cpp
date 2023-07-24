@@ -39,7 +39,7 @@ static void control_cb(int control);
 
 static void control_cb2(int control);
 
-char *ProgramVersion=(char *)"SdrGlut-1161";
+char *ProgramVersion=(char *)"SdrGlut-1162";
 
 extern "C" struct Scene *sceneRoot(void);
 
@@ -77,6 +77,8 @@ int WriteToHelpTop();
 
 static GLUI_EditText *edittext1;
 static char text1[255];
+
+struct GlobalFrequency gf;
 
 int mainClean(void)
 {
@@ -416,6 +418,8 @@ static void control_cb2(int control)
 }
 int main (int argc, char *argv[]) {
     
+    gf.broadCastFrequency=1;
+
 	SoapyNetSDR_SocketInit socket_init;
 
     fprintf(stderr,"LIQUID_VERSION_NUMBER %d\n",LIQUID_VERSION_NUMBER);

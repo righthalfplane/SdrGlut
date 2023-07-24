@@ -59,6 +59,7 @@ using namespace std;
 #include "paletteDraw.h"
 #include "DialogSave.h"
 
+extern struct GlobalFrequency gf;
 
 class GLUIAPI GLUI_TextBox3 : public GLUI_TextBox
 {

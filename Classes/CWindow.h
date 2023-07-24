@@ -18,6 +18,10 @@
 #define M_SCAN                  6
 #define M_SEND2                 7
 
+struct GlobalFrequency{
+    int broadCastFrequency;
+};
+
 class CWindow{
 public:	
 	CWindow(struct Scene *scene);

@@ -1272,8 +1272,8 @@ int Radio::BackGroundEvents(struct Scene *scene)
     }
     
     if(rx->matchFrequencies){
-      //  fprintf(stderr,"matchFrequencies this %p\n",this);
-        RadioWindowSetFrequency(rx);
+        //fprintf(stderr,"matchFrequencies this %p gf.broadCastFrequency %d\n",this,gf.broadCastFrequency);
+        if(gf.broadCastFrequency)RadioWindowSetFrequency(rx);
         rx->matchFrequencies=0;
     }
         
@@ -2695,6 +2695,7 @@ static void getMousel(int button, int state, int x, int y)
                     sdr->rx->fc=fl;
                 }
                 sdr->setFrequency2(sdr->rx);
+                sdr->rx->matchFrequencies=1;
                 break;
             }
         }
@@ -2788,8 +2789,6 @@ void Radio::getMouse(int button, int state, int x, int y)
             rx->matchFrequencies=1;
             
        }
-        
-
         adjustView(0);
         return;
     }else if(button == 4 && state == 0){
@@ -2852,7 +2851,10 @@ void Radio::getMouse(int button, int state, int x, int y)
         
         // printf("fclick %f button %d state %d x %d y %d\n",fclick,button,state,x,y);
     }else{
-       if(fsave != rx->fv) setFrequency2(rx);
+        if(fsave != rx->fv){
+            setFrequency2(rx);
+        }
+        rx->matchFrequencies=1;
     }
     adjustView(0);
 }
