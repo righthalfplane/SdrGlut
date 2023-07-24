@@ -1,6 +1,6 @@
 # SdrGlut
 
-SdrGlut V1.32 - New Remote Speaker Option
+SdrGlut V1.32 - Mostly Improvements and Clean up.
 
 What is new ?
 
