@@ -947,19 +947,22 @@ int Radio::updateLine()
     welch(real,imag,&length);
     
     amin =  0.0;
+    amax =  0.0;
     int nn=0;
     for(int n=10;n<length-10;++n){
         v=(real[n]*real[n]+imag[n]*imag[n]);
         if(v > 0.0)v=10*log10(v)+5;
         double mag=(1.0-lineAlpha)*magnitude[length-n-1]+v*lineAlpha;
         amin +=  mag;
+        amax +=  v;
         ++nn;
      }
     
     amin /= nn;
-    
+    amax /= nn;
+
     double shift=-90-amin;
-    rx->shiftGlobal = amin;
+    rx->shiftGlobal = amax;
     if(rx->aminGlobal3 == 0.0)rx->aminGlobal3=shift;
     rx->aminGlobal3 = 0.9*rx->aminGlobal3+0.1*shift;
  //   shift=rx->aminGlobal3;
@@ -1787,9 +1790,9 @@ static void displayc(void)
         char value[256];
         
         if(images->rx->mute){
-            msprintf(value,sizeof(value),"Frequency: %010ld Hz   Center Frequency: %010ld Hz Power: %.0f db Shift: %.1f db MUTE",f,fc,images->rx->meterMax,fs);
+            msprintf(value,sizeof(value),"Frequency: %010ld Hz   Center Frequency: %010ld Hz Power: %.0f db Avg: %.0f db MUTE",f,fc,images->rx->meterMax,fs);
         }else{
-            msprintf(value,sizeof(value),"Frequency: %010ld Hz   Center Frequency: %010ld Hz Power: %.0f db Shift: %.1f db ",f,fc,images->rx->meterMax,fs);
+            msprintf(value,sizeof(value),"Frequency: %010ld Hz   Center Frequency: %010ld Hz Power: %.0f db Avg: %.0f db ",f,fc,images->rx->meterMax,fs);
         }
         
         DrawString(20, (int)scene->yResolution-15, value);
