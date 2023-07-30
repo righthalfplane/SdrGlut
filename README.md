@@ -25,6 +25,7 @@ SdrGlut has a new Voice Command Module. It can be programed to record any freque
 
 ## Demo videos
 - [An Introduction to SdrGlut (A software defined radio)](https://youtu.be/JEXK-r6PvmA)
+- [Ham It Up (Plus) using BladeRF-XA5 vs SDRplay RSP2 reception tests.](https://youtu.be/PRhD0N9icLw)
 - [Ham It Up (Plus) vs SDRplay RSP2 reception tests.](https://youtu.be/ZATC0DXrhYg)
 - [Receiving Two Or More Data Streams With gnuradio-companion.](https://youtu.be/7G7D5hoC7dI)
 - [Ham It Up (Plus) vs RTL-SDR reception tests.](https://youtu.be/30DvmHJUL78)
