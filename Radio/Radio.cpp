@@ -1009,7 +1009,7 @@ int Radio::updateLine()
 
     
     if(FindScene(scenel)){
-        lines->plotPutData(scenel,range,magnitude2,length,0L);
+        lines->plotPutData(scenel,range,magnitude2,length,1L);
         
         uGridPlotPtr Plot;
         Plot=lines->lines->Plot;
@@ -3134,7 +3134,7 @@ int doWindow(double *x,double *y,long length,int type)
     int i;
     
     if(!ww){
-        ww=(double *)cMalloc(131072,66666);
+        ww=(double *)cMalloc(131072*sizeof(double),77777);
         if(!ww){
             fprintf(stderr,"doWindow out of memory\n");
             return 1;

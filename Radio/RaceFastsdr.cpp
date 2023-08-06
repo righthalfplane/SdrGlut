@@ -1854,45 +1854,17 @@ int rxBuffer(void *rxv)
                 }else{
                     time=0;
                 }
-
-               // double scale=pow(10.0,rx->scaleFactor/20.0);
-/*
-                double amin=1e30;
-                double amax=-1e30;
-                double v;
                 
-                for (int k = 0 ; k < rx->size ; k++){
-                    float r = (float)(buff[k * 2]*scale);
-                    float i = (float)(buff[k * 2 + 1]*scale);
-                    buff[k * 2] = r;
-                    buff[k * 2 + 1] = i;
-                    v=sqrt(i*i+r*r);
-                    if(v > amax)amax=v;
-                    if(v < amin)amin=v;
-                }
-*/
-                //printf("amin %g amax %g witch %d count %d\n",amin,amax,rx->witchRFBuffer,count);
                 if(ret != -1){
-                    //double as=(double)rx->size/(double)rx->FFTcount;
-                    //double sum=0;
                     for(int k=0;k<rx->FFTcount;++k){
-                        //int ks=k*as;
                         if(k < rx->size){
-                           // rx->real[k]=buff[2*ks]*scale;
-                           // rx->imag[k]=buff[2*ks+1]*scale;
                             rx->real[k]=buff[2*k];
                             rx->imag[k]=buff[2*k+1];
                         }else{
                             rx->real[k]=0;
                             rx->imag[k]=0;
                         }
-                        //sum += sqrt(rx->real[k]*rx->real[k]+rx->imag[k]*rx->imag[k]);
                    }
-                    
-                    //sum /= (double)rx->FFTcount;
-
-                   //printf("b sum %g \n",sum);
-
                    
                 }
              	++rx->witchRFBuffer;
