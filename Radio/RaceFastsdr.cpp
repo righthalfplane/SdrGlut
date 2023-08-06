@@ -836,6 +836,8 @@ static int ProcessSound(void *rxv)
     
     fprintf(stderr,"ProcessSound start\n");
     
+    ALuint *fbuff= new ALuint[audio->numbuff];
+
     int ibuff;
     ibuff=3;
     while(rx->controlProcess >= 0){
@@ -846,7 +848,6 @@ static int ProcessSound(void *rxv)
             alGetSourcei(rx->source, AL_BUFFERS_PROCESSED, &processed);
             
             if(processed){
-                ALuint *fbuff= new ALuint[audio->numbuff];
                 
                 alSourceUnqueueBuffers(rx->source, processed, fbuff);
                 if ((error = alGetError()) != AL_NO_ERROR)

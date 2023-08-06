@@ -147,7 +147,10 @@ void checkall(void)
 {
 	int k,count;
 	char buff[256];
-	
+    extern double *ww;
+    
+    if(ww)cFree(ww);
+    
 	count=0;
 	for(k=0;k<maxgiven;++k){
 	    if(given[k]){

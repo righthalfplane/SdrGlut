@@ -116,6 +116,8 @@ int datatype[100];
 
 int boxnumber[100];
 
+double *ww;
+
 static int OpenZoomWindow;
 
 static GLUI_Listbox  *box[100];
@@ -3128,14 +3130,12 @@ static void moveMouse(int x, int y)
 }
  
 int doWindow(double *x,double *y,long length,int type)
-{
-    static double *w;
-    
+{    
     int i;
     
-    if(!w){
-        w=(double *)cMalloc(131072,66666);
-        if(!w){
+    if(!ww){
+        ww=(double *)cMalloc(131072,66666);
+        if(!ww){
             fprintf(stderr,"doWindow out of memory\n");
             return 1;
         }
@@ -3148,7 +3148,7 @@ int doWindow(double *x,double *y,long length,int type)
         case FILTER_RECTANGULAR:
 
             for(i=0; i<length; i++)
-                w[i] = 1.0;
+                ww[i] = 1.0;
             
             break;
             
@@ -3158,9 +3158,9 @@ int doWindow(double *x,double *y,long length,int type)
             
             for(i=0; i<length; i++)  {
 #ifdef WINDOWS_LONG_NAMES
-                w[i]=liquid_hann(i, (int)length);
+                ww[i]=liquid_hann(i, (int)length);
 #else
-                w[i]=hann(i, (int)length);
+                ww[i]=hann(i, (int)length);
 #endif
             }
             break;
@@ -3171,9 +3171,9 @@ int doWindow(double *x,double *y,long length,int type)
             
             for(i=0; i<length; i++)  {
 #ifdef WINDOWS_LONG_NAMES
-                w[i]=liquid_hamming(i, (int)length);
+                ww[i]=liquid_hamming(i, (int)length);
 #else
-                w[i]=hamming(i, (int)length);
+                ww[i]=hamming(i, (int)length);
 #endif
             }
             break;
@@ -3182,9 +3182,9 @@ int doWindow(double *x,double *y,long length,int type)
             
             for(i=0; i<length; i++)  {
 #ifdef WINDOWS_LONG_NAMES
-                w[i]=liquid_flattop(i, (int)length);
+                ww[i]=liquid_flattop(i, (int)length);
 #else
-                w[i]=flattop(i, (int)length);
+                ww[i]=flattop(i, (int)length);
 #endif
             }
             break;
@@ -3194,9 +3194,9 @@ int doWindow(double *x,double *y,long length,int type)
             
             for(i=0; i<length; i++)  {
 #ifdef WINDOWS_LONG_NAMES
-                w[i]=liquid_blackmanharris(i, (int)length);
+                ww[i]=liquid_blackmanharris(i, (int)length);
 #else
-                w[i]=blackmanharris(i, (int)length);
+                ww[i]=blackmanharris(i, (int)length);
 #endif
             }
             break;
@@ -3205,9 +3205,9 @@ int doWindow(double *x,double *y,long length,int type)
             
             for(i=0; i<length; i++)  {
 #ifdef WINDOWS_LONG_NAMES
-                w[i]=liquid_blackmanharris7(i, (int)length);
+                ww[i]=liquid_blackmanharris7(i, (int)length);
 #else
-                w[i]=blackmanharris7(i, (int)length);
+                ww[i]=blackmanharris7(i, (int)length);
 #endif
             }
             break;
@@ -3215,7 +3215,7 @@ int doWindow(double *x,double *y,long length,int type)
     
     for(i=0; i<length; i++){
         double amp;
-        amp=w[i];
+        amp=ww[i];
         x[i]=amp*x[i];
         y[i]=amp*y[i];
     }
