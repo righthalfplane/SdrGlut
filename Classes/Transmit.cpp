@@ -247,7 +247,7 @@ int Radio::Transmit(struct Scene *scene)
     
     tt.foffset=0;
     
-    tt.transmitSampleRate=0.4e6;
+    tt.transmitSampleRate=2.0e6;
     
     msprintf(tt.text1,sizeof(tt.text1),"%g",tt.foffset);
     msprintf(tt.text2,sizeof(tt.text2),"%g",rx->f);

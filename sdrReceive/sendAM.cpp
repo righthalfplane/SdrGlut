@@ -1,7 +1,7 @@
  
-// c++ -std=c++11 -o sendAM sendAM.cpp -lSoapySDR -lsndfile -lliquid -Wall -Wno-return-type-c-linkage
-// sendAM "driver=hackrf"
-// sendAM "driver=bladerf"
+// c++ -std=c++11 -o sendAM.x sendAM.cpp -lSoapySDR -lsndfile -lliquid -Wall -Wno-return-type-c-linkage
+// sendAM.x "driver=hackrf"
+// sendAM.x "driver=bladerf"
 
 #include <iostream>
 #include <SoapySDR/Device.hpp>

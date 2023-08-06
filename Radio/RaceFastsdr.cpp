@@ -861,16 +861,20 @@ static int ProcessSound(void *rxv)
                     //fprintf(stderr,"finish bufferd %d\n",fbuff[k]);
                     freebuffAudio(audio,fbuff[k]);
                     
-                    while((ibuff=popBuffa(rx)) < 0)Sleep2(10);
-                    
+                    while((ibuff=popBuffa(rx)) < 0){
+                      //  printf("Sleep count %lu\n",count);
+                        Sleep2(10);
+                    }
                     if(setBuffers(rx, ibuff)){
                         ;
                     }
                     
-                    if(count % 5){
-                        alGetSourcei(rx->source, AL_SOURCE_STATE, &rx->al_state);
-                        if(rx->al_state == AL_STOPPED){
-                            alSourcePlay(rx->source);
+                    alGetSourcei(rx->source, AL_SOURCE_STATE, &rx->al_state);
+                    //printf("rx->al_state %d AL_STOPPED %d\n",rx->al_state,AL_STOPPED);
+                    if(rx->al_state == AL_STOPPED){
+                        Sleep2(500);
+                        alSourcePlay(rx->source);
+                        if(count % 5){
                             if(rx->Debug)printf("%s count %lu sound restarted\n",rx->driveName,count);
                         }
                     }
