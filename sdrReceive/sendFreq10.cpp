@@ -1,5 +1,5 @@
  
-// c++ -std=c++11 -o sendFreq10 sendFreq10.cpp -lSoapySDR -lsndfile -lliquid -Wall -Wno-return-type-c-linkage
+// c++ -std=c++11 -o sendFreq10 sendFreq10.cpp -lSoapySDR -lsndfile -lliquid -Wall -Wno-return-type-c-linkage -Wno-deprecated-declarations
 // sendFreq10 "driver=hackrf"
 // sendFreq10 "driver=bladerf"
 // sdrReceive.x -f 230 -am -PPM -0.15 -cutoff -100 -device 2
@@ -704,7 +704,7 @@ int main(int argc, char** argv)
 	
 	fprintf(stderr,"count %ld\n",count);
 
-	sf_close (infile) ;
+	sf_close (infile);
 	
     freqmod_destroy(mod);
     

@@ -708,10 +708,9 @@ int doRadioOpenRA(std::string argStr)
                     name=it->second;
                 }
             }
+            SoapySDR::Device *devicer = SoapySDR::Device::make(deviceArgs);
             if(name != ""){
-                
-                SoapySDR::Device *devicer = SoapySDR::Device::make(deviceArgs);
-                
+            
                 ++iopen;
                 
                 new GLUI_Button(obj_panel, (char *)name.c_str(), (int)(2+k), control_cb);
@@ -731,11 +730,11 @@ int doRadioOpenRA(std::string argStr)
                     box[nb]->add_item((int)j,data);
 
                 }
-                SoapySDR::Device::unmake(devicer);
                 ++nb;
 
             }
-            
+            SoapySDR::Device::unmake(devicer);
+
         } catch(const std::exception &e) {
             std::string streamExceptionStr = e.what();
             printf("doRadioOpen Error: %s\n",streamExceptionStr.c_str());
