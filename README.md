@@ -1,5 +1,7 @@
 # SdrGlut
 
+Forced to move to gitlab - go there for lastest updates
+
 SdrGlut V1.32 - Mostly Improvements and Clean up.
 
 What is new ?
