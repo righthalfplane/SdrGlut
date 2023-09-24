@@ -527,8 +527,6 @@ public:
     
     struct playData rxs;
     
-    class Poly *plowpass;
-
 
 };
 

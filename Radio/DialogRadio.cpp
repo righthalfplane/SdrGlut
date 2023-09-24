@@ -728,13 +728,14 @@ static void control_cb(int control)
     }
     else if(control == 500)
     {
+/*
         char value[256];
         msprintf(value,sizeof(value),"%0.f",s->dd.lowpassvalue);
         s->dd.editlowpass->set_text(value);
         printf("s->dd.lowpassvalue %f\n",s->dd.lowpassvalue);
         
         s->plowpass->Clowpass("butter",10,1.0,s->dd.lowpassvalue);
-
+*/
     }
     else if(control == 8)
     {

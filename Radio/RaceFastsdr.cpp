@@ -727,7 +727,10 @@ static int playRadio(struct playData *rx)
      }
     
     double bw=rx->device->getBandwidth(SOAPY_SDR_RX, rx->channel);
-    int size=(int)(0.5+rate/10.0);
+    
+    rx->ncut=20;
+    
+    int size=(int)(0.5+rate/(float)rx->ncut);
     
     rx->size=size;
     
@@ -1140,7 +1143,7 @@ static int setBuffers(struct playData *rx, int numBuff)
     alBufferData(buffer,
                  AL_FORMAT_MONO16,
                  rx->buffa[numBuff % NUM_ABUFF5],
-                 4800  * sizeof(short),
+                 (48000/rx->ncut) * sizeof(short),
                  48000);
     
     if ((error = alGetError()) != AL_NO_ERROR){
@@ -1175,32 +1178,35 @@ static int Process(void *rxv)
 	
 	setFilters(rx,&f);
     
-    int bsize=2*rx->size*sizeof(float);
-    if(bsize < 200000)bsize=200000;
-	
-	float *wBuff=(float *)cMalloc(bsize,8889);
-    if(!wBuff){
-        fprintf(stderr,"2 cMalloc Errror %ld\n",(long)(bsize));
+    int size1=2*rx->size*sizeof(float);
+    if(size1 < 200000)size1=200000;
+    int size2=2*rx->fOut*4;
+    if(size1 < size2)size1=size2;
+    if(size2 < size1)size2=size1;
+
+	float *buff1=(float *)cMalloc(size1,8889);
+    if(!buff1){
+        fprintf(stderr,"2 cMalloc Errror %ld\n",(long)(size1));
        	 return 1;
     }
-    zerol((unsigned char *)wBuff,bsize);
+    zerol((unsigned char *)buff1,size1);
 
    // printf("Process Start rx->frame %d Thread %d\n",rx->controlAudio,f.thread);
 	
-	float *aBuff=(float *)cMalloc(2*rx->fOut*4,8890);
-    if(!aBuff){
-        fprintf(stderr,"3 cMalloc Errror %ld\n",(long)(2*rx->fOut*4));
+	float *buff2=(float *)cMalloc(size2,8890);
+    if(!buff2){
+        fprintf(stderr,"3 cMalloc Errror %ld\n",(long)(size2));
        	 return 1;
     }
-    zerol((unsigned char *)aBuff,2*rx->fOut*4);
+    zerol((unsigned char *)buff2,size2);
 	
 	while(rx->controlAudio >= 0){
          //double start=rtime();
 
-		if(doFilter(rx,wBuff,aBuff,&f)){
+		if(doFilter(rx,buff1,buff2,&f)){
 			Sleep2(40);
 		}else{
-			doAudio(aBuff,rx);
+			doAudio(buff2,rx);
             //double end=rtime();
            // printf("Total Time in doFilter %.3f Seconds\n",end-start);
 		}
@@ -1208,9 +1214,9 @@ static int Process(void *rxv)
 	}
 	//printf("Process Done rx->frame %d Thread %d\n",rx->controlAudio,f.thread);
 	
-	if(wBuff)cFree((char *)wBuff);
+	if(buff1)cFree((char *)buff1);
 	
-	if(aBuff)cFree((char *)aBuff);
+	if(buff2)cFree((char *)buff2);
 	
 	if (f.iqSampler)msresamp_crcf_destroy(f.iqSampler);
 	
@@ -1450,7 +1456,7 @@ int doFilter(struct playData *rx,float *wBuff,float *aBuff,struct Filters *f)
 
     if(rx->mRadio){
         //printf("rx->mRadio %p\n",rx->mRadio->plowpass);
-        rx->mRadio->plowpass->forceCascadeRun(buf,buf,num2,0);
+        //rx->mRadio->plowpass->forceCascadeRun(buf,buf,num2,0);
     }
 	return 0;
 }

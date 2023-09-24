@@ -452,9 +452,6 @@ Radio::Radio(struct Scene *scene,SoapySDR::Kwargs deviceArgs): CWindow(scene)
     
     zerol((char *)&start,&end-&start+1);
     
-    plowpass=new Poly(48000);
-    plowpass->Clowpass("butter",10,1.0,14000);
-
     
     mstrncpy(rs.FilePath[0],(char *)"sound01.wav",sizeof(rs.FilePath[0]));
     mstrncpy(rs.FilePath[1],(char *)"sound02.wav",sizeof(rs.FilePath[1]));
@@ -708,9 +705,10 @@ int doRadioOpenRA(std::string argStr)
                     name=it->second;
                 }
             }
-            SoapySDR::Device *devicer = SoapySDR::Device::make(deviceArgs);
             if(name != ""){
-            
+                
+                SoapySDR::Device *devicer = SoapySDR::Device::make(deviceArgs);
+                
                 ++iopen;
                 
                 new GLUI_Button(obj_panel, (char *)name.c_str(), (int)(2+k), control_cb);
@@ -730,11 +728,11 @@ int doRadioOpenRA(std::string argStr)
                     box[nb]->add_item((int)j,data);
 
                 }
+                SoapySDR::Device::unmake(devicer);
                 ++nb;
 
             }
-            SoapySDR::Device::unmake(devicer);
-
+            
         } catch(const std::exception &e) {
             std::string streamExceptionStr = e.what();
             printf("doRadioOpen Error: %s\n",streamExceptionStr.c_str());
@@ -870,7 +868,6 @@ Radio::~Radio()
     }
 //    fprintf(stderr,"~Radio() end\n");
 
-    if(plowpass)delete plowpass;
 }
 int Radio::welch(double *real,double *imag,int *lengthi)
 {
@@ -975,7 +972,7 @@ int Radio::updateLine()
     rx->aminGlobal3 = 0.9*rx->aminGlobal3+0.1*shift;
  //   shift=rx->aminGlobal3;
 
-   // printf("shift %g amin %g \n",shift,amin);
+    //printf("shift %g amin %g \n",shift,amin);
     
     amin =  1e33;
     amax = -1e33;

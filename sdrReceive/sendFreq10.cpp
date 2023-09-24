@@ -1,5 +1,5 @@
  
-// c++ -std=c++11 -o sendFreq10 sendFreq10.cpp -lSoapySDR -lsndfile -lliquid -Wall -Wno-return-type-c-linkage -Wno-deprecated-declarations
+// c++ -std=c++11 -o sendFreq10 sendFreq10.cpp -lSoapySDR -lsndfile -lliquid -Wall -Wno-return-type-c-linkage
 // sendFreq10 "driver=hackrf"
 // sendFreq10 "driver=bladerf"
 // sdrReceive.x -f 230 -am -PPM -0.15 -cutoff -100 -device 2

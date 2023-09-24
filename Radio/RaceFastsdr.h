@@ -133,6 +133,7 @@ struct playData{
     int FFTfilter;
     int wShift;
     int size;
+    int ncut;
 
     ALuint source;
     double samplerate;

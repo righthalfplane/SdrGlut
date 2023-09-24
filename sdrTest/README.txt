@@ -25,7 +25,7 @@ uncomment the line in Clisten.cpp -
 
 Some examples -
 
-./sdrTest -fc 101.1e6 -f 101.5e6 -fm -gain 1 -audiodevice 2
+./sdrTest.x -fc 101.1e6 -f 101.5e6 -fm -gain 1 -audiodevice 2
 
 ./sdrTest -fc 1e6 -f 0.6e6 -gain 1
 
@@ -37,13 +37,13 @@ Some examples -
 
 ./sdrTest -fc 27.1e6 -f 27.185e6 -gain 1
 
-./sdrTest -fc 101.1e6 -f 101.5e6 -fm -gain 1
+./sdrTest.x -fc 101.1e6 -f 101.5e6 -fm -gain 1 -samplerate 912000 -device 0
 
 ./sdrTest -fc 103.0e6 -f 103.7e6 -fm -gain 1
 
 ./sdrTest -fc 102.0e6 -f 102.1e6 -fm -gain 1
 
-./sdrTest -fc 162.0e6 -f 162.4e6 -nbfm -gain 1
+./sdrTest.x -fc 162.0e6 -f 162.4e6 -nbfm -gain 1
 
 ./sdrTest -fc 102.0e6 -f 102.1e6 -fm -gain 1 -faudio 12000 -file test.raw
 
