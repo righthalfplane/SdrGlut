@@ -317,12 +317,23 @@ int Radio::Transmit(struct Scene *scene)
     
     // Scan through devices for various capabilities
     
+#if RTAUDIO_VERSION_MAJOR == 6
+    std::vector<unsigned int> id=tt.audio->getDeviceIds();
+#else
+    std::vector<unsigned int> id;
+    for(unsigned int n=0;n<devices;++n){
+        id.push_back(n);
+    }
+#endif
+
+    
+    
     int find=0;
     RtAudio::DeviceInfo info;
     for (int i=0; i<devices; i++) {
         
         try {
-            info = tt.audio->getDeviceInfo(i);
+            info = tt.audio->getDeviceInfo(id[i]);
             if(info.inputChannels > 0){
             // Print, for example, the maximum number of output channels for each device
                 //std::cout << "device = " << i;
@@ -735,7 +746,22 @@ static int TransmitThread(void *rxv)
     unsigned int bufferFrames = 2040;
     
     try {
-        s->tt.audio->openStream( NULL, &s->tt.Params, RTAUDIO_SINT16, samples, &bufferFrames, &input, (void *)&s->tt.info );
+ //       s->tt.audio->openStream( NULL, &s->tt.Params, RTAUDIO_SINT16, samples, &bufferFrames, &input, (void *)&s->tt.info );
+        
+        
+#if RTAUDIO_VERSION_MAJOR == 6
+        RtAudio::StreamOptions options;
+        options.flags = RTAUDIO_NONINTERLEAVED;
+        s->tt.audio->openStream(NULL,  &s->tt.Params, RTAUDIO_SINT16,
+                        (unsigned int)samples, &bufferFrames, &input, &s->tt.info, &options);
+#else
+        s->tt.audio->openStream(NULL,  &s->tt.Params, RTAUDIO_SINT16,
+                        (unsigned int)samples, &bufferFrames, &input, (void *)this );
+#endif
+
+        
+        
+        
     }
     catch (...) {
         std::cout << '\n' << "audio->openStream Error" << '\n' << std::endl;
