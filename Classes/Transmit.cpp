@@ -756,7 +756,7 @@ static int TransmitThread(void *rxv)
                         (unsigned int)samples, &bufferFrames, &input, &s->tt.info, &options);
 #else
         s->tt.audio->openStream(NULL,  &s->tt.Params, RTAUDIO_SINT16,
-                        (unsigned int)samples, &bufferFrames, &input, (void *)this );
+                        (unsigned int)samples, &bufferFrames, &input, &s->tt.info);
 #endif
 
         
