@@ -301,9 +301,9 @@ int Radio::Transmit(struct Scene *scene)
     try {
         tt.audio = new RtAudio();
     }
-    catch (RtAudioError &error) {
-        error.printMessage();
-        exit(1);
+    catch (...) {
+        fprintf(stderr,"new RtAudio Failed");
+        return 1;
     }
     
     if(tt.audio == NULL){
@@ -336,8 +336,8 @@ int Radio::Transmit(struct Scene *scene)
             }
 
         }
-        catch (RtAudioError &error) {
-            error.printMessage();
+        catch (...) {
+            fprintf(stderr,"RtAudio Info Error\n");
             break;
         }
         
@@ -737,8 +737,8 @@ static int TransmitThread(void *rxv)
     try {
         s->tt.audio->openStream( NULL, &s->tt.Params, RTAUDIO_SINT16, samples, &bufferFrames, &input, (void *)&s->tt.info );
     }
-    catch ( RtAudioError& e ) {
-        std::cout << '\n' << e.getMessage() << '\n' << std::endl;
+    catch (...) {
+        std::cout << '\n' << "audio->openStream Error" << '\n' << std::endl;
         goto cleanup;
     }
     
@@ -749,8 +749,8 @@ static int TransmitThread(void *rxv)
     try {
         s->tt.audio->startStream();
     }
-    catch ( RtAudioError& e ) {
-        std::cout << '\n' << e.getMessage() << '\n' << std::endl;
+    catch (...) {
+        std::cout << '\n' << "audio->startStream" << '\n' << std::endl;
         goto cleanup;
     }
     

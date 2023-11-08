@@ -4,6 +4,7 @@
 #include <string.h>    
 #include </usr/local/include/libusb-1.0/libusb.h>    
 
+//cc -o bulkio2.x bulkio2.c -lusb-1.0
 
 #define BULK_EP_OUT     0x02    
 #define BULK_EP_IN      0x88    
@@ -44,7 +45,7 @@ struct libusb_endpoint_descriptor* active_config(struct libusb_device *dev,struc
 {    
     struct libusb_device_handle *hDevice_req;    
     struct libusb_config_descriptor *config;    
-    struct libusb_endpoint_descriptor *endpoint;    
+    const struct libusb_endpoint_descriptor *endpoint;    
     int altsetting_index,interface_index=0,ret_active;    
     int i,ret_print;    
 
@@ -63,7 +64,7 @@ struct libusb_endpoint_descriptor* active_config(struct libusb_device *dev,struc
             int endpoint_index;    
             for(endpoint_index=0;endpoint_index<altsetting->bNumEndpoints;endpoint_index++)    
             {    
-                const struct libusb_endpoint_desriptor *ep = &altsetting->endpoint[endpoint_index];    
+                const struct libusb_endpoint_descriptor *ep = &altsetting->endpoint[endpoint_index];    
                 endpoint = ep;      
                 alt_interface = altsetting->bAlternateSetting;    
                 interface_number = altsetting->bInterfaceNumber;    
@@ -79,7 +80,7 @@ struct libusb_endpoint_descriptor* active_config(struct libusb_device *dev,struc
         }    
     }    
     libusb_free_config_descriptor(NULL);    
-    return endpoint;    
+    return (struct libusb_endpoint_descriptor *)endpoint;    
 }    
 
 int main(void)    
@@ -186,7 +187,7 @@ int main(void)
     }//end of while    
     if(found == 0)    
     {    
-        printf("\nDevice NOT found\n");    
+        printf("\nDevice ICR8600 NOT found\n");    
         libusb_free_device_list(devs,1);    
         libusb_close(handle);    
         return 1;    

@@ -954,8 +954,9 @@ int cReceive::playRadio(struct playData *rx)
 							(unsigned int)rx->faudio, &bufferFrames, &sound, (void *)rx );
 			dac.startStream();
 		}
-		catch ( RtAudioError& e ) {
-			e.printMessage();
+		//catch ( RtAudioError& e ) {
+		//	e.printMessage();
+		catch ( ...) {
 			exit( 0 );
 		}
 	
@@ -1022,8 +1023,10 @@ int cReceive::playRadio(struct playData *rx)
 		// Stop the stream
 			dac.stopStream();
 		}
-		catch (RtAudioError& e) {
-			e.printMessage();
+		//catch (RtAudioError& e) {
+		//	e.printMessage();
+		catch (...) {
+			;
 		}
 		if (dac.isStreamOpen()) dac.closeStream();
 	}
@@ -1561,8 +1564,10 @@ int cReceive::printAudioInfo(struct playData *rx)
 		   }
 
 		}
-		catch (RtAudioError &error) {
-			error.printMessage();
+		//catch (RtAudioError &error) {
+		//	error.printMessage();
+		catch (...) {
+			;
 			break;
 		}
 

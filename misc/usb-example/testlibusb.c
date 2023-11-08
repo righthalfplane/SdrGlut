@@ -23,11 +23,15 @@
 #include <string.h>
 #include <libusb-1.0/libusb.h>
 
+
+//cc -o testlibusb.x testlibusb.c -lusb-1.0
+
+
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
 #define snprintf _snprintf
 #endif
 
-int verbose = 0;
+int verbose = 1;
 
 static void print_endpoint_comp(const struct libusb_ss_endpoint_companion_descriptor *ep_comp)
 {
@@ -185,7 +189,7 @@ static int print_device(libusb_device *dev, int level)
 	ret = libusb_open(dev, &handle);
 	if (LIBUSB_SUCCESS == ret) {
 		if (desc.iManufacturer) {
-			ret = libusb_get_string_descriptor_ascii(handle, desc.iManufacturer, string, sizeof(string));
+			ret = libusb_get_string_descriptor_ascii(handle, desc.iManufacturer,(unsigned char *) string, sizeof(string));
 			if (ret > 0)
 				snprintf(description, sizeof(description), "%s - ", string);
 			else
@@ -197,7 +201,7 @@ static int print_device(libusb_device *dev, int level)
 			desc.idVendor);
 
 		if (desc.iProduct) {
-			ret = libusb_get_string_descriptor_ascii(handle, desc.iProduct, string, sizeof(string));
+			ret = libusb_get_string_descriptor_ascii(handle, desc.iProduct,(unsigned char *) string, sizeof(string));
 			if (ret > 0)
 				snprintf(description + strlen(description), sizeof(description) -
 				strlen(description), "%s", string);
@@ -219,7 +223,7 @@ static int print_device(libusb_device *dev, int level)
 
 	if (handle && verbose) {
 		if (desc.iSerialNumber) {
-			ret = libusb_get_string_descriptor_ascii(handle, desc.iSerialNumber, string, sizeof(string));
+			ret = libusb_get_string_descriptor_ascii(handle, desc.iSerialNumber,(unsigned char *) string, sizeof(string));
 			if (ret > 0)
 				printf("%.*s  - Serial Number: %s\n", level * 2,
 				"                    ", string);

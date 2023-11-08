@@ -1,4 +1,0 @@
-C:/Users/Owner/Documents/Archive/SDRPlay-indepentRX2/SoapySDRPlay/build/CMakeFiles/sdrPlaySupport.dir
-C:/Users/Owner/Documents/Archive/SDRPlay-indepentRX2/SoapySDRPlay/build/CMakeFiles/INSTALL.dir
-C:/Users/Owner/Documents/Archive/SDRPlay-indepentRX2/SoapySDRPlay/build/CMakeFiles/ALL_BUILD.dir
-C:/Users/Owner/Documents/Archive/SDRPlay-indepentRX2/SoapySDRPlay/build/CMakeFiles/ZERO_CHECK.dir
