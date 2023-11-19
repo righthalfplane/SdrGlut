@@ -126,6 +126,7 @@ static GLUI_Listbox  *boxmode;
 int modetype;
 
 int iblade;
+int iant;
 
 RadioPtr RadioWindowSetFrequency(struct playData *rx);
 
@@ -566,7 +567,7 @@ static int doRadioOpen2(SoapySDR::Kwargs deviceArgs)
     
     int ntransmit=(int)devicer->getNumChannels(SOAPY_SDR_TX);
     
-    if(iblade){
+    if(iblade || iant){
         nreceive=1;
         ntransmit=1;
     }
@@ -781,12 +782,16 @@ static void control_cb(int control)
 
     SoapySDR::Kwargs deviceArgs=results[device];
     
+    iant=0;
     iblade=0;
     for (SoapySDR::Kwargs::const_iterator it = deviceArgs.begin(); it != deviceArgs.end(); ++it) {
         if (it->first == "driver") {
             if(it->second == "bladerf"){
                 printf("Blade Found\n");
                 iblade=1;
+            }else if(it->second == "uhd"){
+                printf("AntSDR Found\n");
+                iant=1;
             }
         }
     }

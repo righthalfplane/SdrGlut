@@ -64,7 +64,7 @@ g++ -O2 -std=c++11 -Wno-deprecated -o sdrTest sdrTest.cpp mThread.cpp cMalloc.cp
 
 ./sdrTest -fc 101.1e6 -f 101.5e6 -fm -gain 1 -audiodevice 2
 
-./sdrTest -fc 1e6 -f 0.6e6 -am -gain 1  -timeout 5
+./sdrTest.x -fc 1e6 -f 0.6e6 -am -gain 1  -timeout 5
 
 ./sdrTest -fc 1e6 -f 0.76e6 -am -gain 1
 
@@ -439,8 +439,8 @@ int main (int argc, char * argv [])
 			   }
 
 			}
-			catch (RtAudioError &error) {
-				error.printMessage();
+			catch (...) {
+				fprintf(stderr,"Audio Error\n");
 				break;
 			}
 		
@@ -465,9 +465,9 @@ int main (int argc, char * argv [])
 							(unsigned int)rx.faudio, &bufferFrames, &sound, (void *)&rx );
 			dac.startStream();
 		}
-		catch ( RtAudioError& e ) {
-			e.printMessage();
-			exit( 0 );
+		catch (...) {
+			fprintf(stderr,"Audio Error\n");
+			exit(2);
 		}
 	}	
 	
@@ -493,9 +493,9 @@ int main (int argc, char * argv [])
 			// Stop the stream
 			dac.stopStream();
 		  }
-		  catch (RtAudioError& e) {
-			e.printMessage();
-		  }
+		catch (...) {
+			fprintf(stderr,"Audio Error\n");
+		}
 		  if ( dac.isStreamOpen() ) dac.closeStream();
 	}
 	
