@@ -123,7 +123,7 @@ int main(int argc,char *argv[])
 	
     RtAudio::DeviceInfo info;
     
-#if RTAUDIO_VERSION_MAJOR == 6
+#ifndef RTAUDIO_OLD
 	std::vector<unsigned int> id=dac.getDeviceIds();
 #else
 	std::vector<unsigned int> id;

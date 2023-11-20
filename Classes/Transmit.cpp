@@ -317,7 +317,7 @@ int Radio::Transmit(struct Scene *scene)
     
     // Scan through devices for various capabilities
     
-#if RTAUDIO_VERSION_MAJOR == 6
+#ifndef RTAUDIO_OLD
     std::vector<unsigned int> id=tt.audio->getDeviceIds();
 #else
     std::vector<unsigned int> id;
@@ -749,7 +749,7 @@ static int TransmitThread(void *rxv)
  //       s->tt.audio->openStream( NULL, &s->tt.Params, RTAUDIO_SINT16, samples, &bufferFrames, &input, (void *)&s->tt.info );
         
         
-#if RTAUDIO_VERSION_MAJOR == 6
+#ifndef RTAUDIO_OLD
         RtAudio::StreamOptions options;
         options.flags = RTAUDIO_NONINTERLEAVED;
         s->tt.audio->openStream(NULL,  &s->tt.Params, RTAUDIO_SINT16,

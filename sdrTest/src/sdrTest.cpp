@@ -406,7 +406,7 @@ int main (int argc, char * argv [])
 			exit( 0 );
 		}
 	
-#if RTAUDIO_VERSION_MAJOR == 6
+#ifndef RTAUDIO_OLD
 	std::vector<unsigned int> id=dac.getDeviceIds();
 #else
 	std::vector<unsigned int> id;
