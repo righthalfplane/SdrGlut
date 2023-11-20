@@ -1196,7 +1196,7 @@ cReceive::cReceive(int argc, char * argv [])
     rx->Debug = 1;
     rx->ncut = 20;
     rx->rf_gain=0;
-    rx->cutOFF=-70;
+    rx->cutOFF=-170;
     rx->pipe=0;
     rx->muteAudio=0;
     
@@ -1535,13 +1535,23 @@ int cReceive::printAudioInfo(struct playData *rx)
 	mprint("\nAudio device Count %d default output device %d audiodevice %d\n",deviceCount,dac.getDefaultOutputDevice(),rx->audiodevice);
 
 	RtAudio::DeviceInfo info;
+	
+#if RTAUDIO_VERSION_MAJOR == 6
+	std::vector<unsigned int> id=dac.getDeviceIds();
+#else
+	std::vector<unsigned int> id;
+	for(unsigned int n=0;n<deviceCount;++n){
+		id.push_back(n);
+	}
+#endif
+	
 	for (int i=0; i<deviceCount; i++) {
 
 		try {
-			info=dac.getDeviceInfo(i);
+			info=dac.getDeviceInfo(id[i]);
 			if(info.outputChannels > 0){
 			// Print, for example, the maximum number of output channels for each device
-				mprint("audio device = %d : output  channels = %d Device Name = %s",i,info.outputChannels,info.name.c_str());
+				mprint("audio device = %d : output  channels = %d Device Name = %s",id[i],info.outputChannels,info.name.c_str());
 				if(info.sampleRates.size()){
 					mprint(" sampleRates = ");
 					for (int ii = 0; ii < (int)info.sampleRates.size(); ++ii){
@@ -1553,7 +1563,7 @@ int cReceive::printAudioInfo(struct playData *rx)
  
 			if(info.inputChannels > 0){
 			// Print, for example, the maximum number of output channels for each device
-				mprint("audio device = %d : input   channels = %d Device Name = %s",i,info.inputChannels,info.name.c_str());
+				mprint("audio device = %d : input   channels = %d Device Name = %s",id[i],info.inputChannels,info.name.c_str());
 				 if(info.sampleRates.size()){
 					mprint(" sampleRates = ");
 					for (int ii = 0; ii < (int)info.sampleRates.size(); ++ii){

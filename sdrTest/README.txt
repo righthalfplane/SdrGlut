@@ -27,11 +27,11 @@ Some examples -
 
 ./sdrTest.x -fc 101.1e6 -f 101.5e6 -fm -gain 1 -audiodevice 2
 
-./sdrTest -fc 1e6 -f 0.6e6 -gain 1
+./sdrTest.x -fc 1e6 -f 0.6e6 -gain 1
 
-./sdrTest -fc 1e6 -f 0.76e6 -am -gain 1
+./sdrTest.x -fc 1e6 -f 0.76e6 -am -gain 1
 
-./sdrTest -fc 1e6 -f 1.17e6 -gain 1
+./sdrTest.x -fc 1e6 -f 1.17e6 -gain 1
 
 ./sdrTest -fc 10.1e6 -f 10.0e6 -gain 1
 

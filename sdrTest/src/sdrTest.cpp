@@ -290,7 +290,7 @@ int main (int argc, char * argv [])
 	
 	rx.samplerate=2000000;
 	rx.deviceNumber=0;
-	audiodevice=0;
+	audiodevice=-1;
 	threadexit=0;
 	rx.gain=0.5;
 	rx.fc=1.0e6;
@@ -406,6 +406,14 @@ int main (int argc, char * argv [])
 			exit( 0 );
 		}
 	
+#if RTAUDIO_VERSION_MAJOR == 6
+	std::vector<unsigned int> id=dac.getDeviceIds();
+#else
+	std::vector<unsigned int> id;
+	for(unsigned int n=0;n<deviceCount;++n){
+		id.push_back(n);
+	}
+#endif
 	
 		mprint("\nAudio device Count %d default output device %d audiodevice %d\n",deviceCount,dac.getDefaultOutputDevice(),audiodevice);
 	
@@ -413,10 +421,10 @@ int main (int argc, char * argv [])
 		for (int i=0; i<deviceCount; i++) {
 		
 			try {
-				info=dac.getDeviceInfo(i);
+				info=dac.getDeviceInfo(id[i]);
 				if(info.outputChannels > 0){
 				// Print, for example, the maximum number of output channels for each device
-					mprint("audio device = %d : output  channels = %d Device Name = %s",i,info.outputChannels,info.name.c_str());
+					mprint("audio device = %d : output  channels = %d Device Name = %s",id[i],info.outputChannels,info.name.c_str());
 					if(info.sampleRates.size()){
 						mprint(" sampleRates = ");
 						for (int ii = 0; ii < (int)info.sampleRates.size(); ++ii){
@@ -428,7 +436,7 @@ int main (int argc, char * argv [])
 			 
 				if(info.inputChannels > 0){
 				// Print, for example, the maximum number of output channels for each device
-					mprint("audio device = %d : input   channels = %d Device Name = %s",i,info.inputChannels,info.name.c_str());
+					mprint("audio device = %d : input   channels = %d Device Name = %s",id[i],info.inputChannels,info.name.c_str());
 					 if(info.sampleRates.size()){
 						mprint(" sampleRates = ");
 						for (int ii = 0; ii < (int)info.sampleRates.size(); ++ii){
@@ -452,8 +460,11 @@ int main (int argc, char * argv [])
 	
 	
 		RtAudio::StreamParameters parameters;
-		parameters.deviceId = dac.getDefaultOutputDevice();
-		parameters.deviceId = audiodevice;
+		if(audiodevice >= 0){
+			parameters.deviceId = audiodevice;
+		}else{
+			parameters.deviceId = dac.getDefaultOutputDevice();
+		}
 		parameters.nChannels = 2;
 		parameters.nChannels = 1;
 		parameters.firstChannel = 0;
@@ -505,6 +516,8 @@ int main (int argc, char * argv [])
 	if(l)delete l;
 	
 	checkall();
+	
+	fprintf(stderr,"Fini\n");
 	
 	return 0 ;
 } /* main */
