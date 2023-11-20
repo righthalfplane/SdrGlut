@@ -53,7 +53,7 @@ int Usage()
 	fprintf(stderr,"  -audiodevice 1           Use audio output device one\n");
 	fprintf(stderr,"  -binary                  Write I/Q data to stdout\n\n");
 	fprintf(stderr,"  -p  3500                 listen on port 3500\n\n");
-	fprintf(stderr,"\nPath:\n");
+	fprintf(stderr,"\nSoapy Path:\n");
 	fprintf(stderr,"SOAPY_SDR_ROOT\n");
 
 	return 0;
@@ -95,6 +95,7 @@ int main(int argc,char *argv[])
             device=(int)atof(argv[++n]);
         }else if(!strcmp(argv[n],"-remotespeakers")){
             remoteSpeakers=1;
+            l->Port=5000;
         }else if(!strcmp(argv[n],"-h")){
             Usage();
             exit(0);
@@ -118,26 +119,38 @@ int main(int argc,char *argv[])
 		return 1;
 	}
 	
-	fprintf(stderr,"deviceCount %d default output device %d\n",deviceCount,dac.getDefaultOutputDevice());
+	fprintf(stderr,"deviceCount %d default output device %d listen port %u\n",deviceCount,dac.getDefaultOutputDevice(),l->Port);
 	
     RtAudio::DeviceInfo info;
+    
+#if RTAUDIO_VERSION_MAJOR == 6
+	std::vector<unsigned int> id=dac.getDeviceIds();
+#else
+	std::vector<unsigned int> id;
+	for(unsigned int n=0;n<deviceCount;++n){
+		id.push_back(n);
+	}
+#endif
+
+    
+    
     for (int i=0; i<deviceCount; i++) {
         
         try {
-            info=dac.getDeviceInfo(i);
+            info=dac.getDeviceInfo(id[i]);
             if(info.outputChannels > 0){
             // Print, for example, the maximum number of output channels for each device
-                fprintf(stderr,"device = %d : maximum output  channels = %d Device Name = %s\n",i,info.outputChannels,info.name.c_str());
+                fprintf(stderr,"device = %d : maximum output  channels = %d Device Name = %s\n",id[i],info.outputChannels,info.name.c_str());
              }
              
             if(info.inputChannels > 0){
             // Print, for example, the maximum number of output channels for each device
-                fprintf(stderr,"device = %d : maximum output  channels = %d Device Name = %s\n",i,info.inputChannels,info.name.c_str());
+                fprintf(stderr,"device = %d : maximum output  channels = %d Device Name = %s\n",id[i],info.inputChannels,info.name.c_str());
             }
 
         }
-        catch (RtAudioError &error) {
-            error.printMessage();
+        catch (...) {
+            fprintf(stderr,"Audio Error\n");
             break;
         }
         
@@ -162,9 +175,9 @@ int main(int argc,char *argv[])
 						sampleRate, &bufferFrames, &sound, (void *)l);
 		dac.startStream();
 	}
-	catch ( RtAudioError& e ) {
-		e.printMessage();
-		exit( 0 );
+	catch (...) {
+		fprintf(stderr,"Audio Error\n");
+		exit(1);
 	}
 	
 	
@@ -185,9 +198,9 @@ int main(int argc,char *argv[])
     	// Stop the stream
     	dac.stopStream();
   	}
-  	catch (RtAudioError& e) {
-    	e.printMessage();
-    }
+	catch (...) {
+		fprintf(stderr,"Audio Error\n");
+	}
   	
   	if ( dac.isStreamOpen() ) dac.closeStream();
   	
