@@ -766,6 +766,7 @@ int printInfo(void)
 	mprint("Lib Version: v%s\n",SoapySDR::getLibVersion().c_str());
 	mprint("API Version: v%s\n",SoapySDR::getAPIVersion().c_str());
 	mprint("ABI Version: v%s\n",SoapySDR::getABIVersion().c_str());
+	mprint("SOAPY_SDR_ROOT\n");
 	mprint("Install root:  %s\n",SoapySDR::getRootPath().c_str());
     
     std::vector<std::string> path=SoapySDR::listSearchPaths();
@@ -791,8 +792,6 @@ int printInfo(void)
 
     return 0;
 }
-
-
 
 int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
          double streamTime, RtAudioStreamStatus status, void *userData )
@@ -1425,6 +1424,7 @@ int findRadio(struct playData *rx)
 			rx->device = SoapySDR::Device::make(deviceArgs);
 			
 			mprint("driver = %s\n",rx->device->getDriverKey().c_str());
+			
 			mprint("hardware = %s\n",rx->device->getHardwareKey().c_str());
         
         
@@ -1432,7 +1432,7 @@ int findRadio(struct playData *rx)
 		
 			for( SoapySDR::Kwargs::iterator  ii=it.begin(); ii!=it.end(); ++ii)
 			{
-					mprint("%s = %s ",ii->first.c_str(), ii->second.c_str());
+					mprint("%s = %s \n",ii->first.c_str(), ii->second.c_str());
 			}
 
 			
@@ -1500,15 +1500,18 @@ int findRadio(struct playData *rx)
             
         	for (size_t j = 0; j < rlist.size(); j++)
         	{
-         	    mprint("FrequencyRange min %g max %g \n",rlist[j].minimum(),rlist[j].maximum());
+         	    mprint("RX FrequencyRange min %g max %g \n",rlist[j].minimum(),rlist[j].maximum());
         	}
 
         	std::vector<double> band=rx->device->listBandwidths(SOAPY_SDR_RX, rx->channel);
         	if(band.size()){
-                mprint("\nBandwidth MHZ ");  		
+                mprint("\nRX Bandwidth MHZ ");  		
 				for (size_t j = 0; j <band.size(); j++)
 				{
 				   mprint(" %.2f ",band[j]/1.0e6);
+				   if(((j+1) % 10) == 0){
+				   		mprint("\n                 ",band[j]/1.0e6);
+				   }
 				}
 				mprint("\n\n");
             }
@@ -1516,15 +1519,19 @@ int findRadio(struct playData *rx)
 
 			std::vector<double> rate=rx->device->listSampleRates(SOAPY_SDR_RX, rx->channel);
         	if(rate.size()){
-                 mprint("SampleRates MHZ ");
+                 mprint("RX SampleRates MHZ\n");
       		}
 			for (size_t j = 0; j < rate.size(); j++)
         	{
            		mprint(" %.6f ",rate[j]/1.0e6);
+  				if(((j+1) % 10) == 0){
+				   	mprint("\n",band[j]/1.0e6);
+				}
+         		
          	}
             mprint("\n\n");
 
-            mprint("Gains: \n");  		
+            mprint("RX Gains: \n");  		
 			names=rx->device->listGains( SOAPY_SDR_RX, rx->channel);
 			for (size_t j = 0; j < names.size(); j++)
 			{
@@ -1535,11 +1542,66 @@ int findRadio(struct playData *rx)
 			}
 
            mprint("\n");
+           
+           
+  			if(rx->device->getNumChannels(SOAPY_SDR_TX)){
+			
+			    SoapySDR::Range range=rx->device->getGainRange(SOAPY_SDR_TX, rx->channel);
+        
+            	mprint("TX RF Gain range min %g max %g \n",range.minimum(),range.maximum());
 
-			rx->device->setSampleRate(SOAPY_SDR_RX, rx->channel, rx->samplerate);
+				SoapySDR::RangeList rlist=rx->device->getFrequencyRange(SOAPY_SDR_TX, rx->channel);
+			
+				for (size_t j = 0; j < rlist.size(); j++)
+				{
+					mprint("TX FrequencyRange min %g max %g \n",rlist[j].minimum(),rlist[j].maximum());
+				}
+		
+				std::vector<double> band=rx->device->listBandwidths(SOAPY_SDR_TX, rx->channel);
+				if(band.size()){
+					mprint("TX Bandwidth MHZ ");  		
+					for (size_t j = 0; j <band.size(); j++)
+					{
+					   mprint(" %.2f ",band[j]/1.0e6);
+					}
+					mprint("\n");
+				}
+		
+			
+				rate=rx->device->listSampleRates(SOAPY_SDR_TX, rx->channel);
+				if(rate.size()){
+					 mprint("TX SampleRates MHZ \n");
+				}
+				for (size_t j = 0; j < rate.size(); j++)
+				{
+					mprint(" %.6f ",rate[j]/1.0e6);
+					if(((j+1) % 10) == 0){
+						mprint("\n",band[j]/1.0e6);
+					}
+
+				}
+				mprint("\n");
+				
+				mprint("TX Gains: \n");  		
+				names=rx->device->listGains( SOAPY_SDR_TX, rx->channel);
+				for (size_t j = 0; j < names.size(); j++)
+				{
+					mprint("         %lu %s ",j, names[j].c_str());
+			
+					SoapySDR::Range range3=rx->device->getGainRange(SOAPY_SDR_TX, rx->channel, names[j].c_str());
+					mprint("range max %g min %g\n",range3.maximum(),range3.minimum());
+				}
+
+			   mprint("\n");
+				
+				
+			}
+         
 			
 			rx->device->setFrequency(SOAPY_SDR_RX, rx->channel, rx->fc);
 			
+			rx->device->setSampleRate(SOAPY_SDR_RX, rx->channel, rx->samplerate);
+		
         	mprint("rx->samplerate %d\n",rx->samplerate);
 			
 			//const std::vector<size_t> channels = {(size_t)0,(size_t)1};
@@ -1570,6 +1632,8 @@ int findRadio(struct playData *rx)
     return 0;
     
 }
+
+
 int rxBuffer(void *rxv)
 {
 
