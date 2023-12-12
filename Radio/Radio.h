@@ -204,6 +204,7 @@ struct DialogRadioData{
     int gain_Index;
     int iic;
     int useagc;
+    int flipSpectrum;
     struct Scene *sceneLocal;
     int sub_window;
 };

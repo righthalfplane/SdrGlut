@@ -897,7 +897,6 @@ int Radio::welch(double *real,double *imag,int *lengthi)
             real[n+k*length/2] *= pow(-1.0,n);
             imag[n+k*length/2] *= pow(-1.0,n);
         }
-        
         doFFT2(real+k*length/2,imag+k*length/2,length,1);
 
         for(int n=0;n<length;++n){
@@ -920,8 +919,9 @@ int Radio::welch(double *real,double *imag,int *lengthi)
         real[n] *= pow(-1.0,n);
         imag[n] *= pow(-1.0,n);
     }
-    
-    doFFT2(real,imag,length,1);
+    int direction=1;
+    if(rx->flipSpectrum)direction = -1;
+    doFFT2(real,imag,length,direction);
 #endif
     return 0;
 }

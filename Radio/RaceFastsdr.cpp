@@ -104,7 +104,7 @@ int RadioStart(int argc, char * argv [],struct playData *rx)
     rx->controlSend = -1;
     rx->fillBuffer = -1;
     rx->Debug = 1;
-    
+    rx->flipSpectrum=0;
 
 	for(int n=1;n<argc;++n){
 	    if(!strcmp(argv[n],"-debug")){

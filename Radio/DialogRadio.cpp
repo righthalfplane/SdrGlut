@@ -472,6 +472,7 @@ int Radio::dialogRadio(struct Scene *scene)
     
     dd.useagc=rx->gainMode;
     
+    
     check_box = new GLUI_Checkbox( dd.glui, "Use Automatic Agc", &dd.useagc, 7, control_cb );
     
     if(!rx->hasGainMode)check_box->disable();
@@ -552,6 +553,11 @@ int Radio::dialogRadio(struct Scene *scene)
     dd.lowpass->set_speed(1);
     
     check_box = new GLUI_Checkbox( dd.glui, "Broadcast Frequencies", &gf.broadCastFrequency, 777, control_cb );
+    
+    dd.flipSpectrum=rx->flipSpectrum;
+    //fprintf(stderr,"dd.flipSpectrum %d rx->flipSpectrum %d\n",dd.flipSpectrum,rx->flipSpectrum);
+
+    check_box = new GLUI_Checkbox( dd.glui, "Flip Spectrum", &dd.flipSpectrum, 888, control_cb );
 
     dd.sub_window=glutGetWindow();
     
@@ -725,6 +731,11 @@ static void control_cb(int control)
             s->dd.line_Index_old[ind]=(int)s->dd.line_Index[ind];
             setControls();
        }
+    }
+    else if(control == 888)
+    {
+        s->rx->flipSpectrum = s->dd.flipSpectrum;
+       // fprintf(stderr,"s->rx->flipSpectrum %d s->dd.flipSpectrum %d\n",s->rx->flipSpectrum,s->dd.flipSpectrum);
     }
     else if(control == 500)
     {

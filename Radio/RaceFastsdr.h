@@ -163,6 +163,8 @@ struct playData{
     int decodemode;
     
     int matchFrequencies;
+    
+    int flipSpectrum;
 
     SoapySDR::Stream *rxStream;
     SoapySDR::Device *device;
