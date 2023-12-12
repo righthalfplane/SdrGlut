@@ -27,6 +27,7 @@ SdrGlut has a new Voice Command Module. It can be programed to record any freque
 
 ## Demo videos
 - [An Introduction to SdrGlut (A software defined radio)](https://youtu.be/JEXK-r6PvmA)
+- [CaribouLite SDR - Demo of CubicSDR 0.2.7 vs. SdrGlut-1182](https://youtu.be/sKcm6edLB-U)
 - [Using the MicroPhase ANTSDR E200 on Ubuntu 23.10](https://youtu.be/76u6hPhku5E)
 - [HackRF One vs. ANTSDR E200 at FRS Frequencies.](https://youtu.be/39tmEcldqsA)
 - [BladeRF xA5 vs. ANTSDR E200 at FRS Frequencies.](https://youtu.be/LHv6Z11Tf9c)
