@@ -920,7 +920,6 @@ int Radio::welch(double *real,double *imag,int *lengthi)
         imag[n] *= pow(-1.0,n);
     }
     int direction=1;
-    if(rx->flipSpectrum)direction = -1;
     doFFT2(real,imag,length,direction);
 #endif
     return 0;

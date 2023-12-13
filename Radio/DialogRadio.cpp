@@ -557,7 +557,7 @@ int Radio::dialogRadio(struct Scene *scene)
     dd.flipSpectrum=rx->flipSpectrum;
     //fprintf(stderr,"dd.flipSpectrum %d rx->flipSpectrum %d\n",dd.flipSpectrum,rx->flipSpectrum);
 
-    check_box = new GLUI_Checkbox( dd.glui, "Flip Spectrum", &dd.flipSpectrum, 888, control_cb );
+    check_box = new GLUI_Checkbox( dd.glui, "I/Q Swap", &dd.flipSpectrum, 888, control_cb );
 
     dd.sub_window=glutGetWindow();
     

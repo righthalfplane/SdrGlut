@@ -1836,6 +1836,15 @@ int rxBuffer(void *rxv)
                     fprintf(stderr,"2 free error data corrupt Buffer %d count %d rx->size %d\n",rx->witchRFBuffer,count,rx->size);
                 }
  */
+                if(rx->flipSpectrum){
+                    for(int n=0;n<rx->size;++n){
+                        float save;
+                        save=buff[2*n];
+                        buff[2*n]=buff[2*n+1];
+                        buff[2*n+1]=save;
+                    }
+                }
+
         	    pushBuff(rx->witchRFBuffer,rx);
                 
                 if(rx->fillBuffer == 1){
