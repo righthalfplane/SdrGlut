@@ -18,6 +18,10 @@
 
 #include <GL/glui.h>
 
+#ifdef FREEGLUT
+#include <GL/freeglut.h>
+#endif
+
 #include <liquid/liquid.h>
 
 #include "BatchFile.h"
@@ -39,7 +43,7 @@ static void control_cb(int control);
 
 static void control_cb2(int control);
 
-char *ProgramVersion=(char *)"SdrGlut-1184";
+char *ProgramVersion=(char *)"SdrGlut-1185";
 
 extern "C" struct Scene *sceneRoot(void);
 
@@ -458,6 +462,10 @@ int main (int argc, char *argv[]) {
     dialogStart();
     
     glutTimerFunc(50,timer,50);
+    
+#ifdef FREEGLUT
+    glutSetOption( GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS );
+#endif
     
     glutMainLoop();
     
