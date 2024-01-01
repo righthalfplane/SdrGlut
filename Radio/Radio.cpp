@@ -564,14 +564,11 @@ static int doRadioOpen2(SoapySDR::Kwargs deviceArgs)
     SoapySDR::Device *devicer = SoapySDR::Device::make(deviceArgs);
     
     int nreceive=(int)devicer->getNumChannels(SOAPY_SDR_RX);
+    if(nreceive > 1)nreceive=1;
     
     int ntransmit=(int)devicer->getNumChannels(SOAPY_SDR_TX);
-    
-    if(iblade || iant){
-        nreceive=1;
-        ntransmit=1;
-    }
-    
+    if(ntransmit > 1)ntransmit=1;
+        
     printf("receive channels %d transmit channels %d\n",nreceive,ntransmit);
     
     SoapySDR::Device::unmake(devicer);
