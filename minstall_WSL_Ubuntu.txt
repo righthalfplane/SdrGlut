@@ -1,18 +1,23 @@
 #!/bin/tcsh
 # Also git cmake and pkg-config
 ##*******************************
+sudo apt-get update
+sudo apt-get upgrade
 
 sudo apt-get cmake
 sudo apt-get git
 sudo apt-get pkg-config
+sudo apt-get geany
 
 
-sudo apt-get install python3-pip3
+sudo apt-get install python3-pip
 pip3 install ruamel.yaml
 pip3 install numpy
 pip3 install requests
 pip3 install mako
-pip3 install platform
+
+sudo apt-get install libboost1.74-all-dev -y
+sudo apt-get install libusb-1.0-0-dev -y
 
 git clone --depth=1 https://github.com/MicroPhase/antsdr_uhd
 cd antsdr_uhd
@@ -23,22 +28,29 @@ cd build
 cmake -DENABLE_X400=OFF -DENABLE_N320=OFF -DENABLE_X300=OFF -DENABLE_USRP2=OFF -DENABLE_USRP1=OFF -DENABLE_N300=OFF -DENABLE_E320=OFF -DENABLE_E300=OFF ../
 make -j 12
 sudo make install
+sudo ldconfig
+uhd_find_devices --args "addr=192.168.1.10"
+cd ..
+cd ..
+cd ..
 
-sudo apt-get install portaudio19-dev
+
+
 
 
 sudo apt-get update
 sudo apt-get upgrade
 sudo apt-get install build-essential
-sudo apt-get install libsoapysdr-dev
-sudo apt-get install libopenal-dev
-sudo apt-get install libliquid-dev
-sudo apt-get install freeglut3-dev
-sudo apt-get install libalut-dev
-sudo apt-get install libsndfile1-dev
-sudo apt-get install librtaudio-dev
-sudo apt-get install libglew-dev
-sudo apt-get install git
+sudo apt-get install libsoapysdr-dev -y
+sudo apt-get install libopenal-dev -y
+sudo apt-get install libliquid-dev -y
+sudo apt-get install libalut-dev -y
+sudo apt-get install portaudio19-dev -y
+sudo apt-get install libsndfile1-dev -y
+sudo apt-get install librtaudio-dev -y
+sudo apt-get install libglew-dev -y
+sudo apt-get install freeglut3-dev -y
+sudo apt-get install git -y
 cd ~/Desktop
 git clone --depth=1 https://github.com/righthalfplane/SdrGlut.git
 cd SdrGlut
