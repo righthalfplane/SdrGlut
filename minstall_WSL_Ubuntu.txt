@@ -1,0 +1,252 @@
+#!/bin/tcsh
+# Also git cmake and pkg-config
+##*******************************
+
+sudo apt-get cmake
+sudo apt-get git
+sudo apt-get pkg-config
+
+
+sudo apt-get install python3-pip3
+pip3 install ruamel.yaml
+pip3 install numpy
+pip3 install requests
+pip3 install mako
+pip3 install platform
+
+git clone --depth=1 https://github.com/MicroPhase/antsdr_uhd
+cd antsdr_uhd
+cd host
+mkdir build
+cd build
+#cmake -DPYTHON_EXECUTABLE=/usr/local/bin/python3 -DENABLE_X400=OFF -DENABLE_N320=OFF -DENABLE_X300=OFF -DENABLE_USRP2=OFF -DENABLE_USRP1=OFF -DENABLE_N300=OFF -DENABLE_E320=OFF -DENABLE_E300=OFF ../
+cmake -DENABLE_X400=OFF -DENABLE_N320=OFF -DENABLE_X300=OFF -DENABLE_USRP2=OFF -DENABLE_USRP1=OFF -DENABLE_N300=OFF -DENABLE_E320=OFF -DENABLE_E300=OFF ../
+make -j 12
+sudo make install
+
+sudo apt-get install portaudio19-dev
+
+
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install build-essential
+sudo apt-get install libsoapysdr-dev
+sudo apt-get install libopenal-dev
+sudo apt-get install libliquid-dev
+sudo apt-get install freeglut3-dev
+sudo apt-get install libalut-dev
+sudo apt-get install libsndfile1-dev
+sudo apt-get install librtaudio-dev
+sudo apt-get install libglew-dev
+sudo apt-get install git
+cd ~/Desktop
+git clone --depth=1 https://github.com/righthalfplane/SdrGlut.git
+cd SdrGlut
+make -f makefileUbunta -j 8
+setenv SOAPY_SDR_ROOT /usr/
+./sdrglut.x
+
+
+
+
+
+
+#cmake-3.10.2.tar.gz
+#./bootstrap
+#make -j 8
+#sudo make install
+##********************************
+##**********************************************
+##pkg-config-0.29.2
+##configure --with-internal-glib --prefix=/usr/local
+##make -j 8
+##sudo make install
+##**********************************************
+
+setenv DYLD_LIBRARY_PATH /usr/local/lib
+setenv SOAPY_SDR_ROOT /usr/local
+###########################################
+tar -zxvf autoconf-2.69.tar.gz
+cd autoconf-2.69
+configure --prefix=/usr/local
+make -j 8
+sudo make install
+sudo ldconfig
+cd ..
+###########################################
+tar -zxvf automake-1.15.tar.gz
+cd automake-1.15
+configure --prefix=/usr/local
+make -j 8
+sudo make install
+sudo ldconfig
+cd ..
+###########################################
+tar -zxvf fftw-3.3.10.tar.gz
+cd fftw-3.3.10
+configure --prefix=/usr/local --enable-single
+make -j 8
+sudo make install
+sudo ldconfig
+#make clean
+#configure --prefix=/usr/local
+#make -j 8
+#sudo make install
+cd ..
+###########################################
+tar -zxvf liquid-dsp-master.gz
+cd liquid-dsp-master
+./bootstrap.sh
+./configure --prefix=/usr/local
+make
+sudo make install
+sudo ldconfig
+cd ..
+###########################################
+tar -zxvf SoapySDR-soapy-sdr-0.8.1.tar.gz
+cd SoapySDR-soapy-sdr-0.8.1
+mkdir build
+cd build
+cmake ../ 
+make -j 8
+sudo make install
+sudo ldconfig
+cd ..
+cd ..
+###########################################
+#tar -zxvf libusb-1.0.26.gz
+#cd libusb-1.0.26
+#./bootstrap.sh
+#./configure --prefix=/usr/local
+#make -j 8
+#sudo make install
+#sudo ldconfig
+#cd ..
+###########################################
+tar -zxvf airspyhf-master.gz
+cd airspyhf-master
+mkdir build
+cd build
+#cmake ../ -DLIBUSB_INCLUDE_DIR=/usr/local/include/libusb-1.0
+cmake ../
+make -j 8
+sudo make install
+sudo ldconfig
+cd ..
+cd ..
+###########################################
+tar -zxvf SoapyAirspyHF-master.gz
+cd SoapyAirspyHF-master
+mkdir build
+cd build
+#cmake ../ -DLIBUSB_INCLUDE_DIR=/usr/local/include/libusb-1.0
+cmake ../
+make -j 8
+sudo make install
+sudo ldconfig
+cd ..
+cd ..
+###########################################
+tar -zxvf libsndfile.gz
+cd libsndfile
+mkdir build
+cd build
+#cmake ../  -DENABLE_EXTERNAL_LIBS=0 -DCMAKE_OSX_DEPLOYMENT_TARGET=12.0 -DLIBUSB_INCLUDE_DIR=/usr/local/include/libusb-1.0
+cmake ../
+make -j 8
+sudo make install
+sudo ldconfig
+cd ..
+cd ..
+###########################################
+tar -zxvf rtaudio-6.0.1.tar.gz
+cd rtaudio-6.0.1
+mkdir build
+cd build
+#cmake ../  -DCMAKE_OSX_DEPLOYMENT_TARGET=12.0 -DCMAKE_OSX_ARCHITECTURES=arm64 
+cmake ../ 
+make -j 8
+sudo make install
+sudo ldconfig
+cd ..
+cd ..
+###########################################
+tar -zxvf bladeRF.gz
+cd bladeRF
+cd host
+mkdir build
+cd build
+cmake ../ 
+make -j 8
+sudo make install
+sudo ldconfig
+cd ..
+cd ..
+cd ..
+***************************************
+tar -zxvf SoapyBladeRF-master.gz
+cd SoapyBladeRF-master
+mkdir build
+cd build
+cmake ../ 
+make -j 8
+sudo make install
+sudo ldconfig
+cd ..
+cd ..
+###########################################
+tar -zxvf hackrf-master.gz
+cd hackrf-master
+cd host
+mkdir build
+cd build
+#cmake ../  -DLIBUSB_INCLUDE_DIR=/usr/local/include/libusb-1.0
+cmake ../
+make -j 8
+sudo make install
+sudo ldconfig
+cd ..
+cd ..
+cd ..
+###########################################
+tar -zxvf SoapyHackRF.gz
+cd SoapyHackRF
+mkdir build
+cd build
+#cmake ../  -DLIBUSB_INCLUDE_DIR=/usr/local/include/libusb-1.0
+cmake ../
+make -j 8
+sudo make install
+sudo ldconfig
+cd ..
+cd ..
+###########################################
+tar -zxvf librtlsdr-master.gz 
+cd librtlsdr-master
+mkdir build
+cd build
+#cmake ../ -DCMAKE_BUILD_TYPE=Release -DLIBUSB_LIBRARIES=/usr/local/lib/libusb-1.0.a -DLIBUSB_INCLUDE_DIR=/usr/local/include/libusb-1.0
+cmake ../
+make -j 8
+sudo make install
+sudo ldconfig
+cd ..
+cd ..
+###########################################
+tar -zxvf SoapyRTLSDR-master.gz
+cd SoapyRTLSDR-master
+mkdir build
+cd build
+cmake ../
+make -j 8
+sudo make install
+sudo ldconfig
+cd ..
+cd ..
+###########################################
+
+
+
+
+
+
