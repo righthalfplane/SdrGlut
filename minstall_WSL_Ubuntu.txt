@@ -1,14 +1,41 @@
 #!/bin/tcsh
 # Also git cmake and pkg-config
 ##*******************************
+On Windows as ADMIN
+wsl --install Ubuntu-22.04
+wsl -l -v
+wsl --list --online
+wsl -d Ubuntu-22.04
+wsl --unregister Ubuntu-22.04
+wsl --unregister Ubuntu
+
+On Windows as ADMIN
+usbipd list
+usbipd bind --busid 2-23
+usbipd attach  --wsl --busid 2-23
+
+On Windows as ADMIN
+usbipd detach --busid 2-23
+
+On Linux
 sudo apt-get update
 sudo apt-get upgrade
+sudo apt install linux-tools-generic hwdata
+sudo update-alternatives --install /usr/local/bin/usbip usbip /usr/lib/linux-tools/*-generic/usbip 20
+lsusb
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install tcsh
+tcsh
+vi .tcshrc
+alias h history
+set path =(. $path)
+tcsh
 
 sudo apt-get cmake
 sudo apt-get git
 sudo apt-get pkg-config
 sudo apt-get geany
-
 
 sudo apt-get install python3-pip
 pip3 install ruamel.yaml
@@ -33,10 +60,6 @@ uhd_find_devices --args "addr=192.168.1.10"
 cd ..
 cd ..
 cd ..
-
-
-
-
 
 sudo apt-get update
 sudo apt-get upgrade
