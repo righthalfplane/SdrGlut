@@ -1,18 +1,42 @@
+
+Ubuntu 23.10
+
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install build-essential
+sudo apt-get install libsoapysdr-dev
+sudo apt-get install libopenal-dev
+sudo apt-get install libliquid-dev
+sudo apt-get install freeglut3-dev
+sudo apt-get install libalut-dev
+sudo apt-get install libsndfile1-dev
+sudo apt-get install librtaudio-dev
+sudo apt-get install libglew-dev
+sudo apt-get install git
+cd ~/Desktop
+git clone --depth=1 https://github.com/righthalfplane/SdrGlut.git
+cd SdrGlut
+make -f makefileUbunta -j 8
+setenv SOAPY_SDR_ROOT /usr/
+./sdrglut.x
+
+
+
 iqSDR.x "192.168.0.3:3700" -fc 101.5 -samplerate 10000000 -tcp -cat >out_101500000_10000000_fc.raw
 
-sdrwx.x "192.168.0.11:3700" -fc 101.5 -samplerate 10000000 -tcp -cat | ffplay -
+iqSDR.x "192.168.0.11:3700" -fc 101.5 -samplerate 10000000 -tcp -cat | ffplay -
 
-sdrwx.x "192.168.0.3:3700" -fc 101.5 -samplerate 10000000 -tcp -cat | ffplay -
+iqSDR.x "192.168.0.3:3700" -fc 101.5 -samplerate 10000000 -tcp -cat | ffplay -
 
 iqSDR.x "192.168.0.3:3700" -fc 101.5 -samplerate 8000000 -tcp -cat
 
-sdrwx.x "192.168.0.3:3700" -fc 101.5 -samplerate 8000000 -tcp -cat
+iqSDR.x "192.168.0.3:3700" -fc 101.5 -samplerate 8000000 -tcp -cat
 
-sdrwx.x "192.168.0.3:3700" -fc 101.5 -samplerate 10000000 -tcp
+iqSDR.x "192.168.0.3:3700" -fc 101.5 -samplerate 10000000 -tcp
 
-sdrwx.x "192.168.0.3:3700" -fc 101.5 -samplerate 10000000 -tcp -float
+iqSDR.x "192.168.0.3:3700" -fc 101.5 -samplerate 10000000 -tcp -float
 
-sdrwx.x "192.168.0.3:3700" -fc 101.5 -samplerate 10000000 -tcpip -float -pipeout >out.raw
+iqSDR.x "192.168.0.3:3700" -fc 101.5 -samplerate 10000000 -tcpip -float -pipeout >out.raw
  
 outputIQ.x -fc 101.2e6 -f 101.5e6 -samplerate 10000000 -pipe 1 | sdrwx.x -fc 101.2 -pipe -samplerate 10000000
 
