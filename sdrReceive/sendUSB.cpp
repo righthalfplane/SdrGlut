@@ -1,5 +1,5 @@
  
-// c++ -std=c++11 -o sendUSB sendUSB.cpp -lSoapySDR -lsndfile -lliquid -Wall -Wno-return-type-c-linkage
+// c++ -std=c++11 -Wno-deprecated -o sendUSB sendUSB.cpp -lSoapySDR -lsndfile -lliquid -Wall -Wno-return-type-c-linkage
 // sendUSB "driver=hackrf"
 // sendUSB "driver=bladerf"
 
@@ -196,7 +196,7 @@ int main(int argc, char** argv)
 
    device->setSampleRate(SOAPY_SDR_TX, 0, sample_rate);
 
-    cout << "Sample rate: " << sample_rate/1e6 << " MHz" << endl;
+    cout << " Frequency: " << frequency << " Sample rate: " << sample_rate/1e6 << " MHz" << endl;
 
     //Set center frequency
     

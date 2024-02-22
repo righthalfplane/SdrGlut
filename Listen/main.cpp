@@ -216,7 +216,6 @@ int ListenAudio(void *rxv)
   unsigned char *data;
   int audioOut;
   int bytes;
- // int nn;
   
   
   socklen_t slen=sizeof(sockaddr);
@@ -260,7 +259,7 @@ int ListenAudio(void *rxv)
 	rx->mutexo.unlock();
 	
 	
-	//nn=0;
+	int nn=0;
     int nc=0;
 	while(1)
 	{
@@ -268,7 +267,7 @@ int ListenAudio(void *rxv)
 		int ret;
 		ret=recvfrom(s, buf, sizeof(buf)-1, 0, (sockaddr *)&si_other, &slen);
 
-		//printf("recv ret %d %d\n",ret,nn++);
+		printf("recv ret %d %d\n",ret,nn++);
 		bytes=ret;
 		for(int k=0;k<bytes;++k){
 			data[nc++]=buf[k];

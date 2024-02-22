@@ -80,19 +80,19 @@ g++ -O2 -std=c++11 -Wno-deprecated -o sdrTest sdrTest.cpp mThread.cpp cMalloc.cp
 
 ./sdrTest -fc 102.0e6 -f 102.1e6 -fm -gain 1
 
-./sdrTest -fc 162.0e6 -f 162.4e6 -nbfm -gain 1
+./sdrTest.x -fc 162.0e6 -f 162.4e6 -nbfm -gain 1
 
-./sdrTest -fc 102.0e6 -f 102.1e6 -fm -gain 0.9 -faudio 12000 -file test.raw -timeout 10
+./sdrTest.x -fc 102.0e6 -f 102.1e6 -fm -gain 0.9 -faudio 12000 -file test.raw -timeout 10
 
 ./sdrTest -fc 101.1e6 -f 101.5e6 -fm -gain 0.9 -faudio 12000 -file test.raw -timeout 10
 
-./sdrTest -fc 102.0e6 -f 102.1e6 -fm -gain 1 -timeout 15 -faudio 12000 -file test.raw
+./sdrTest.x -fc 102.0e6 -f 102.1e6 -fm -gain 1 -timeout 15 -faudio 12000 -file test.raw
 
 ./sdrTest -fc 102.0e6 -f 102.1e6 -fm -gain 1 -timeout 601 -dumpbyminute -faudio 12000
 
 ./sdrTest -fc 102.0e6 -f 102.1e6 -fm -gain 1 -dumpbyminute -faudio 12000
 
-./sdrTest -fc 602e6 -f 602.308400e6 -usb -timeout 10 -file test01.raw
+./sdrTest.x -fc 602e6 -f 602.308400e6 -usb -timeout 10 -file test01.raw
 
 ./sdrTest -fc 602e6 -f 602.308400e6 -usb -timeout 10 -file test01.raw -device 1
 
