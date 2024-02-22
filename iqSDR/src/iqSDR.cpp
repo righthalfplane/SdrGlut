@@ -1901,7 +1901,7 @@ BasicPane::BasicPane(wxWindow *frame, const wxString &title,class sdrClass *sdrI
 	
 	itemCol.SetText("Channel");
 	listFrequency->InsertColumn(0,itemCol);
-	listFrequency->SetColumnWidth(0,55);
+	listFrequency->SetColumnWidth(0,60);
 	
 	itemCol.SetText("Freq");
 	listFrequency->InsertColumn(1,itemCol);
