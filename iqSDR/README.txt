@@ -21,6 +21,49 @@ setenv SOAPY_SDR_ROOT /usr/
 ./sdrglut.x
 
 
+iqSDR.x -fc 1090 -samplerate 2000000 -outFile "-" -unsigned >out_1090000000_2000000_fc.raw
+
+cat out_1090000000_2000000_fc.raw | iqSDR.x -fc 1090 -samplerate 2000000 -pipe -unsigned 
+
+dump1090 --ifile out_1090000000_2000000_fc.raw
+
+iqSDR.x -fc 1090 -samplerate 2000000 -outFile "-" -unsigned | dump1090 --ifile "-"
+
+
+
+iqSDR.x -fc 101.5 -samplerate 2000000 -outFile "-" -unsignedshort >out_1090000000_2000000_fc.raw
+
+cat out_1090000000_2000000_fc.raw | iqSDR.x -fc 101.5 -samplerate 2000000 -pipe -unsignedshort 
+
+
+
+iqSDR.x -fc 1090 -samplerate 2000000 -outFile "-" -unsignedshort >out_1090000000_2000000_fc.raw
+
+cat out_1090000000_2000000_fc.raw | iqSDR.x -fc 1090 -samplerate 2000000 -pipe -unsignedshort 
+
+dump1090 --ifile out_1090000000_2000000_fc.raw
+
+
+
+
+iqSDR.x "192.168.0.3:3700" -fc 101.5 -samplerate 2000000 -outFile "-" -short >out_1090000000_2000000_fc.raw
+
+cat out_1090000000_2000000_fc.raw | iqSDR.x -fc 101.5 -samplerate 2000000 -pipe -short 
+
+iqSDR.x -fc 1090 -samplerate 2000000 -outFile "-" -short >out_1090000000_2000000_fc.raw
+
+
+
+
+iqSDR.x "192.168.0.3:3700" -fc 1090 -samplerate 2000000 -outFile "-" -short >out_1090000000_2000000_fc.raw
+
+iqSDR.x "192.168.0.3:3700" -fc 1090 -samplerate 2000000 -outFile "-" | dump1090 --ifile "-"
+
+iqSDR.x "192.168.0.3:3700" -fc 1090 -samplerate 2000000 -outFile "-" >out_1090000000_2000000_fc.raw
+
+dump1090 --ifile out_1090000000_2000000_fc.raw
+
+
 
 iqSDR.x "192.168.0.3:3700" -fc 101.5 -samplerate 10000000 -tcp -cat >out_101500000_10000000_fc.raw
 
@@ -36,7 +79,7 @@ iqSDR.x "192.168.0.3:3700" -fc 101.5 -samplerate 10000000 -tcp
 
 iqSDR.x "192.168.0.3:3700" -fc 101.5 -samplerate 10000000 -tcp -float
 
-iqSDR.x "192.168.0.3:3700" -fc 101.5 -samplerate 10000000 -tcpip -float -pipeout >out.raw
+iqSDR.x "192.168.0.3:3700" -fc 101.5 -samplerate 10000000 -tcp -float -pipeout >out.raw
  
 outputIQ.x -fc 101.2e6 -f 101.5e6 -samplerate 10000000 -pipe 1 | sdrwx.x -fc 101.2 -pipe -samplerate 10000000
 

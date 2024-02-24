@@ -66,10 +66,11 @@
 #define MODE_CW   6
 */
 
-#define TYPE_FLOAT      0
-#define TYPE_SHORT      1
-#define TYPE_SIGNED     2
-#define TYPE_UNSIGNED   3
+#define TYPE_FLOAT      		0
+#define TYPE_SHORT      		1
+#define TYPE_UNSIGNEDSHORT      2
+#define TYPE_SIGNED     		3
+#define TYPE_UNSIGNED   		4
 
 
 #define NUM_ABUFF 10
@@ -171,7 +172,7 @@ public:
 	SoapySDR::Stream *rxStream;
 	SoapySDR::Device *device;
 	
-	
+	int data_type;
 
 	float *saveBuff;
 	int saveLength;
@@ -260,6 +261,8 @@ public:
  	cStack *bS;
  	
  	cStack *bS2;
+ 	
+ 	std::vector<std::string> streamFormat;
  	 	
  	struct Filters ff;			
  	

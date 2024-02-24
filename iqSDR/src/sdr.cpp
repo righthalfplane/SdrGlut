@@ -906,7 +906,9 @@ int sdrClass::findRadio()
         
   // fprintf(stderr,"1 findRadio samplerate %g\n",samplerate);
     
-    mprintFlag=0;
+    mprintFlag=Debug;
+    
+    mprintFlag=1;
     
     mprint("Number of Devices Found: %ld\n",(long)resultsEnumerate.size());
     
@@ -1003,8 +1005,17 @@ int sdrClass::findRadio()
                 }
         		mprint("\n");
             }
-                            
-                
+            
+            
+            streamFormat.clear();
+        	streamFormat=device->getStreamFormats(SOAPY_SDR_RX, channel);
+        	
+			for (size_t j = 0; j < streamFormat.size(); j++)
+			{
+				mprint("RX StreamFormats %lu %s\n",j, streamFormat[j].c_str());
+				if(j == streamFormat.size()-1)mprint("\n");
+			}
+			          
         	rxGainRange=device->getGainRange(SOAPY_SDR_RX, channel);
         
             mprint("RF Gain range RX min %g max %g \n",rxGainRange.minimum(),rxGainRange.maximum());
@@ -1353,10 +1364,42 @@ int sdrClass::readPipe(){
 		
 		iread=rec;
 					
-		//fprintf(stderr,"readPipe iread %ld size %d toRead %d\n",iread,size,rec);
-		
-		 ret = fread(buffs, sizeof(float)*2,iread,stdin);
-		 
+		if(data_type == TYPE_SHORT){
+		//fprintf(stderr,"readPipe iread %ld size %d toRead %d data_type %d\n",iread,size,rec,data_type);
+			ret = fread(buffs, sizeof(short)*2,iread,stdin);
+			if(ret <= 0)break;
+			short int *in=(short int *)buffs;
+			int ne=ret-1;
+			for(int n=0;n<ret;++n){
+				buffs[2*ne]=in[2*ne]/32000.0;
+				buffs[2*ne+1]=in[2*ne+1]/32000.0;
+				--ne;
+			}
+		}else if(data_type == TYPE_UNSIGNEDSHORT){
+		//fprintf(stderr,"readPipe iread %ld size %d toRead %d data_type %d\n",iread,size,rec,data_type);
+			ret = fread(buffs, sizeof(unsigned short)*2,iread,stdin);
+			if(ret <= 0)break;
+			unsigned short int *in=(unsigned short int *)buffs;
+			int ne=ret-1;
+			for(int n=0;n<ret;++n){
+				buffs[2*ne]=((in[2*ne]/32767.0)-1.0);
+				buffs[2*ne+1]=((in[2*ne+1]/32767.0)-1.0);
+				--ne;
+			}
+		}else if(data_type == TYPE_UNSIGNED){
+		//fprintf(stderr,"readPipe iread %ld size %d toRead %d data_type %d\n",iread,size,rec,data_type);
+			ret = fread(buffs, sizeof(unsigned char)*2,iread,stdin);
+			if(ret <= 0)break;
+			unsigned char *in=(unsigned char *)buffs;
+			int ne=ret-1;
+			for(int n=0;n<ret;++n){
+				buffs[2*ne]=((in[2*ne]/128.0)-1.0);
+				buffs[2*ne+1]=((in[2*ne+1]/128.0)-1.0);
+				--ne;
+			}
+		 }else{
+			ret = fread(buffs, sizeof(float)*2,iread,stdin);		 
+		 }
 		 retFlag=ret;
 	 				   
 		if(ret <= 0){
@@ -1713,9 +1756,77 @@ int sdrClass::doFilter(float *wBuff,float *aBuff,struct Filters *f)
 		float *buf2=wBuff;
 				
 		if(outFile){
-			size_t ret=fwrite(buf, 2*sizeof(float), rx->size,outFile);
-			if(ret != (size_t)rx->size){
-				fprintf(stderr,"fwrite Error ret %ld bytes %ld\n",(long)ret,(long)rx->size);
+			if(data_type == TYPE_FLOAT){
+				size_t ret=fwrite(buf, 2*sizeof(float), rx->size,outFile);
+				if(ret != (size_t)rx->size){
+					fprintf(stderr,"fwrite Error ret %ld bytes %ld\n",(long)ret,(long)rx->size);
+				}
+			}else if(data_type == TYPE_SHORT){
+				double amin=  1e33;
+				double amax= -1e33;
+				for(int n=0;n<rx->size;++n){
+					char out[4];
+					float r=buf[2*n];
+					float i=buf[2*n+1];
+					short rs=32000.0*r;
+					if(r > amax)amax=r;
+					if(r < amin)amin=r;
+					out[0]=rs & 0xff;
+					out[1]=(rs >> 8) & 0xff;
+					short is=32000.0*i;
+					if(i > amax)amax=i;
+					if(i < amin)amin=i;
+					out[2]=is & 0xff;
+					out[3]=(is >> 8) & 0xff;
+					size_t ret=fwrite(out, 1, 4,outFile);
+					if(ret != 4){
+						fprintf(stderr,"fwrite Error ret %ld bytes %ld\n",(long)ret,(long)4);
+					}
+				}
+				//fprintf(stderr,"amin %g amax %g\n",amin,amax);
+			}else if(data_type == TYPE_UNSIGNEDSHORT){
+				double amin=  1e33;
+				double amax= -1e33;
+				for(int n=0;n<rx->size;++n){
+					char out[4];
+					float r=buf[2*n];
+					float i=buf[2*n+1];
+					unsigned short rs=32767*(1+r);
+					if(r > amax)amax=r;
+					if(r < amin)amin=r;
+					out[0]=rs & 0xff;
+					out[1]=(rs >> 8) & 0xff;
+					unsigned short is=32767*(1+i);
+					if(i > amax)amax=i;
+					if(i < amin)amin=i;
+					out[2]=is & 0xff;
+					out[3]=(is >> 8) & 0xff;
+					size_t ret=fwrite(out, 1, 4,outFile);
+					if(ret != 4){
+						fprintf(stderr,"fwrite Error ret %ld bytes %ld\n",(long)ret,(long)4);
+					}
+				}
+			}else if(data_type == TYPE_UNSIGNED){
+				double amin=  1e33;
+				double amax= -1e33;
+				for(int n=0;n<rx->size;++n){
+					char out[4];
+					float r=buf[2*n];
+					float i=buf[2*n+1];
+					unsigned char rs=127*(1.0+r);
+					if(r > amax)amax=r;
+					if(r < amin)amin=r;
+					out[0]=rs;
+					unsigned char is=127*(1.0+i);
+					if(i > amax)amax=i;
+					if(i < amin)amin=i;
+					out[1]=is;
+					size_t ret=fwrite(out, 1, 2,outFile);
+					if(ret != 2){
+						fprintf(stderr,"fwrite Error ret %ld bytes %ld\n",(long)ret,(long)4);
+					}
+				}
+				//fprintf(stderr,"amin %g amax %g\n",amin,amax);
 			}
 		}
 		

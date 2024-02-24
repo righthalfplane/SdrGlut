@@ -360,6 +360,8 @@ void startWindow::openArgcArgv(int argc,char **argv)
 			type=TYPE_FLOAT;
 		}else if(name == "-short"){
 			type=TYPE_SHORT;
+		}else if(name == "-unsignedshort"){
+			type=TYPE_UNSIGNEDSHORT;
 		}else if(name == "-signed"){
 			type=TYPE_SIGNED;
 		}else if(name == "-unsigned"){
@@ -381,9 +383,15 @@ void startWindow::openArgcArgv(int argc,char **argv)
 		}else if(name == "-samplerate"){		
 			samplerate=atof(argv[++n]);	
 	    }else if(name == "-outFile"){
-	         outFile=fopen(argv[++n],"wb");
-	         if(outFile == NULL){
-	             fprintf(stderr,"Could Not Open %s to Write\n",argv[n]);
+	    	name=argv[++n];
+	    	if(name == "-"){
+	    		outFile=stdout;
+	    		fprintf(stderr,"outFile=stdout\n");
+	    	}else{
+				 outFile=fopen(argv[n],"wb");
+				 if(outFile == NULL){
+					 fprintf(stderr,"Could Not Open %s to Write\n",argv[n]);
+				 }
 	         }
 	    }else if(name == "-inFile"){
 	         inFile=fopen(argv[++n],"rb");
@@ -410,6 +418,8 @@ void startWindow::openArgcArgv(int argc,char **argv)
 	sdrIn->deviceNumber=0;
 	sdrIn->decodemode=MODE_FM;
 	sdrIn->outFile=outFile;
+	sdrIn->Debug=debug;
+	sdrIn->data_type=type;
 	if(inFile){
 		sdrIn->inFile=inFile;
 		sdrIn->inData=IN_FILE;
@@ -417,10 +427,10 @@ void startWindow::openArgcArgv(int argc,char **argv)
 		sdrIn->inData=IN_UDP;			
 		sdrIn->l=new Listen(LISTEN_UDP);
 		sdrIn->l->Debug=debug;
-		sdrIn->l->data_type=type;
 		sdrIn->l->samplerate=samplerate;
 		sdrIn->l->binary=pipeout;
 		sdrIn->l->cat=cat;
+		sdrIn->l->data_type=type;
 		copyl(argv[1],sdrIn->l->name,(long)strlen(argv[1])+1);
 		std::thread(&Listen::WaitFor,sdrIn->l).detach();
 		name=(char *)"UDP Data";
@@ -429,10 +439,10 @@ void startWindow::openArgcArgv(int argc,char **argv)
 		sdrIn->inData=IN_TCPIP;			
 		sdrIn->l=new Listen(LISTEN_TCP);
 		sdrIn->l->Debug=debug;
-		sdrIn->l->data_type=type;
 		sdrIn->l->samplerate=samplerate;
 		sdrIn->l->binary=pipeout;
 		sdrIn->l->cat=cat;
+		sdrIn->l->data_type=type;
 		copyl(argv[1],sdrIn->l->name,(long)strlen(argv[1])+1);
 		std::thread(&Listen::WaitFor,sdrIn->l).detach();
 		name=(char *)"TCP/IP Data";
@@ -1636,7 +1646,7 @@ BasicPane::BasicPane(wxWindow *frame, const wxString &title,class sdrClass *sdrI
 	wxStaticBox *box = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Set Volume ",wxPoint(20,yloc), wxSize(230, 80),wxBORDER_SUNKEN );
 	box->SetToolTip(wxT("This is tool tip") );
 
-	new wxSlider(box,SCROLL_GAIN,100,0,100,wxPoint(10,0),wxSize(210,-1),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
+	new wxSlider(box,SCROLL_GAIN,100,0,100,wxPoint(10,0),wxSize(210,30),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
 
 	yloc += 85;   
 	
