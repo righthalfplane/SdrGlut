@@ -27,6 +27,7 @@ SdrGlut has a new Voice Command Module. It can be programed to record any freque
 
 ## Demo videos
 - [An Introduction to SdrGlut (A software defined radio)](https://youtu.be/JEXK-r6PvmA)
+- [Installing iqSDR on DragonOS.](https://youtu.be/yJ9pYlZZ1VI)
 - [Using iqSDR To Enhance Gnuradio.](https://youtu.be/kvwMYOMpF4o)
 - [How to Install iqSDR on Ubuntu 23.10.](https://youtu.be/_8FA2wanckQ)
 - [Using the ANTSDR E200 on Windows with WSL Ubuntu 22.04.](https://youtu.be/sYnqp-skjEo)
