@@ -1,4 +1,34 @@
 
+iqSDR.x -fc 1090 -samplerate 2000000 -outFile "-" -unsigned | dump1090 --ifile "-"
+
+iqSDR.x "192.168.0.11:3700" -fc 101.5 -samplerate 10000000 -tcp -cat | ffplay -
+
+iqSDR.x "192.168.0.11:3700" -tcp -cat | ffplay -
+
+##########################################
+setenv SOAPY_SDR_ROOT /usr/local
+
+setenv DYLD_LIBRARY_PATH /usr/local/lib
+
+bladeRF-cli -l /Users/dir/Desktop/blade/hostedxA5-latest.rbf 
+
+sdrReceive.x -f 101.5 -fm
+
+/Applications/radioconda/bin/SoapySDRUtil -i
+
+/Applications/radioconda/bin/gnuradio-companion
+
+iqSDR.x "192.168.0.3:3700" -fc 605 -samplerate 4000000 -outFile "-" -unsigned | ffplay -
+
+iqSDR.x "192.168.0.3:3700" -fc 605 -samplerate 4000000 -outFile "-" -unsigned -tcp -cat | ffplay -
+
+
+
+*********************************************
+
+
+
+
 Ubuntu 23.10
 
 sudo apt-get update
@@ -28,6 +58,10 @@ cat out_1090000000_2000000_fc.raw | iqSDR.x -fc 1090 -samplerate 2000000 -pipe -
 dump1090 --ifile out_1090000000_2000000_fc.raw
 
 iqSDR.x -fc 1090 -samplerate 2000000 -outFile "-" -unsigned | dump1090 --ifile "-"
+
+iqSDR.x -fc 1090 -samplerate 2000000 -outFile "-" -unsigned | dump1090-mutability --ifile "-"
+
+iqSDR.x -fc 1090 -samplerate 2000000 -outFile "-" -unsignedshort | dump1090-mutability --ifile "-"
 
 
 
