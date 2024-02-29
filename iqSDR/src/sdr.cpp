@@ -1086,7 +1086,7 @@ int sdrClass::findRadio()
 			
   	       // fprintf(stderr,"5 findRadio samplerate %g device %p fc %g\n",samplerate,device,fc);
   	        
-      		mprint("samplerate %d\n",samplerate);
+      		mprint("samplerate %g\n",samplerate);
 			
 			//const std::vector<size_t> channels = {(size_t)0,(size_t)1};
 			

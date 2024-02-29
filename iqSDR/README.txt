@@ -5,6 +5,9 @@ iqSDR.x "192.168.0.11:3700" -fc 101.5 -samplerate 10000000 -tcp -cat | ffplay -
 
 iqSDR.x "192.168.0.11:3700" -tcp -cat | ffplay -
 
+iqSDR.x -fc 1090 -samplerate 2000000 -outFile "-" -unsigned | dump1090 --ifile "-" --interactive
+
+
 ##########################################
 setenv SOAPY_SDR_ROOT /usr/local
 
