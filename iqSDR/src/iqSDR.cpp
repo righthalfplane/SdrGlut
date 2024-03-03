@@ -499,11 +499,11 @@ startWindow::startWindow(wxWindow *frame, const wxString &title)
    	
     new wxButton (box,ID_QUIT,wxT("Quit"),wxPoint(20,100));
       
-    wxStaticBox *box2 = new wxStaticBox(this, wxID_ANY, "&Device String",wxPoint(10,170), wxSize(135, 60),wxBORDER_SUNKEN );
+    wxStaticBox *box2 = new wxStaticBox(this, wxID_ANY, "&Device String",wxPoint(10,170), wxSize(130, 60),wxBORDER_SUNKEN );
 	box2->SetToolTip(wxT("This is tool tip") );
 
-    text=new wxTextCtrl(box2,ID_TEXTCTRL,wxT("1000"),
-          wxPoint(5,10), wxDefaultSize);
+    textDevice=new wxTextCtrl(box2,ID_TEXTCTRL,wxT("1000"),
+          wxPoint(5,10), wxSize(120, 30));
           
     grab=NULL;
 
@@ -946,8 +946,7 @@ void startWindow::OnRadio(wxCommandEvent& event)
 
 	wxFrame *frame= new wxFrame(NULL, wxID_ANY, wxT("Device Select"), wxDefaultPosition, wxSize(400,400));
 		
-	new selectionWindow(frame, "Device");
-	
+	new selectionWindow(frame, "Device",textDevice);
 	
 	frame->Show();
 	
@@ -1110,14 +1109,18 @@ void startWindow::OpenFile()
 }
 
 
-selectionWindow::selectionWindow(wxWindow *frame, const wxString &title)
+selectionWindow::selectionWindow(wxWindow *frame, const wxString &title,wxTextCtrl *textDevice)
     : wxWindow(frame,32000)
 {
 
 	gBasicPane=NULL;
-		
+			
+	wxString s=textDevice->GetValue();
+	
+	const char *textDevicePointer=s;
+	
 	if(resultsEnumerate.size() < 1){
-		if(doEnumerate())return;
+		if(doEnumerate((char *)textDevicePointer))return;
 	}
 	
 	size_t length;

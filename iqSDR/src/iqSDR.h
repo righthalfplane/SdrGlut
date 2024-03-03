@@ -287,7 +287,7 @@ class selectionWindow : public wxWindow
     wxGLContext*	m_context;
 
 public:
-	selectionWindow(wxWindow *frame, const wxString& title);
+	selectionWindow(wxWindow *frame, const wxString& title,wxTextCtrl *text);
 	virtual ~selectionWindow();
     
 	void resized(wxSizeEvent& evt);
@@ -299,6 +299,7 @@ public:
 
 	wxRadioBox *radioBoxp;
 	wxTextCtrl *text;
+	
 	
 	wxComboBox *boxList[200];
 	wxComboBox *boxMode;
@@ -411,6 +412,8 @@ public:
 
 	wxRadioBox *radioBoxp;
 	wxTextCtrl *text;
+	
+	wxTextCtrl *textDevice;
 	
 	wxTimer m_timer;
 	

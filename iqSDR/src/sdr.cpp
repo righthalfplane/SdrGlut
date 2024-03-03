@@ -493,9 +493,13 @@ int ListenSocket(void *rxv)
     return 1;
 }
 
-int doEnumerate()
+int doEnumerate(char *deviceString)
 {
-	resultsEnumerate=SoapySDR::Device::enumerate();
+	fprintf(stderr,"1 deviceString %p\n",deviceString);
+	
+	resultsEnumerate=SoapySDR::Device::enumerate(deviceString);
+	
+	fprintf(stderr,"2deviceString %s\n",deviceString);
 	
 	int length=resultsEnumerate.size();
     
@@ -630,6 +634,8 @@ sdrClass::sdrClass()
     IQSwap=0;
     
     sendBuff=NULL;
+    
+    deviceString=NULL;
       	
 }
 sdrClass::~sdrClass()
@@ -901,7 +907,7 @@ int sdrClass::findRadio()
  //   fprintf(stderr,"Call enumerate\n");
     
     if(resultsEnumerate.size() < 1){
-    	if(doEnumerate())return 1;
+    	if(doEnumerate(deviceString))return 1;
     }
         
   // fprintf(stderr,"1 findRadio samplerate %g\n",samplerate);
@@ -2010,7 +2016,7 @@ int sdrClass::printDevices(void)
 {
 
     if(resultsEnumerate.size() < 1){
-    	if(doEnumerate())return 1;
+    	if(doEnumerate(deviceString))return 1;
     }
  
     std::vector<SoapySDR::Kwargs> results=resultsEnumerate;

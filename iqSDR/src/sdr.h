@@ -92,9 +92,11 @@ typedef int (sdrClass::*A_pmf_t)();
 
 int mstrncpy(char *out,char *in,long n);
 
-extern int doEnumerate();
+extern int doEnumerate(char *string);
 
 extern std::vector<SoapySDR::Kwargs> resultsEnumerate;
+
+extern char *strsave(char *s,int tag);
 
 class soundClass;
 
@@ -147,9 +149,9 @@ public:
 	int setSampleWidth(double value);
 	
 	int setCenterFrequency(double value);
-
+	
 //	static int printAudio(void);
-	static int printDevices(void);
+	int printDevices(void);
 	
     double samplerate;
     double samplewidth;
@@ -268,6 +270,9 @@ public:
  	
  	class Listen *l;
  	
+ 	char *deviceString;
+ 	
 };
+
 
 #endif
