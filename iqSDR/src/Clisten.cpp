@@ -340,10 +340,17 @@ SOCKET Listen::waitForService(char *name)
 	return 0;
 }
 
-SOCKET Listen::startService(char *name)
+SOCKET Listen::startService(char *serverName)
 {
-
-	// if(getPortAndName(name,&hostAddr,&Port))return -1;
+	char *np;
+	
+	if(!(np=strrchr(serverName,':'))){
+		;
+	}else{
+	    *np=0;
+	    np += 1;
+	    Port=(unsigned short)atol(np);
+	}
 	
 	serverSocket=createService(&Port);
     if(serverSocket == -1){
@@ -521,12 +528,6 @@ int Listen::getPortAndName(char *in,unsigned int *hostAddr,unsigned short *Port)
 
 	return 0;
 }
-//static int zerol(char *p,long n)
-//{
-//	if(!p)return 1;
-//	while(n-- > 0)*p++ = 0;
-//	return 0;
-//}
 SOCKET Listen::connectToServer(char *serverName,unsigned short *Port)
 {
 	struct sockaddr_in serverSocketAddr;

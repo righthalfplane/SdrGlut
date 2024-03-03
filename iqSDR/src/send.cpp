@@ -27,6 +27,7 @@ int netWrite(SOCKET toServerSocket,char *buffout,long HdfSize);
 int writeLab(SOCKET toServerSocket,char *Type,long size);
 
 long Bytes;
+
 int BasicPane::txPipe()
 {
 
