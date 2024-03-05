@@ -1540,7 +1540,7 @@ int sdrClass::rxBuffer()
                 }
 
 	        	if(!iWait)bS->pushBuff(rx->witch);
-	        	
+
 	        	float *buff2=bS2->buff[rx->witch % NUM_DATA_BUFF];
 
 				for(int n=0;n<rx->size*2;++n){
@@ -1548,6 +1548,8 @@ int sdrClass::rxBuffer()
 				}
 	        	
 	        	if(!iWait)bS2->pushBuff(rx->witch);
+	        	
+	        	
              	++rx->witch;
 
              	if(saveCall){ 	

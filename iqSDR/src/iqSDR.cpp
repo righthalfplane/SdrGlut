@@ -182,7 +182,7 @@ void startWaveFile::OnScroll(wxCommandEvent &event)
 	}else if(event.GetId() == SCROLL_TIME2){
 		// printf("OnScroll value %g %d \n",value,event.GetId());
 		sf_count_t ret=sf_seek(infile, value*sfinfo.samplerate, SEEK_SET);
-        if(ret < 0)printf("sf_seek error\n");
+        if(ret < 0)fprintf(stderr,"sf_seek error\n");
 		CurrentFrame=value*sfinfo.samplerate;
 		return;
 	}
@@ -754,7 +754,8 @@ void applFrame::OnSampleRateSelected(wxCommandEvent& event)
 	
 	sampleRateMenu->Check(event.GetId(),1);
 
-   
+   	s->bS=NULL;
+   	
    	sdr->waitPointer("iqToAudio(8)",&sdr->iqToAudio,0);
 
 	sdr->waitPointer("frame(8)",&sdr->frame,0);
@@ -791,6 +792,7 @@ void applFrame::OnBandSelected(wxCommandEvent& event)
 	
 	bandMenu->Check(event.GetId(),1);
 
+   	s->bS=NULL;
    
    	sdr->waitPointer("iqToAudio(8)",&sdr->iqToAudio,0);
 
@@ -899,6 +901,8 @@ void applFrame::OnOuputSelect(wxCommandEvent& event){
 		Sleep2(10);
 	}
 	std::thread(&soundClass::startSound,s).detach();
+	
+	s->bS=NULL;
 	
    	sdr->waitPointer("iqToAudio(8)",&sdr->iqToAudio,0);
 
@@ -2079,6 +2083,8 @@ void BasicPane::OnTextBandWidth(wxCommandEvent &event)
 	wxString bandwidth=event.GetString();
 	
 	if(!bandwidth)return;
+	
+	s->bS=NULL;
 
 	sdr->waitPointer("iqToAudio(11)",&sdr->iqToAudio,0);
 
@@ -2107,6 +2113,8 @@ void BasicPane::setBandwidth(wxCommandEvent &event)
 	//const char *bandWidth=bandWidths.c_str();
 
    //fprintf(stderr,"bandWidth %s len %d\n",bandWidth,(int)strlen(bandWidth));
+   
+    s->bS=NULL;
 
 	sdr->waitPointer("iqToAudio(10)",&sdr->iqToAudio,0);
 
@@ -2174,6 +2182,8 @@ void BasicPane::OnText(wxCommandEvent &event)
 	wxString rates=event.GetString();
 	
 	if(!rates)return;
+	
+	s->bS=NULL;
 
 	sdr->waitPointer("iqToAudio(7)",&sdr->iqToAudio,0);
 
@@ -2251,7 +2261,7 @@ int BasicPane::getHeight()
 
 void BasicPane::mouseMoved(wxMouseEvent& event) {	event.Skip();}
 
-void BasicPane::mouseDown(wxMouseEvent& event) {	event.Skip(); printf("BasicPane::mouseDown\n");}
+void BasicPane::mouseDown(wxMouseEvent& event) {	event.Skip(); fprintf(stderr,"BasicPane::mouseDown\n");}
 
 /*
 void BasicPane::OnButton(wxCommandEvent& event) 
@@ -2344,6 +2354,8 @@ void BasicPane::OnComboSampleRate(wxCommandEvent& event)
 //	fprintf(stderr,"rate %s len %d\n",rate,(int)strlen(rate));
 
 	//fprintf(stderr,"Start Stop\n");
+	
+	s->bS=NULL;
 
 	sdr->waitPointer("iqToAudio(7)",&sdr->iqToAudio,0);
 
@@ -3242,7 +3254,7 @@ void Spectrum::keyPressed(wxKeyEvent& event)
     wxString key;
     long keycode = event.GetKeyCode();
     
-    printf("keycode keyPressed %ld\n",keycode);
+    fprintf(stderr,"keycode keyPressed %ld\n",keycode);
     
     if(keycode == 84){
     	doTestSpeed();
@@ -3339,10 +3351,11 @@ void Spectrum::mouseDown(wxMouseEvent& event)
 				sdr->setFrequency(fx);
 			}
 			s->bS=sdr->bS;
+			//fprintf(stderr,"Spectrum::mouseDown %p %p\n",s->bS,sdr->bS);
 			gTopPane->Refresh();
 		}
 	}else{
-		printf("Spectrum::mouseDown x %d y %d\n",pp3.x,pp3.y);
+		fprintf(stderr,"Spectrum::mouseDown x %d y %d\n",pp3.x,pp3.y);
 	}
 
 }
@@ -3612,10 +3625,10 @@ void Spectrum::render(wxPaintEvent& evt )
 /*		
 		if(tick % 40 == 0){
 			double dt=1.0;
-			printf("plot %d signal\n",buffSendLength);
+			fprintf(stderr,"plot %d signal\n",buffSendLength);
 			for(int n=0;n<buffSendLength;++n){
-			//	printf("%f %f\n",n*dt,(buffSend[2*n]*buffSend[2*n]+buffSend[2*n+1]*buffSend[2*n+1]));
-				printf("%f %f\n",n*dt,buffSend10[n]);
+			//	fprintf(stderr,"%f %f\n",n*dt,(buffSend[2*n]*buffSend[2*n]+buffSend[2*n+1]*buffSend[2*n+1]));
+				fprintf(stderr,"%f %f\n",n*dt,buffSend10[n]);
 			}
 		}
 */

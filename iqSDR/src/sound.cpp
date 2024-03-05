@@ -83,6 +83,8 @@ int soundClass::sound( void *outputBuffer, void *inputBuffer, unsigned int nBuff
 	int ibuff = -1;
 	
 	if(bS)ibuff=bS->popBuffa();
+	
+	//fprintf(stderr,"ibuff %d bS %p\n",ibuff,bS);
 
 	if (ibuff >= 0){
 		short int *buff= bS->buffa[ibuff % NUM_ABUFF2];
