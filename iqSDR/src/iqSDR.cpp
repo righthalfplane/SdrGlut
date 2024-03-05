@@ -502,7 +502,7 @@ startWindow::startWindow(wxWindow *frame, const wxString &title)
     wxStaticBox *box2 = new wxStaticBox(this, wxID_ANY, "&Device String",wxPoint(10,170), wxSize(130, 60),wxBORDER_SUNKEN );
 	box2->SetToolTip(wxT("This is tool tip") );
 
-    textDevice=new wxTextCtrl(box2,ID_TEXTCTRL,wxT("1000"),
+    textDevice=new wxTextCtrl(box2,ID_TEXTCTRL,wxT(""),
           wxPoint(5,10), wxSize(120, 30));
           
     grab=NULL;
