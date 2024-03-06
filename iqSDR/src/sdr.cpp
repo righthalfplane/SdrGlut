@@ -495,11 +495,9 @@ int ListenSocket(void *rxv)
 
 int doEnumerate(char *deviceString)
 {
-	fprintf(stderr,"1 deviceString %p\n",deviceString);
 	
 	resultsEnumerate=SoapySDR::Device::enumerate(deviceString);
 	
-	fprintf(stderr,"2deviceString %s\n",deviceString);
 	
 	int length=resultsEnumerate.size();
     
@@ -562,6 +560,10 @@ void sdrClass::setMode(std::string mode)
 	iqToAudio=0;
 
 	std::thread(&sdrClass::Process,this).detach();
+	for(int n=0;n<audioThreads;++n){
+		std::thread(&sdrClass::Process,this).detach();
+    }
+
   	
 	//fprintf(stderr,"setMode End\n");
   	
@@ -636,6 +638,8 @@ sdrClass::sdrClass()
     sendBuff=NULL;
     
     deviceString=NULL;
+    
+    audioThreads=0;
       	
 }
 sdrClass::~sdrClass()
@@ -756,6 +760,7 @@ int sdrClass::run()
 {
 	
 	bS=new cStack;
+	
 	bS2=new cStack;
 
 	playRadio();
@@ -839,13 +844,19 @@ int sdrClass::playRadio()
 	}
 
 	std::thread(&sdrClass::rxBuffer,this).detach();
-
-	std::thread(&sdrClass::Process,this).detach();
-
-	//        mprint("Start playing\n");
-
+	
 	rx->doWhat=2;
-     	       
+	
+	aminGlobal=0;
+	    
+    amaxGlobal=0;
+    
+   // audioThreads=2;
+    std::thread(&sdrClass::Process,this).detach();
+	for(int n=0;n<audioThreads;++n){
+		std::thread(&sdrClass::Process,this).detach();
+    }
+
     s->bS=bS;
 
 	rx->timestart=rtime();
@@ -858,8 +869,7 @@ int sdrClass::playRadio()
 		}
 		
    	}  
-   	
-   	        
+   	      
 	waitPointer("doWhat(4)",&doWhat,0);
    
     return 0;
@@ -1333,6 +1343,7 @@ int sdrClass::readSDR(){
 		 timeNs++;
 				   
 		if(ret <= 0){
+		   printf("readSDR readStream ret %d iread %d MTU %ld\n",ret,iread,(long)MTU);
 		 //  if(Debug > 0)fprintf(stderr,"readStream ret %d \n",ret);
 		   break;
 		}else if(ret < toRead){
@@ -1509,7 +1520,7 @@ int sdrClass::rxBuffer()
 	     case 1:
 	        return 0;
 		 case 2:
-//			auto t1 = std::chrono::high_resolution_clock::now();
+			//auto t1 = std::chrono::high_resolution_clock::now();
 			
 			if(inData == IN_FILE){
 				readFile();
@@ -1568,9 +1579,9 @@ int sdrClass::rxBuffer()
 			//	fprintf(stderr,"rxBuff saveCall %d witch %d\n",saveCall,rx->witch);
 				
 	        }
-//	        auto t2 = std::chrono::high_resolution_clock::now();
-//		    std::chrono::duration<double> difference = t2 - t1;
-//		    fprintf(stderr,"Time %g\n",difference.count());
+	      //  auto t2 = std::chrono::high_resolution_clock::now();
+		   // std::chrono::duration<double> difference = t2 - t1;
+		   // printf("Time %g rx->witch %d\n",difference.count(),rx->witch);
 	//		fprintf(stderr,"rxBuffer doWhat %p %d\n",&rx->doWhat,rx->doWhat);
 	        break;
 	     }
@@ -1604,9 +1615,17 @@ int sdrClass::Process()
 	
 	sdrClass *rx=this;
 	
+	struct Filters ff;			
+	
 	zerol((char *)&ff,sizeof(f));
 
 	ff.thread=rx->thread++;
+	
+	ff.aminGlobal=0;
+	
+	ff.amaxGlobal=0;
+	
+	//fprintf(stderr,"Process %d\n",ff.thread);
 	
 	setFilters(&ff);
 	
@@ -1635,10 +1654,16 @@ int sdrClass::Process()
     zerol((char *)buff2,(unsigned long)(size2));
 	
 	while(rx->frame >= 0 && iqToAudio >= 0){
-		if(doFilter(buff1,buff2,&ff)){
+		//auto t1 = std::chrono::high_resolution_clock::now();
+	    int ret=doFilter(buff1,buff2,&ff);
+		if(ret){
+			//fprintf(stderr,"Sleep2\n");
 			Sleep2(5);
 		}else{
-			doAudio(buff2,buff1);
+			doAudio(buff2,buff1,&ff);
+			//auto t2 = std::chrono::high_resolution_clock::now();
+			//std::chrono::duration<double> difference = t2 - t1;
+			//printf("Time %g thread %d size %d\n",difference.count(),ff.thread,rx->size);
 		}
 	}
 	
@@ -1856,11 +1881,10 @@ int sdrClass::doFilter(float *wBuff,float *aBuff,struct Filters *f)
                 buf2[k * 2 + 1] = i;
             }
         }
-        
+     
     double r=sqrt(rx->coso*rx->coso+rx->sino*rx->sino);
     rx->coso /= r;
     rx->sino /= r;
-    
     
 	buf=aBuff;
 	
@@ -1869,34 +1893,9 @@ int sdrClass::doFilter(float *wBuff,float *aBuff,struct Filters *f)
     
     num=0;
     num2=0;
-/*
-    fprintf(stderr,"rx->coso %g rx->sino %g coso %g sino %g\n",rx->coso,rx->sino,coso,sino);
-    
-    double amax=-1e33;
-   	double amin=1e33; 
-    for(int n=0;n<rx->size;++n){
-    	double v=buf2[n * 2];
-    	if(v > amax)amax=v;
-    	if(v < amin)amin=v;
-    }
-    
-    fprintf(stderr,"b rx->size %d num %d amin %g amax %g\n",rx->size,num,amin,amax);
-*/
 
     msresamp_crcf_execute(f->iqSamplerd, (liquid_float_complex *)buf2, rx->size, (liquid_float_complex *)buf, &num);  // decimate
-
-/*
-    amax=-1e33;
-   	amin=1e33; 
-    for(int n=0;n<num;++n){
-    	double v=buf[n * 2];
-    	if(v > amax)amax=v;
-    	if(v < amin)amin=v;
-    }
-    
-    fprintf(stderr,"a rx->size %d num %d amin %g amax %g\n",rx->size,num,amin,amax);
-*/
-        
+            
     if(rx->decodemode == MODE_FM || rx->decodemode == MODE_NBFM){
 
 		freqdem_demodulate_block(f->demod, (liquid_float_complex *)buf, (int)num, (float *)buf2);
@@ -1924,7 +1923,7 @@ int sdrClass::doFilter(float *wBuff,float *aBuff,struct Filters *f)
 	return 0;
 }
 
-int sdrClass::doAudio(float *aBuff,float *wBuff)
+int sdrClass::doAudio(float *aBuff,float *wBuff,struct Filters *f)
 {
 	int short *data;
 	int audioOut;
@@ -1962,7 +1961,7 @@ int sdrClass::doAudio(float *aBuff,float *wBuff)
 	}
 	
 	average /= length;
-	
+		
 	//fprintf(stderr,"rx->faudio %g amin %g amax %g\n",rx->faudio,amin,amax);
 	
     amin -= average;
@@ -1970,18 +1969,18 @@ int sdrClass::doAudio(float *aBuff,float *wBuff)
     amax -= average;
 	
 
-    if(rx->aminGlobal == 0.0)rx->aminGlobal=amin;
+    if(f->aminGlobal == 0.0)f->aminGlobal=amin;
 
-    rx->aminGlobal = 0.8*rx->aminGlobal+0.2*amin;
+    f->aminGlobal = 0.9*f->aminGlobal+0.1*amin;
 
-    amin=rx->aminGlobal;
+    amin=f->aminGlobal;
 
 
-    if(rx->amaxGlobal == 0.0)rx->amaxGlobal=amax;
+    if(f->amaxGlobal == 0.0)f->amaxGlobal=amax;
 
-    rx->amaxGlobal = 0.8*rx->amaxGlobal+0.2*amax;
+    f->amaxGlobal = 0.9*f->amaxGlobal+0.1*amax;
 
-    amax=rx->amaxGlobal;
+    amax=f->amaxGlobal;
 	
 	
     if((amax-amin) > 0){
@@ -1990,7 +1989,8 @@ int sdrClass::doAudio(float *aBuff,float *wBuff)
         dnom=65535.0;
     }
 		
-
+	//fprintf(stderr,"amin %g amax %g average %g dnom %g\n",amin,amax,average,dnom);
+	
 	for(int k=0;k<length;++k){
 		double v;
 
@@ -2006,6 +2006,14 @@ int sdrClass::doAudio(float *aBuff,float *wBuff)
 
 		data[k]=(short int)v;
 	}	
+
+	if(audioThreads > 0){
+		for(int n=0;n<100;++n){
+			data[n]=data[n]*(float)n/100.0;
+			data[length-1-n]=data[length-1-n]*(float)n/100.0;
+		}
+	}
+
 
 	sendAudio(data,length);
 	

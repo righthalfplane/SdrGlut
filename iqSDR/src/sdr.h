@@ -111,6 +111,8 @@ struct Filters{
 	nco_crcf fShift;
 	int thread;	
 	double amHistory;
+	double aminGlobal;
+    double amaxGlobal;
 };
 
 class sdrClass
@@ -138,7 +140,7 @@ public:
 	int Process();
 	int setFilters(struct Filters *f);
 	int doFilter(float *wBuff,float *aBuff,struct Filters *f);
-	int doAudio(float *aBuff,float *wBuff);
+	int doAudio(float *aBuff,float *wBuff,struct Filters *f);
 	int startSound();
 	int sound( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
          double streamTime, RtAudioStreamStatus status, void *userData );
@@ -266,11 +268,12 @@ public:
  	
  	std::vector<std::string> streamFormat;
  	 	
- 	struct Filters ff;			
  	
  	class Listen *l;
  	
  	char *deviceString;
+ 	
+ 	int audioThreads;
  	
 };
 

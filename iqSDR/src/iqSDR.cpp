@@ -770,8 +770,6 @@ void applFrame::OnSampleRateSelected(wxCommandEvent& event)
 	
 	std::thread(&sdrClass::run,sdr).detach();
 
-
-
 }
 
 void applFrame::OnBandSelected(wxCommandEvent& event)
