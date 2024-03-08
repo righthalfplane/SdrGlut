@@ -1515,27 +1515,28 @@ EVT_CHECKBOX(ID_SETGAIN,BasicPane::OnCheckAuto)
 EVT_BUTTON(ID_STARTSEND, BasicPane::startSend)
 EVT_BUTTON(ID_STOPSEND, BasicPane::stopSend)
 EVT_BUTTON(ID_ALPHA, BasicPane::stopSend)
-EVT_LIST_ITEM_SELECTED(ID_RXFREQUENCY,BasicPane::OnListSelected)
+EVT_DATAVIEW_ITEM_ACTIVATED(ID_VIEWSELECTED, BasicPane::OnViewSelected)
+EVT_DATAVIEW_SELECTION_CHANGED(ID_VIEWSELECTED, BasicPane::OnViewSelected)
 END_EVENT_TABLE()
 void dummpy11(){;}
-void BasicPane::OnListSelected(wxListEvent& event) 
+void BasicPane::OnViewSelected(wxDataViewEvent& event) 
 {    
 	event.Skip();
 	
-	//int id=event.GetId();
+	long int nRow=(long)listctrlFreq->GetSelectedRow();
 	
-    int index=event.GetIndex();
-    
-    wxString text=listFrequency->GetItemText(index,1);
-    
-	const char *freq=text;
+	//fprintf(stderr,"nRow %ld\n",nRow);
+	
+	wxString nn=listctrlFreq->GetTextValue(nRow,1);
 
-	//fprintf(stderr,"OnListSelected id %d index %d freq %g\n",id,index,atof(freq));
-	
+	//fprintf(stderr,"%s\n",static_cast<const char*>(nn));
+		
+	const char *freq=nn;
+		
 	sdr->setFrequencyFC(atof(freq)*1e6);
 	
 	gTopPane->Refresh();
-	
+
 }
 void BasicPane::startSend(wxCommandEvent& event) 
 {    
@@ -1900,79 +1901,18 @@ BasicPane::BasicPane(wxWindow *frame, const wxString &title,class sdrClass *sdrI
 	
 	yloc += 200;
 	
-	wxStaticBox *box44 = new wxStaticBox(ScrolledWindow, wxID_ANY, "&TV Frequencies",wxPoint(20,yloc), wxSize(225, 190),wxBORDER_SUNKEN );
+	listctrlFreq = new wxDataViewListCtrl( ScrolledWindow, ID_VIEWSELECTED,wxPoint(20,yloc),wxSize(225, 190));
+	listctrlFreq->AppendTextColumn( "Channel" );
+	listctrlFreq->AppendTextColumn( "Freq" );
 	
-	//wxStaticBox *box44 = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Frequencies",wxPoint(20,yloc), wxDefaultSize,wxBORDER_SUNKEN );
-
-	listFrequency=new wxListCtrl(box44,ID_RXFREQUENCY,wxPoint(20,10), wxSize(225, 190),wxLC_REPORT|wxLC_SINGLE_SEL);
-	
-	//listFrequency=new wxListCtrl(box44,wxID_ANY,wxPoint(0,0), wxDefaultSize,wxLC_REPORT|wxLC_VIRTUAL);
-	
-	
-	//listFrequency=new wxListCtrl(this,wxID_ANY,wxPoint(20,yloc),wxDefaultSize,wxLC_REPORT|wxLC_SINGLE_SEL);
-	
-	
-	wxListItem itemCol;
-	
-	itemCol.SetText("Channel");
-	listFrequency->InsertColumn(0,itemCol);
-	listFrequency->SetColumnWidth(0,60);
-	
-	itemCol.SetText("Freq");
-	listFrequency->InsertColumn(1,itemCol);
-	listFrequency->SetColumnWidth(1,155);
-	
-	      wxString computers31[] =
-      { "2","3","4","5","6",
-      	"7","8","9","10","11","12","13",
-        "14","15","16","17","18", "19","20","21","22","23",
-      	"24","25","26","27","28", "29","30","31","32","33",
-        "34","35","36",""};
-
-	      wxString computers32[] =
-       { "57","63","69","79","85",
-       	 "177","183","189","195","201","207","213",
-         "473","479","485","491","497", "503","509","515","521","527",
-      	 "533","539","545","551","557", "563","569","575","581","587",
-         "593","599","605",""};
-
-	
-	
-	for(int n=0;n<36;++n){
-		wxString buf;
-
-		buf.Printf("%d",n);
-		
-		listFrequency->InsertItem(n,computers31[n]);
-
-		listFrequency->SetItemData(n,n);
-	
-		buf.Printf("Col 1, item %d",n);
-		listFrequency->SetItem(n,1,computers32[n]);
-	
-	
+	wxVector<wxVariant> data;
+	for(int n=0;n<sizeof(computers31)/sizeof(wxString);++n){
+		data.clear();
+		data.push_back(computers31[n]);
+		data.push_back(computers32[n]);
+		listctrlFreq->AppendItem( data );
 	}
-	
 
-/*
-	wxStaticBox *box44 = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Frequencies",wxPoint(20,yloc), wxSize(225, 190),wxBORDER_SUNKEN );
-	
-	listFrequency=new wxListCtrl(box44,wxID_ANY,wxPoint(0,0), wxDefaultSize,wxLC_REPORT|wxLC_VIRTUAL);
-	
-	wxString listFrequency::OnGetItemText(long item,long column) const
-	{
-		return wxString::Format(" Column %ld item %ld",column,item);
-	}
-	
-	
-	listFrequency->InsertColumn(0,"first");
-	listFrequency->SetColumnWidth(0,155);
-
-	listFrequency->InsertColumn(1,"second");
-	listFrequency->SetColumnWidth(1,155);
-
-	listFrequency->SetItemCount(1000000);
-*/
 
     wxWindow::SetSize(wxDefaultCoord,wxDefaultCoord,280,100);
     

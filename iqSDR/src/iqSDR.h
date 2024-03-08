@@ -19,6 +19,8 @@
 #include <wx/window.h>
 #include <wx/gbsizer.h>
 #include <wx/listctrl.h>
+#include <wx/dataview.h>
+
 
 #include <string.h>
 
@@ -107,6 +109,7 @@ double rtime(void);
     ID_SETGAIN,
     ID_RXFREQUENCY,
     ID_FC=ID_RXFREQUENCY+100,
+    ID_VIEWSELECTED,
 };
 
 
@@ -700,13 +703,27 @@ public:
 	wxTextCtrl *rangeMin;
 	
 	wxTextCtrl *rangeMax;
+		
+	wxDataViewListCtrl *listctrlFreq;
 	
-	wxListCtrl *listFrequency;
+	  wxString computers31[35] =
+      { "2","3","4","5","6",
+      	"7","8","9","10","11","12","13",
+        "14","15","16","17","18", "19","20","21","22","23",
+      	"24","25","26","27","28", "29","30","31","32","33",
+        "34","35","36"};
+
+	  wxString computers32[35] =
+       { "57","63","69","79","85",
+       	 "177","183","189","195","201","207","213",
+         "473","479","485","491","497", "503","509","515","521","527",
+      	 "533","539","545","551","557", "563","569","575","581","587",
+         "593","599","605"};
+
 	
-	
-	
+
 	// events
-	void OnListSelected(wxListEvent &event);
+	void OnViewSelected(wxDataViewEvent &event);
 	void OnTimer(wxTimerEvent &event);
 	void OnCombo(wxCommandEvent& event);
 	void OnComboFilter(wxCommandEvent& event);
