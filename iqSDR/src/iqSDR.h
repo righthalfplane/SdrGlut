@@ -238,6 +238,7 @@ public:
     applFrame(wxFrame* parent,wxString title,class sdrClass *sdrIn);
     ~applFrame();
 
+	void About(wxCommandEvent &event );
     void OnHideBtn(wxCommandEvent&);
     void OnShowBtn(wxCommandEvent&);
     void OnMoveBtn(wxCommandEvent&);

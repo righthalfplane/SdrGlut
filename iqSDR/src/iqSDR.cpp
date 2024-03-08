@@ -546,7 +546,13 @@ EVT_MENU_RANGE(ID_DIRECT,ID_DIRECT+99,applFrame::OnDirectSelected)
 EVT_MENU_RANGE(ID_BAND,ID_BAND+99,applFrame::OnBandSelected)
 EVT_MENU_RANGE(ID_SAMPLERATE,ID_SAMPLERATE+99,applFrame::OnSampleRateSelected)
 EVT_SIZE(applFrame::resized)
+EVT_MENU(wxID_ABOUT, applFrame::About)
 wxEND_EVENT_TABLE()
+void applFrame::About(wxCommandEvent& WXUNUSED(event) )
+{
+    wxMessageBox("iqSDR(c) 2024 Dale Ranta");
+}
+
 void applFrame::resized(wxSizeEvent& evt)
 {
  evt.Skip();
@@ -939,8 +945,9 @@ applFrame::~applFrame()
 void startWindow::OnAbout(wxCommandEvent& event)
 {
 	event.Skip();
+	
+	wxMessageBox("iqSDR(c) 2024 Dale Ranta");
 
-	fprintf(stderr,"OnAbout\n");
 }
 void startWindow::OnRadio(wxCommandEvent& event)
 {	
@@ -1906,7 +1913,7 @@ BasicPane::BasicPane(wxWindow *frame, const wxString &title,class sdrClass *sdrI
 	listctrlFreq->AppendTextColumn( "Freq" );
 	
 	wxVector<wxVariant> data;
-	for(int n=0;n<sizeof(computers31)/sizeof(wxString);++n){
+	for(unsigned int n=0;n<sizeof(computers31)/sizeof(wxString);++n){
 		data.clear();
 		data.push_back(computers31[n]);
 		data.push_back(computers32[n]);
