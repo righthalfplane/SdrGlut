@@ -20,6 +20,8 @@
 #include <wx/gbsizer.h>
 #include <wx/listctrl.h>
 #include <wx/dataview.h>
+#include <wx/cmdline.h>
+#include <wx/event.h>
 
 
 #include <string.h>
@@ -43,7 +45,6 @@
 #include <fftw3.h>
 
 #include <chrono>
-
 
 #include "sdr.h"
 

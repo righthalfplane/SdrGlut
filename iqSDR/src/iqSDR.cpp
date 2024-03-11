@@ -1,10 +1,7 @@
 ﻿#include "iqSDR.h"
-#include "sound.h"
 #include <string.h>
 #include <vector>
 #include <string>
-#include <wx/cmdline.h>
-#include <wx/event.h>
 
 int copyl(char *p1,char *p2,long n);
 

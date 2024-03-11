@@ -1549,6 +1549,22 @@ int sdrClass::rxBuffer()
                         buff[2*n+1]=save;
                     }
                 }
+                
+                int idc=0;
+                if(idc){
+                	double average=0;
+                    for(int n=0;n<rx->size*2;++n){
+                    	average += buff[n];
+                    }
+                    average /= (rx->size*2);
+                    
+                    for(int n=0;n<rx->size*2;++n){
+                    	buff[n] -= average;
+                    }
+                    
+                    fprintf(stderr,"average %g\n",average);
+          
+                }
 
 	        	if(!iWait)bS->pushBuff(rx->witch);
 

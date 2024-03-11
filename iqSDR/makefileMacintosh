@@ -5,7 +5,7 @@ CCFILES= ./src/sdr.cpp ./src/mThread.cpp ./src/cMalloc.cpp ./src/iqSDR.cpp ./src
 CCOBJS = ./src/sdr.o ./src/mThread.o ./src/cMalloc.o ./src/iqSDR.o ./src/bStack.o ./src/sound.o ./src/getPalette.o ./src/send.o ./src/Clisten.o
  
 fireball:  ${COBJS} ${CCOBJS}
-	${CXX} ${CFLAGS} -g -o iqSDR.x ${COBJS} ${CCOBJS}   -lrtaudio -lSoapySDR -lliquid -lsndfile `/opt/wxWidgets/bin/wx-config --cxxflags --libs --gl-libs` -lfftw3f
+	${CXX} ${CFLAGS} -g -o iqSDR.x ${COBJS} ${CCOBJS}   -lrtaudio -lSoapySDR -lliquid -framework OpenAL -lsndfile `/opt/wxWidgets/bin/wx-config --cxxflags --libs --gl-libs` -lfftw3f
 #	rm ./src/sdr.o ./src/mThread.o ./src/cMalloc.o ./src/sdrwx.o
 
 

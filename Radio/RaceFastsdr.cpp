@@ -840,11 +840,10 @@ static int ProcessSound(void *rxv)
     fprintf(stderr,"ProcessSound start\n");
     
     ALuint *fbuff= new ALuint[audio->numbuff];
-
+    
     int ibuff;
     ibuff=3;
     while(rx->controlProcess >= 0){
-        Sleep2(20);
         {
             processed=0;
             
@@ -866,9 +865,10 @@ static int ProcessSound(void *rxv)
                     freebuffAudio(audio,fbuff[k]);
                     
                     while((ibuff=popBuffa(rx)) < 0){
-                      //  printf("Sleep count %lu\n",count);
-                        Sleep2(10);
+                        //fprintf(stderr,"Sleep count %lu\n",count);
+                        Sleep2(5);
                     }
+                
                     if(setBuffers(rx, ibuff)){
                         ;
                     }
@@ -876,39 +876,26 @@ static int ProcessSound(void *rxv)
                     alGetSourcei(rx->source, AL_SOURCE_STATE, &rx->al_state);
                     //printf("rx->al_state %d AL_STOPPED %d\n",rx->al_state,AL_STOPPED);
                     if(rx->al_state == AL_STOPPED){
-                        Sleep2(500);
+                        //Sleep2(500);
+                        int errors = alGetError();
                         alSourcePlay(rx->source);
+                        if ((error = alGetError()) != AL_NO_ERROR)
+                        {
+                            fprintf(stderr,"Error on Restart\n");
+                        }
                         if(count % 5){
-                            if(rx->Debug)printf("%s count %lu sound restarted\n",rx->driveName,count);
+                            if(rx->Debug)printf("%s count %lu sound restarted error %d\n",rx->driveName,count,errors);
                         }
                     }
-
                     
                     if(!(++count % 100)){
                         end=rtime();
-                        /*
-                        printf("%s count %lu time %.2f ",rx->driveName,count,end-start);
-                        alGetSourcei(rx->source, AL_SOURCE_STATE, &rx->al_state);
-                        fprintf(stderr,"al state %d %x AL_STOPPED %d AL_INITIAL %d\n",rx->al_state,rx->al_state,AL_STOPPED,AL_INITIAL);
-                        
-                        if(rx->al_state == AL_STOPPED){
-                            alSourcePlay(rx->source);
-                        }
-                        
-                        if ((error = alGetError()) != AL_NO_ERROR){
-                            fprintf(stderr,"Device %s count %lu ",rx->driveName,count);
-                            DisplayALError((unsigned char *)"in ProcessSound alBufferData 1 : ", error);
-                        }
-                         */
-                        
                         start=end;
                     }
                     
                 }
-                
-                
-                
             }else{
+                Sleep2(5);
                 alGetSourcei(rx->source, AL_SOURCE_STATE, &rx->al_state);
                 //fprintf(stderr,"count %lu al state %d %x AL_STOPPED %d AL_INITIAL %d\n",count,rx->al_state,rx->al_state,AL_STOPPED,AL_INITIAL);
                 if(rx->al_state != AL_PLAYING && rx->al_state != AL_INITIAL){
@@ -1139,13 +1126,24 @@ static int setBuffers(struct playData *rx, int numBuff)
     int mute=rx->mute+rx->muteScan;
     
     if(mute)zerol((unsigned char *)rx->buffa[numBuff % NUM_ABUFF5],(long)(4800*sizeof(short)));
-
-    alBufferData(buffer,
-                 AL_FORMAT_MONO16,
-                 rx->buffa[numBuff % NUM_ABUFF5],
-                 (48000/rx->ncut) * sizeof(short),
-                 48000);
     
+    
+    if(numBuff < 0){
+        short buffa[48000/rx->ncut];
+        for(int n=0;n<48000/rx->ncut;++n)buffa[n]=0;
+        alBufferData(buffer,
+                     AL_FORMAT_MONO16,
+                     buffa,
+                     (48000/rx->ncut) * sizeof(short),
+                     48000);
+    }else{
+        alBufferData(buffer,
+                     AL_FORMAT_MONO16,
+                     rx->buffa[numBuff % NUM_ABUFF5],
+                     (48000/rx->ncut) * sizeof(short),
+                     48000);
+
+    }
     if ((error = alGetError()) != AL_NO_ERROR){
         fprintf(stderr,"Device %s Error on buffer # %d ",rx->driveName,buffer);
         DisplayALError((unsigned char *)"in SetBuffers alBufferData 1 : ", error);
