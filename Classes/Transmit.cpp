@@ -341,7 +341,7 @@ int Radio::Transmit(struct Scene *scene)
                 //std::cout << " Device Name = " << info.name << '\n';
                 new GLUI_Button(obj_panel, info.name.c_str(), 200+i, control_cb);
                 if(find == 0){
-                    tt.Params.deviceId=i;
+                    tt.Params.deviceId=id[i];
                     find = 1;
                 }
             }
