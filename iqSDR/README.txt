@@ -7,6 +7,15 @@ iqSDR.x "192.168.0.11:3700" -tcp -cat | ffplay -
 
 iqSDR.x -fc 1090 -samplerate 2000000 -outFile "-" -unsigned | dump1090 --ifile "-" --interactive
 
+iqSDR.x -fc 1090 -samplerate 2000000 -outFile "-" -unsigned | dump1090 --ifile "-" --interactive --net
+
+http://localhost:8080
+
+sudo apachectl stop
+
+sudo apachectl start
+
+
 
 ##########################################
 setenv SOAPY_SDR_ROOT /usr/local

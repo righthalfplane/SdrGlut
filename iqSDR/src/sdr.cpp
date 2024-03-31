@@ -495,9 +495,10 @@ int ListenSocket(void *rxv)
 
 int doEnumerate(char *deviceString)
 {
+
+	fprintf(stderr,"deviceString %p\n",deviceString);
 	
 	resultsEnumerate=SoapySDR::Device::enumerate(deviceString);
-	
 	
 	int length=resultsEnumerate.size();
     
@@ -637,7 +638,7 @@ sdrClass::sdrClass()
     
     sendBuff=NULL;
     
-    deviceString=NULL;
+    deviceString=(char *)"";
     
     audioThreads=0;
       	
@@ -851,7 +852,6 @@ int sdrClass::playRadio()
 	    
     amaxGlobal=0;
     
-   // audioThreads=2;
     std::thread(&sdrClass::Process,this).detach();
 	for(int n=0;n<audioThreads;++n){
 		std::thread(&sdrClass::Process,this).detach();
