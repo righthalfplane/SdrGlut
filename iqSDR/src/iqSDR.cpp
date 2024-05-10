@@ -5,6 +5,8 @@
 
 int copyl(char *p1,char *p2,long n);
 
+char *ProgramVersion=(char *)"iqSDR-1231";
+
 //c++ -std=c++11 -o iqSDR.x iqSDR.cpp -lGLEW `/usr/local/bin/wx-config --cxxflags --libs --gl-libs` -lGLU -lGL
 
 //c++ -std=c++11 -o iqSDR.x iqSDR.cpp -lGLEW `/usr/bin/wx-config --cxxflags --libs --gl-libs` -lGLU -lGL
@@ -117,7 +119,7 @@ bool MyApp::OnInit()
    
     // testEM();
         
- 	wxFrame *frame2 = new wxFrame(NULL,wxID_ANY,wxT("iqSDR.x"));
+ 	wxFrame *frame2 = new wxFrame(NULL,wxID_ANY,ProgramVersion);
 	startIt=new startWindow(frame2, "Controls");
 	frame2->SetSize(wxDefaultCoord,wxDefaultCoord,155,270);
 	frame2->Show();
