@@ -112,7 +112,7 @@ int BasicPane::rxSend()
     struct sockaddr_in server_addr;
     struct hostent *host;
     char name[256];
-    int ret;
+    int ret=0;
     long size=2;
     
     if(!rx)return 0;

@@ -1449,7 +1449,7 @@ static unsigned char p28[]={
 
 	if(n < 0 || n > 27)return 1;
     
-	if(name)strncpy(name,names[n].c_str(),strlen(names[n].c_str()));
+	if(name)strncpy(name,names[n].c_str(),strlen(names[n].c_str())+1);
     
     if(!pal)return 1;
     
