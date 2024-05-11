@@ -5,7 +5,7 @@
 
 int copyl(char *p1,char *p2,long n);
 
-char *ProgramVersion=(char *)"iqSDR-1233";
+char *ProgramVersion=(char *)"iqSDR-1234";
 
 //c++ -std=c++11 -o iqSDR.x iqSDR.cpp -lGLEW `/usr/local/bin/wx-config --cxxflags --libs --gl-libs` -lGLU -lGL
 
@@ -1670,7 +1670,7 @@ BasicPane::BasicPane(wxWindow *frame, const wxString &title,class sdrClass *sdrI
 	wxCheckBox *cbox;
 	if(sdr->hasGainMode){
 		cbox=new wxCheckBox(ScrolledWindow,ID_CHECKAUTO, "&Hardware AGC",wxPoint(20,yloc), wxSize(230, 25));
-		cbox->SetValue(0);	
+		cbox->SetValue(1);	
 		yloc += 25;   
 	}
 	
@@ -1984,14 +1984,27 @@ void BasicPane::OnCheckAuto(wxCommandEvent &event)
 	}
 	
 	if(sdr->inData != IN_RADIO)return;
+	
+	
+	if(id == ID_CHECKAUTO){
 		
-	int gainMode=sdr->device->getGainMode(SOAPY_SDR_RX, sdr->channel);
+		bool gainMode=sdr->device->getGainMode(SOAPY_SDR_RX, sdr->channel);
+		
+		//fprintf(stderr,"1 OnCheckAuto id %d gainMode %d\n",id,gainMode);
 	
-	gainMode = !gainMode;
+		gainMode = !gainMode;
 	
-	sdr->device->setGainMode(SOAPY_SDR_RX, sdr->channel, gainMode);
+		//fprintf(stderr,"1a OnCheckAuto id %d gainMode %d\n",id,gainMode);
+		
+		sdr->device->setGainMode(SOAPY_SDR_RX, sdr->channel, gainMode);
 
-	//fprintf(stderr,"OnCheckAuto id %d gainMode %d\n",id,gainMode);
+		//fprintf(stderr,"2 OnCheckAuto id %d gainMode %d\n",id,gainMode);
+		
+		//gainMode=sdr->device->getGainMode(SOAPY_SDR_RX, sdr->channel);
+
+		//fprintf(stderr,"2a OnCheckAuto id %d gainMode %d\n",id,gainMode);
+		
+	}
 
 }
 
