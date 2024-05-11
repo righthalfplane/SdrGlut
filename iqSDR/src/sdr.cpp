@@ -550,7 +550,7 @@ void sdrClass::setMode(std::string mode)
 	   decodemode = MODE_NBFM;
 	}else if(mode == "USB"){
 		decodemode = MODE_USB;
-	}else if(mode == "USB"){
+	}else if(mode == "LSB"){
 		decodemode = MODE_LSB;
 	}else if(mode == "CW"){
 		decodemode = MODE_CW;

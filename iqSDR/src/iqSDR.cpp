@@ -5,7 +5,7 @@
 
 int copyl(char *p1,char *p2,long n);
 
-char *ProgramVersion=(char *)"iqSDR-1232";
+char *ProgramVersion=(char *)"iqSDR-1233";
 
 //c++ -std=c++11 -o iqSDR.x iqSDR.cpp -lGLEW `/usr/local/bin/wx-config --cxxflags --libs --gl-libs` -lGLU -lGL
 
@@ -546,10 +546,14 @@ EVT_MENU_RANGE(ID_BAND,ID_BAND+99,applFrame::OnBandSelected)
 EVT_MENU_RANGE(ID_SAMPLERATE,ID_SAMPLERATE+99,applFrame::OnSampleRateSelected)
 EVT_SIZE(applFrame::resized)
 EVT_MENU(wxID_ABOUT, applFrame::About)
+EVT_MENU(ID_EXIT, applFrame::About)
 wxEND_EVENT_TABLE()
-void applFrame::About(wxCommandEvent& WXUNUSED(event) )
+void applFrame::About(wxCommandEvent &event)
 {
-    wxMessageBox("iqSDR(c) 2024 Dale Ranta");
+
+	int item=event.GetId();
+    if(item == wxID_ABOUT)wxMessageBox("iqSDR(c) 2024 Dale Ranta");
+    if(item == ID_EXIT)startIt->OnQuit(event);
 }
 
 void applFrame::resized(wxSizeEvent& evt)
@@ -568,10 +572,11 @@ applFrame::applFrame(wxFrame* parent,wxString title,class sdrClass *sdrIn)
     : wxFrame(parent, wxID_ANY, "wxGridBagSizer Test Frame")
 {
 	sdr=sdrIn;
-    wxMenu *menuFile = new wxMenu(_T(""), wxMENU_TEAROFF);
+	
+    wxMenu *menuFile = new wxMenu;
     //menuFile->Append(wxID_OPEN, _T("&Information Audio...\tCtrl-O"), _T("Infomation"));
     
-    menuFile->Append(wxID_EXIT, _T("E&xit\tAlt-X"), _T("Quit this program"));
+    menuFile->Append(ID_EXIT, _T("Exit"), _T("Quit2 this program"));
     
     wxMenu *helpMenu = new wxMenu;
     helpMenu->Append(wxID_ABOUT, _T("&About...\tCtrl-A"), _T("Show about dialog"));
@@ -1701,14 +1706,14 @@ BasicPane::BasicPane(wxWindow *frame, const wxString &title,class sdrClass *sdrI
 
 	yloc += 85;   
 
-	box = new wxStaticBox(ScrolledWindow, wxID_ANY, "Minimun Value ",wxPoint(20,yloc), wxSize(230, 80),wxBORDER_SUNKEN );
+	box = new wxStaticBox(ScrolledWindow, wxID_ANY, "Minimum Value ",wxPoint(20,yloc), wxSize(230, 80),wxBORDER_SUNKEN );
 	box->SetToolTip(wxT("This is tool tip") );
 
 	new wxSlider(box,ID_MININUM,-130,-200,100,wxPoint(10,0),wxSize(210,-1),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
 
 	yloc += 85;
 
-	box = new wxStaticBox(ScrolledWindow, wxID_ANY, "Maximun Value",wxPoint(20,yloc), wxSize(230, 80),wxBORDER_SUNKEN );
+	box = new wxStaticBox(ScrolledWindow, wxID_ANY, "Maximum Value",wxPoint(20,yloc), wxSize(230, 80),wxBORDER_SUNKEN );
 
 	new wxSlider(box,ID_MAXINUM,-30,-200,100,wxPoint(10,0),wxSize(210,-1),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
   	

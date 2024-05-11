@@ -111,6 +111,7 @@ double rtime(void);
     ID_RXFREQUENCY,
     ID_FC=ID_RXFREQUENCY+100,
     ID_VIEWSELECTED,
+    ID_EXIT,
 };
 
 
