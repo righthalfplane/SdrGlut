@@ -1,8 +1,9 @@
  
-// c++ -std=c++11 -o sendFreq10 sendFreq10.cpp -lSoapySDR -lsndfile -lliquid -Wall -Wno-return-type-c-linkage
+// c++ -std=c++11 -o sendFreq10 sendFreq10.cpp -lSoapySDR -lsndfile -lliquid -Wall -Wno-return-type-c-linkage -Wno-deprecated-declarations
 // sendFreq10 "driver=hackrf"
 // sendFreq10 "driver=bladerf"
 // sdrReceive.x -f 230 -am -PPM -0.15 -cutoff -100 -device 2
+// sdrReceive.x -f 231 -am -ichar 1 -cutoff -100 -device 1
 #include <stdio.h>
 #include <SoapySDR/Device.hpp>
 #include <SoapySDR/Formats.hpp>
@@ -430,6 +431,7 @@ int main(int argc, char** argv)
 {
 
 	char 		infilename[]="/Users/dir/images/saveVoice.wav";
+//	char 		infilename[]="/home/dir/Desktop/saveVoice.wav";
 	SNDFILE	 	*infile = NULL ;
 	SF_INFO	 	sfinfo ;
 	long int count=0;
@@ -448,7 +450,7 @@ int main(int argc, char** argv)
 
 	
     //const double frequency = 462.7125e6;
-    const double frequency = 230.0e6;
+    const double frequency = 231.0e6;
     //const double frequency = 85.5e6;
     const double sample_rate = 2.0e6;
     float As = 60.0f;

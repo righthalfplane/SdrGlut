@@ -12,7 +12,15 @@
 ****************************************************************************/
 
 #include <string.h>
-#include <GL/glui.h>
+#ifdef __APPLE__
+#include <GLUT/glut.h>	// GLUT OpenGL includes
+#include <OpenGL/glext.h>
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
+#else
+#include <GL/glut.h>	// GLUT OpenGL includes
+#include <stdarg.h>
+#endif
 
 float xy_aspect;
 int   last_x, last_y;
