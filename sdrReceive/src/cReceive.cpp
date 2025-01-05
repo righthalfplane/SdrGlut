@@ -159,7 +159,7 @@ StartWork:
 	        	rx->cs->pushBuff(rx->witch,rx);
 	        	
               	float *buff=rx->cs->buff[rx->witch % NUM_DATA_BUFF];
-              	if(rx->binary){
+              	if(rx->binary == 1){
 					int filenum=fileno(stdout);
 					int count=(int)write(filenum,buff,rx->size*8);
 					if(count != (int)(rx->size*8)){
@@ -545,6 +545,9 @@ int cReceive::stopPlay(struct playData *rx)
         rx->device->closeStream(rx->rxStream);
     
         SoapySDR::Device::unmake(rx->device);
+        
+        rx->device=NULL;
+        
     }
         	       	
     if(rx->antenna){
@@ -564,12 +567,19 @@ int cReceive::stopPlay(struct playData *rx)
 	rx->cs=NULL;
 	    
 	if(range)cFree((char *)range);
+	range=NULL;
 	if(range3)cFree((char *)range3);
+	range3=NULL;
 	if(magnitude)cFree((char *)magnitude);
+	magnitude=NULL;
 	if(magnitude2)cFree((char *)magnitude2);
+	magnitude2=NULL;
 	if(magnitude3)cFree((char *)magnitude3);
+	magnitude3=NULL;
 	if(frequencies)cFree((char *)frequencies);
+	frequencies=NULL;
 	if(ampitude)cFree((char *)ampitude);
+	ampitude=NULL;
 	    
 	return 0;
 }
@@ -1346,7 +1356,7 @@ cReceive::cReceive(int argc, char * argv [])
 
 	if(rx->fc < 0)rx->fc=rx->f+20000;
 	
-	if(rx->binary){
+	if(rx->binary == 1){
 		if(rx->pipe){
 			fprintf(stderr,"-binary and -pipe conflict STOP\n");
 			exit(1);
@@ -1430,8 +1440,16 @@ cReceive::cReceive(int argc, char * argv [])
 
 int doWindow(double *x,double *y,long length,int type)
 {
-    //double w[length];
-    double w[32768];
+    static float *w=NULL;
+    static long lengthSave;
+    if(!w){
+    	w=new float[length];
+    	lengthSave=length;
+    }else if(length > lengthSave){
+    	delete[] w;
+    	w=new float[length];
+    	lengthSave=length;    
+    }
     int i;
     
     if(!x || !y)return 1;

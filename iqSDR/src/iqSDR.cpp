@@ -5,7 +5,7 @@
 
 int copyl(char *p1,char *p2,long n);
 
-char *ProgramVersion=(char *)"iqSDR-1234";
+char *ProgramVersion=(char *)"iqSDR-1236";
 
 //c++ -std=c++11 -o iqSDR.x iqSDR.cpp -lGLEW `/usr/local/bin/wx-config --cxxflags --libs --gl-libs` -lGLU -lGL
 
@@ -552,7 +552,7 @@ void applFrame::About(wxCommandEvent &event)
 {
 
 	int item=event.GetId();
-    if(item == wxID_ABOUT)wxMessageBox("iqSDR(c) 2024 Dale Ranta");
+    if(item == wxID_ABOUT)wxMessageBox("iqSDR(c) 2025 Dale Ranta");
     if(item == ID_EXIT)startIt->OnQuit(event);
 }
 
@@ -950,7 +950,7 @@ void startWindow::OnAbout(wxCommandEvent& event)
 {
 	event.Skip();
 	
-	wxMessageBox("iqSDR(c) 2024 Dale Ranta");
+	wxMessageBox("iqSDR(c) 2025 Dale Ranta");
 
 }
 void startWindow::OnRadio(wxCommandEvent& event)

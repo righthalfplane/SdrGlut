@@ -986,6 +986,8 @@ static int setFilters(struct playData4 *rx,struct Filters2 *f)
     int size=(int)(rate/10.0);
     
     rx->size=size;
+    
+    size += 48000;
 
     if(f->buf1)cFree((char *)f->buf1);
     f->buf1=(float *)cMalloc(2*size*sizeof(float),8887);
