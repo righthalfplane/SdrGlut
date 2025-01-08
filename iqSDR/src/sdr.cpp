@@ -1149,7 +1149,7 @@ int sdrClass::setSampleWidth(double value)
 {
 	if(value <= 0)value=1;
 	
-	value /= 100;
+	value /= 200;
 	
 	samplescale=value;
 	
@@ -1307,8 +1307,8 @@ int sdrClass::readFile(){
  	if(ret <= 0){
  		rewind(inFile);
  	}
- 	
- 	if(s->bS == bS)s->audioSync=1;
+ 	 	
+ 	s->audioSync=1;
  
 	return ret;
 }
@@ -1431,10 +1431,8 @@ int sdrClass::readPipe(){
 
 		//fprintf(stderr,"%p %p \n",s->bS,bS);
 		
-		if(s->bS == bS){
-		    s->audioSync=1;
-		  //  fprintf(stderr,"s->audioSync=1 \n");
-		}	
+		s->audioSync=1;
+		
 	}
 	
 	//fprintf(stderr,"readPipe countl %ld size %d ret %d inFilenum %d\n",countl++,size,ret,inFilenum);

@@ -1702,7 +1702,7 @@ BasicPane::BasicPane(wxWindow *frame, const wxString &title,class sdrClass *sdrI
 	box = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Zoom",wxPoint(20,yloc), wxSize(230, 80),wxBORDER_SUNKEN );
 	box->SetToolTip(wxT("This is tool tip") );
 
-	new wxSlider(box,ID_SAMPLEWIDTH,100,0,100,wxPoint(10,0),wxSize(210,-1),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
+	new wxSlider(box,ID_SAMPLEWIDTH,200,0,200,wxPoint(10,0),wxSize(210,-1),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
 
 	yloc += 85;   
 
@@ -1887,9 +1887,11 @@ BasicPane::BasicPane(wxWindow *frame, const wxString &title,class sdrClass *sdrI
  	yloc += 235;
 	
 	wxStaticBox *box33 = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Alpha",wxPoint(20,yloc), wxSize(225, 190),wxBORDER_SUNKEN );
+	box33->SetToolTip(wxT("Click Apply To Activate") );
 
     textAlpha=new wxTextCtrl(box33,ID_TEXTCTRL,wxT("0.1"),
           wxPoint(5,10), wxSize(220, 30));
+	textAlpha->SetToolTip(wxT("Click Apply To Activate") );
           
     cbox=new wxCheckBox(box33,ID_SETGAIN, "&Power Range",wxPoint(20,45), wxSize(230, 25));
 	cbox->SetValue(0);	
@@ -3495,6 +3497,8 @@ void Spectrum::render(wxPaintEvent& evt )
 		double xmax2=sdr->fc+0.5*sdr->samplerate;
 		double dx2=xmax2-xmin2;
 		
+		
+		//fprintf(stderr,"buffSendLength %ld lineAlpha %g\n",(long)buffSendLength,lineAlpha);
 			
 		for(int n=0;n<buffSendLength;++n){
 			double sum=0;
