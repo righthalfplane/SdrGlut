@@ -1708,7 +1708,8 @@ int cDemod::process(struct playData *rxi)
 	return 0;
 }
 
-int cDemod::dumpCharacters(float *buf,int num){
+int cDemod::dumpCharacters(float *buf,int num)
+{
     int length=512;
     double real[length*2];
     double imag[length*2];
@@ -1772,11 +1773,11 @@ int cDemod::dumpCharacters(float *buf,int num){
     		continue;
     	}
      	if(np == 0){
-     		if(rx->ichar == 2)printf("plot %d data\n",length);
+     		if(rx->ichar & 2)printf("plot %d data\n",length);
      		np=1;
      	}
    		float nc=-0.5*range+n*dx+rx->PPM;
-    	if(rx->ichar == 2)printf("%f %f\n",nc,v);
+    	if(rx->ichar & 2)printf("%f %f\n",nc,v);
    /*
 		if(v > 0.001){
 			if(nc > -2100 && nc < -1900)c |= 1;
@@ -1822,12 +1823,12 @@ int cDemod::dumpCharacters(float *buf,int num){
 	if(found){
 	   static int count=0;
 	   if(c >= 33 and c <= 127){
-	     if(rx->ichar == 1)printf(" %c",c);
+	     if(rx->ichar & 1)printf(" %c",c);
 	   }else{
-	     if(rx->ichar == 1)printf(" %d",c);
+	     if(rx->ichar & 1)printf(" %d",c);
 	   }
 	   if(++count > 32){
-	     if(rx->ichar == 1)printf("\n");
+	     if(rx->ichar & 1)printf("\n");
 	      count=0;
 	   }
 	}

@@ -11,6 +11,8 @@ void signalHandler( int signum ) {
 
 void checkall();
 
+//sdrReceive.x -f 300 -fc 300 -am -cutoff -200 -device 0 -ichar 1
+
 
 int main(int argc, char * argv [])
 {	
