@@ -1396,19 +1396,7 @@ int sdrClass::readPipe(){
 	s->audioSync = 1;
 	
 	while(doWhat == 2){
-			
-		while(doWhat == 2){
-			auto t2 = std::chrono::high_resolution_clock::now();
-			std::chrono::duration<double> difference = t2 - timePipeFile;
-			timeFileWait=1.0/(double)(ncut);
-			if(difference.count() > timeFileWait)break;
-			Sleep2(5);
-		}
-	
-		if(doWhat != 2)return 0;
-	
-		timePipeFile=std::chrono::high_resolution_clock::now();
-		
+					
 		float *buffs=buff+2*count;
 		
 		iread=rec;
@@ -1461,13 +1449,10 @@ int sdrClass::readPipe(){
 			break;
 		}
 
-		//fprintf(stderr,"%p %p \n",s->bS,bS);
-		
-		s->audioSync=1;
-		
+		//fprintf(stderr,"%p %p \n",s->bS,bS);		
 	}
 	
-	//fprintf(stderr,"readPipe countl %ld size %d ret %d inFilenum %d\n",countl++,size,ret,inFilenum);
+	fprintf(stderr,"readPipe count %d size %d ret %d data_type %d doWhat %d\n",count,size,ret,data_type,doWhat);
 
 	return 0;
 

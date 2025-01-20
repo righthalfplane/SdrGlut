@@ -48,6 +48,57 @@
 
 #include "bStack.h"
 
+#ifdef __APPLE__
+# include <OpenAL/al.h>
+# include <OpenAL/alc.h>
+#else
+# include <AL/al.h>
+# include <AL/alc.h>
+# include <AL/alext.h>
+#endif
+
+
+#define NO_MORE_SPACE 99999
+
+struct audioInfo
+{
+    ALCdevice *dev;
+    ALCcontext *ctx;
+    
+	ALuint *source;
+	int *sourceFlag;
+	int numsource;
+	
+	ALuint *buff;
+	int *buffFlag;
+	int numbuff;
+	
+};
+
+ALvoid DisplayALError(unsigned char *szText, ALint errorCode);
+
+ALuint getsourceAudio(struct audioInfo *audio);
+
+ALuint getbuffAudio(struct audioInfo *audio);
+
+ALuint freebuffAudio(struct audioInfo *audio,ALuint n);
+
+int freesourceAudio(struct audioInfo *audio,ALuint n);
+
+int startAudio(struct audioInfo *audio,int numsource,int numbuff);
+int stopAudio(struct audioInfo *audio);
+int updateAudio(struct audioInfo *audio);
+
+
+struct playData{
+    ALCdevice *dev;
+    ALCcontext *ctx;
+    ALuint source;
+    int channels;
+};
+
+
+
 struct names{
 	std::string name;
 	std::vector<int> sampleRate;
@@ -70,6 +121,7 @@ public:
 	int rxBuffer();
 	int startPlay();
 	int playRadio();
+	void playSound();
 	int stopPlay();
 	int Process();
 	int doAudio(float *aBuff,float *wBuff);
@@ -80,7 +132,8 @@ public:
 	int printInfo(void);
 	int printAudio(void);
 	static int printDevices(void);
-	
+	int setBuffers(struct playData *play);
+
     double samplerate;
 	int Debug;
 	double gain;
@@ -171,6 +224,11 @@ public:
  	std::vector<double> rate;
  	
  	cStack *bS;
+ 	
+ 	struct audioInfo *audio;
+ 	
+ 	struct playData play;
+
  	 	
 };
 

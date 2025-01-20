@@ -46,10 +46,9 @@ static void WarningBatch(char *message)
 	while(*message){
 		n = *message++;
 		if(n == '\r' || n == '\n'){
-			printf("\n");
-			fflush(stdout);
+			fprintf(stderr,"\n");
 		}else{
-			putc(n,stdout);
+			putc(n,stderr);
 		}
 	}
 }

@@ -25,6 +25,10 @@ uncomment the line in Clisten.cpp -
 
 Some examples -
 
+./sdrTest.x -fc 101.4e6 -f 101.5e6 -fm -gain 1 -samplerate 2e6 -device 1 -antenna LNAW
+
+./sdrTest.x -fc 101.5e6 -f 101.5e6 -fm -gain 0.0001 -samplerate 2e6 -device 0 -antenna LNAW -pipe 1 | iqSDR.x -pipe -float -samplerate 2e6 -fc 101.5
+
 ./sdrTest.x -fc 101.4e6 -f 101.5e6 -fm -gain 1 -audiodevice 2
 
 ./sdrTest.x -fc 1e6 -f 0.6e6 -gain 1

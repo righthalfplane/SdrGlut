@@ -162,6 +162,7 @@ struct playData{
     char **antenna;
     char *antennaUse;
     int channel;
+    int pipe;
     
     unsigned int deviceNumber;
     
@@ -312,6 +313,8 @@ int main (int argc, char * argv [])
     rx.ncut = 20;
     
     rx.rf_gain=0;
+    
+    rx.pipe=0;
 
 	signal(SIGINT, signalHandler);  
 	
@@ -347,6 +350,8 @@ int main (int argc, char * argv [])
 	         rx.gain=atof(argv[++n]);
 	    }else if(!strcmp(argv[n],"-PPM")){
 	         rx.PPM=atof(argv[++n]);
+	    }else if(!strcmp(argv[n],"-pipe")){
+	         rx.pipe=atof(argv[++n]);
 	    }else if(!strcmp(argv[n],"-rf_gain")){
 	         rx.rf_gain=atof(argv[++n]);
 	    }else if(!strcmp(argv[n],"-fc")){
@@ -936,9 +941,9 @@ int playRadio(struct playData *rx)
         
         rx->frame=0;
         
-        launchThread((void *)rx,Process);   	
+        //launchThread((void *)rx,Process);   	
 
-        launchThread((void *)rx,Process); 
+        //launchThread((void *)rx,Process); 
           	
         launchThread((void *)rx,Process);   	        
         
@@ -1525,7 +1530,7 @@ int findRadio(struct playData *rx)
         	{
            		mprint(" %.6f ",rate[j]/1.0e6);
   				if(((j+1) % 10) == 0){
-				   	mprint("\n",band[j]/1.0e6);
+				   	mprint("\n",rate[j]/1.0e6);
 				}
          		
          	}
@@ -1576,7 +1581,7 @@ int findRadio(struct playData *rx)
 				{
 					mprint(" %.6f ",rate[j]/1.0e6);
 					if(((j+1) % 10) == 0){
-						mprint("\n",band[j]/1.0e6);
+						mprint("\n",rate[j]/1.0e6);
 					}
 
 				}
@@ -1677,8 +1682,9 @@ int rxBuffer(void *rxv)
 				int ret = rx->device->readStream(rx->rxStream, buffs, iread, flags, timeNs, 100000L);
 			 
 				 timeNs++;
-						   
-				if(ret <= 0){
+						  
+	        	
+	        	if(ret <= 0){
 				   mprint("ret=%d, flags=%d, timeNs=%lld b0 %f b1 %f witch %d\n", ret, flags, timeNs,buff[0],buff[1],rx->witch);
 				   break;
 				}else if(ret < toRead){
@@ -1690,6 +1696,14 @@ int rxBuffer(void *rxv)
 				}
             }
 	        if(rx->doWhat == 2){
+			    if(rx->pipe == 1){
+					int filenum=fileno(stdout);
+					int count=(int)write(filenum,buff,rx->size*8);
+					if(count != (int)(rx->size*8)){
+						fprintf(stderr,"I/Q write error: count %ld rx->size*8 %ld\n",(long)count,(long)(rx->size*8));
+					}
+	        	} 
+				
 	        	pushBuff(rx->witch,rx);
              	++rx->witch;
 	        	//rx->doWhat=0;
