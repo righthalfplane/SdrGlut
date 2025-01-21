@@ -598,7 +598,7 @@ sdrClass::sdrClass()
     amaxGlobal=0;
     decodemode = MODE_FM;
     Debug = 0;
-    ncut = 40;
+    ncut = 20;
     
     rf_gain=0;
     
