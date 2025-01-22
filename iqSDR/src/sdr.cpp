@@ -1357,7 +1357,8 @@ int sdrClass::readSDR(){
 	return 0;
 }
 
-int sdrClass::readPipe(){
+int sdrClass::readPipe()
+{
    
    //static long int countl=0;
    
@@ -1375,7 +1376,7 @@ int sdrClass::readPipe(){
 	
 	while(doWhat == 2){
 	
-		while(s->audioSync == 1 && doWhat == 2)Sleep2(5);
+//		while(s->audioSync == 1 && doWhat == 2)Sleep2(5);
 			
 		float *buffs=buff+2*count;
 		
