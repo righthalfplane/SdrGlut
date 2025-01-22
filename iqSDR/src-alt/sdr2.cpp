@@ -135,7 +135,7 @@ int ListenSocket2(class Listen *l)
 	
     l->ncommand=0;
     
-    int ncut=40;
+    int ncut=20;
     
     size=0;
     
@@ -598,7 +598,7 @@ sdrClass::sdrClass()
     amaxGlobal=0;
     decodemode = MODE_FM;
     Debug = 0;
-    ncut = 40;
+    ncut = 20;
     
     rf_gain=0;
     

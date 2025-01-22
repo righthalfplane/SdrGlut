@@ -135,7 +135,7 @@ int ListenSocket2(class Listen *l)
 	
     l->ncommand=0;
     
-    int ncut=40;
+    int ncut=20;
     
     size=0;
     
@@ -581,7 +581,7 @@ sdrClass::sdrClass()
 	samplescale=1.0;
 	deviceNumber=0;
 	gain=1.0;
-	fc=101.5;
+	fc=101.5e6;
 	fw=fc;
 	f=101.5e6;
     channel=0;
@@ -641,14 +641,6 @@ sdrClass::sdrClass()
     deviceString=(char *)"";
     
     audioThreads=0;
-    
-    timeFileRead=std::chrono::high_resolution_clock::now();
-    
-    timeFileWait=0.0;
-    
-    timePipeFile=std::chrono::high_resolution_clock::now();
-    
-    timePipeWait=0.0;
       	
 }
 sdrClass::~sdrClass()
@@ -760,10 +752,6 @@ int sdrClass::setup(int argc, char *argv[])
 			// infilename = argv [n] ;
 		}
 	}
-	
-	fc=1e6*fc;
-	fw=fc;
-	f=1e6*f;
 	
 	if(startPlay())return 0;
 		
@@ -1307,18 +1295,8 @@ int sdrClass::setFrequency(double frequency)
 int sdrClass::readFile(){
 
 	extern soundClass *s;
-	
-	while(doWhat == 2){
-		auto t2 = std::chrono::high_resolution_clock::now();
-		std::chrono::duration<double> difference = t2 - timeFileRead;
-		timeFileWait=1.0/(double)(ncut);
-		if(difference.count() > timeFileWait)break;
-		Sleep2(5);
-	}
-	
-	if(doWhat != 2)return 0;
-	
-	timeFileRead=std::chrono::high_resolution_clock::now();
+
+	while(s->audioSync == 1 && doWhat == 2)Sleep2(5);
 	
 	float *buff=bS->buff[witch % NUM_DATA_BUFF];
 	
@@ -1396,19 +1374,9 @@ int sdrClass::readPipe(){
 	s->audioSync = 1;
 	
 	while(doWhat == 2){
+	
+		while(s->audioSync == 1 && doWhat == 2)Sleep2(5);
 			
-		while(doWhat == 2){
-			auto t2 = std::chrono::high_resolution_clock::now();
-			std::chrono::duration<double> difference = t2 - timePipeFile;
-			timeFileWait=1.0/(double)(ncut);
-			if(difference.count() > timeFileWait)break;
-			Sleep2(5);
-		}
-	
-		if(doWhat != 2)return 0;
-	
-		timePipeFile=std::chrono::high_resolution_clock::now();
-		
 		float *buffs=buff+2*count;
 		
 		iread=rec;
