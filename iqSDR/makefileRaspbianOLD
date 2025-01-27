@@ -1,4 +1,4 @@
-﻿CXXFLAGS =  -std=c++11 -O2  -DRTAUDIO_OLD -I/usr/include  `wx-config --cxxflags`  -I/opt/X11/include -Wall -DGL_SILENCE_DEPRECATION -Wno-return-type-c-linkage -Wno-deprecated-declarations
+﻿CXXFLAGS =  -std=c++11 -O3  -DRTAUDIO_OLD -I/usr/include  `wx-config --cxxflags`  -I/opt/X11/include -Wall -DGL_SILENCE_DEPRECATION -Wno-return-type-c-linkage -Wno-deprecated-declarations
 
 CCFILES= ./src/sdr.cpp ./src/mThread.cpp ./src/cMalloc.cpp ./src/iqSDR.cpp ./src/bStack.cpp ./src/sound.cpp ./src/getPalette.cpp  ./src/send.cpp ./src/Clisten.cpp
  
