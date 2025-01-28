@@ -1129,7 +1129,7 @@ static int setBuffers(struct playData *rx, int numBuff)
     
     
     if(numBuff < 0){
-        short buffa[48000/rx->ncut];
+        short buffa[48000];
         for(int n=0;n<48000/rx->ncut;++n)buffa[n]=0;
         alBufferData(buffer,
                      AL_FORMAT_MONO16,
