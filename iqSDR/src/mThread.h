@@ -3,7 +3,7 @@
 #define __MTHREAD__
 
 #include <stdio.h>
-#include <pthread.h>
+//#include <pthread.h>
 
 
 #if defined c_plusplus || defined __cplusplus

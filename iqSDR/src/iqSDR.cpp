@@ -1364,6 +1364,9 @@ TopPane::TopPane(wxWindow *frame, const wxString &title)
 	
 	fontSize=font->GetPixelSize();
 
+
+	fprintf(stderr, "x %d y %d\n", fontSize.x, fontSize.y);
+
 	nchar = -1;
 	
 	idoFC=0;
@@ -1393,7 +1396,9 @@ void TopPane::mouseDown(wxMouseEvent& event)
 	wxPoint p = event.GetLogicalPosition(wxClientDC(this));
 	int yh=fontSize.GetHeight()/2-10;
 	int diff=p.x-pt.x;
-	nchar=(diff)/fontSize.GetWidth();
+	int dnum= fontSize.GetWidth();
+	if (dnum <= 0)dnum = 10;
+	nchar=(diff)/dnum;
 	if(diff >= 0 && nchar >=0 && nchar <= 14){
 		if(nchar == 3 || nchar == 7 || nchar == 11)return;
 		int up=1;
@@ -1435,7 +1440,9 @@ void TopPane::mouseMoved(wxMouseEvent& event)
 
 	wxPoint p = event.GetLogicalPosition(wxClientDC(this));
 	
-	nchar=(p.x-pt.x)/fontSize.GetWidth();
+	int dnum= fontSize.GetWidth();
+	if (dnum <= 0)dnum = 10;
+	nchar=(p.x-pt.x)/dnum;
 
 	//fprintf(stderr,"TopPane::mouseMoved diff %d character %d\n",p.x-pt.x,nchar);
 	

@@ -1,0 +1,509 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="KdTree-routines">
+      <UniqueIdentifier>{0b093fd0-266a-45de-9ebd-2a9982bd7090}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="glui-routines">
+      <UniqueIdentifier>{a1dbcbf1-29a6-4f80-9b9b-f619e4db3581}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CExpress">
+      <UniqueIdentifier>{cf135eb9-368d-41ea-aae8-581582c6dad4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DrawFindPointHistory">
+      <UniqueIdentifier>{7891bc11-92b9-47cb-825b-a8625d2d0d87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{fa2bb651-d7b1-4bad-92b9-09674b618045}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes">
+      <UniqueIdentifier>{ba7cb210-15da-4976-b34a-c5a7f531a65c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MainSource">
+      <UniqueIdentifier>{b1d1e611-57de-4dd0-9a08-2b8d4dd59df2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Radio">
+      <UniqueIdentifier>{f8adccbb-28fe-4e38-85ab-c5404d1cdd2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sdrFile">
+      <UniqueIdentifier>{00eedb73-90f2-4bde-adb0-1a6745a2e192}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Digital">
+      <UniqueIdentifier>{60ea0f2c-ae2d-4495-8cec-ad648f924494}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\KdTree-routines\Defs.h">
+      <Filter>KdTree-routines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\KdTree-routines\Tools.h">
+      <Filter>KdTree-routines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\glui-routines\algebra3.h">
+      <Filter>glui-routines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\glui-routines\arcball.h">
+      <Filter>glui-routines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\glui-routines\glui_internal.h">
+      <Filter>glui-routines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\glui-routines\glui_internal_control.h">
+      <Filter>glui-routines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\glui-routines\quaternion.h">
+      <Filter>glui-routines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\glui-routines\viewmodel.h">
+      <Filter>glui-routines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CExpress\File8.h">
+      <Filter>CExpress</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CExpress\FileList.h">
+      <Filter>CExpress</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CExpress\Limits2.h">
+      <Filter>CExpress</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CExpress\Message.h">
+      <Filter>CExpress</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CExpress\SetFrameData.h">
+      <Filter>CExpress</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CExpress\Utilities2.h">
+      <Filter>CExpress</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CExpress\Xappl.h">
+      <Filter>CExpress</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DrawFindPointHistory\DrawFindPointHistory.h">
+      <Filter>DrawFindPointHistory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DrawFindPointHistory\GridPlot.h">
+      <Filter>DrawFindPointHistory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DrawFindPointHistory\lineAttributes.h">
+      <Filter>DrawFindPointHistory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DrawFindPointHistory\Linedata.h">
+      <Filter>DrawFindPointHistory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DrawFindPointHistory\paletteDraw.h">
+      <Filter>DrawFindPointHistory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DrawFindPointHistory\PlotAttributes.h">
+      <Filter>DrawFindPointHistory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DrawFindPointHistory\pointTimeHistory.h">
+      <Filter>DrawFindPointHistory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Library\include\jpeglib.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\CWindow.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\BackgroundQ.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\CreateBackDrop.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\datatypes.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\DialogFileOpen.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\DialogFireBall.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\DialogFolder.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\DialogOpacity.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\DialogOverWrite.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\DialogPreferences.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\DialogRangeData.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\DialogRecipe.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\DialogSave.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\DialogView.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\DialogViewFactorTests.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\DrawPalette.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\FireBall.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\firstFile.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\LoadFiles.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\mThread.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\paletteDraw.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\QuitDialog.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\ReadFiles.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\ReadGeom.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\ReadSTLFiles.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\ReDrawVolumetric.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\Scene.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\SceneBatch.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\sceneDisplay.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\SceneList.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\ShowGLSL.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\uAttributes.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\ulibTypes.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\Utilities.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\ViewFactorTests.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\WriteJpeg.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Radio\DialogRadio.h">
+      <Filter>Radio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Radio\RaceFastsdr.h">
+      <Filter>Radio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Radio\Radio.h">
+      <Filter>Radio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\CLines.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\CLinesPlotBox.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\ClinesAttributes.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\CLInesPlotLabels.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Contours.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CExpress\uFiles.h">
+      <Filter>CExpress</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SdrFile\DialogSdrFile.h">
+      <Filter>sdrFile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SdrFile\SdrFile.h">
+      <Filter>sdrFile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\audiolib.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\PlayIQ.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MainSource\RecordIQ.h">
+      <Filter>MainSource</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="..\Digital\BatchFile.h">
+      <Filter>Digital</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Digital\Poly.h">
+      <Filter>Digital</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Radio\SocketDefs.h">
+      <Filter>Radio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Transmit.h">
+      <Filter>Radio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SdrFile\AudioFile.h">
+      <Filter>sdrFile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SdrFile\DialogAudioFile.h">
+      <Filter>sdrFile</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\glui-routines\algebra3.cpp">
+      <Filter>glui-routines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glui-routines\arcball.cpp">
+      <Filter>glui-routines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glui-routines\glui.cpp">
+      <Filter>glui-routines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glui-routines\glui_add_controls.cpp">
+      <Filter>glui-routines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glui-routines\glui_bitmap_img_data.cpp">
+      <Filter>glui-routines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glui-routines\glui_bitmaps.cpp">
+      <Filter>glui-routines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glui-routines\glui_button.cpp">
+      <Filter>glui-routines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glui-routines\glui_checkbox.cpp">
+      <Filter>glui-routines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glui-routines\glui_column.cpp">
+      <Filter>glui-routines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glui-routines\glui_commandline.cpp">
+      <Filter>glui-routines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glui-routines\glui_control.cpp">
+      <Filter>glui-routines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glui-routines\glui_edittext.cpp">
+      <Filter>glui-routines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glui-routines\glui_filebrowser.cpp">
+      <Filter>glui-routines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glui-routines\glui_list.cpp">
+      <Filter>glui-routines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glui-routines\glui_listbox.cpp">
+      <Filter>glui-routines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glui-routines\glui_mouse_iaction.cpp">
+      <Filter>glui-routines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glui-routines\glui_node.cpp">
+      <Filter>glui-routines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glui-routines\glui_panel.cpp">
+      <Filter>glui-routines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glui-routines\glui_radio.cpp">
+      <Filter>glui-routines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glui-routines\glui_rollout.cpp">
+      <Filter>glui-routines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glui-routines\glui_rotation.cpp">
+      <Filter>glui-routines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glui-routines\glui_scrollbar.cpp">
+      <Filter>glui-routines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glui-routines\glui_separator.cpp">
+      <Filter>glui-routines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glui-routines\glui_spinner.cpp">
+      <Filter>glui-routines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glui-routines\glui_statictext.cpp">
+      <Filter>glui-routines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glui-routines\glui_string.cpp">
+      <Filter>glui-routines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glui-routines\glui_textbox.cpp">
+      <Filter>glui-routines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glui-routines\glui_translation.cpp">
+      <Filter>glui-routines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glui-routines\glui_tree.cpp">
+      <Filter>glui-routines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glui-routines\glui_treepanel.cpp">
+      <Filter>glui-routines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glui-routines\glui_window.cpp">
+      <Filter>glui-routines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glui-routines\quaternion.cpp">
+      <Filter>glui-routines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\glui-routines\viewmodel.cpp">
+      <Filter>glui-routines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CExpress\Utilities2.c">
+      <Filter>CExpress</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DrawFindPointHistory\GridPlot.c">
+      <Filter>DrawFindPointHistory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\CWindow.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="File8-Windows.c" />
+    <ClCompile Include="..\MainSource\BackgroundQ.c">
+      <Filter>MainSource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MainSource\cMalloc.c">
+      <Filter>MainSource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MainSource\Getpalette.c">
+      <Filter>MainSource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MainSource\main.cpp">
+      <Filter>MainSource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MainSource\QuitDialog.cpp">
+      <Filter>MainSource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MainSource\Scene.c">
+      <Filter>MainSource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MainSource\sceneDisplay.c">
+      <Filter>MainSource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MainSource\SceneList.c">
+      <Filter>MainSource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MainSource\Utilities.c">
+      <Filter>MainSource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Radio\DialogRadio.cpp">
+      <Filter>Radio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Radio\RaceFastsdr.cpp">
+      <Filter>Radio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Radio\Radio.cpp">
+      <Filter>Radio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\CLines.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\CLinesPlotBox.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\ClinesAttributes.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\ClinesPlotAttributes.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\CLInesPlotLabels.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CExpress\FFT2.c">
+      <Filter>CExpress</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SdrFile\DialogSdrFile.cpp">
+      <Filter>sdrFile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SdrFile\SdrFile.cpp">
+      <Filter>sdrFile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MainSource\DialogFileOpen.cpp">
+      <Filter>MainSource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MainSource\DialogSave.cpp">
+      <Filter>MainSource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MainSource\DialogFolder.cpp">
+      <Filter>MainSource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MainSource\audiolib.cpp">
+      <Filter>MainSource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MainSource\PlayIQ.cpp">
+      <Filter>MainSource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MainSource\RecordIQ.cpp">
+      <Filter>MainSource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MainSource\mThread.cpp">
+      <Filter>MainSource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MainSource\printInfo.cpp">
+      <Filter>MainSource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MainSource\WriteToGLUIWindow.cpp">
+      <Filter>MainSource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Digital\BatchFile.cpp">
+      <Filter>Digital</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Digital\FFT.cpp">
+      <Filter>Digital</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Digital\Poly.cpp">
+      <Filter>Digital</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MainSource\eMemory.cpp">
+      <Filter>MainSource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Radio\send.cpp">
+      <Filter>Radio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Radio\WriteToWindow.cpp">
+      <Filter>Radio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Transmit.cpp">
+      <Filter>Radio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MainSource\dialogTime.cpp">
+      <Filter>MainSource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SdrFile\AudioFile.cpp">
+      <Filter>sdrFile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SdrFile\DialogAudioFile.cpp">
+      <Filter>sdrFile</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="SdrGlut.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="SdrGlut3.ico" />
+  </ItemGroup>
+</Project>

@@ -9,7 +9,7 @@
 */
 
 #include "sdr.h"
-#include <unistd.h>
+//#include <unistd.h>
 #include <cstdio>
 #include <cstdlib>
 #include <string>
@@ -18,8 +18,8 @@
 #include <vector>
 
 #include <sys/types.h>
-#include <sys/uio.h>
-#include <unistd.h>
+//#include <sys/uio.h>
+//#include <unistd.h>
 
 
 /*
@@ -1370,7 +1370,7 @@ int sdrClass::readPipe()
 	
 	int count=0;
 	
-	ssize_t iread=rec;
+	size_t iread=rec;
 	
 	s->audioSync = 1;
 	
