@@ -124,7 +124,7 @@ bool MyApp::OnInit()
         
  	wxFrame *frame2 = new wxFrame(NULL,wxID_ANY,ProgramVersion);
 	startIt=new startWindow(frame2, "Controls");
-	frame2->SetSize(wxDefaultCoord,wxDefaultCoord,155,270);
+	frame2->SetSize(wxDefaultCoord,wxDefaultCoord,155,300);
 	frame2->Show();
 	
 	//fprintf(stderr,"startIt %p\n",startIt);
@@ -490,7 +490,7 @@ void startWindow::openArgcArgv(int argc,char **argv)
 startWindow::startWindow(wxWindow *frame, const wxString &title)
     : wxWindow(frame,32000)
 {
-	 wxStaticBox *box = new wxStaticBox(this, wxID_ANY, "&Start Options",wxPoint(10,10), wxSize(135, 160),wxBORDER_SUNKEN );
+	 wxStaticBox *box = new wxStaticBox(this, wxID_ANY, "&Start Options",wxPoint(10,10), wxSize(135, 175),wxBORDER_SUNKEN );
 	 box->SetToolTip(wxT("This is tool tip") );
 
   	new wxButton(box,ID_ABOUT,wxT("About"),wxPoint(20,25));
@@ -501,12 +501,12 @@ startWindow::startWindow(wxWindow *frame, const wxString &title)
    	
     new wxButton (box,ID_QUIT,wxT("Quit"),wxPoint(20,115));
       
-    wxStaticBox *box2 = new wxStaticBox(this, wxID_ANY, "&Device String",wxPoint(10,180), wxSize(135, 60),wxBORDER_SUNKEN );
+    wxStaticBox *box2 = new wxStaticBox(this, wxID_ANY, "&Device String",wxPoint(10,190), wxSize(135, 75),wxBORDER_SUNKEN );
 	box2->SetToolTip(wxT("This is tool tip") );
 
     textDevice=new wxTextCtrl(box2,ID_TEXTCTRL,wxT(""),
           wxPoint(5,15), wxSize(120, 30));
-          
+                    
     grab=NULL;
 
    //   wxString value=text->GetValue();
@@ -960,14 +960,12 @@ void startWindow::OnRadio(wxCommandEvent& event)
 {	
 	event.Skip();
 
-	wxFrame *frame= new wxFrame(NULL, wxID_ANY, wxT("Device Select"), wxDefaultPosition, wxSize(400,400));
+	wxFrame *frame= new wxFrame(NULL, wxID_ANY, wxT("Device Select"), wxDefaultPosition, wxSize(400,500));
 		
 	new selectionWindow(frame, "Device",textDevice);
 	
 	frame->Show();
-	
-	wxWindow::SetSize(wxDefaultCoord,wxDefaultCoord,400,400);
-	
+		
 }
 void startWindow::OnFile(wxCommandEvent& event)
 {
@@ -1154,7 +1152,7 @@ selectionWindow::selectionWindow(wxWindow *frame, const wxString &title,wxTextCt
 		return;
 	}
 	
-	wxStaticBox *box2 = new wxStaticBox(this, wxID_ANY, "&Parameters",wxPoint(10,15), wxSize(220, 80),wxBORDER_SUNKEN );
+	wxStaticBox *box2 = new wxStaticBox(this, wxID_ANY, "&Parameters",wxPoint(10,15), wxSize(300, 100),wxBORDER_SUNKEN );
 	box2->SetToolTip(wxT("This is tool tip") );
 	new wxStaticText(box2,wxID_STATIC,wxT("Frequency(MHZ)"),wxPoint(20,15), wxDefaultSize,wxALIGN_LEFT);
 	text=new wxTextCtrl(box2,ID_TEXTCTRL,wxT("101.5"),wxPoint(130,10), wxSize(80, 25));
@@ -1173,10 +1171,10 @@ selectionWindow::selectionWindow(wxWindow *frame, const wxString &title,wxTextCt
 	boxMode=new wxComboBox(box2,ID_COMBOMODE,wxT("Mode"),wxPoint(130,40),wxDefaultSize,
 	                   strings,wxCB_DROPDOWN);
 	boxMode->SetSelection(2);
-	wxStaticBox *box = new wxStaticBox(this, wxID_ANY, "&Device",wxPoint(10,10+90), wxSize(300, 20+2*length*30),wxBORDER_SUNKEN );
+	wxStaticBox *box = new wxStaticBox(this, wxID_ANY, "&Device",wxPoint(10,120), wxSize(300, 60+2*length*45),wxBORDER_SUNKEN );
 	box->SetToolTip(wxT("This is tool tip") );
 
-    int outset1=10;
+    int outset1=15;
 
     SoapySDR::Kwargs deviceArgs;
     
@@ -1212,7 +1210,7 @@ selectionWindow::selectionWindow(wxWindow *frame, const wxString &title,wxTextCt
 	  			
 	  			
 				new wxButton(box,ID_DEVICE+k,name,wxPoint(20,5+outset1));
-				outset1 += 30;
+				outset1 += 40;
 				strings.Clear();
 
                 std::vector<double> rate=devicer->listSampleRates(SOAPY_SDR_RX,0);
@@ -1225,13 +1223,13 @@ selectionWindow::selectionWindow(wxWindow *frame, const wxString &title,wxTextCt
 
                 }
                 
-				new wxStaticText(box,wxID_STATIC,wxT("Sample Rate :"),wxPoint(20,outset1+8), wxDefaultSize,wxALIGN_LEFT);
+				new wxStaticText(box,wxID_STATIC,wxT("Sample Rate :"),wxPoint(20,outset1+15), wxDefaultSize,wxALIGN_LEFT);
 
-				boxList[k]=new wxComboBox(box,ID_FREQUENCY+k,wxT("Mode"),wxPoint(110,outset1+5),wxDefaultSize,
+				boxList[k]=new wxComboBox(box,ID_FREQUENCY+k,wxT("Mode"),wxPoint(110,outset1+11),wxDefaultSize,
 				   strings,wxCB_DROPDOWN);
 				boxList[k]->SetSelection(0);
 
-				outset1 += 30;
+				outset1 += 45;
 
 				SoapySDR::Device::unmake(devicer); 
             }
