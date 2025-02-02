@@ -1865,13 +1865,13 @@ BasicPane::BasicPane(wxWindow *frame, const wxString &title,class sdrClass *sdrI
     yloc += 110;
     
 
-       wxPanel *panel3 = new wxPanel(ScrolledWindow,wxID_ANY, wxPoint(20,yloc), wxSize(230, 230),wxBORDER_SUNKEN | wxFULL_REPAINT_ON_RESIZE,wxT("Control2"));
+       wxPanel *panel3 = new wxPanel(ScrolledWindow,wxID_ANY, wxPoint(20,yloc), wxSize(230, 270),wxBORDER_SUNKEN | wxFULL_REPAINT_ON_RESIZE,wxT("Control2"));
 
       wxString computers2[] =
       { "Float", "Short int","Signed char","Unsigned char" };
       
 	  sendTypeBox=new wxRadioBox(panel3, ID_DATATYPE,
-		"Data Type", wxPoint(2,10), wxSize(120, 110),
+		"Data Type", wxPoint(2,10), wxSize(120, 140),
 		 4, computers2, 0, wxRA_SPECIFY_ROWS);
 		 
 	sendTypeBox->SetSelection(1);
@@ -1880,23 +1880,23 @@ BasicPane::BasicPane(wxWindow *frame, const wxString &title,class sdrClass *sdrI
       { "Listen","TCP/IP","UDP","Speakers","Pipe" };
       
 	  sendModeBox=new wxRadioBox(panel3, ID_DATAMODE,
-		"Send Mode", wxPoint(125,10), wxSize(120, 110),
+		"Send Mode", wxPoint(125,10), wxSize(120, 140),
 		 5, computers3, 0, wxRA_SPECIFY_ROWS);
 		 
 	sendModeBox->SetSelection(1);
 	
-	wxStaticBox *box22 = new wxStaticBox(panel3, wxID_ANY, "&Net-Address",wxPoint(15,140), wxSize(210, 50),wxBORDER_SUNKEN );
+	wxStaticBox *box22 = new wxStaticBox(panel3, wxID_ANY, "&Net-Address",wxPoint(15,170), wxSize(210, 60),wxBORDER_SUNKEN );
 
     sendAddress=new wxTextCtrl(box22,ID_TEXTCTRL,wxT("192.168.1.3:3500"),
           wxPoint(5,15), wxSize(190, 30));
 
-  	new wxButton(panel3,ID_STARTSEND,wxT("Start"),wxPoint(20,200));
+  	new wxButton(panel3,ID_STARTSEND,wxT("Start"),wxPoint(20,235));
   	
-  	new wxButton(panel3,ID_STOPSEND,wxT("Stop"),wxPoint(140,200));
+  	new wxButton(panel3,ID_STOPSEND,wxT("Stop"),wxPoint(140,235));
 
- 	yloc += 235;
+ 	yloc += 285;
 	
-	wxStaticBox *box33 = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Alpha",wxPoint(20,yloc), wxSize(225, 200),wxBORDER_SUNKEN );
+	wxStaticBox *box33 = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Alpha",wxPoint(20,yloc), wxSize(225, 220),wxBORDER_SUNKEN );
 	box33->SetToolTip(wxT("Click Apply To Activate") );
 
     textAlpha=new wxTextCtrl(box33,ID_TEXTCTRL,wxT("0.1"),
