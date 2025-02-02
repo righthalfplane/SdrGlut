@@ -4,4 +4,8 @@
     <LocalDebuggerEnvironment>PATH=C:/dev/vcpkg/packages/liblzma_x64-windows/bin;C:/dev/vcpkg/packages/libjpeg-turbo_x64-windows/bin;C:/dev/vcpkg/packages/fftw3_x64-windows/bin;C:/dev/vcpkg/packages/zlib_x64-windows/bin;C:/dev/vcpkg/packages/tiff_x64-windows/bin;C:/dev/vcpkg/packages/libpng_x64-windows/bin/;C:/dev/vcpkg/packages/wxwidgets_x64-windows/bin/;%PATH%</LocalDebuggerEnvironment>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LocalDebuggerEnvironment>PATH=C:/dev/vcpkg/packages/liblzma_x64-windows/bin;C:/dev/vcpkg/packages/libjpeg-turbo_x64-windows/bin;C:/dev/vcpkg/packages/fftw3_x64-windows/bin;C:/dev/vcpkg/packages/zlib_x64-windows/bin;C:/dev/vcpkg/packages/tiff_x64-windows/bin;C:/dev/vcpkg/packages/libpng_x64-windows/bin/;C:/dev/vcpkg/packages/wxwidgets_x64-windows/bin/;%PATH%</LocalDebuggerEnvironment>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
 </Project>

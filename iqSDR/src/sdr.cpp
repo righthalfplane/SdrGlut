@@ -500,7 +500,7 @@ int doEnumerate(char *deviceString)
 	
 	resultsEnumerate=SoapySDR::Device::enumerate(deviceString);
 	
-	int length=resultsEnumerate.size();
+	int length=(int)resultsEnumerate.size();
     
 	if(length == 0){
 		fprintf(stderr,"Error: enumerate Found No Devices - Try Again !\n");
@@ -718,7 +718,7 @@ int sdrClass::setup(int argc, char *argv[])
 	    }else if(!strcmp(argv[n],"-f")){
 	         f=atof(argv[++n]);
 	    }else if(!strcmp(argv[n],"-channel")){
-	         channel=atof(argv[++n]);
+	         channel=(int)atof(argv[++n]);
 	    }else if(!strcmp(argv[n],"-outFile")){
 	         outFile=fopen(argv[++n],"wb");
 	         if(outFile == NULL){
@@ -818,9 +818,9 @@ int sdrClass::playRadio()
 
 	size += 1024;  // bug in rfspace NetSDR and icr8600
 
-	bS->setBuff(size,faudio);
+	bS->setBuff(size,(int)faudio);
 	
-	bS2->setBuff(size,faudio);
+	bS2->setBuff(size,(int)faudio);
 	
 	fillBuffer=0;
 	if(sendBuff)cFree((char *)sendBuff);
@@ -1135,7 +1135,7 @@ int sdrClass::findRadio()
               	device->setGain(SOAPY_SDR_RX, channel,rf_gain);
             }
             
-    		MTU=device->getStreamMTU(rxStream);
+    		MTU=(unsigned long)device->getStreamMTU(rxStream);
     
     		mprint("MTU %ld\n",(long)MTU);
 
@@ -1300,7 +1300,7 @@ int sdrClass::readFile(){
 	
 	float *buff=bS->buff[witch % NUM_DATA_BUFF];
 	
- 	int ret=fread(buff, sizeof(float)*2, size, inFile);
+ 	int ret=(int)fread(buff, sizeof(float)*2, size, inFile);
  
  	retFlag=ret;
  	
@@ -1384,39 +1384,39 @@ int sdrClass::readPipe()
 					
 		if(data_type == TYPE_SHORT){
 		//fprintf(stderr,"readPipe iread %ld size %d toRead %d data_type %d\n",iread,size,rec,data_type);
-			ret = fread(buffs, sizeof(short)*2,iread,stdin);
+			ret = (int)fread(buffs, sizeof(short)*2,iread,stdin);
 			if(ret <= 0)break;
 			short int *in=(short int *)buffs;
 			int ne=ret-1;
 			for(int n=0;n<ret;++n){
-				buffs[2*ne]=in[2*ne]/32000.0;
-				buffs[2*ne+1]=in[2*ne+1]/32000.0;
+				buffs[2*ne]=(float)(in[2*ne]/32000.0);
+				buffs[2*ne+1]=(float)(in[2*ne+1]/32000.0);
 				--ne;
 			}
 		}else if(data_type == TYPE_UNSIGNEDSHORT){
 		//fprintf(stderr,"readPipe iread %ld size %d toRead %d data_type %d\n",iread,size,rec,data_type);
-			ret = fread(buffs, sizeof(unsigned short)*2,iread,stdin);
+			ret = (int)fread(buffs, sizeof(unsigned short)*2,iread,stdin);
 			if(ret <= 0)break;
 			unsigned short int *in=(unsigned short int *)buffs;
 			int ne=ret-1;
 			for(int n=0;n<ret;++n){
-				buffs[2*ne]=((in[2*ne]/32767.0)-1.0);
-				buffs[2*ne+1]=((in[2*ne+1]/32767.0)-1.0);
+				buffs[2*ne]= (float)((in[2*ne]/32767.0)-1.0);
+				buffs[2*ne+1]= (float)((in[2*ne+1]/32767.0)-1.0);
 				--ne;
 			}
 		}else if(data_type == TYPE_UNSIGNED){
 		//fprintf(stderr,"readPipe iread %ld size %d toRead %d data_type %d\n",iread,size,rec,data_type);
-			ret = fread(buffs, sizeof(unsigned char)*2,iread,stdin);
+			ret = (int)fread(buffs, sizeof(unsigned char)*2,iread,stdin);
 			if(ret <= 0)break;
 			unsigned char *in=(unsigned char *)buffs;
 			int ne=ret-1;
 			for(int n=0;n<ret;++n){
-				buffs[2*ne]=((in[2*ne]/128.0)-1.0);
-				buffs[2*ne+1]=((in[2*ne+1]/128.0)-1.0);
+				buffs[2*ne]= (float)((in[2*ne]/128.0)-1.0);
+				buffs[2*ne+1]= (float)((in[2*ne+1]/128.0)-1.0);
 				--ne;
 			}
 		 }else{
-			ret = fread(buffs, sizeof(float)*2,iread,stdin);		 
+			ret = (int)fread(buffs, sizeof(float)*2,iread,stdin);		 
 		 }
 		 retFlag=ret;
 	 				   
@@ -1551,7 +1551,7 @@ int sdrClass::rxBuffer()
                 
                 int idc=0;
                 if(idc){
-                	double average=0;
+                	float average=0;
                     for(int n=0;n<rx->size*2;++n){
                     	average += buff[n];
                     }
@@ -1649,7 +1649,7 @@ int sdrClass::Process()
 	float *buff2=NULL;
 	
 	int size1=2*rx->size*sizeof(float);
-	int size2=2*rx->faudio*sizeof(short);
+	int size2=(int)(2*rx->faudio*sizeof(short));
 	if(size1 < size2)size1=size2;
 	if(size2 < size1)size2=size1;
 	
@@ -1816,12 +1816,12 @@ int sdrClass::doFilter(float *wBuff,float *aBuff,struct Filters *f)
 					char out[4];
 					float r=buf[2*n];
 					float i=buf[2*n+1];
-					short rs=32000.0*r;
+					short rs=(short)(32000.0*r);
 					if(r > amax)amax=r;
 					if(r < amin)amin=r;
 					out[0]=rs & 0xff;
 					out[1]=(rs >> 8) & 0xff;
-					short is=32000.0*i;
+					short is=(short)(32000.0*i);
 					if(i > amax)amax=i;
 					if(i < amin)amin=i;
 					out[2]=is & 0xff;
@@ -1839,12 +1839,12 @@ int sdrClass::doFilter(float *wBuff,float *aBuff,struct Filters *f)
 					char out[4];
 					float r=buf[2*n];
 					float i=buf[2*n+1];
-					unsigned short rs=32767*(1+r);
+					unsigned short rs=(unsigned short)(32767*(1+r));
 					if(r > amax)amax=r;
 					if(r < amin)amin=r;
 					out[0]=rs & 0xff;
 					out[1]=(rs >> 8) & 0xff;
-					unsigned short is=32767*(1+i);
+					unsigned short is=(unsigned short)(32767*(1+i));
 					if(i > amax)amax=i;
 					if(i < amin)amin=i;
 					out[2]=is & 0xff;
@@ -1861,11 +1861,11 @@ int sdrClass::doFilter(float *wBuff,float *aBuff,struct Filters *f)
 					char out[4];
 					float r=buf[2*n];
 					float i=buf[2*n+1];
-					unsigned char rs=127*(1.0+r);
+					unsigned char rs=(unsigned char)(127*(1.0+r));
 					if(r > amax)amax=r;
 					if(r < amin)amin=r;
 					out[0]=rs;
-					unsigned char is=127*(1.0+i);
+					unsigned char is=(unsigned char)(127*(1.0+i));
 					if(i > amax)amax=i;
 					if(i < amin)amin=i;
 					out[1]=is;
@@ -1963,7 +1963,7 @@ int sdrClass::doAudio(float *aBuff,float *wBuff,struct Filters *f)
 	double amax=-1e30;
 	double average=0;
 	
-	length=rx->faudio/rx->ncut;
+	length=(int)(rx->faudio/rx->ncut);
 	
 	//fprintf(stderr," sdrClass::doAudio rx->faudio %g\n",rx->faudio);
 	
@@ -2024,8 +2024,8 @@ int sdrClass::doAudio(float *aBuff,float *wBuff,struct Filters *f)
 
 	if(audioThreads > 0){
 		for(int n=0;n<100;++n){
-			data[n]=data[n]*(float)n/100.0;
-			data[length-1-n]=data[length-1-n]*(float)n/100.0;
+			data[n]=(short int)(data[n]*(float)n/100.0);
+			data[length-1-n]=(short int)(data[length-1-n]*(float)n/100.0);
 		}
 	}
 

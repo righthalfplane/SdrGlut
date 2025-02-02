@@ -333,6 +333,7 @@ public:
 	void OnAbout(wxCommandEvent& event );
 	void OnRadio(wxCommandEvent& event );
 	void OnQuit(wxCommandEvent& event );
+	void doQuit();
 	void OnFile(wxCommandEvent& event );
 
 	void OnTimer(wxTimerEvent &event);
@@ -442,6 +443,7 @@ public:
 	void OnAbout(wxCommandEvent& event );
 	void OnRadio(wxCommandEvent& event );
 	void OnQuit(wxCommandEvent& event );
+	void doQuit();
 	void OnFile(wxCommandEvent& event );
 	void OnTest(wxCommandEvent& event );
 

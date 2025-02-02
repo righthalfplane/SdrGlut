@@ -1,4 +1,6 @@
 #include "sound.h"
+#include "WarningBatch.h"
+
 
 static int sound2( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
          double streamTime, RtAudioStreamStatus status, void *userData );
@@ -8,7 +10,7 @@ SNDFILE *sfopen(char *filename,int faudio);
 soundClass::soundClass()
 {
 	
-	audiodevice=129;
+	audiodevice=0;
 	faudio=48000;
 	ncut=20;
 	bS=NULL;
@@ -188,7 +190,7 @@ int soundClass::printAudio()
 	unsigned int deviceCount=dac.getDeviceCount();
 
 	if (deviceCount < 1 ) {
-		fprintf(stderr,"\nNo audio devices found!\n");
+		winout("\nNo audio devices found!\n");
 		exit( 0 );
 	}
 
@@ -208,9 +210,9 @@ int soundClass::printAudio()
 	}
 #endif
 	
-	int flag=1;
+	int flag=0;
 
-	if(flag == 0)fprintf(stderr,"id.size %ld\n",(long)id.size());
+	if(flag == 0)winout("id.size %ld\n",(long)id.size());
 
 	struct names name;
 	
@@ -220,35 +222,35 @@ int soundClass::printAudio()
 			info=dac.getDeviceInfo(id[i]);
 			if(info.outputChannels > 0){
 			// Print, for example, the maximum number of output channels for each device
-				if(flag == 0)printf("audio device = %d : output  channels = %d Device Name = %s",id[i],info.outputChannels,info.name.c_str());
+				if(flag == 0)winout("audio device = %d : output  channels = %d Device Name = %s",id[i],info.outputChannels,info.name.c_str());
 				name.name=info.name;
 				name.deviceID=id[i];
 				name.sampleRate.clear();
 				if(info.sampleRates.size()){
-					if(flag == 0)printf(" sampleRates = ");
+					if(flag == 0)winout(" sampleRates = ");
 					for (int ii = 0; ii < (int)info.sampleRates.size(); ++ii){
-						if(flag == 0)printf(" %d ",info.sampleRates[ii]);
+						if(flag == 0)winout(" %d ",info.sampleRates[ii]);
 						name.sampleRate.push_back(info.sampleRates[ii]);
 				   }
 				}
-				if(flag == 0)printf("\n");
+				if(flag == 0)winout("\n");
 				outputNames.push_back(name);
 			 }
  
 			if(info.inputChannels > 0){
 			// Print, for example, the maximum number of output channels for each device
-				if(flag == 0)printf("audio device = %d : input   channels = %d Device Name = %s",id[i],info.inputChannels,info.name.c_str());
+				if(flag == 0)winout("audio device = %d : input   channels = %d Device Name = %s",id[i],info.inputChannels,info.name.c_str());
 				name.name=info.name;
 				name.deviceID=id[i];
 				name.sampleRate.clear();
 				if(info.sampleRates.size()){
-					if(flag == 0)printf(" sampleRates = ");
+					if(flag == 0)winout(" sampleRates = ");
 					for (int ii = 0; ii < (int)info.sampleRates.size(); ++ii){
-						if(flag == 0)printf(" %d ",info.sampleRates[ii]);
+						if(flag == 0)winout(" %d ",info.sampleRates[ii]);
 						name.sampleRate.push_back(info.sampleRates[ii]);
 			        }
 				}
-				if(flag == 0)printf("\n");
+				if(flag == 0)winout("\n");
 				inputNames.push_back(name);
 		   }
 

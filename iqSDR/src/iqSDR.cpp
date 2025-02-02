@@ -1,4 +1,5 @@
 ﻿#include "iqSDR.h"
+#include "WarningBatch.h"
 #include <string.h>
 #include <vector>
 #include <string>
@@ -66,6 +67,8 @@ BasicPane *pBasicPane;
 Spectrum *pSpectrum;
 WaterFall *pWaterFall;
 TopPane *pTopPane;
+
+ostringstream outs;
 
 int sendAudio(int short *data,int length)
 {
@@ -487,22 +490,22 @@ void startWindow::openArgcArgv(int argc,char **argv)
 startWindow::startWindow(wxWindow *frame, const wxString &title)
     : wxWindow(frame,32000)
 {
-	 wxStaticBox *box = new wxStaticBox(this, wxID_ANY, "&Start Options",wxPoint(10,10), wxSize(135, 150),wxBORDER_SUNKEN );
+	 wxStaticBox *box = new wxStaticBox(this, wxID_ANY, "&Start Options",wxPoint(10,10), wxSize(135, 160),wxBORDER_SUNKEN );
 	 box->SetToolTip(wxT("This is tool tip") );
 
-  	new wxButton(box,ID_ABOUT,wxT("About"),wxPoint(20,10));
+  	new wxButton(box,ID_ABOUT,wxT("About"),wxPoint(20,25));
   	
-  	new wxButton(box,ID_RADIO,wxT("Radio"),wxPoint(20,40));
+  	new wxButton(box,ID_RADIO,wxT("Radio"),wxPoint(20,55));
   	
-    new wxButton(box,ID_FILE,wxT("File"),wxPoint(20,70));
+    new wxButton(box,ID_FILE,wxT("File"),wxPoint(20,85));
    	
-    new wxButton (box,ID_QUIT,wxT("Quit"),wxPoint(20,100));
+    new wxButton (box,ID_QUIT,wxT("Quit"),wxPoint(20,115));
       
-    wxStaticBox *box2 = new wxStaticBox(this, wxID_ANY, "&Device String",wxPoint(10,170), wxSize(130, 60),wxBORDER_SUNKEN );
+    wxStaticBox *box2 = new wxStaticBox(this, wxID_ANY, "&Device String",wxPoint(10,180), wxSize(135, 60),wxBORDER_SUNKEN );
 	box2->SetToolTip(wxT("This is tool tip") );
 
     textDevice=new wxTextCtrl(box2,ID_TEXTCTRL,wxT(""),
-          wxPoint(5,10), wxSize(120, 30));
+          wxPoint(5,15), wxSize(120, 30));
           
     grab=NULL;
 
@@ -974,6 +977,10 @@ void startWindow::OnFile(wxCommandEvent& event)
 }
 void startWindow::OnQuit(wxCommandEvent& event)
 {
+	doQuit();
+}
+void startWindow::doQuit()
+{
 
 	if(grabList.size() > 0){
 		for(std::vector<applFrame *>::size_type k=0;k<grabList.size();++k){
@@ -1147,11 +1154,11 @@ selectionWindow::selectionWindow(wxWindow *frame, const wxString &title,wxTextCt
 		return;
 	}
 	
-	wxStaticBox *box2 = new wxStaticBox(this, wxID_ANY, "&Parameters",wxPoint(10,10), wxSize(220, 80),wxBORDER_SUNKEN );
+	wxStaticBox *box2 = new wxStaticBox(this, wxID_ANY, "&Parameters",wxPoint(10,15), wxSize(220, 80),wxBORDER_SUNKEN );
 	box2->SetToolTip(wxT("This is tool tip") );
-	new wxStaticText(box2,wxID_STATIC,wxT("Frequency(MHZ)"),wxPoint(0,5), wxDefaultSize,wxALIGN_LEFT);
-	text=new wxTextCtrl(box2,ID_TEXTCTRL,wxT("101.5"),wxPoint(110,5), wxSize(80, 25));
-	new wxStaticText(box2,wxID_STATIC,wxT("Mode :"),wxPoint(0,30), wxDefaultSize,wxALIGN_LEFT);
+	new wxStaticText(box2,wxID_STATIC,wxT("Frequency(MHZ)"),wxPoint(20,15), wxDefaultSize,wxALIGN_LEFT);
+	text=new wxTextCtrl(box2,ID_TEXTCTRL,wxT("101.5"),wxPoint(130,10), wxSize(80, 25));
+	new wxStaticText(box2,wxID_STATIC,wxT("Mode :"),wxPoint(20,43), wxDefaultSize,wxALIGN_LEFT);
 	
 	wxArrayString strings;
 	
@@ -1163,13 +1170,13 @@ selectionWindow::selectionWindow(wxWindow *frame, const wxString &title,wxTextCt
 	strings.Add("LSB");
 	strings.Add("CW");
 	
-	boxMode=new wxComboBox(box2,ID_COMBOMODE,wxT("Mode"),wxPoint(50,30),wxDefaultSize,
+	boxMode=new wxComboBox(box2,ID_COMBOMODE,wxT("Mode"),wxPoint(130,40),wxDefaultSize,
 	                   strings,wxCB_DROPDOWN);
 	boxMode->SetSelection(2);
 	wxStaticBox *box = new wxStaticBox(this, wxID_ANY, "&Device",wxPoint(10,10+90), wxSize(300, 20+2*length*30),wxBORDER_SUNKEN );
 	box->SetToolTip(wxT("This is tool tip") );
 
-    int outset1=0;
+    int outset1=10;
 
     SoapySDR::Kwargs deviceArgs;
     
@@ -1360,12 +1367,15 @@ TopPane::TopPane(wxWindow *frame, const wxString &title)
     : wxWindow(frame,32000)
 {
 	
-	font= new wxFont(35,wxFONTFAMILY_MODERN,wxNORMAL,wxNORMAL);
+	//font= new wxFont(35,wxFONTFAMILY_MODERN,wxNORMAL,wxNORMAL);
+
+	font = new wxFont(35, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
 	
-	fontSize=font->GetPixelSize();
-
-
-	fprintf(stderr, "x %d y %d\n", fontSize.x, fontSize.y);
+	fontSize = font->GetPixelSize();
+	if(fontSize.x <= 0)fontSize.x=28;
+		
+	//outs << "fontSize : "  << " x "  << " " << fontSize.x  << " " << " y " << fontSize.y  << endl ;
+	//BatchWarning(outs);
 
 	nchar = -1;
 	
@@ -1396,9 +1406,7 @@ void TopPane::mouseDown(wxMouseEvent& event)
 	wxPoint p = event.GetLogicalPosition(wxClientDC(this));
 	int yh=fontSize.GetHeight()/2-10;
 	int diff=p.x-pt.x;
-	int dnum= fontSize.GetWidth();
-	if (dnum <= 0)dnum = 10;
-	nchar=(diff)/dnum;
+	nchar=(diff)/fontSize.x;
 	if(diff >= 0 && nchar >=0 && nchar <= 14){
 		if(nchar == 3 || nchar == 7 || nchar == 11)return;
 		int up=1;
@@ -1440,15 +1448,15 @@ void TopPane::mouseMoved(wxMouseEvent& event)
 
 	wxPoint p = event.GetLogicalPosition(wxClientDC(this));
 	
-	int dnum= fontSize.GetWidth();
-	if (dnum <= 0)dnum = 10;
-	nchar=(p.x-pt.x)/dnum;
+	nchar=(p.x-pt.x)/fontSize.x;
 
 	//fprintf(stderr,"TopPane::mouseMoved diff %d character %d\n",p.x-pt.x,nchar);
 	
 	Refresh();
 	
 }
+
+#include <wx/graphics.h>
 
 void TopPane::render( wxPaintEvent& evt )
 {
@@ -1479,22 +1487,17 @@ void TopPane::render( wxPaintEvent& evt )
 	}
 	
 	if(nchar >= 0 && nchar <= 14){
-		wxPoint Rect[4];	
-		wxColour *tGreen=new wxColour(0,255,0,64);
-		dc.SetPen(wxPen(*wxWHITE));
-		//dc.SetBrush(*wxGREEN);
-		dc.SetBrush(*tGreen);
-		Rect[0].x=0;
-		Rect[0].y=0;
-		Rect[1].x=0;
-		Rect[1].y=fontSize.y;
-		Rect[2].x=fontSize.x;
-		Rect[2].y=fontSize.y;
-		Rect[3].x=fontSize.x;
-		Rect[3].y=0;
-		dc.DrawPolygon(WXSIZEOF(Rect),Rect,	pt.x+nchar*fontSize.x,0);
-	//	fprintf(stderr,"draw nchar %d\n",nchar);
 
+		wxGraphicsContext* gc = wxGraphicsContext::Create(dc);
+
+		if (gc)
+		{
+			gc->SetPen(*wxGREEN);
+			wxGraphicsPath path = gc->CreatePath();
+			path.AddRectangle((int)(pt.x + nchar * fontSize.x), 0, fontSize.x, fontSize.y-8);
+			gc->StrokePath(path);
+			delete gc;
+		}
 	}
 
 	
@@ -1670,7 +1673,7 @@ BasicPane::BasicPane(wxWindow *frame, const wxString &title,class sdrClass *sdrI
 	wxStaticBox *box = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Set Volume ",wxPoint(20,yloc), wxSize(230, 80),wxBORDER_SUNKEN );
 	box->SetToolTip(wxT("This is tool tip") );
 
-	new wxSlider(box,SCROLL_GAIN,100,0,100,wxPoint(10,0),wxSize(210,30),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
+	new wxSlider(box,SCROLL_GAIN,100,0,100,wxPoint(10,15),wxSize(210,30),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
 
 	yloc += 85;   
 	
@@ -1698,7 +1701,7 @@ BasicPane::BasicPane(wxWindow *frame, const wxString &title,class sdrClass *sdrI
 			
 			double rmid=0.5*(rxGainRange.maximum()+rxGainRange.minimum());
 
-			new wxSlider(box,ID_RXGAIN+n,rmid,rxGainRange.minimum(),rxGainRange.maximum(),wxPoint(10,0),wxSize(210,-1),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
+			new wxSlider(box,ID_RXGAIN+n,rmid,rxGainRange.minimum(),rxGainRange.maximum(),wxPoint(10,15),wxSize(210,-1),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
 
 			yloc += 85;   
 		}
@@ -1709,20 +1712,20 @@ BasicPane::BasicPane(wxWindow *frame, const wxString &title,class sdrClass *sdrI
 	box = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Zoom",wxPoint(20,yloc), wxSize(230, 80),wxBORDER_SUNKEN );
 	box->SetToolTip(wxT("This is tool tip") );
 
-	new wxSlider(box,ID_SAMPLEWIDTH,200,0,200,wxPoint(10,0),wxSize(210,-1),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
+	new wxSlider(box,ID_SAMPLEWIDTH,200,0,200,wxPoint(10,15),wxSize(210,-1),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
 
 	yloc += 85;   
 
 	box = new wxStaticBox(ScrolledWindow, wxID_ANY, "Minimum Value ",wxPoint(20,yloc), wxSize(230, 80),wxBORDER_SUNKEN );
 	box->SetToolTip(wxT("This is tool tip") );
 
-	new wxSlider(box,ID_MININUM,-130,-200,100,wxPoint(10,0),wxSize(210,-1),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
+	new wxSlider(box,ID_MININUM,-130,-200,100,wxPoint(10,15),wxSize(210,-1),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
 
 	yloc += 85;
 
 	box = new wxStaticBox(ScrolledWindow, wxID_ANY, "Maximum Value",wxPoint(20,yloc), wxSize(230, 80),wxBORDER_SUNKEN );
 
-	new wxSlider(box,ID_MAXINUM,-30,-200,100,wxPoint(10,0),wxSize(210,-1),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
+	new wxSlider(box,ID_MAXINUM,-30,-200,100,wxPoint(10,15),wxSize(210,-1),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
   	
 	yloc += 85;
 
@@ -1821,7 +1824,7 @@ BasicPane::BasicPane(wxWindow *frame, const wxString &title,class sdrClass *sdrI
 	strings.Add("524288");
 	strings.Add("1048576");
 */
-	new wxStaticText(panel2,wxID_STATIC,wxT("FFT size:"),wxPoint(0,12), wxDefaultSize,wxALIGN_LEFT);
+	new wxStaticText(panel2,wxID_STATIC,wxT("FFT size:"),wxPoint(10,12), wxDefaultSize,wxALIGN_LEFT);
 
 	fftCombo=new wxComboBox(panel2,ID_COMBOBOX,wxT("FFT SIZE"),wxPoint(65,10),wxDefaultSize,
 	                   strings,wxCB_DROPDOWN);
@@ -1837,9 +1840,9 @@ BasicPane::BasicPane(wxWindow *frame, const wxString &title,class sdrClass *sdrI
 	strings.Add("BLACKMANHARRIS");
 	strings.Add("BLACKMANHARRIS7");
 	
-	new wxStaticText(panel2,wxID_STATIC,wxT("Window:"),wxPoint(0,42), wxDefaultSize,wxALIGN_LEFT);
+	new wxStaticText(panel2,wxID_STATIC,wxT("Window:"),wxPoint(10,42), wxDefaultSize,wxALIGN_LEFT);
 
-	filterCombo=new wxComboBox(panel2,ID_COMBOFILTER,wxT("FILTER"),wxPoint(55,40),wxDefaultSize,
+	filterCombo=new wxComboBox(panel2,ID_COMBOFILTER,wxT("FILTER"),wxPoint(60,40),wxDefaultSize,
 	                   strings,wxCB_DROPDOWN);
 	filterCombo->SetSelection(5);
 	
@@ -1850,7 +1853,7 @@ BasicPane::BasicPane(wxWindow *frame, const wxString &title,class sdrClass *sdrI
        for (size_t i=0;i<sdr->antennaNames.size();++i){
        		strings.Add(sdr->antennaNames[i]);
         }
-		new wxStaticText(panel2,wxID_STATIC,wxT("Antenna:"),wxPoint(0,72), wxDefaultSize,wxALIGN_LEFT);
+		new wxStaticText(panel2,wxID_STATIC,wxT("Antenna:"),wxPoint(10,72), wxDefaultSize,wxALIGN_LEFT);
 
 		antennaCombo=new wxComboBox(panel2,ID_COMBOANTENNA,wxT("FILTER"),wxPoint(60,70),wxDefaultSize,
 	                   strings,wxCB_DROPDOWN);
@@ -1882,10 +1885,10 @@ BasicPane::BasicPane(wxWindow *frame, const wxString &title,class sdrClass *sdrI
 		 
 	sendModeBox->SetSelection(1);
 	
-	wxStaticBox *box22 = new wxStaticBox(panel3, wxID_ANY, "&Net-Address",wxPoint(1,125), wxSize(225, 60),wxBORDER_SUNKEN );
+	wxStaticBox *box22 = new wxStaticBox(panel3, wxID_ANY, "&Net-Address",wxPoint(15,140), wxSize(210, 50),wxBORDER_SUNKEN );
 
     sendAddress=new wxTextCtrl(box22,ID_TEXTCTRL,wxT("192.168.1.3:3500"),
-          wxPoint(5,10), wxSize(220, 30));
+          wxPoint(5,15), wxSize(190, 30));
 
   	new wxButton(panel3,ID_STARTSEND,wxT("Start"),wxPoint(20,200));
   	
@@ -1893,33 +1896,33 @@ BasicPane::BasicPane(wxWindow *frame, const wxString &title,class sdrClass *sdrI
 
  	yloc += 235;
 	
-	wxStaticBox *box33 = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Alpha",wxPoint(20,yloc), wxSize(225, 190),wxBORDER_SUNKEN );
+	wxStaticBox *box33 = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Alpha",wxPoint(20,yloc), wxSize(225, 200),wxBORDER_SUNKEN );
 	box33->SetToolTip(wxT("Click Apply To Activate") );
 
     textAlpha=new wxTextCtrl(box33,ID_TEXTCTRL,wxT("0.1"),
-          wxPoint(5,10), wxSize(220, 30));
+          wxPoint(5,15), wxSize(220, 30));
 	textAlpha->SetToolTip(wxT("Click Apply To Activate") );
           
-    cbox=new wxCheckBox(box33,ID_SETGAIN, "&Power Range",wxPoint(20,45), wxSize(230, 25));
+    cbox=new wxCheckBox(box33,ID_SETGAIN, "&Power Range",wxPoint(20,50), wxSize(230, 25));
 	cbox->SetValue(0);	
 
 
-	new wxStaticText(box33,wxID_STATIC,wxT("pmin:"),wxPoint(20,75), wxSize(50, 30),wxALIGN_LEFT);
+	new wxStaticText(box33,wxID_STATIC,wxT("pmin:"),wxPoint(20,94), wxSize(50, 30),wxALIGN_LEFT);
 
           
     rangeMin=new wxTextCtrl(box33,ID_TEXTCTRL,wxT("-120"),
-          wxPoint(75,75), wxSize(100, 30));
+          wxPoint(75,90), wxSize(100, 30));
           
-  	new wxStaticText(box33,wxID_STATIC,wxT("pmax:"),wxPoint(20,105), wxSize(50, 30),wxALIGN_LEFT);
+  	new wxStaticText(box33,wxID_STATIC,wxT("pmax:"),wxPoint(20,124), wxSize(50, 30),wxALIGN_LEFT);
         
           
     rangeMax=new wxTextCtrl(box33,ID_TEXTCTRL,wxT("-30"),
-          wxPoint(75,105), wxSize(100, 30));
+          wxPoint(75,120), wxSize(100, 30));
           
     
-  	new wxButton(box33,ID_ALPHA,wxT("Apply"),wxPoint(10,140));
+  	new wxButton(box33,ID_ALPHA,wxT("Apply"),wxPoint(10,160));
 	
-	yloc += 200;
+	yloc += 210;
 	
 	listctrlFreq = new wxDataViewListCtrl( ScrolledWindow, ID_VIEWSELECTED,wxPoint(20,yloc),wxSize(225, 190));
 	listctrlFreq->AppendTextColumn( "Channel" );
