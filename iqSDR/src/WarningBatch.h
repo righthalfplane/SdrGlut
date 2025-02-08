@@ -7,6 +7,17 @@
 
 #define wxUSE_FONTDLG 1
 
+
+struct dataStructHold{
+    long count;
+    long countMax;
+    char **message;
+};
+
+int WarningBatchHoldDump(void);
+
+int WarningBatchHold(char *buff);
+
 class Utilities
 {
 public:
@@ -56,6 +67,7 @@ private:
 };
 
 
+
 class BatchWindow: public wxFrame
 {
 public:
@@ -66,6 +78,7 @@ public:
     void OnClose(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
     void OnClose2(wxCloseEvent& event); 
+    void OnIdle(wxIdleEvent& event); 
     
 #if wxUSE_FONTDLG
     void ChooseFont(wxCommandEvent& event);

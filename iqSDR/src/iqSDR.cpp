@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 
+void winout(const char *fmt, ...);
+
 int copyl(char *p1,char *p2,long n);
 
 char *ProgramVersion=(char *)"iqSDR-1257";
@@ -113,7 +115,7 @@ bool MyApp::OnInit()
   	s->soundRun=0;   
     std::thread(&soundClass::startSound,s).detach(); 
     while(s->soundRun == 0){
-    	//fprintf(stderr,"s->soundRun  %d\n",s->soundRun);
+    	//winout("s->soundRun  %d\n",s->soundRun);
    		 Sleep2(5);
     }
     
@@ -127,7 +129,7 @@ bool MyApp::OnInit()
 	frame2->SetSize(wxDefaultCoord,wxDefaultCoord,155,300);
 	frame2->Show();
 	
-	//fprintf(stderr,"startIt %p\n",startIt);
+	//winout("startIt %p\n",startIt);
 	
 	startIt->openArgcArgv(argc,argv);
 	
@@ -152,7 +154,7 @@ void startWaveFile::Pause(wxCommandEvent& event)
        
     iPause=pbox->GetValue();
 
-//   fprintf(stderr,"Pause iPause %d\n",iPause);
+//   winout("Pause iPause %d\n",iPause);
 }
 void startWaveFile::OnIdle(wxTimerEvent &event)
 {
@@ -177,14 +179,14 @@ void startWaveFile::OnScroll(wxCommandEvent &event)
 	float value=event.GetSelection();
 
 	if(event.GetId() == SCROLL_GAIN2){
-		//printf("OnScroll value %g %d \n",value,event.GetId());
+		//winout("OnScroll value %g %d \n",value,event.GetId());
 		gain=0.01*value;
 		s->gain=gain;
 		return;
 	}else if(event.GetId() == SCROLL_TIME2){
-		// printf("OnScroll value %g %d \n",value,event.GetId());
+		// winout("OnScroll value %g %d \n",value,event.GetId());
 		sf_count_t ret=sf_seek(infile, value*sfinfo.samplerate, SEEK_SET);
-        if(ret < 0)fprintf(stderr,"sf_seek error\n");
+        if(ret < 0)winout("sf_seek error\n");
 		CurrentFrame=value*sfinfo.samplerate;
 		return;
 	}
@@ -232,7 +234,7 @@ startWaveFile::startWaveFile(wxWindow *frame,const wxString& title)
     
 	s->soundRun = -1;
 	while(s->soundRun == -1){
-		//fprintf(stderr,"Wait soundRun %d\n",s->soundRun);
+		//winout("Wait soundRun %d\n",s->soundRun);
 		Sleep2(10);
 	}
     
@@ -245,7 +247,7 @@ startWaveFile::startWaveFile(wxWindow *frame,const wxString& title)
 
 	s->faudio=sfinfo.samplerate;
     
-//	fprintf(stderr,"sfinfo.samplerate %d sfinfo.channels %d sfinfo.frames %lld\n",sfinfo.samplerate,sfinfo.channels,sfinfo.frames);
+//	winout("sfinfo.samplerate %d sfinfo.channels %d sfinfo.frames %lld\n",sfinfo.samplerate,sfinfo.channels,sfinfo.frames);
 
 	bS=new cStack;
 
@@ -296,7 +298,7 @@ int startWaveFile::wavBuffer()
 	 //	sendAudio(data,readcount);
 
 		bS->pushBuffa(audioOut-1);
-		//fprintf(stderr,"audioOut %ld readcount %d\n",audioOut,readcount);
+		//winout("audioOut %ld readcount %d\n",audioOut,readcount);
 		if(s->bS == bS)s->audioSync=1;
 
 	}
@@ -330,7 +332,7 @@ startWaveFile::~startWaveFile()
 	if(bS)delete bS;
 	bS=NULL;
 	
-	//fprintf(stderr,"exit startWaveFile %p\n",this);
+	//winout("exit startWaveFile %p\n",this);
 
 }
 
@@ -355,7 +357,7 @@ void startWindow::openArgcArgv(int argc,char **argv)
 		wxString name=argv[n];
 		if(name == "-pipe"){
 		    ipipe=1;
-			fprintf(stderr,"pipe input\n");
+			winout("pipe input\n");
 		}else if(name == "-pipeout"){
 			pipeout=1;
 		}else if(name == "-float"){
@@ -370,16 +372,16 @@ void startWindow::openArgcArgv(int argc,char **argv)
 			type=TYPE_UNSIGNED;
 		}else if(name == "-debug"){
 			debug=1;
-			fprintf(stderr,"debug %d\n",debug);
+			winout("debug %d\n",debug);
 		}else if(name == "-udp"){
 			udp=1;
-			//fprintf(stderr,"tcp_ip %d input\n",tcp_ip);
+			//winout("tcp_ip %d input\n",tcp_ip);
 		}else if(name == "-tcp"){
 			tcp_ip=1;
-			//fprintf(stderr,"tcp_ip %d input\n",tcp_ip);
+			//winout("tcp_ip %d input\n",tcp_ip);
 		}else if(name == "-cat"){
 			cat=1;
-			//fprintf(stderr,"tcp_ip %d input\n",tcp_ip);
+			//winout("tcp_ip %d input\n",tcp_ip);
 		}else if(name == "-fc"){		
 			fc=atof(argv[++n]);	
 		}else if(name == "-samplerate"){		
@@ -388,17 +390,17 @@ void startWindow::openArgcArgv(int argc,char **argv)
 	    	name=argv[++n];
 	    	if(name == "-"){
 	    		outFile=stdout;
-	    		fprintf(stderr,"outFile=stdout\n");
+	    		winout("outFile=stdout\n");
 	    	}else{
 				 outFile=fopen(argv[n],"wb");
 				 if(outFile == NULL){
-					 fprintf(stderr,"Could Not Open %s to Write\n",argv[n]);
+					 winout("Could Not Open %s to Write\n",argv[n]);
 				 }
 	         }
 	    }else if(name == "-inFile"){
 	         inFile=fopen(argv[++n],"rb");
 	         if(inFile == NULL){
-	             fprintf(stderr,"Could Not Open %s to Write\n",argv[n]);
+	             winout("Could Not Open %s to Write\n",argv[n]);
 	         }
 		}
 	
@@ -406,7 +408,7 @@ void startWindow::openArgcArgv(int argc,char **argv)
 	
 	fc *= 1e6;
 		
-	//fprintf(stderr,"fc %g MHZ samplerate %g\n",fc/1e6,samplerate);
+	//winout("fc %g MHZ samplerate %g\n",fc/1e6,samplerate);
 	
     class sdrClass *sdrIn= new sdrClass;
 	
@@ -458,7 +460,7 @@ void startWindow::openArgcArgv(int argc,char **argv)
 /*
 	sdrIn->inFile=fopen(file,"rb");
 	if(sdrIn->inFile == NULL){
-	    fprintf(stderr,"Could Not Open %s to Read\n",file);
+	    winout("Could Not Open %s to Read\n",file);
 	    return;
 	}
 */
@@ -483,7 +485,7 @@ void startWindow::openArgcArgv(int argc,char **argv)
 
 	gBasicPane->gSpectrum->iWait=0;
 	
-	//fprintf(stderr,"samplerate %g samplewidth %g\n",sdrIn->samplerate,sdrIn->samplewidth);
+	//winout("samplerate %g samplewidth %g\n",sdrIn->samplerate,sdrIn->samplewidth);
 	
 }
 
@@ -515,7 +517,7 @@ startWindow::startWindow(wxWindow *frame, const wxString &title)
 
 startWindow::~startWindow()
 {
-	//fprintf(stderr,"exit startWindow %p\n",this);
+	//winout("exit startWindow %p\n",this);
 }
 BEGIN_EVENT_TABLE(startWindow, wxWindow)
 EVT_BUTTON(ID_ABOUT, startWindow::OnAbout)
@@ -523,7 +525,20 @@ EVT_BUTTON(ID_RADIO, startWindow::OnRadio)
 EVT_BUTTON(ID_QUIT, startWindow::OnQuit)
 EVT_BUTTON(ID_FILE, startWindow::OnFile)
 //EVT_BUTTON(ID_TEST, startWindow::OnTest)
+EVT_IDLE(startWindow::OnIdle)
 END_EVENT_TABLE()
+
+void startWindow::OnIdle(wxIdleEvent& event)
+{
+	extern int WarningBatchHoldDump(void);
+	
+	static long long ip=0;
+	
+	if(++ip > 100)WarningBatchHoldDump();
+	
+	event.Skip();
+}
+
 
 void startWindow::openWindows(char *name)
 {
@@ -565,7 +580,7 @@ void applFrame::resized(wxSizeEvent& evt)
 
 //const wxSize size = evt.GetSize() * GetContentScaleFactor();
 
-//fprintf(stderr,"applFrame::resized %d %d %f\n", size.x,size.y,GetContentScaleFactor());
+//winout("applFrame::resized %d %d %f\n", size.x,size.y,GetContentScaleFactor());
 	Refresh();
 
 }
@@ -585,11 +600,11 @@ applFrame::applFrame(wxFrame* parent,wxString title,class sdrClass *sdrIn)
     helpMenu->Append(wxID_ABOUT, _T("&About...\tCtrl-A"), _T("Show about dialog"));
 	
 	wxMenu *inputMenu = new wxMenu;
-	//fprintf(stderr,"s->inputNames.size() %lld\n",(long long)s->inputNames.size());
+	//winout("s->inputNames.size() %lld\n",(long long)s->inputNames.size());
     for(unsigned long int n=0;n<s->inputNames.size();++n){
         wxMenu *subMenu = new wxMenu;
         inputMenu->AppendSubMenu(subMenu, s->inputNames[n].name, wxT("Description?"));
-       // fprintf(stderr,"s->inputNames[n].name %s\n",s->inputNames[n].name.c_str());
+       // winout("s->inputNames[n].name %s\n",s->inputNames[n].name.c_str());
        //int deviceID=inputNames[n].deviceID;
         for(unsigned long int k=0;k<s->inputNames[n].sampleRate.size();++k){
             std::stringstream srateName;
@@ -599,11 +614,11 @@ applFrame::applFrame(wxFrame* parent,wxString title,class sdrClass *sdrIn)
     }
    
     wxMenu *outputMenu = new wxMenu;
- 	//fprintf(stderr,"s->outputNames.size() %lld\n",(long long)s->outputNames.size());
+ 	//winout("s->outputNames.size() %lld\n",(long long)s->outputNames.size());
 	for(unsigned long int n=0;n<s->outputNames.size();++n){
         wxMenu *subMenu = new wxMenu;
     	outputMenu->AppendSubMenu(subMenu, s->outputNames[n].name, wxT("Description?"));
-  //  	fprintf(stderr,"s->outputNames[n].name %s\n",s->outputNames[n].name.c_str());
+  //  	winout("s->outputNames[n].name %s\n",s->outputNames[n].name.c_str());
        // int deviceID=s->outputNames[n].deviceID;
         for(unsigned long int k=0;k<s->outputNames[n].sampleRate.size();++k){
             std::stringstream srateName;
@@ -617,7 +632,7 @@ applFrame::applFrame(wxFrame* parent,wxString title,class sdrClass *sdrIn)
 	
 	getPaletteNames(names);
 	
-	//fprintf(stderr,"names.size() %ld\n",(long)names.size());
+	//winout("names.size() %ld\n",(long)names.size());
 	
 	actionMenu = new wxMenu;
 	paletteMenu = new wxMenu;
@@ -632,11 +647,11 @@ applFrame::applFrame(wxFrame* parent,wxString title,class sdrClass *sdrIn)
   		int directSampleMode=0;
 		SoapySDR::ArgInfoList flags;
 		flags = sdr->device->getSettingInfo();
-//		fprintf(stderr,"flags.size() %ld\n",(long)flags.size());
+//		winout("flags.size() %ld\n",(long)flags.size());
 		if(flags.size()){
 			int count=0;
 			for(size_t k=0;k<flags.size();++k){
-			// fprintf(stderr,"k %d %s %s type %d\n",(int)k,flags[k].key.c_str(),flags[k].value.c_str(),(int)flags[k].type);
+			// winout("k %d %s %s type %d\n",(int)k,flags[k].key.c_str(),flags[k].value.c_str(),(int)flags[k].type);
 				if(flags[k].key == "direct_samp")directSampleMode=1;
 				if(flags[k].type == flags[k].BOOL){
 					//wxMenu *subMenu = new wxMenu;
@@ -759,7 +774,7 @@ void applFrame::OnSampleRateSelected(wxCommandEvent& event)
 	
 	const char *what=whatEvent.c_str();
 
-   	//printf("OnBandSelected %d ID_BAND %d what %s\n",item,ID_BAND,what);
+   	//winout("OnBandSelected %d ID_BAND %d what %s\n",item,ID_BAND,what);
    	
    	for(int n=0;n<(int)sdr->rate.size();++n){
 		sampleRateMenu->Check(ID_SAMPLERATE+n,0);
@@ -795,7 +810,7 @@ void applFrame::OnBandSelected(wxCommandEvent& event)
 	
 	const char *what=whatEvent.c_str();
 
-   	//printf("OnBandSelected %d ID_BAND %d what %s\n",item,ID_BAND,what);
+   	//winout("OnBandSelected %d ID_BAND %d what %s\n",item,ID_BAND,what);
    	
    	for(int n=0;n<(int)sdr->band.size();++n){
 		bandMenu->Check(ID_BAND+n,0);
@@ -829,7 +844,7 @@ void applFrame::OnOptionsSelected(wxCommandEvent& event){
 	
 	const char *what=whatEvent.c_str();
 
-   // printf("OnOptionsSelected %d INPUT_MENU %d checked %d what %s\n",item,ID_OPTIONS,actionMenu->IsChecked(event.GetId()),what);
+   // winout("OnOptionsSelected %d INPUT_MENU %d checked %d what %s\n",item,ID_OPTIONS,actionMenu->IsChecked(event.GetId()),what);
     
     
     sdr->device->writeSetting(what,actionMenu->IsChecked(event.GetId()));
@@ -846,7 +861,7 @@ void applFrame::OnDirectSelected(wxCommandEvent& event){
 	const char *what=whatEvent.c_str();
 
 	
-  //  printf("OnDirectSelected %d ID_DIRECT %d what %s\n",item,ID_DIRECT,what);
+  //  winout("OnDirectSelected %d ID_DIRECT %d what %s\n",item,ID_DIRECT,what);
     
     for(int n=0;n<3;++n){
 		directMenu->Check(ID_DIRECT+n,0);
@@ -862,7 +877,7 @@ void applFrame::OnPaletteSelected(wxCommandEvent& event){
 	event.Skip();
 
 	int item=event.GetId()-ID_PALETTE;
-//	printf("OnPaletteSelected %d INPUT_MENU %d\n",item,ID_PALETTE);
+//	winout("OnPaletteSelected %d INPUT_MENU %d\n",item,ID_PALETTE);
 	
 	char name[512];
 
@@ -870,7 +885,7 @@ void applFrame::OnPaletteSelected(wxCommandEvent& event){
 
 	getPalette(item,name,pal);
 
-	//printf("name %s\n",name);
+	//winout("name %s\n",name);
 	
 	for(int n=0;n<256;++n){
 		gWaterFall->pd.palette[3*n]=pal[3*n]*255;
@@ -889,26 +904,26 @@ void applFrame::OnPaletteSelected(wxCommandEvent& event){
 
 void applFrame::OnInputSelect(wxCommandEvent& event){
 	int item=event.GetId()-INPUT_MENU;
-	//printf("OnInputSelect %d INPUT_MENU %d\n",item,INPUT_MENU);
+	//winout("OnInputSelect %d INPUT_MENU %d\n",item,INPUT_MENU);
 	int n=item/10;
 	s->inputID=s->inputNames[n].deviceID;
 	int sound=item-10*n;
-	//fprintf(stderr,"%s sampleRate %d\n",s->inputNames[n].name.c_str(),s->inputNames[n].sampleRate[sound]);
+	//winout("%s sampleRate %d\n",s->inputNames[n].name.c_str(),s->inputNames[n].sampleRate[sound]);
 	SampleFrequency=s->inputNames[n].sampleRate[sound];
 	//startAudio();
 }
 
 void applFrame::OnOuputSelect(wxCommandEvent& event){
 	int item=event.GetId()-OUTPUT_MENU;
-	//printf("OnOuputSelect %d OUTPUT_MENU %d\n",item,OUTPUT_MENU);
+	//winout("OnOuputSelect %d OUTPUT_MENU %d\n",item,OUTPUT_MENU);
 	int n=item/10;
 	s->outputID=s->outputNames[n].deviceID;
 	int sound=item-10*n;
-	//fprintf(stderr,"%s sampleRate %d\n",s->outputNames[n].name.c_str(),s->outputNames[n].sampleRate[sound]);
+	//winout("%s sampleRate %d\n",s->outputNames[n].name.c_str(),s->outputNames[n].sampleRate[sound]);
 	s->faudio=s->outputNames[n].sampleRate[sound];
 	s->soundRun = -1;
 	while(s->soundRun == -1){
-		//fprintf(stderr,"Wait soundRun %d\n",s->soundRun);
+		//winout("Wait soundRun %d\n",s->soundRun);
 		Sleep2(10);
 	}
 	std::thread(&soundClass::startSound,s).detach();
@@ -931,21 +946,21 @@ void applFrame::OnOuputSelect(wxCommandEvent& event){
 
 applFrame::~applFrame()
 {
-//	fprintf(stderr,"applFrame::~applFrame\n");
+//	winout("applFrame::~applFrame\n");
 	
 	if(grabList.size() > 0){
 		for(std::vector<applFrame *>::size_type k=0;k<grabList.size();++k){
 			applFrame *grab=grabList[k];
 			if(grab == this){
 			    grabList[k]=NULL;
-			    //fprintf(stderr,"applFrame remove from list\n");
+			    //winout("applFrame remove from list\n");
 			}
 		}
 	}
 
 	checkall();
 	
-	//fprintf(stderr,"exit applFrame %p\n",this);
+	//winout("exit applFrame %p\n",this);
 
 }
 
@@ -1007,7 +1022,7 @@ void startWindow::openIQFile(const char *file)
 	
 	mstrncpy(name,(char *)file,sizeof(name));
 	
-	//fprintf(stderr,"openIQFile %s name %s\n",file,name);
+	//winout("openIQFile %s name %s\n",file,name);
 	
 	double samplerate=0;
 	double fc=0;
@@ -1049,7 +1064,7 @@ void startWindow::openIQFile(const char *file)
 	sdrIn->inData=IN_FILE;
 	sdrIn->inFile=fopen(file,"rb");
 	if(sdrIn->inFile == NULL){
-	    fprintf(stderr,"Could Not Open %s to Read\n",file);
+	    winout("Could Not Open %s to Read\n",file);
 	    return;
 	}
 	sdrIn->startPlay();
@@ -1096,7 +1111,7 @@ void startWindow::OpenFile()
         
         int Index=filedlg.GetFilterIndex();
         
-        fprintf(stderr,"OpenFile file %s Index %d\n",file,Index);
+        winout("OpenFile file %s Index %d\n",file,Index);
         
         if(Index == 0)
         {     
@@ -1148,7 +1163,7 @@ selectionWindow::selectionWindow(wxWindow *frame, const wxString &title,wxTextCt
     length=results.size();
     
 	if(length == 0){
-		fprintf(stderr,"Error: enumerate Found No Devices - Try Again !\n");
+		winout("Error: enumerate Found No Devices - Try Again !\n");
 		return;
 	}
 	
@@ -1190,7 +1205,7 @@ selectionWindow::selectionWindow(wxWindow *frame, const wxString &title,wxTextCt
 
             deviceArgs = results[k];
             for (SoapySDR::Kwargs::const_iterator it = deviceArgs.begin(); it != deviceArgs.end(); ++it) {
-               // fprintf(stderr,"%s=%s\n",it->first.c_str(),it->second.c_str());
+               // winout("%s=%s\n",it->first.c_str(),it->second.c_str());
                 if (it->first == "driver") {
                     if(it->second == "audio")break;
                     if(it->second == "redpitaya"){
@@ -1236,7 +1251,7 @@ selectionWindow::selectionWindow(wxWindow *frame, const wxString &title,wxTextCt
             
         } catch(const std::exception &e) {
             std::string streamExceptionStr = e.what();
-            fprintf(stderr,"doRadioOpen Error: %s\n",streamExceptionStr.c_str());
+            winout("doRadioOpen Error: %s\n",streamExceptionStr.c_str());
         }
    }
  
@@ -1244,8 +1259,8 @@ selectionWindow::selectionWindow(wxWindow *frame, const wxString &title,wxTextCt
 selectionWindow::~selectionWindow()
 {
 	//delete m_context;
-	//fprintf(stderr,"selectionWindow::~selectionWindow\n");
-	//fprintf(stderr,"exit selectionWindow %p\n",this);
+	//winout("selectionWindow::~selectionWindow\n");
+	//winout("exit selectionWindow %p\n",this);
 
 }
 
@@ -1309,7 +1324,7 @@ void selectionWindow::OnDevice(wxCommandEvent& event)
 
 	killMe();
 
-//	fprintf(stderr,"OnDevice  11\n");
+//	winout("OnDevice  11\n");
    
     
 }
@@ -1331,7 +1346,7 @@ void TopPane::Record(wxCommandEvent& event)
 	
 	if(event.GetId() == ID_FC){
 		idoFC=rbox2->GetValue();
-		//fprintf(stderr,"ID_FC idoFC %d\n",idoFC);
+		//winout("ID_FC idoFC %d\n",idoFC);
 		Refresh();
 		return;
 	}
@@ -1391,8 +1406,8 @@ TopPane::TopPane(wxWindow *frame, const wxString &title)
 }
 TopPane::~TopPane()
 {
-	//fprintf(stderr,"TopPane::~TopPane\n");
-	//fprintf(stderr,"exit TopPane %p\n",this);
+	//winout("TopPane::~TopPane\n");
+	//winout("exit TopPane %p\n",this);
 
 }
 
@@ -1409,7 +1424,7 @@ void TopPane::mouseDown(wxMouseEvent& event)
 		if(nchar == 3 || nchar == 7 || nchar == 11)return;
 		int up=1;
 		if(p.y > yh)up=0;
-		//fprintf(stderr,"p.y %d up %d yh %d\n",p.y,up,yh);
+		//winout("p.y %d up %d yh %d\n",p.y,up,yh);
 		
 		long long fl=(long long)sdr->f;
 		if(idoFC) fl=(long long)sdr->fc;
@@ -1433,7 +1448,7 @@ void TopPane::mouseDown(wxMouseEvent& event)
 			sdr->setFrequency((double)fl);
 		}
 		
-//		fprintf(stderr,"TopPane::mouseDown f %lld k %d nchar %d up %d %f\n",fl,k,nchar,up,value);
+//		winout("TopPane::mouseDown f %lld k %d nchar %d up %d %f\n",fl,k,nchar,up,value);
 		Refresh();
 
 	}
@@ -1448,7 +1463,7 @@ void TopPane::mouseMoved(wxMouseEvent& event)
 	
 	nchar=(p.x-pt.x)/fontSize.x;
 
-	//fprintf(stderr,"TopPane::mouseMoved diff %d character %d\n",p.x-pt.x,nchar);
+	//winout("TopPane::mouseMoved diff %d character %d\n",p.x-pt.x,nchar);
 	
 	Refresh();
 	
@@ -1467,7 +1482,7 @@ void TopPane::render( wxPaintEvent& evt )
 	dc.SetTextForeground(*wxBLACK);
 	dc.SetTextBackground(*wxWHITE);
 	
-	//fprintf(stderr,"TopPane f %g \n",sdr->f);
+	//winout("TopPane f %g \n",sdr->f);
 
 	if(sdr){
 		char freq[50];
@@ -1499,7 +1514,7 @@ void TopPane::render( wxPaintEvent& evt )
 	}
 
 	
-//	fprintf(stderr,"TopPane:render\n");
+//	winout("TopPane:render\n");
 }
 
 BEGIN_EVENT_TABLE(BasicPane, wxWindow)
@@ -1544,11 +1559,11 @@ void BasicPane::OnViewSelected(wxDataViewEvent& event)
 	
 	long int nRow=(long)listctrlFreq->GetSelectedRow();
 	
-	//fprintf(stderr,"nRow %ld\n",nRow);
+	//winout("nRow %ld\n",nRow);
 	
 	wxString nn=listctrlFreq->GetTextValue(nRow,1);
 
-	//fprintf(stderr,"%s\n",static_cast<const char*>(nn));
+	//winout("%s\n",static_cast<const char*>(nn));
 		
 	const char *freq=nn;
 		
@@ -1567,12 +1582,12 @@ void BasicPane::startSend(wxCommandEvent& event)
 	const char *Address=value;
 	
 	if(sendFlag){
-		fprintf(stderr,"Send Already Running\n");
+		winout("Send Already Running\n");
 		return;
 	}else{	
 	    sendFlag=1;
 		sdr->fillBuffer=1;
-//		fprintf(stderr,"startSend Type %d Mode %d Address %s\n",sendTypeBox->GetSelection(),sendModeBox->GetSelection(),Address);	
+//		winout("startSend Type %d Mode %d Address %s\n",sendTypeBox->GetSelection(),sendModeBox->GetSelection(),Address);	
 		SendStart((char *)Address,sendTypeBox->GetSelection(),sendModeBox->GetSelection());
 	}
 
@@ -1608,7 +1623,7 @@ void BasicPane::stopSend(wxCommandEvent& event)
 
 		gWaterFall->pd.sPmax=atof(alpha2);
 		
-		//fprintf(stderr,"UsePlotScales %d sPmin %g sPmax %g\n",gWaterFall->pd.UsePlotScales,gWaterFall->pd.sPmin,gWaterFall->pd.sPmax);
+		//winout("UsePlotScales %d sPmin %g sPmax %g\n",gWaterFall->pd.UsePlotScales,gWaterFall->pd.sPmin,gWaterFall->pd.sPmax);
 			
 		return;
 	}
@@ -1617,7 +1632,7 @@ void BasicPane::stopSend(wxCommandEvent& event)
 	
 	sdr->fillBuffer=0;
 	
-	//fprintf(stderr,"stopSend \n");
+	//winout("stopSend \n");
 
    // int id=event.GetId();
 }
@@ -1844,7 +1859,7 @@ BasicPane::BasicPane(wxWindow *frame, const wxString &title,class sdrClass *sdrI
 	                   strings,wxCB_DROPDOWN);
 	filterCombo->SetSelection(5);
 	
-//	fprintf(stderr,"Ant %p count %d\n",sdr->antenna,sdr->antennaCount);
+//	winout("Ant %p count %d\n",sdr->antenna,sdr->antennaCount);
 	
 	if(sdr->antennaNames.size() > 0){
  		strings.Clear();
@@ -1939,7 +1954,7 @@ BasicPane::BasicPane(wxWindow *frame, const wxString &title,class sdrClass *sdrI
     
     iRefresh=1;
     
-//    fprintf(stderr,"BasicPane Done\n");
+//    winout("BasicPane Done\n");
     
 }
 
@@ -1951,7 +1966,7 @@ void BasicPane::dataType(wxCommandEvent &event)
 	
 	//const char *mode=name.ToUTF8().data();
 
-	//fprintf(stderr,"dataType %s GetSelection %d\n",mode,event.GetSelection());
+	//winout("dataType %s GetSelection %d\n",mode,event.GetSelection());
 	
 }
 void BasicPane::dataMode(wxCommandEvent &event)
@@ -1962,7 +1977,7 @@ void BasicPane::dataMode(wxCommandEvent &event)
 	
 	//const char *mode=name.ToUTF8().data();
 
-	//fprintf(stderr,"dataMode %s GetSelection %d\n",mode,event.GetSelection());
+	//winout("dataMode %s GetSelection %d\n",mode,event.GetSelection());
 	
 }
 void BasicPane::OnCheckAuto(wxCommandEvent &event)
@@ -2000,19 +2015,19 @@ void BasicPane::OnCheckAuto(wxCommandEvent &event)
 		
 		bool gainMode=sdr->device->getGainMode(SOAPY_SDR_RX, sdr->channel);
 		
-		//fprintf(stderr,"1 OnCheckAuto id %d gainMode %d\n",id,gainMode);
+		//winout("1 OnCheckAuto id %d gainMode %d\n",id,gainMode);
 	
 		gainMode = !gainMode;
 	
-		//fprintf(stderr,"1a OnCheckAuto id %d gainMode %d\n",id,gainMode);
+		//winout("1a OnCheckAuto id %d gainMode %d\n",id,gainMode);
 		
 		sdr->device->setGainMode(SOAPY_SDR_RX, sdr->channel, gainMode);
 
-		//fprintf(stderr,"2 OnCheckAuto id %d gainMode %d\n",id,gainMode);
+		//winout("2 OnCheckAuto id %d gainMode %d\n",id,gainMode);
 		
 		//gainMode=sdr->device->getGainMode(SOAPY_SDR_RX, sdr->channel);
 
-		//fprintf(stderr,"2a OnCheckAuto id %d gainMode %d\n",id,gainMode);
+		//winout("2a OnCheckAuto id %d gainMode %d\n",id,gainMode);
 		
 	}
 
@@ -2025,7 +2040,7 @@ void BasicPane::setRxGain(wxCommandEvent &event)
 	
 	int id=event.GetId()-ID_RXGAIN;
 	
-	//fprintf(stderr,"setRxGain id %d\n",id);
+	//winout("setRxGain id %d\n",id);
 	
 	double rxgain=event.GetSelection();
 	
@@ -2050,7 +2065,7 @@ void BasicPane::OnTextBandWidth(wxCommandEvent &event)
 {
 	event.Skip();
 	
-	//fprintf(stderr,"OnTextBandWidth\n");
+	//winout("OnTextBandWidth\n");
 	
 	wxString bandwidth=event.GetString();
 	
@@ -2075,16 +2090,16 @@ void BasicPane::setBandwidth(wxCommandEvent &event)
 {
 	event.Skip();
 	
-	//fprintf(stderr,"setBandwidth\n");
+	//winout("setBandwidth\n");
 	
-	//fprintf(stderr,"Filter %d\n",bandwidthCombo->GetSelection());
+	//winout("Filter %d\n",bandwidthCombo->GetSelection());
 	
 	
 	wxString bandWidths=event.GetString();
 
 	//const char *bandWidth=bandWidths.c_str();
 
-   //fprintf(stderr,"bandWidth %s len %d\n",bandWidth,(int)strlen(bandWidth));
+   //winout("bandWidth %s len %d\n",bandWidth,(int)strlen(bandWidth));
    
     s->bS=NULL;
 
@@ -2107,7 +2122,7 @@ void BasicPane::OnMinimun(wxCommandEvent &event)
 
 	float gain=event.GetSelection();
 	gSpectrum->verticalMinimum=gain;
-	//fprintf(stderr,"min gain %g\n",gain);
+	//winout("min gain %g\n",gain);
 	if(gain+20 > gSpectrum->verticalMaximum)gSpectrum->verticalMaximum=gain+20;
 
 }
@@ -2116,7 +2131,7 @@ void BasicPane::OnMaximun(wxCommandEvent &event)
 	event.Skip();
 	float gain=event.GetSelection();
 	gSpectrum->verticalMaximum=gain;
-	//fprintf(stderr,"max gain %g\n",gain);
+	//winout("max gain %g\n",gain);
 	if(gain-20 < gSpectrum->verticalMinimum)gSpectrum->verticalMinimum=gain-20;
 
 }
@@ -2124,25 +2139,25 @@ void BasicPane::OnMaximun(wxCommandEvent &event)
 void BasicPane::setSampleRate(wxCommandEvent &event)
 {
 	event.Skip();
-	fprintf(stderr,"setSampleRate\n");
+	winout("setSampleRate\n");
 	
-	fprintf(stderr,"Filter %d\n",sampleRateCombo->GetSelection());
+	winout("Filter %d\n",sampleRateCombo->GetSelection());
 	
 
 	wxString name=sampleRateCombo->GetValue();
 
-	fprintf(stderr,"S1\n");
+	winout("S1\n");
 
 	
 	if(!name)return;
 	
-	fprintf(stderr,"S2\n");
+	winout("S2\n");
 	
 	const char *mode=name.ToUTF8().data();
 	
 	std::string number=mode;
 	
-	fprintf(stderr,"Filter %s\n",number.c_str());
+	winout("Filter %s\n",number.c_str());
 
 
 }
@@ -2178,7 +2193,7 @@ void BasicPane::OnScroll(wxCommandEvent &event)
 	//int which=event.GetId();
 	float gain=event.GetSelection();
 	if(event.GetId() == SCROLL_GAIN){
-	//	printf("OnScroll gain %g %d \n",gain,event.GetId());
+	//	winout("OnScroll gain %g %d \n",gain,event.GetId());
 		s->gain=0.01*gain;
 //		gain=value;
 		return;
@@ -2197,7 +2212,7 @@ void BasicPane::OnScroll(wxCommandEvent &event)
 
 	std::string number=mode;
 	
-	fprintf(stderr,"Filter %s %d\n",number.c_str(),filterCombo->GetSelection());
+	winout("Filter %s %d\n",number.c_str(),filterCombo->GetSelection());
 	
 	gSpectrum->filterType=filterCombo->GetSelection();
 
@@ -2207,7 +2222,7 @@ void BasicPane::OnScroll(wxCommandEvent &event)
  void BasicPane::render( wxPaintEvent& evt )
 {
 	evt.Skip();
-	//fprintf(stderr,"BasicPane:render sdr->decodemode %d\n",sdr->decodemode);
+	//winout("BasicPane:render sdr->decodemode %d\n",sdr->decodemode);
 	modeBox->SetSelection(sdr->decodemode);
 
 }
@@ -2215,7 +2230,7 @@ void BasicPane::OnScroll(wxCommandEvent &event)
  void BasicPane::resized(wxSizeEvent& evt)
 {
 //	wxGLCanvas::OnSize(evt);
-	//fprintf(stderr,"BasicPane::resized %d %d\n",getWidth(),getHeight());
+	//winout("BasicPane::resized %d %d\n",getWidth(),getHeight());
 	ScrolledWindow->SetSize(0,0,getWidth(),getHeight());
 	evt.Skip();
    	Refresh();
@@ -2233,7 +2248,7 @@ int BasicPane::getHeight()
 
 void BasicPane::mouseMoved(wxMouseEvent& event) {	event.Skip();}
 
-void BasicPane::mouseDown(wxMouseEvent& event) {	event.Skip(); fprintf(stderr,"BasicPane::mouseDown\n");}
+void BasicPane::mouseDown(wxMouseEvent& event) {	event.Skip(); winout("BasicPane::mouseDown\n");}
 
 /*
 void BasicPane::OnButton(wxCommandEvent& event) 
@@ -2261,7 +2276,7 @@ void BasicPane::OnTimer(wxTimerEvent &event){
 		Sleep2(10);
 		return;
 	}
-	//fprintf(stderr,"BasicPane::OnTimer\n");
+	//winout("BasicPane::OnTimer\n");
 	
 	if(gSpectrum->iWait){
 		iRefresh=1;
@@ -2269,7 +2284,7 @@ void BasicPane::OnTimer(wxTimerEvent &event){
 		return;
 	}
 	
-	//fprintf(stderr,"BasicPane::OnTimer gSpectrum->iWait %d gSpectrum->sdr %p\n",gSpectrum->iWait,gSpectrum->sdr);
+	//winout("BasicPane::OnTimer gSpectrum->iWait %d gSpectrum->sdr %p\n",gSpectrum->iWait,gSpectrum->sdr);
 	
 	//auto t1 = std::chrono::high_resolution_clock::now();
 
@@ -2282,32 +2297,32 @@ void BasicPane::OnTimer(wxTimerEvent &event){
 			//if(fabs(buff[2*n]) > amax)amax=fabs(buff[2*n]);
 		}
 		
-		//fprintf(stderr,"sdr->saveFlag %d buffSendLength %d buffFlag %d\n",sdr->saveFlag,buffSendLength,buffFlag);
+		//winout("sdr->saveFlag %d buffSendLength %d buffFlag %d\n",sdr->saveFlag,buffSendLength,buffFlag);
 		
 		gSpectrum->buffFlag=1;
 		
 	    gSpectrum->sdr->saveFlag=0;
 	}else{
-		//fprintf(stderr,"Save Not Set\n");
+		//winout("Save Not Set\n");
 	}
 	
 	if(iRefresh){
 		iRefresh=0;
 		gTopPane->Refresh();
 		Refresh();
-		//fprintf(stderr,"gTopPane->Refresh called f %g sdr->decodemode %d\n",sdr->f,sdr->decodemode);
+		//winout("gTopPane->Refresh called f %g sdr->decodemode %d\n",sdr->f,sdr->decodemode);
 	}
 	
 	if(gSpectrum->buffFlag){
 		gSpectrum->Refresh();
 		gWaterFall->Refresh();
 	}else{
-	 // fprintf(stderr,"OnTimer Skip call\n");
+	 // winout("OnTimer Skip call\n");
 	}
 	
 	//auto t2 = std::chrono::high_resolution_clock::now();
 	//std::chrono::duration<double> difference = t2 - t1;
-	//fprintf(stderr,"Time in OnTimer %g\n",difference.count());
+	//winout("Time in OnTimer %g\n",difference.count());
 
 	
 	
@@ -2323,9 +2338,9 @@ void BasicPane::OnComboSampleRate(wxCommandEvent& event)
 
 //	const char *rate=rates.c_str();
 
-//	fprintf(stderr,"rate %s len %d\n",rate,(int)strlen(rate));
+//	winout("rate %s len %d\n",rate,(int)strlen(rate));
 
-	//fprintf(stderr,"Start Stop\n");
+	//winout("Start Stop\n");
 	
 	s->bS=NULL;
 
@@ -2342,7 +2357,7 @@ void BasicPane::OnComboSampleRate(wxCommandEvent& event)
 	Sleep2(50);
 	
 	
-	//fprintf(stderr,"Stop Stop sdr->samplerate %g\n",sdr->samplerate);
+	//winout("Stop Stop sdr->samplerate %g\n",sdr->samplerate);
 
 	
 	sdr->startPlay();
@@ -2358,7 +2373,7 @@ void BasicPane::OnComboAntenna(wxCommandEvent& event)
 		
 		const char *antenna=antennas.c_str();
 		
-		//fprintf(stderr,"antenna %s len %d\n",antenna,(int)strlen(antenna));
+		//winout("antenna %s len %d\n",antenna,(int)strlen(antenna));
 		
 		sdr->device->setAntenna(SOAPY_SDR_RX, sdr->channel, antenna);
 
@@ -2366,13 +2381,13 @@ void BasicPane::OnComboAntenna(wxCommandEvent& event)
 
 void BasicPane::OnCombo(wxCommandEvent& event){
 	//int ngroup=event.GetSelection();
-//	printf("OnCombo %d IsChecked %d\n",item,event.IsChecked());
+//	winout("OnCombo %d IsChecked %d\n",item,event.IsChecked());
 //	noteCheckBox=event.IsChecked();
 
 		event.Skip();
 		
 		
-	//fprintf(stderr,"BasicPane::OnCombo\n");
+	//winout("BasicPane::OnCombo\n");
 
 	wxString number=event.GetString();
 	
@@ -2382,7 +2397,7 @@ void BasicPane::OnCombo(wxCommandEvent& event){
 	
 
     if(!gSpectrum->buffSend10){
-    	fprintf(stderr,"Radio Not Running\n");
+    	winout("Radio Not Running\n");
     	return;
 	}
 	
@@ -2422,7 +2437,7 @@ void BasicPane::OnCombo(wxCommandEvent& event){
 	gSpectrum->buffSendLength=np;
 
 
-//	printf("np %d iWait %d saveCall %d iWait %p\n",np,gSpectrum->iWait,gSpectrum->sdr->saveCall,&gSpectrum->iWait);
+//	winout("np %d iWait %d saveCall %d iWait %p\n",np,gSpectrum->iWait,gSpectrum->sdr->saveCall,&gSpectrum->iWait);
 	
 }
 
@@ -2435,7 +2450,7 @@ void BasicPane::OnButton2(wxCommandEvent& event)
     
    // int flag=event.GetValue();
      
-   //	fprintf(stderr,"OnButton2 id %d flag %d\n",id,flag);
+   //	winout("OnButton2 id %d flag %d\n",id,flag);
     
 
 	//sdr->printDevices();
@@ -2452,7 +2467,7 @@ void BasicPane::OnButton2(wxCommandEvent& event)
 	
 //	wxWindow::SetSize(wxDefaultCoord,wxDefaultCoord,200,200);
 	
-//	fprintf(stderr,"Select Device OUT\n");
+//	winout("Select Device OUT\n");
 
 }
 void BasicPane::radioBox(wxCommandEvent& event) 
@@ -2470,10 +2485,10 @@ void BasicPane::radioBox(wxCommandEvent& event)
 
 BasicPane::~BasicPane()
 {
-	//fprintf(stderr,"exit1 BasicPane %p thread %llx\n",this,(long long)std::this_thread::get_id);
+	//winout("exit1 BasicPane %p thread %llx\n",this,(long long)std::this_thread::get_id);
 	if(sdr)delete sdr;
 	sdr=NULL;
-	//fprintf(stderr,"exit2 BasicPane %p thread %llx\n",this,(long long)std::this_thread::get_id);
+	//winout("exit2 BasicPane %p thread %llx\n",this,(long long)std::this_thread::get_id);
 }
 
 
@@ -2531,7 +2546,7 @@ void WaterFall::mouseWheelMoved(wxMouseEvent& event)
 			sdr->setFrequency(frequency);
 		}
 		gTopPane->Refresh();
-//		fprintf(stderr,"bw %g %ld\n",sdr->bw,(long)event.ControlDown());
+//		winout("bw %g %ld\n",sdr->bw,(long)event.ControlDown());
 	}
 }
 void WaterFall::mouseDown(wxMouseEvent& event) 
@@ -2541,8 +2556,8 @@ void WaterFall::mouseDown(wxMouseEvent& event)
 	wxPoint pp3 = event.GetLogicalPosition(wxClientDC(this))*scaleFactor;
 	if(sdr){
 		double fx=sdr->fw-0.5*sdr->samplewidth + sdr->samplewidth*(pp3.x)/((double)getWidth());
-		//printf("mouseDown x %d y %d sdr->fc %g sdr->f %g sdr->samplerate %g fx %g width %d\n",p1.x,p1.y,sdr->fc,sdr->f,sdr->samplerate,fx,getWidth());
-		//printf(" fx %g\n",fx);
+		//winout("mouseDown x %d y %d sdr->fc %g sdr->f %g sdr->samplerate %g fx %g width %d\n",p1.x,p1.y,sdr->fc,sdr->f,sdr->samplerate,fx,getWidth());
+		//winout(" fx %g\n",fx);
 		if(sdr->samplescale < 0.98){
 			sdr->setCenterFrequency(fx);
 		}else{
@@ -2555,7 +2570,7 @@ void WaterFall::mouseDown(wxMouseEvent& event)
 }
 // some useful events to use
 void WaterFall::mouseMoved(wxMouseEvent& event) {
-	//fprintf(stderr,"mouseMoved \n");
+	//winout("mouseMoved \n");
 		event.Skip();
 
 }
@@ -2566,7 +2581,7 @@ WaterFall::~WaterFall()
 	if(water.data)cFree((char *)water.data);
 	water.data=NULL;
 
-	//fprintf(stderr,"exit WaterFall %p\n",this);
+	//winout("exit WaterFall %p\n",this);
 }
 
 void WaterFall::prepare2DViewport(int topleft_x, int topleft_y, int bottomrigth_x, int bottomrigth_y)
@@ -2622,7 +2637,7 @@ void WaterFall::render2()
 void WaterFall::render( wxPaintEvent& evt )
 {
 	evt.Skip();
-//   fprintf(stderr,"WaterFall::render\n");
+//   winout("WaterFall::render\n");
 
     if(!IsShown()) return;
     
@@ -2634,7 +2649,7 @@ void WaterFall::render( wxPaintEvent& evt )
     //auto t1 = chrono::high_resolution_clock::now();
     
 
-   // fprintf(stderr,"WaterFall render 2\n");
+   // winout("WaterFall render 2\n");
         
     wxGLCanvas::SetCurrent(*m_context);
     wxPaintDC(this); // only to be used in paint events. use wxClientDC to paint outside the paint event
@@ -2687,7 +2702,7 @@ void WaterFall::render( wxPaintEvent& evt )
     	pd.sPmax=pmax;
     }
     
-//   fprintf(stderr,"rmin %g rmax %g amin %g amax %g\n",rmin,rmax,amin,amax);
+//   winout("rmin %g rmax %g amin %g amax %g\n",rmin,rmax,amin,amax);
     
     
     if(water.nline >= water.ysize)water.nline=0;
@@ -2720,7 +2735,7 @@ void WaterFall::render( wxPaintEvent& evt )
     }
     
     
-    //fprintf(stderr,"nmin %d nmax %d dxn %g\n",nmin,nmax,dxn);
+    //winout("nmin %d nmax %d dxn %g\n",nmin,nmax,dxn);
    
     
     double dxw=(double)(water.xsize-1)/(double)(length-1);
@@ -2743,12 +2758,12 @@ void WaterFall::render( wxPaintEvent& evt )
         
         
 
-//            fprintf(stderr,"nn %d nn2 %d nnn %d n %d next %d ic %d ics %d\n",nn,nn2,nnn,n,next,ic,ics);
+//            winout("nn %d nn2 %d nnn %d n %d next %d ic %d ics %d\n",nn,nn2,nnn,n,next,ic,ics);
 
         if(ic > ics)ics=ic;
         
         if(nn == nn2){
-        	//fprintf(stderr,"2 nn %d nn2 %d nnn %d\n",nn,nn2,nnn);
+        	//winout("2 nn %d nn2 %d nnn %d\n",nn,nn2,nnn);
            continue;
         }
         ic=ics;
@@ -2756,7 +2771,7 @@ void WaterFall::render( wxPaintEvent& evt )
         ics=wateric[next];
         
         if(nn < 0 || nn >= water.SRect.xsize){
-            fprintf(stderr,"nn %d nn2 %d nnn %d n %d next %d ic %d ics %d\n",nn,nn2,nnn,n,next,ic,ics);
+            winout("nn %d nn2 %d nnn %d n %d next %d ic %d ics %d\n",nn,nn2,nnn,n,next,ic,ics);
 			exit(1);
         }
                 
@@ -2772,7 +2787,7 @@ void WaterFall::render( wxPaintEvent& evt )
     
     water.SRect.y=water.ysize+1-water.nline;
     
-   // fprintf(stderr,"x %d y %d xsize %d ysize %d \n",water.SRect.x,water.SRect.y,water.SRect.xsize,water.SRect.ysize);
+   // winout("x %d y %d xsize %d ysize %d \n",water.SRect.x,water.SRect.y,water.SRect.xsize,water.SRect.ysize);
 
     int xsize=water.SRect.xsize;
     
@@ -2788,16 +2803,16 @@ void WaterFall::render( wxPaintEvent& evt )
 	xs=ftox(sdr->f+sdr->bw/2.0);
 	DrawLine(xs, 0, xs, getHeight());
 	
-//	fprintf(stderr,"xs %d iWait %d\n",xs,iWait);
+//	winout("xs %d iWait %d\n",xs,iWait);
 
 /*
  		
- 		//fprintf(stderr," left %d right %d center %d xsize %d bw %g\n",ftox(sdr->f-sdr->bw/2.0),ftox(sdr->f+sdr->bw/2.0),ftox(sdr->f),box.xsize,sdr->bw);
+ 		//winout(" left %d right %d center %d xsize %d bw %g\n",ftox(sdr->f-sdr->bw/2.0),ftox(sdr->f+sdr->bw/2.0),ftox(sdr->f),box.xsize,sdr->bw);
  		
  		DrawBox(&box,0);
 */
 
-//	fprintf(stderr,"Waterfall f %p\n",&sdr->f);
+//	winout("Waterfall f %p\n",&sdr->f);
 
     	if(range)delete [] range;
     	range=NULL;
@@ -2840,7 +2855,7 @@ int WaterFall::SetWindow()
     
     water.data=(unsigned char *)cMalloc(2*xsize*ysize*3,9999);
     
-  //  fprintf(stderr,"WaterFall::SetWindow\n");
+  //  winout("WaterFall::SetWindow\n");
     
     if(!water.data)return 1;
     
@@ -3032,7 +3047,7 @@ END_EVENT_TABLE()
 
 // some useful events to use
 void Spectrum::mouseMoved(wxMouseEvent& event) {
-	//fprintf(stderr,"mouseMoved \n");
+	//winout("mouseMoved \n");
 	event.Skip();
 }
 void Spectrum::mouseReleased(wxMouseEvent& event) {event.Skip();}
@@ -3058,7 +3073,7 @@ void Spectrum::mouseWheelMoved(wxMouseEvent& event)
 		}
 	
 		gTopPane->Refresh();
-//		fprintf(stderr,"bw %g %ld\n",sdr->bw,(long)event.ControlDown());
+//		winout("bw %g %ld\n",sdr->bw,(long)event.ControlDown());
 	}
 
 }
@@ -3069,16 +3084,16 @@ void Spectrum::OnChar(wxKeyEvent& event)
 	
 	int keycode=event.GetKeyCode();
 	
-	fprintf(stderr,"Spectrum::OnChar %d\n",keycode);
+	winout("Spectrum::OnChar %d\n",keycode);
 	
     if(keycode == 'w'){
         iWait = !iWait;
-        fprintf(stderr,"iWait %d\n",iWait);
+        winout("iWait %d\n",iWait);
     }
 
     if(keycode == 'n'){
         sdr->iWait = !sdr->iWait;
-        fprintf(stderr,"sdr->iWait %d\n",sdr->iWait);
+        winout("sdr->iWait %d\n",sdr->iWait);
     }
     
     if(keycode == 'm' || keycode == 'M' ){
@@ -3146,7 +3161,7 @@ Spectrum::Spectrum(wxFrame* parent, int* args) :
     lineTime=ftime()+lineDumpInterval;
 
     
-  //  printf("Groups of triangles %ld vender %s\n",triangle,glGetString(GL_VENDOR));
+  //  winout("Groups of triangles %ld vender %s\n",triangle,glGetString(GL_VENDOR));
   
 	//Bind(wxEVT_CHAR, &Spectrum::OnChar, this);    
 }
@@ -3189,7 +3204,7 @@ double Spectrum::ftime()
 
 void Spectrum::startRadio2() 
 {
-//	fprintf(stderr,"startRadio2 Start sdr %p thread %llx\n",sdr,(long long)std::this_thread::get_id);
+	//winout("startRadio2 Start sdr %p thread %llx\n",sdr,(long long)std::this_thread::get_id);
 	
     
     if(buffSend10){
@@ -3213,10 +3228,10 @@ void Spectrum::startRadio2()
 	p1 = fftwf_plan_dft_1d(np,(fftwf_complex *)buffSend2, (fftwf_complex *)buffSend, FFTW_FORWARD, FFTW_ESTIMATE);
 	
 	sdr->setDataSave(np);
-	
-	sdr->run();
-	
-//   fprintf(stderr,"startRadio2 out sdr %p thread %llx \n",sdr,(long long)std::this_thread::get_id);
+		
+	std::thread(&sdrClass::run,sdr).detach();
+		
+   //winout("startRadio2 out sdr %p thread %llx \n",sdr,(long long)std::this_thread::get_id);
 
 }
 
@@ -3226,7 +3241,7 @@ void Spectrum::keyPressed(wxKeyEvent& event)
     wxString key;
     long keycode = event.GetKeyCode();
     
-    fprintf(stderr,"keycode keyPressed %ld\n",keycode);
+    winout("keycode keyPressed %ld\n",keycode);
     
     if(keycode == 84){
     	doTestSpeed();
@@ -3234,12 +3249,12 @@ void Spectrum::keyPressed(wxKeyEvent& event)
         
     if(keycode == 87){
         iWait = !iWait;
-        fprintf(stderr,"iWait %d\n",iWait);
+        winout("iWait %d\n",iWait);
     }
 
     if(keycode == 78){
         sdr->iWait = !sdr->iWait;
-        fprintf(stderr,"sdr->iWait %d\n",sdr->iWait);
+        winout("sdr->iWait %d\n",sdr->iWait);
     }
     
 	event.Skip();
@@ -3251,7 +3266,7 @@ int Spectrum::doTestSpeed()
 	long n;
 	double den;
 	
-	fprintf(stderr,"doTestSpeed\n");
+	winout("doTestSpeed\n");
 	//count=0;
 	
 	start=rtime();
@@ -3281,14 +3296,14 @@ Spectrum::~Spectrum()
 	buffSend10=NULL;
 	buffSend2=NULL;
 	buffSend=NULL;
-	//fprintf(stderr,"exit Spectrum %p\n",this);
+	//winout("exit Spectrum %p\n",this);
 
 }
 
 void Spectrum::resized(wxSizeEvent& evt)
 {
 //	wxGLCanvas::OnSize(evt);
-	//fprintf(stderr,"Spectrum::resized %d %d\n",getWidth(),getHeight());
+	//winout("Spectrum::resized %d %d\n",getWidth(),getHeight());
 	evt.Skip();
 	scaleFactor=GetContentScaleFactor();
 	Refresh();
@@ -3315,19 +3330,19 @@ void Spectrum::mouseDown(wxMouseEvent& event)
 	if(buffSendLength){
 		if(sdr){
 		    double fx=sdr->fw-0.5*sdr->samplewidth + sdr->samplewidth*(pp3.x)/((double)getWidth());
-			//printf("mouseDown x %d y %d sdr->fc %g sdr->f %g sdr->samplerate %g fx %g width %d\n",p1.x,p1.y,sdr->fc,sdr->f,sdr->samplerate,fx,getWidth());
-			//printf(" fx %g\n",fx);
+			//winout("mouseDown x %d y %d sdr->fc %g sdr->f %g sdr->samplerate %g fx %g width %d\n",p1.x,p1.y,sdr->fc,sdr->f,sdr->samplerate,fx,getWidth());
+			//winout(" fx %g\n",fx);
 			if(sdr->samplescale < 0.98){
 				sdr->setCenterFrequency(fx);
 			}else{
 				sdr->setFrequency(fx);
 			}
 			s->bS=sdr->bS;
-			//fprintf(stderr,"Spectrum::mouseDown %p %p\n",s->bS,sdr->bS);
+			//winout("Spectrum::mouseDown %p %p\n",s->bS,sdr->bS);
 			gTopPane->Refresh();
 		}
 	}else{
-		fprintf(stderr,"Spectrum::mouseDown x %d y %d\n",pp3.x,pp3.y);
+		winout("Spectrum::mouseDown x %d y %d\n",pp3.x,pp3.y);
 	}
 
 }
@@ -3398,7 +3413,7 @@ void Spectrum::render(wxPaintEvent& evt )
 	tick++;
 	tick=10;
 */
-	//fprintf(stderr,"Spectrum render nc %lld\n",nc++);
+	//winout("Spectrum render nc %lld\n",nc++);
 
     if(!IsShown()) return;
     
@@ -3434,13 +3449,13 @@ void Spectrum::render(wxPaintEvent& evt )
  		box.xsize=ftox(sdr->f+sdr->bw/(2.0))-ftox(sdr->f-sdr->bw/(2.0));
  		box.ysize=getHeight();
  		
- 		//fprintf(stderr," left %d right %d center %d xsize %d bw %g\n",ftox(sdr->f-sdr->bw/2.0),ftox(sdr->f+sdr->bw/2.0),ftox(sdr->f),box.xsize,sdr->bw);
+ 		//winout(" left %d right %d center %d xsize %d bw %g\n",ftox(sdr->f-sdr->bw/2.0),ftox(sdr->f+sdr->bw/2.0),ftox(sdr->f),box.xsize,sdr->bw);
  		
  		DrawBox(&box,0);
  		
 		glColor4f(0, 0, 1, 1);
 		
-		//fprintf(stderr,"filterType %d\n",filterType);
+		//winout("filterType %d\n",filterType);
 		
 		doWindow(buffSend2,buffSendLength,filterType);
 		
@@ -3506,7 +3521,7 @@ void Spectrum::render(wxPaintEvent& evt )
 		double dx2=xmax2-xmin2;
 		
 		
-		//fprintf(stderr,"buffSendLength %ld lineAlpha %g\n",(long)buffSendLength,lineAlpha);
+		//winout("buffSendLength %ld lineAlpha %g\n",(long)buffSendLength,lineAlpha);
 			
 		for(int n=0;n<buffSendLength;++n){
 			double sum=0;
@@ -3555,9 +3570,9 @@ void Spectrum::render(wxPaintEvent& evt )
 			double bw=sdr->samplewidth/(2.0);
 			xmnc=fc-bw;
 			xmxc=fc+bw;
-			//fprintf(stderr,"xmnc %g xmxc %g value %g samplewidth %g\n",xmnc,xmxc,value,sdr->samplewidth);
+			//winout("xmnc %g xmxc %g value %g samplewidth %g\n",xmnc,xmxc,value,sdr->samplewidth);
 			GridPlotNeat(&xmnc,&xmxc,&Large,&Small);
-			//fprintf(stderr,"xmnc %g xmxc %g Large %g Small %g %g %g\n",xmnc,xmxc,Large,Small,xmnc/Large,xmxc/Large);
+			//winout("xmnc %g xmxc %g Large %g Small %g %g %g\n",xmnc,xmxc,Large,Small,xmnc/Large,xmxc/Large);
 			
 			for(double xp=xmnc;xp <= xmxc;xp += Large){
 				char cbuff[256];
@@ -3567,17 +3582,17 @@ void Spectrum::render(wxPaintEvent& evt )
 			    int ixx=(int)(idx*xx);
 			    if(ixx < ixmin || ixx > ixmax)continue;
  				DrawLine3(ixx, 0, ixx, getHeight()-15);
- 				//fprintf(stderr," %g ",xx);
+ 				//winout(" %g ",xx);
  				DrawString(ixx-10,getHeight()-13, cbuff);
 			}
-			//fprintf(stderr," idx %g\n",idx);
+			//winout(" idx %g\n",idx);
 			
 			
 			xmnc=ymin;
 			xmxc=ymax;
-			//fprintf(stderr,"xmnc %g xmxc %g\n",xmnc,xmxc);
+			//winout("xmnc %g xmxc %g\n",xmnc,xmxc);
 			GridPlotNeat(&xmnc,&xmxc,&Large,&Small);
-			//fprintf(stderr,"xmnc %g xmxc %g Large %g Small %g %g %g\n",xmnc,xmxc,Large,Small,xmnc/Large,xmxc/Large);
+			//winout("xmnc %g xmxc %g Large %g Small %g %g %g\n",xmnc,xmxc,Large,Small,xmnc/Large,xmxc/Large);
 			
 			for(double xp=xmnc;xp <= xmxc;xp += Large){
 				char cbuff[256];
@@ -3586,12 +3601,12 @@ void Spectrum::render(wxPaintEvent& evt )
 			    if(xx < 0.0 || xx > 1.0)continue;
 			    int ixx=(int)(iymax+idy*xx);
 			    //int ixx=(int)(iymax-xx*idy);
-				//fprintf(stderr," %d %g ",ixx,xx);
+				//winout(" %d %g ",ixx,xx);
  				DrawLine3(30, ixx, getWidth(), ixx);
- 				//fprintf(stderr," %g ",xx);
+ 				//winout(" %g ",xx);
  				DrawString(5,ixx-8,cbuff);
 			}
-			//fprintf(stderr," idy %g\n",idy);
+			//winout(" idy %g\n",idy);
 		
  		}
 		
@@ -3599,25 +3614,25 @@ void Spectrum::render(wxPaintEvent& evt )
 /*		
 		if(tick % 40 == 0){
 			double dt=1.0;
-			fprintf(stderr,"plot %d signal\n",buffSendLength);
+			winout("plot %d signal\n",buffSendLength);
 			for(int n=0;n<buffSendLength;++n){
-			//	fprintf(stderr,"%f %f\n",n*dt,(buffSend[2*n]*buffSend[2*n]+buffSend[2*n+1]*buffSend[2*n+1]));
-				fprintf(stderr,"%f %f\n",n*dt,buffSend10[n]);
+			//	winout("%f %f\n",n*dt,(buffSend[2*n]*buffSend[2*n]+buffSend[2*n+1]*buffSend[2*n+1]));
+				winout("%f %f\n",n*dt,buffSend10[n]);
 			}
 		}
 */
 
 		
-		//fprintf(stderr,"ixxmin %d ixxmax %d getWidth() %d iyymin %d iyymax %d getHeight() %d\n",ixxmin,ixxmax,getWidth(),iyymin,iyymax,getHeight());
+		//winout("ixxmin %d ixxmax %d getWidth() %d iyymin %d iyymax %d getHeight() %d\n",ixxmin,ixxmax,getWidth(),iyymin,iyymax,getHeight());
 
 		//auto t2 = chrono::high_resolution_clock::now();
 		//std::chrono::duration<double> difference = t2 - t1;
 		//std::cout << "Time "<< difference.count() << endl;
-		//fprintf(stderr,"count %g\n",difference.count());
+		//winout("count %g\n",difference.count());
 
 	}
 
-	//fprintf(stderr,"Spectrum done\n");
+	//winout("Spectrum done\n");
 		
     glFlush();
     SwapBuffers();
@@ -3682,7 +3697,7 @@ int doWindow(float *x,long length,int type)
         if(w)delete w;
         lengthSave=length;
         w=new float[lengthSave];
-//      fprintf(stderr,"lengthSave %ld\n",lengthSave);
+//      winout("lengthSave %ld\n",lengthSave);
    	}
    
     int i;
@@ -4015,7 +4030,7 @@ static void GridPlotNeat(double *xmnc,double *xmxc,double *Large,double *Small)
     
     step=stepi;
     
-    //printf("step %g stepi %lld\n",step,stepi);
+    //winout("step %g stepi %lld\n",step,stepi);
     
     min=(xmn-step)/step;
     xmin=min*step;
@@ -4023,7 +4038,7 @@ static void GridPlotNeat(double *xmnc,double *xmxc,double *Large,double *Small)
     max=(xmx+step)/step;
     xmax=max*step;
     
-    //printf("xmin %g xmax %g\n\n",xmin,xmax);
+    //winout("xmin %g xmax %g\n\n",xmin,xmax);
     
     *Large=step;
     
@@ -4044,33 +4059,33 @@ int testEM()
     bw=10e6;
     xmnc=fc-bw;
     xmxc=fc+bw;
-    fprintf(stderr,"xmnc %g xmxc %g\n",xmnc,xmxc);
+    winout("xmnc %g xmxc %g\n",xmnc,xmxc);
     GridPlotNeat(&xmnc,&xmxc,&Large,&Small);
-    fprintf(stderr,"xmnc %g xmxc %g Large %g Small %g %g %g\n",xmnc,xmxc,Large,Small,xmnc/Large,xmxc/Large);
+    winout("xmnc %g xmxc %g Large %g Small %g %g %g\n",xmnc,xmxc,Large,Small,xmnc/Large,xmxc/Large);
     bw=1e6;
     xmnc=fc-bw;
     xmxc=fc+bw;
-    fprintf(stderr,"xmnc %g xmxc %g\n",xmnc,xmxc);
+    winout("xmnc %g xmxc %g\n",xmnc,xmxc);
     GridPlotNeat(&xmnc,&xmxc,&Large,&Small);
-    fprintf(stderr,"xmnc %g xmxc %g Large %g Small %g %g %g\n",xmnc,xmxc,Large,Small,xmnc/Large,xmxc/Large);
+    winout("xmnc %g xmxc %g Large %g Small %g %g %g\n",xmnc,xmxc,Large,Small,xmnc/Large,xmxc/Large);
     bw=0.1e6;
     xmnc=fc-bw;
     xmxc=fc+bw;
-    fprintf(stderr,"xmnc %g xmxc %g\n",xmnc,xmxc);
+    winout("xmnc %g xmxc %g\n",xmnc,xmxc);
     GridPlotNeat(&xmnc,&xmxc,&Large,&Small);
-    fprintf(stderr,"xmnc %g xmxc %g Large %g Small %g %g %g\n",xmnc,xmxc,Large,Small,xmnc/Large,xmxc/Large);
+    winout("xmnc %g xmxc %g Large %g Small %g %g %g\n",xmnc,xmxc,Large,Small,xmnc/Large,xmxc/Large);
     bw=0.01e6;
     xmnc=fc-bw;
     xmxc=fc+bw;
-    fprintf(stderr,"xmnc %g xmxc %g\n",xmnc,xmxc);
+    winout("xmnc %g xmxc %g\n",xmnc,xmxc);
     GridPlotNeat(&xmnc,&xmxc,&Large,&Small);
-    fprintf(stderr,"xmnc %g xmxc %g Large %g Small %g %g %g\n",xmnc,xmxc,Large,Small,xmnc/Large,xmxc/Large);
+    winout("xmnc %g xmxc %g Large %g Small %g %g %g\n",xmnc,xmxc,Large,Small,xmnc/Large,xmxc/Large);
     bw=0.001e6;
     xmnc=fc-bw;
     xmxc=fc+bw;
-    fprintf(stderr,"xmnc %g xmxc %g\n",xmnc,xmxc);
+    winout("xmnc %g xmxc %g\n",xmnc,xmxc);
     GridPlotNeat(&xmnc,&xmxc,&Large,&Small);
-    fprintf(stderr,"xmnc %g xmxc %g Large %g Small %g %g %g\n",xmnc,xmxc,Large,Small,xmnc/Large,xmxc/Large);
+    winout("xmnc %g xmxc %g Large %g Small %g %g %g\n",xmnc,xmxc,Large,Small,xmnc/Large,xmxc/Large);
     
     return 0;
 }

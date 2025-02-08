@@ -446,6 +446,8 @@ public:
 	void doQuit();
 	void OnFile(wxCommandEvent& event );
 	void OnTest(wxCommandEvent& event );
+	void OnIdle(wxIdleEvent& event); 
+
 
 	void OnTimer(wxTimerEvent &event);
 	void OnCombo(wxCommandEvent& event);

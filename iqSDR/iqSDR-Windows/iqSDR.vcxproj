@@ -36,6 +36,7 @@
     <ClCompile Include="..\src\sdr.cpp" />
     <ClCompile Include="..\src\send.cpp" />
     <ClCompile Include="..\src\sound.cpp" />
+    <ClCompile Include="..\src\WarningBatch.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\bStack.h" />
@@ -46,6 +47,7 @@
     <ClInclude Include="..\src\sdr.h" />
     <ClInclude Include="..\src\SocketDefs.h" />
     <ClInclude Include="..\src\sound.h" />
+    <ClInclude Include="..\src\WarningBatch.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{F408F215-DE56-42E5-8004-C3640467BBA9}</ProjectGuid>

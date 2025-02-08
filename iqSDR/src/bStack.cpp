@@ -1,6 +1,8 @@
 
 #include "bStack.h"
 
+void winout(const char *fmt, ...);
+
 cStack::cStack()
 {
     bufftopa=0;
@@ -9,7 +11,7 @@ cStack::cStack()
     for(int k=0;k<NUM_DATA_BUFF2;++k){
         buffStack[k]=0;
         buff[k]=NULL;
-    //	fprintf(stderr,"k %d buff[k] %p\n",k,buff[k]);
+    //	winout("k %d buff[k] %p\n",k,buff[k]);
     }
     for(int k=0;k<NUM_ABUFF2;++k){
     	buffStacka[k]=0;
@@ -28,7 +30,7 @@ cStack::~cStack()
 		buffa[k]=NULL;
 	}
 	
-	//fprintf(stderr,"Exit cStack %p\n",this);
+	//winout("Exit cStack %p\n",this);
 }
 
 int cStack::setBuff(int sizei,int faudioi)
@@ -37,11 +39,11 @@ int cStack::setBuff(int sizei,int faudioi)
 	faudio=faudioi;
 
 	for(int k=0;k<NUM_DATA_BUFF2;++k){
-	//    fprintf(stderr,"k %d buff %p\n",k,buff[k]);
+	//    winout("k %d buff %p\n",k,buff[k]);
 		if(buff[k])cFree((char *)buff[k]);
 		buff[k]=(float *)cMalloc(2*size*4*8,5777);
 		if(!buff[k]){
-			fprintf(stderr,"5 cMalloc Errror %ld\n",(long)(2*size*4));
+			winout("5 cMalloc Errror %ld\n",(long)(2*size*4));
 			return 1;
 		}
 		zerol((unsigned char *)buff[k],2*size*4);
@@ -52,7 +54,7 @@ int cStack::setBuff(int sizei,int faudioi)
 		if(buffa[k])cFree((char *)buffa[k]);
 		buffa[k]=(short int *)cMalloc((size_t)(2*faudio*4),5272);
 		if(!buffa[k]){
-			fprintf(stderr,"10 cMalloc Errror %ld\n",(long)(2*faudio*4));
+			winout("10 cMalloc Errror %ld\n",(long)(2*faudio*4));
 			return 1;
 		}
 		zerol((unsigned char *)buffa[k],(unsigned long)(2*faudio*4));
@@ -150,6 +152,9 @@ int cStack::pushBuff(int nbuffer)
 
 	mutex1.lock();
 	
+	//winout("pushBuff nbuffer %d buffStack %p\n",nbuffer,buffStack);
+
+	
     if(bufftop >= NUM_DATA_BUFF2){
         bufftop=NUM_DATA_BUFF2;
         int small2,ks;
@@ -184,10 +189,11 @@ int cStack::popBuff()
 	
 	ret=-1;
 	
+	
  	if(bufftop < 1)goto Out;
  	
- 	//fprintf(stderr,"popBuff bufftop %d ",bufftop );
- 	
+  	//winout("popBuff bufftop %d \n",bufftop );
+	
  	if(bufftop == 1){
  		ret=buffStack[0];
  		bufftop=0;
@@ -203,7 +209,7 @@ int cStack::popBuff()
              	ks=k;
              }
         }
-  	//fprintf(stderr,"ks %d \n",ks);
+  	//winout("ks %d \n",ks);
        
         if(ks >= 0){
         	ret=buffStack[ks];

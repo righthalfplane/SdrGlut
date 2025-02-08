@@ -10,9 +10,7 @@
 extern      "C"
 {
 #endif                          /* c_plusplus || __cplusplus */
-						
-	int launchThread(void *data,int (*sageThread)(void *data));
-	
+							
 	int zerol(char *p,unsigned long n);
 	
 	void mprint(const char *fmt, ...);

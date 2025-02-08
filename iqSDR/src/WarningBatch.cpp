@@ -1,4 +1,5 @@
 #include "WarningBatch.h"
+#include <mutex>
 
 #if wxUSE_FONTDLG
     #include "wx/fontdlg.h"
@@ -9,6 +10,15 @@ using namespace std;
 
 void WarningBatch(const char *message);
 void BatchWarning(ostringstream& outs);
+
+#define POINT_INCREMENT 10
+
+static struct dataStructHold BatchHold;
+static int checkBatchHold(struct dataStructHold *plane);
+
+std::mutex mutexb;
+
+extern void *cRealloc(char *p,unsigned long r,int tag);
 
 enum
 {
@@ -27,13 +37,18 @@ BEGIN_EVENT_TABLE(BatchWindow, wxFrame)
     EVT_MENU(wxID_CLOSE, BatchWindow::OnClose)
     EVT_CLOSE( BatchWindow::OnClose2)
     EVT_MENU(wxID_SAVE, BatchWindow::OnFileSave)
+//    EVT_IDLE(BatchWindow::OnIdle)
 #if wxUSE_FONTDLG
     EVT_MENU(DIALOGS_CHOOSE_FONT, BatchWindow::ChooseFont)
 #endif // USE_FONTDLG_GENERIC
     EVT_MENU(wxID_ABOUT, BatchWindow::OnAbout)
 END_EVENT_TABLE()
 
-
+void BatchWindow::OnIdle(wxIdleEvent& event)
+{
+	fprintf(stderr,"OnIdle\n");
+	event.Skip();
+}
 
  BatchWindow::BatchWindow():
       wxFrame(NULL, wxID_ANY, wxT("BatchPrint"), wxDefaultPosition, wxSize(650,500))
@@ -77,15 +92,17 @@ END_EVENT_TABLE()
 
  }
  
- void BatchWindow::OnQuit(wxCommandEvent& WXUNUSED(event))
+ void BatchWindow::OnQuit(wxCommandEvent&(event))
  {
-      
+     event.Skip();
       extern startWindow *startIt;
 	  startIt->doQuit();
 
  }
- void BatchWindow::OnOpen(wxCommandEvent& WXUNUSED(event))
+ void BatchWindow::OnOpen(wxCommandEvent&(event))
  {
+     event.Skip();
+
  //		VtkFrame *vtl=new VtkFrame();
  		
  //	  	vtl->OpenFile();
@@ -94,22 +111,24 @@ END_EVENT_TABLE()
  }
 
 
- void BatchWindow::OnClose(wxCommandEvent& WXUNUSED(event))
+ void BatchWindow::OnClose(wxCommandEvent&(event))
  {
+    event.Skip();
  	Destroy();
  }
  
- void BatchWindow::OnClose2(wxCloseEvent& WXUNUSED(event))
+ void BatchWindow::OnClose2(wxCloseEvent&(event))
  {
  
- 	wxCommandEvent event;
- 	
- 	OnClose(event);
+     event.Skip();
+     Destroy();
  	
  }
 #if wxUSE_FONTDLG
-void BatchWindow::ChooseFont(wxCommandEvent& WXUNUSED(event) )
+void BatchWindow::ChooseFont(wxCommandEvent&(event) )
 {
+    event.Skip();
+
     wxFontData data;
     data.SetInitialFont(text->GetFont());
    
@@ -124,8 +143,10 @@ void BatchWindow::ChooseFont(wxCommandEvent& WXUNUSED(event) )
 }
 #endif // USE_FONTDLG_GENERIC
  
-void BatchWindow::OnFileSave(wxCommandEvent& WXUNUSED(event))
+void BatchWindow::OnFileSave(wxCommandEvent&(event))
 {
+
+    event.Skip();
 
 	static const wxChar* psz=_("BatchPrint.txt");
 
@@ -159,12 +180,14 @@ void BatchWindow::OnFileSave(wxCommandEvent& WXUNUSED(event))
     }
 }
  
- void BatchWindow::OnAbout(wxCommandEvent& WXUNUSED(event))
+ void BatchWindow::OnAbout(wxCommandEvent&(event))
 {
-    wxString msg;
-    msg.Printf( _T("This is the openVTK Application.\n"));
+     event.Skip();
 
-    wxMessageBox(msg, _T("About openVTK"), wxOK | wxICON_INFORMATION, this);
+    wxString msg;
+    msg.Printf( _T("This is the iqSDR Application.\n"));
+
+    wxMessageBox(msg, _T("About iqSDR"), wxOK | wxICON_INFORMATION, this);
 }
 
 void winout(const char *fmt, ...)
@@ -172,6 +195,7 @@ void winout(const char *fmt, ...)
 	char buff[4096];
 	va_list arg;
 	int ret;
+	
 
     buff[0]=0;
     va_start(arg, fmt);
@@ -181,11 +205,9 @@ void winout(const char *fmt, ...)
 	}
     va_end(arg);
 		
-    fprintf(stderr, "%s",buff);
-	//WarningBatch((char *)buff);
-
+	WarningBatchHold(buff);
+	 
 }
-
 
 void WarningBatch(const char *message)
 {
@@ -214,4 +236,103 @@ void BatchWarning(ostringstream& outs)
     
     outs.str("");
 }
+
+int WarningBatchHoldDump(void)
+{
+	struct dataStructHold *b;
+	int ret=1;
+	long n;
+	
+	mutexb.lock();
+
+	b=&BatchHold;
+	
+	if(!b->message || (b->count <= 0))goto OutOfHere;
+	
+	
+	for(n=0;n<b->count;++n){
+		if(b->message[n]){
+		    WarningBatch(b->message[n]);
+		    cFree((char *)b->message[n]);
+		    b->message[n]=NULL;
+		}
+	}
+	
+	cFree((char *)b->message);
+	
+	b->message=NULL;
+	b->countMax=0;
+	b->count=0;
+	
+	ret=0;
+	
+OutOfHere:
+	
+	mutexb.unlock();
+
+	return ret;
+	
+}
+int WarningBatchHold(char *buff)
+{
+	struct dataStructHold *b;
+	int ret=1;
+	
+	if(!buff)return 1;
+	
+	mutexb.lock();
+
+	b=&BatchHold;
+	
+	if(checkBatchHold(b))goto OutOfHere;
+	
+	b->message[b->count]=strsave(buff,1974);
+	
+	if(!b->message[b->count])goto OutOfHere;
+	
+	++b->count;
+	ret=0;
+	
+OutOfHere:
+	
+	mutexb.unlock();
+
+	return ret;
+}
+static int checkBatchHold(struct dataStructHold *plane)
+{
+    long countMax;
+	char **message;
+	if(!plane)return 1;
+	
+	if(plane->count+1 < plane->countMax)return 0;
+	
+	countMax=plane->countMax+POINT_INCREMENT;
+	
+	message=NULL;
+	
+	if(plane->message){
+	    message=(char **)cRealloc((char *)plane->message,countMax*sizeof(char **),7761);
+	    if(!message){
+	        goto ErrorOut;
+	    }
+	    zerol((char *)&message[plane->countMax],POINT_INCREMENT*sizeof(char **));
+	}else{
+	    message=(char **)cMalloc(countMax*sizeof(char **),7452);
+	    if(!message){
+	        goto ErrorOut;
+	    }
+	    zerol((char *)message,countMax*sizeof(char **));
+	}
+	
+	plane->countMax=countMax;
+	plane->message=message;
+	
+	return 0;
+ErrorOut:
+    if(message)cFree((char *)message);
+	return 1;
+	
+}	
+
 

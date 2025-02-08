@@ -33,6 +33,8 @@ g++ -O2 -std=c++11 -Wno-deprecated -o sdrTest sdrTest.cpp mThread.cpp cMalloc.cp
 
 */
 
+void winout(const char *fmt, ...);
+
 void *cMalloc(unsigned long r, int tag);
 
 char *strsave(char *s,int tag);
@@ -107,13 +109,13 @@ int udpRead(class Listen *l,int n)
 		    isleep=0;
 	    }else if(n == 0){
 	        if(++isleep > 20){
-	            fprintf(stderr,"netRead Time Out Error\n");
+	            winout("netRead Time Out Error\n");
 	            return 1;
 	        }else{
 	            Sleep2(10);
 	        }
 	    }else{
-	        fprintf(stderr,"netRead Error Reading Socket\n");
+	        winout("netRead Error Reading Socket\n");
 		    return 1;        
 	    }
 	}
@@ -145,7 +147,7 @@ int ListenSocket2(class Listen *l)
 	    if(l->data_type == TYPE_FLOAT){
 		    size=(int)(2*sizeof(float)*l->samplerate/ncut);
 	        if(l->Debug){
-				fprintf(stderr,"FLOAT size %ld\n",size);
+				winout("FLOAT size %ld\n",size);
 		    }
 		    if(size > l->buffsize){
 		       if(l->output)free(l->output);
@@ -159,7 +161,7 @@ int ListenSocket2(class Listen *l)
 		        if(l->netRead(l->clientSocket,(char *)l->buff1,size))break;
 		    }else{
 		    	udpRead(l,size);
-		    	//fprintf(stderr,"UDP Read ret %d\n",ret);
+		    	//winout("UDP Read ret %d\n",ret);
 		    }
 		    if(l->binary)fwrite((char *)l->buff1,size,1,stdout);
 		    l->size=size/(2*sizeof(float));
@@ -169,7 +171,7 @@ int ListenSocket2(class Listen *l)
          }else if(l->data_type == TYPE_SHORT){
  		    size=(int)(2*sizeof(short int)*l->samplerate/ncut);
            	if(l->Debug){
- 				fprintf(stderr,"SHORT size %ld\n",size);
+ 				winout("SHORT size %ld\n",size);
            	}
             if(size > l->buffsize){
                 if(l->output)free(l->output);
@@ -183,7 +185,7 @@ int ListenSocket2(class Listen *l)
 		        if(l->netRead(l->clientSocket,(char *)l->buff1,size))break;
 		    }else{
 		    	udpRead(l,size);
-		        //fprintf(stderr,"UDP Read ret %d\n",ret);
+		        //winout("UDP Read ret %d\n",ret);
 		    }
 		    if(l->binary)fwrite((char *)l->buff1,size,1,stdout);
             l->size=size/(2*sizeof(short int));
@@ -199,7 +201,7 @@ int ListenSocket2(class Listen *l)
        }else if(l->data_type == TYPE_SIGNED){
  		    size=(int)(2*sizeof(signed char)*l->samplerate/ncut);
             if(l->Debug){
-  				fprintf(stderr,"SIGNED size %ld\n",size);
+  				winout("SIGNED size %ld\n",size);
           	}
             if(size > l->buffsize){
                 if(l->output)free(l->output);
@@ -213,7 +215,7 @@ int ListenSocket2(class Listen *l)
 		        if(l->netRead(l->clientSocket,(char *)l->buff1,size))break;
 		    }else{
 		    	udpRead(l,size);
-		    	//fprintf(stderr,"UDP Read ret %d\n",ret);
+		    	//winout("UDP Read ret %d\n",ret);
 		    }
  		    if(l->binary)fwrite((char *)l->buff1,size,1,stdout);
             l->size=size/(2*sizeof(signed char));
@@ -229,7 +231,7 @@ int ListenSocket2(class Listen *l)
        }else if(l->data_type == TYPE_UNSIGNED){
  		    size=(int)(2*sizeof(unsigned char)*l->samplerate/ncut);
             if(l->Debug){
-   				fprintf(stderr,"UNSIGNED size %ld\n",size);
+   				winout("UNSIGNED size %ld\n",size);
           	}
             if(size > l->buffsize){
                 if(l->output)free(l->output);
@@ -243,7 +245,7 @@ int ListenSocket2(class Listen *l)
 		        if(l->netRead(l->clientSocket,(char *)l->buff1,size))break;
 		    }else{
 		    	udpRead(l,size);
-		    	//fprintf(stderr,"UDP Read ret %d\n",ret);
+		    	//winout("UDP Read ret %d\n",ret);
 		    }
  		    if(l->binary)fwrite((char *)l->buff1,size,1,stdout);
  		   // if(in)fwrite((char *)l->buff1,size,1,in);
@@ -259,7 +261,7 @@ int ListenSocket2(class Listen *l)
             l->ibuff=1;
             while(l->ibuff==1)Sleep2(10);            
 	    }else{
-	        fprintf(stderr,"Unknown Command (%s) %d %d %d %d Skiping\n",
+	        winout("Unknown Command (%s) %d %d %d %d Skiping\n",
 	                buff,buff[0],buff[1],buff[2],buff[3]);
 	        if(size > l->buffsize){
                 if(l->output)free(l->output);
@@ -275,7 +277,7 @@ int ListenSocket2(class Listen *l)
 
     total=time(&ship)-start;
 	if(!total)total=1;
-    if(l->Debug)fprintf(stderr,"%ld Seconds To Receive %ld Bytes (%ld Bytes/s)\n",
+    if(l->Debug)winout("%ld Seconds To Receive %ld Bytes (%ld Bytes/s)\n",
                  (long)total,l->Bytes,(long)(l->Bytes/total));
 
 	
@@ -293,20 +295,20 @@ int ListenSocket3(class Listen *l)
 
 	long n;
 	
-	fprintf(stderr,"Start Piping to stdout\n");
+	winout("Start Piping to stdout\n");
 		
 	while(1){
 		n=recv(l->clientSocket,buff,size,0);
 		if(n <= 0){
 			break;
 		}
-	//	fprintf(stderr,"ListenSocket3 n %ld\n",n);
+	//	winout("ListenSocket3 n %ld\n",n);
 		fwrite(buff,n,1,stdout);
 	}
 	
 	if(buff1)free(buff1);
 
-	fprintf(stderr,"Stop Piping to stdout\n");
+	winout("Stop Piping to stdout\n");
 	
 	return 0;
 }
@@ -338,48 +340,48 @@ int ListenSocket(void *rxv)
 
 	while(1){
 	    if(l->readCommand(l->clientSocket,buff,&size))return 1;
-		if(l->Debug)fprintf(stderr,"buff %s size %ld ncommand %ld\n",buff,size,l->ncommand);
+		if(l->Debug)winout("buff %s size %ld ncommand %ld\n",buff,size,l->ncommand);
 		l->ncommand++;
 	    if(!strcmp(buff,"ENDT")){
 	        if(l->Debug){
-				fprintf(stderr,"ENDT\n");
+				winout("ENDT\n");
 		    }
 	        break;
 	    }else if(!strcmp(buff,"STAT")){
 	        if(l->Debug){
-				fprintf(stderr,"STAT\n");
+				winout("STAT\n");
 		    }
 		    long n=2*sizeof(double);
 		    double buff[2];
 		    l->netRead(l->clientSocket,(char *)buff,n);
 		    l->setCenterFrequency(buff[0],buff[1]);
-		    if(l->Debug)fprintf(stderr,"fc %g samplerate %d\n",l->fc,l->samplerate);
+		    if(l->Debug)winout("fc %g samplerate %d\n",l->fc,l->samplerate);
 	    }else if(!strcmp(buff,"F   ")){
 	        if(l->Debug){
-				fprintf(stderr,"F   \n");
+				winout("F   \n");
 		    }
 		    double buff[2];
 		    l->netRead(l->clientSocket,(char *)buff,size);
 		    //setFrequency(buff[0],&rx);
-		   // if(l->Debug)fprintf(stderr,"f %g \n",rx.f);
+		   // if(l->Debug)winout("f %g \n",rx.f);
 	    }else if(!strcmp(buff,"FC  ")){
 	        if(l->Debug){
-				fprintf(stderr,"FC  \n");
+				winout("FC  \n");
 		    }
 		    double buff[2];
 		    l->netRead(l->clientSocket,(char *)buff,size);
-		  //  if(l->Debug)fprintf(stderr,"fc %g \n",rx.fc);
+		  //  if(l->Debug)winout("fc %g \n",rx.fc);
 	    }else if(!strcmp(buff,"DECO")){
 	        if(l->Debug){
-				fprintf(stderr,"DECO\n");
+				winout("DECO\n");
 		    }
 		    double buff[2];
 		    l->netRead(l->clientSocket,(char *)buff,size);
 		  //  setDecodeMode(buff[0],&rx);
-		  //  if(l->Debug)fprintf(stderr,"decodemode %d \n",rx.decodemode);
+		  //  if(l->Debug)winout("decodemode %d \n",rx.decodemode);
 	    }else if(!strcmp(buff,"FLOA")){
 	        if(l->Debug){
-				fprintf(stderr,"FLOA\n");
+				winout("FLOA\n");
 		    }
 		    if(size > l->buffsize){
 		       if(l->output)free(l->output);
@@ -397,7 +399,7 @@ int ListenSocket(void *rxv)
             while(l->ibuff==1)Sleep2(10);
          }else if(!strcmp(buff,"SHOR")){
             if(l->Debug){
-                fprintf(stderr,"SHOR\n");
+                winout("SHOR\n");
             }
             if(size > l->buffsize){
                 if(l->output)free(l->output);
@@ -421,7 +423,7 @@ int ListenSocket(void *rxv)
             while(l->ibuff==1)Sleep2(10);
        }else if(!strcmp(buff,"SIGN")){
             if(l->Debug){
-                fprintf(stderr,"SIGN\n");
+                winout("SIGN\n");
            }
             if(size > l->buffsize){
                 if(l->output)free(l->output);
@@ -445,7 +447,7 @@ int ListenSocket(void *rxv)
             while(l->ibuff==1)Sleep2(10);            
        }else if(!strcmp(buff,"USIG")){
             if(l->Debug){
-                fprintf(stderr,"USIG\n");
+                winout("USIG\n");
            }
             if(size > l->buffsize){
                 if(l->output)free(l->output);
@@ -470,7 +472,7 @@ int ListenSocket(void *rxv)
             l->ibuff=1;
             while(l->ibuff==1)Sleep2(10);            
 	    }else{
-	        fprintf(stderr,"Unknown Command (%s) %d %d %d %d Skiping\n",
+	        winout("Unknown Command (%s) %d %d %d %d Skiping\n",
 	                buff,buff[0],buff[1],buff[2],buff[3]);
 	        if(size > l->buffsize){
                 if(l->output)free(l->output);
@@ -487,7 +489,7 @@ int ListenSocket(void *rxv)
 
     total=time(&ship)-start;
 	if(!total)total=1;
-    if(l->Debug)fprintf(stderr,"%ld Seconds To Receive %ld Bytes (%ld Bytes/s)\n",
+    if(l->Debug)winout("%ld Seconds To Receive %ld Bytes (%ld Bytes/s)\n",
                  (long)total,l->Bytes,(long)(l->Bytes/total));
 
     return 1;
@@ -496,14 +498,14 @@ int ListenSocket(void *rxv)
 int doEnumerate(char *deviceString)
 {
 
-	fprintf(stderr,"deviceString %p\n",deviceString);
+	winout("deviceString %p\n",deviceString);
 	
 	resultsEnumerate=SoapySDR::Device::enumerate(deviceString);
 	
 	int length=(int)resultsEnumerate.size();
     
 	if(length == 0){
-		fprintf(stderr,"Error: enumerate Found No Devices - Try Again !\n");
+		winout("Error: enumerate Found No Devices - Try Again !\n");
 		return 1;
 	}
 
@@ -513,21 +515,21 @@ int sdrClass::waitPointer(std::string name,volatile int *pointer,int flag)
 {
 	int nc=0;
 /*
-	fprintf(stderr,"name %s pointer %p *pointer %d thread %llx\n",name.c_str(),pointer,
+	winout("name %s pointer %p *pointer %d thread %llx\n",name.c_str(),pointer,
 	                *pointer,(long long)std::this_thread::get_id);
 */
 	if(*pointer < 0){
-		if(flag > 0)fprintf(stderr,"%s Immediate return %d\n",name.c_str(),nc);
+		if(flag > 0)winout("%s Immediate return %d\n",name.c_str(),nc);
 		return 0;
 	}
 	*pointer = -1;
 	while(*pointer == -1){
 		Sleep2(20);
 		if(nc++ > 200){
-			fprintf(stderr,"%s Timed out %d\n",name.c_str(),nc);
+			winout("%s Timed out %d\n",name.c_str(),nc);
 			return 1;
 		}else if(flag > 0){
-			fprintf(stderr,"%s Waiting %d\n",name.c_str(),nc);		
+			winout("%s Waiting %d\n",name.c_str(),nc);		
 		}
 	}
 	return 0;
@@ -536,7 +538,7 @@ int sdrClass::waitPointer(std::string name,volatile int *pointer,int flag)
 void sdrClass::setMode(std::string mode)
 {
 
-	//fprintf(stderr,"setMode Start\n");
+	//winout("setMode Start\n");
 	
 	waitPointer("iqToAudio(1)",&iqToAudio,0);
 				
@@ -566,14 +568,14 @@ void sdrClass::setMode(std::string mode)
     }
 
   	
-	//fprintf(stderr,"setMode End\n");
+	//winout("setMode End\n");
   	
   		
 }
 
 sdrClass::sdrClass()
 {
-	//fprintf(stderr,"sdrClass::sdrClass\n");
+	//winout("sdrClass::sdrClass\n");
 	
 	audiodevice=0;
 	samplerate=2000000;
@@ -640,7 +642,7 @@ sdrClass::sdrClass()
     
     deviceString=(char *)"";
     
-    audioThreads=0;
+    audioThreads=1;
       	
 }
 sdrClass::~sdrClass()
@@ -656,13 +658,15 @@ sdrClass::~sdrClass()
 	
 	if(sendBuff)cFree((char *)sendBuff);
 	sendBuff=NULL;
-	
+
+	s->bS=NULL;
+	    
 	if(bS)delete bS;
 	bS=NULL;
 	if(bS2)delete bS2;
 	bS2=NULL;
 	
-	//fprintf(stderr,"exit sdrClass %p thread %llx\n",this,(long long)std::this_thread::get_id);
+	//winout("exit sdrClass %p thread %llx\n",this,(long long)std::this_thread::get_id);
 }
 
 int sdrClass::setDataSave(int length)
@@ -679,7 +683,7 @@ int sdrClass::setDataSave(int length)
 int sdrClass::setup(int argc, char *argv[])
 {	
 	for(int n=1;n<argc;++n){
-	    //fprintf(stderr,"argv %d %s\n",n,argv[n]);
+	    //winout("argv %d %s\n",n,argv[n]);
 	    if(!strcmp(argv[n],"-debug")){
 		   Debug = 1;
 	    }else if(!strcmp(argv[n],"-am")){
@@ -766,6 +770,8 @@ int sdrClass::run()
 
 	playRadio();
 	
+	s->bS=NULL;
+	
 	if(bS)delete bS;
 	bS=NULL;
 
@@ -774,7 +780,7 @@ int sdrClass::run()
 	
 	stopPlay();
 	
-//	fprintf(stderr,"return stopPlay\n");
+//	winout("return stopPlay\n");
 
 	if(outFile)fclose(outFile);
 	
@@ -782,7 +788,7 @@ int sdrClass::run()
 		
 	checkall();
 	
-	//fprintf(stderr,"End of Setup\n");
+	//winout("End of Setup\n");
 	
 	frame=-2;
 
@@ -790,11 +796,11 @@ int sdrClass::run()
 }
 int sdrClass::startPlay()
 {
-	//fprintf(stderr,"startPlay\n");
+	//winout("startPlay\n");
 
 	if(inData == IN_RADIO){
 		if(findRadio() || device == NULL){
-			fprintf(stderr,"Error Opening SDR\n");
+			winout("Error Opening SDR\n");
 			return 1;
 		}
 	}
@@ -826,7 +832,7 @@ int sdrClass::playRadio()
 	if(sendBuff)cFree((char *)sendBuff);
 	sendBuff=(float *)cMalloc(size*2*sizeof(float),76868);
 	if(!sendBuff){
-		fprintf(stderr,"Error playRadio cMalloc Failed\n");
+		winout("Error playRadio cMalloc Failed\n");
 		return 1;	
 	}
 	
@@ -914,13 +920,13 @@ int sdrClass::findRadio()
     
     device = NULL;
         
- //   fprintf(stderr,"Call enumerate\n");
+ //   winout("Call enumerate\n");
     
     if(resultsEnumerate.size() < 1){
     	if(doEnumerate(deviceString))return 1;
     }
         
-  // fprintf(stderr,"1 findRadio samplerate %g\n",samplerate);
+  // winout("1 findRadio samplerate %g\n",samplerate);
     
     mprintFlag=Debug;
     
@@ -949,7 +955,7 @@ int sdrClass::findRadio()
 		
 		SoapySDR::Device *devicer= SoapySDR::Device::make(deviceArgs);;
 		
-	//	fprintf(stderr,"2 findRadio samplerate %g devicer %p\n",samplerate,devicer);
+	//	winout("2 findRadio samplerate %g devicer %p\n",samplerate,devicer);
 
 
     	if(k == deviceNumber){
@@ -984,7 +990,7 @@ int sdrClass::findRadio()
 			
     		mprint("\n\n");
     		
-    		//fprintf(stderr,"2 findRadio samplerate %g device %p\n",samplerate,device);
+    		//winout("2 findRadio samplerate %g device %p\n",samplerate,device);
 
 			
 			        //query device info
@@ -1087,20 +1093,20 @@ int sdrClass::findRadio()
 
            mprint("\n");
            
-           // fprintf(stderr,"3 findRadio samplerate %g device %p channel %d\n",samplerate,device,channel);
+           // winout("3 findRadio samplerate %g device %p channel %d\n",samplerate,device,channel);
 
 
 			device->setSampleRate(SOAPY_SDR_RX, channel, samplerate);
 			
 			
-	       // fprintf(stderr,"4 findRadio samplerate %g device %p\n",samplerate,device);
+	       // winout("4 findRadio samplerate %g device %p\n",samplerate,device);
 		
 			
 			samplewidth=samplerate;
 			
 			device->setFrequency(SOAPY_SDR_RX, channel, fc);
 			
-  	       // fprintf(stderr,"5 findRadio samplerate %g device %p fc %g\n",samplerate,device,fc);
+  	       // winout("5 findRadio samplerate %g device %p fc %g\n",samplerate,device,fc);
   	        
       		mprint("samplerate %g\n",samplerate);
 			
@@ -1109,6 +1115,10 @@ int sdrClass::findRadio()
 			const std::vector<size_t> channels = {(size_t)0};
 						
 			rxStream = device->setupStream(SOAPY_SDR_RX, SOAPY_SDR_CF32, channels);
+			
+			//rxStream = device->setupStream(SOAPY_SDR_RX, SOAPY_SDR_CS16, channels);
+			
+			//rxStream = device->setupStream(SOAPY_SDR_RX, SOAPY_SDR_CS12, channels);
 
 			device->activateStream(rxStream, 0, 0, 0); 
 			
@@ -1177,14 +1187,14 @@ int sdrClass::setFrequencyFC(double frequency)
 		device->setFrequency(SOAPY_SDR_RX, channel, frequency);
 	} catch(const std::exception &e) {
 		std::string streamExceptionStr = e.what();
-		fprintf(stderr,"setCenterFrequency Error: %s\n",streamExceptionStr.c_str());
+		winout("setCenterFrequency Error: %s\n",streamExceptionStr.c_str());
 		device->setFrequency(SOAPY_SDR_RX, channel, fc);
 		return 1;
 	}
 	fc=frequency;	
 	f=frequency;
 	fw=fc;
-	//fprintf(stderr,"setFrequencyFC %g\n",fc);
+	//winout("setFrequencyFC %g\n",fc);
 	initPlay();
 	return 1;
 }
@@ -1239,7 +1249,7 @@ int sdrClass::setCenterFrequency(double frequency)
 			device->setFrequency(SOAPY_SDR_RX, channel, fc);
 		} catch(const std::exception &e) {
 			std::string streamExceptionStr = e.what();
-			fprintf(stderr,"setCenterFrequency Error: %s\n",streamExceptionStr.c_str());
+			winout("setCenterFrequency Error: %s\n",streamExceptionStr.c_str());
 			device->setFrequency(SOAPY_SDR_RX, channel, fc);
 			return 1;
 		}
@@ -1265,7 +1275,7 @@ int sdrClass::setFrequency(double frequency)
 				f=frequency;
 			} catch(const std::exception &e) {
 				std::string streamExceptionStr = e.what();
-				fprintf(stderr,"setFrequency Error: %s\n",streamExceptionStr.c_str());
+				winout("setFrequency Error: %s\n",streamExceptionStr.c_str());
 				device->setFrequency(SOAPY_SDR_RX, channel, fc);
 				return 1;
 			}
@@ -1281,7 +1291,7 @@ int sdrClass::setFrequency(double frequency)
 				f=frequency;
 			} catch(const std::exception &e) {
 				std::string streamExceptionStr = e.what();
-				fprintf(stderr,"setFrequency Error: %s\n",streamExceptionStr.c_str());
+				winout("setFrequency Error: %s\n",streamExceptionStr.c_str());
 				device->setFrequency(SOAPY_SDR_RX, channel, fc);
 				return 1;
 			}
@@ -1343,8 +1353,8 @@ int sdrClass::readSDR(){
 		 timeNs++;
 				   
 		if(ret <= 0){
-		   printf("readSDR readStream ret %d iread %d MTU %ld\n",ret,iread,(long)MTU);
-		 //  if(Debug > 0)fprintf(stderr,"readStream ret %d \n",ret);
+		   winout("readSDR readStream ret %d iread %d MTU %ld\n",ret,iread,(long)MTU);
+		 //  if(Debug > 0)winout("readStream ret %d \n",ret);
 		   break;
 		}else if(ret < toRead){
 			count += ret;
@@ -1383,7 +1393,7 @@ int sdrClass::readPipe()
 		iread=rec;
 					
 		if(data_type == TYPE_SHORT){
-		//fprintf(stderr,"readPipe iread %ld size %d toRead %d data_type %d\n",iread,size,rec,data_type);
+		//winout("readPipe iread %ld size %d toRead %d data_type %d\n",iread,size,rec,data_type);
 			ret = (int)fread(buffs, sizeof(short)*2,iread,stdin);
 			if(ret <= 0)break;
 			short int *in=(short int *)buffs;
@@ -1394,7 +1404,7 @@ int sdrClass::readPipe()
 				--ne;
 			}
 		}else if(data_type == TYPE_UNSIGNEDSHORT){
-		//fprintf(stderr,"readPipe iread %ld size %d toRead %d data_type %d\n",iread,size,rec,data_type);
+		//winout("readPipe iread %ld size %d toRead %d data_type %d\n",iread,size,rec,data_type);
 			ret = (int)fread(buffs, sizeof(unsigned short)*2,iread,stdin);
 			if(ret <= 0)break;
 			unsigned short int *in=(unsigned short int *)buffs;
@@ -1405,7 +1415,7 @@ int sdrClass::readPipe()
 				--ne;
 			}
 		}else if(data_type == TYPE_UNSIGNED){
-		//fprintf(stderr,"readPipe iread %ld size %d toRead %d data_type %d\n",iread,size,rec,data_type);
+		//winout("readPipe iread %ld size %d toRead %d data_type %d\n",iread,size,rec,data_type);
 			ret = (int)fread(buffs, sizeof(unsigned char)*2,iread,stdin);
 			if(ret <= 0)break;
 			unsigned char *in=(unsigned char *)buffs;
@@ -1421,7 +1431,7 @@ int sdrClass::readPipe()
 		 retFlag=ret;
 	 				   
 		if(ret <= 0){
-		 //  if(Debug > 0)fprintf(stderr,"readStream ret %d \n",ret);
+		 //  if(Debug > 0)winout("readStream ret %d \n",ret);
 		   break;
 		}else if(ret < rec){
 			count += ret;
@@ -1430,13 +1440,13 @@ int sdrClass::readPipe()
 			break;
 		}
 
-		//fprintf(stderr,"%p %p \n",s->bS,bS);
+		//winout("%p %p \n",s->bS,bS);
 		
 		s->audioSync=1;
 		
 	}
 	
-	//fprintf(stderr,"readPipe countl %ld size %d ret %d inFilenum %d\n",countl++,size,ret,inFilenum);
+	//winout("readPipe countl %ld size %d ret %d inFilenum %d\n",countl++,size,ret,inFilenum);
 
 	return 0;
 
@@ -1460,7 +1470,7 @@ int sdrClass::readUDP(){
 	
 	if(!data)return 1;
 	
-	//fprintf(stderr,"l->size %d size %d\n",l->size,size);
+	//winout("l->size %d size %d\n",l->size,size);
 
 	for(int n=0;n<l->size*2;++n){
 		buff[n]=data[n];
@@ -1488,7 +1498,7 @@ int sdrClass::readTCPIP(){
 	
 	if(!data)return 1;
 	
-	//fprintf(stderr,"l->size %d size %d\n",l->size,size);
+	//winout("l->size %d size %d\n",l->size,size);
 
 	for(int n=0;n<l->size*2;++n){
 		buff[n]=data[n];
@@ -1508,13 +1518,13 @@ int sdrClass::rxBuffer()
 	{
 		if(rx->doWhat < 0){
 			rx->doWhat=-2;
-			//fprintf(stderr,"rxBuffer Exit\n");
+			//winout("rxBuffer Exit\n");
 			return 0;
 		}
 	     switch(rx->doWhat){
 	     case 0:
 	     	Sleep2(50);
-			//fprintf(stderr,"rxBuffer Sleep\n");
+			//winout("rxBuffer Sleep\n");
 	        break;
 	     case 1:
 	        return 0;
@@ -1561,7 +1571,7 @@ int sdrClass::rxBuffer()
                     	buff[n] -= average;
                     }
                     
-                    fprintf(stderr,"average %g\n",average);
+                    winout("average %g\n",average);
           
                 }
 
@@ -1573,13 +1583,13 @@ int sdrClass::rxBuffer()
 					buff2[n]=buff[n];
 				}
 	        	
-	        	if(!iWait)bS2->pushBuff(rx->witch);
+	        	//if(!iWait)bS2->pushBuff(rx->witch);
 	        	
 	        	
              	++rx->witch;
 
              	if(saveCall){ 	
-             	//	fprintf(stderr,"rx->witch %ld saveLength %ld\n",(long)rx->witch,(long)saveLength);
+             	//	winout("rx->witch %ld saveLength %ld\n",(long)rx->witch,(long)saveLength);
 					for(int k=0;k<saveLength;++k){
 						if(k < rx->size){
 							saveBuff[2*k]=buff[2*k];
@@ -1591,13 +1601,13 @@ int sdrClass::rxBuffer()
                     }
              	}
 				saveFlag=1;
-			//	fprintf(stderr,"rxBuff saveCall %d witch %d\n",saveCall,rx->witch);
+			//	winout("rxBuff saveCall %d witch %d\n",saveCall,rx->witch);
 				
 	        }
-	      //  auto t2 = std::chrono::high_resolution_clock::now();
-		   // std::chrono::duration<double> difference = t2 - t1;
-		   // printf("Time %g rx->witch %d\n",difference.count(),rx->witch);
-	//		fprintf(stderr,"rxBuffer doWhat %p %d\n",&rx->doWhat,rx->doWhat);
+	        //auto t2 = std::chrono::high_resolution_clock::now();
+		    //std::chrono::duration<double> difference = t2 - t1;
+		    //winout("Time %g rx->witch %d\n",difference.count(),rx->witch);
+	//		winout("rxBuffer doWhat %p %d\n",&rx->doWhat,rx->doWhat);
 	        break;
 	     }
 	     
@@ -1640,7 +1650,7 @@ int sdrClass::Process()
 	
 	ff.amaxGlobal=0;
 	
-	//fprintf(stderr,"Process %d\n",ff.thread);
+	//winout("Process %d\n",ff.thread);
 	
 	setFilters(&ff);
 	
@@ -1672,13 +1682,12 @@ int sdrClass::Process()
 		//auto t1 = std::chrono::high_resolution_clock::now();
 	    int ret=doFilter(buff1,buff2,&ff);
 		if(ret){
-			//fprintf(stderr,"Sleep2\n");
 			Sleep2(5);
 		}else{
 			doAudio(buff2,buff1,&ff);
 			//auto t2 = std::chrono::high_resolution_clock::now();
 			//std::chrono::duration<double> difference = t2 - t1;
-			//printf("Time %g thread %d size %d\n",difference.count(),ff.thread,rx->size);
+			//winout("Time %g thread %d size %d\n",difference.count(),ff.thread,rx->size);
 		}
 	}
 	
@@ -1780,7 +1789,8 @@ int sdrClass::doFilter(float *wBuff,float *aBuff,struct Filters *f)
 
  	int ip=bS->popBuff();
  	if(ip < 0){
- 	     return 1;
+ 		//!winout("doFilter thread %d\n",(int)f->thread);
+ 	   return 1;
  	}
  	
  	int witch=ip % NUM_DATA_BUFF;
@@ -1807,7 +1817,7 @@ int sdrClass::doFilter(float *wBuff,float *aBuff,struct Filters *f)
 			if(data_type == TYPE_FLOAT){
 				size_t ret=fwrite(buf, 2*sizeof(float), rx->size,outFile);
 				if(ret != (size_t)rx->size){
-					fprintf(stderr,"fwrite Error ret %ld bytes %ld\n",(long)ret,(long)rx->size);
+					winout("fwrite Error ret %ld bytes %ld\n",(long)ret,(long)rx->size);
 				}
 			}else if(data_type == TYPE_SHORT){
 				double amin=  1e33;
@@ -1828,10 +1838,10 @@ int sdrClass::doFilter(float *wBuff,float *aBuff,struct Filters *f)
 					out[3]=(is >> 8) & 0xff;
 					size_t ret=fwrite(out, 1, 4,outFile);
 					if(ret != 4){
-						fprintf(stderr,"fwrite Error ret %ld bytes %ld\n",(long)ret,(long)4);
+						winout("fwrite Error ret %ld bytes %ld\n",(long)ret,(long)4);
 					}
 				}
-				//fprintf(stderr,"amin %g amax %g\n",amin,amax);
+				//winout("amin %g amax %g\n",amin,amax);
 			}else if(data_type == TYPE_UNSIGNEDSHORT){
 				double amin=  1e33;
 				double amax= -1e33;
@@ -1851,7 +1861,7 @@ int sdrClass::doFilter(float *wBuff,float *aBuff,struct Filters *f)
 					out[3]=(is >> 8) & 0xff;
 					size_t ret=fwrite(out, 1, 4,outFile);
 					if(ret != 4){
-						fprintf(stderr,"fwrite Error ret %ld bytes %ld\n",(long)ret,(long)4);
+						winout("fwrite Error ret %ld bytes %ld\n",(long)ret,(long)4);
 					}
 				}
 			}else if(data_type == TYPE_UNSIGNED){
@@ -1871,10 +1881,10 @@ int sdrClass::doFilter(float *wBuff,float *aBuff,struct Filters *f)
 					out[1]=is;
 					size_t ret=fwrite(out, 1, 2,outFile);
 					if(ret != 2){
-						fprintf(stderr,"fwrite Error ret %ld bytes %ld\n",(long)ret,(long)4);
+						winout("fwrite Error ret %ld bytes %ld\n",(long)ret,(long)4);
 					}
 				}
-				//fprintf(stderr,"amin %g amax %g\n",amin,amax);
+				//winout("amin %g amax %g\n",amin,amax);
 			}
 		}
 		
@@ -1965,7 +1975,7 @@ int sdrClass::doAudio(float *aBuff,float *wBuff,struct Filters *f)
 	
 	length=(int)(rx->faudio/rx->ncut);
 	
-	//fprintf(stderr," sdrClass::doAudio rx->faudio %g\n",rx->faudio);
+	//winout(" sdrClass::doAudio rx->faudio %g\n",rx->faudio);
 	
 	for (int n=0; n<length; n++ ) {
 		double v;
@@ -1977,7 +1987,7 @@ int sdrClass::doAudio(float *aBuff,float *wBuff,struct Filters *f)
 	
 	average /= length;
 		
-	//fprintf(stderr,"rx->faudio %g amin %g amax %g\n",rx->faudio,amin,amax);
+	//winout("rx->faudio %g amin %g amax %g\n",rx->faudio,amin,amax);
 	
     amin -= average;
 
@@ -2004,7 +2014,7 @@ int sdrClass::doAudio(float *aBuff,float *wBuff,struct Filters *f)
         dnom=65535.0;
     }
 		
-	//fprintf(stderr,"amin %g amax %g average %g dnom %g\n",amin,amax,average,dnom);
+	//winout("amin %g amax %g average %g dnom %g\n",amin,amax,average,dnom);
 	
 	for(int k=0;k<length;++k){
 		double v;
@@ -2033,6 +2043,8 @@ int sdrClass::doAudio(float *aBuff,float *wBuff,struct Filters *f)
 	sendAudio(data,length);
 	
 	bS->pushBuffa(audioOut);
+	
+	//winout("audioOut %d f->thread %d\n",(int)audioOut,(int)f->thread);
 
 	return 0;
 }

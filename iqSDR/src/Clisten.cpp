@@ -31,6 +31,9 @@ using namespace std;
 
 int copyl(char *p1,char *p2,long n);
 
+void winout(const char *fmt, ...);
+
+
 //static int zerol(char *p,long n);
 
 Listen::Listen(int listenTypei)
@@ -77,7 +80,7 @@ Listen::Listen(int listenTypei)
 Listen::~Listen()
 {
 	closesocket(clientSocket);
-	fprintf(stderr,"exit Listen %p\n",this);
+	winout("exit Listen %p\n",this);
 
 
 }
@@ -195,19 +198,6 @@ int Listen::mix(float *buf1,float *buf2)
 	return 0;
 }
 
-
-
-/*
-int launchThread(void *data,int (*sageThread)(void *data))
-{
-    
-    std::thread(sageThread,data).detach();
-    
-    return 0;
-}
-*/
-
-
 int Listen::setFrequency(double frequency)
 {
 	double pi;
@@ -290,7 +280,7 @@ int Listen::WaitForTCP()
 	
 	l->serverSocket=l->startService(l->name);
 
-	//fprintf(stderr,"startService %lld\n", serverSocket);
+	//winout("startService %lld\n", serverSocket);
 	
 	l->addrLen=sizeof(l->clientSocketAddr);
 	
@@ -303,12 +293,12 @@ int Listen::WaitForTCP()
 	    ret=l->CheckSocket(l->serverSocket,&count,3000);
 
 		if(ret <= 0){
-		    if(l->Debug)fprintf(stderr,"ret %d exitListen %d\n",ret,exitListen);
+		    if(l->Debug)winout("ret %d exitListen %d\n",ret,exitListen);
 	     	if(exitListen)break;
 			continue;
         }
         
-		if(l->Debug)fprintf(stderr,"ret %d\n",ret);
+		if(l->Debug)winout("ret %d\n",ret);
 		
 		l->clientSocket=accept(l->serverSocket,(struct  sockaddr  *)&l->clientSocketAddr,
 	                        &l->addrLen);
@@ -324,7 +314,7 @@ int Listen::WaitForTCP()
 	     if(exitListen)break;
 	}
 	
-	fprintf(stderr,"Out of WaitFor\n");
+	winout("Out of WaitFor\n");
 	     
 	return l->serverSocket;
 	
@@ -354,7 +344,7 @@ SOCKET Listen::startService(char *serverName)
 	
 	serverSocket=createService(&Port);
     if(serverSocket == -1){
-          fprintf(stderr,"Create Port %d Failed\n",Port);
+          winout("Create Port %d Failed\n",Port);
 	      return -1;
 	}
 
@@ -400,7 +390,7 @@ int Listen::netRead(SOCKET clientSocket,char *buff,long n)
 
 	if(!buff)return 1;
 	
-	// fprintf(stderr,"clientSocket %d netRead %p n %ld\n",clientSocket,buff,n);
+	// winout("clientSocket %d netRead %p n %ld\n",clientSocket,buff,n);
 
 	// Bytes += n;
 
@@ -416,13 +406,13 @@ int Listen::netRead(SOCKET clientSocket,char *buff,long n)
 		    isleep=0;
 	    }else if(n == 0){
 	        if(++isleep > 20){
-	            fprintf(stderr,"netRead Time Out Error\n");
+	            winout("netRead Time Out Error\n");
 	            return 1;
 	        }else{
 	            Sleep2(10);
 	        }
 	    }else{
-	        fprintf(stderr,"netRead Error Reading Socket\n");
+	        winout("netRead Error Reading Socket\n");
 		    return 1;        
 	    }
 	}
@@ -473,7 +463,7 @@ SOCKET Listen::createService(unsigned short *Port)
 /*
 	ret=setsockopt( serverSocket, SOL_SOCKET, SO_RCVBUF, 
                   (char *)&buf_size, sizeof(int) );    
-        if(ret < 0)fprintf(stderr,"setsockopt failed\n");
+        if(ret < 0)winout("setsockopt failed\n");
  */
 	
 	int ret = ::bind(serverSocket, (struct  sockaddr  *)&serverSocketAddr, sizeof(serverSocketAddr));
@@ -513,17 +503,17 @@ int Listen::getPortAndName(char *in,unsigned int *hostAddr,unsigned short *Port)
 	*hostAddr=(unsigned int)inet_addr(out);
 	if((long)(*hostAddr) != (long)oneNeg){
  	    *hostAddr=htonl(*hostAddr);
-	    fprintf(stderr,"Found Address %lx hostAddr %x oneNeg %x diff %x\n",(long)(*hostAddr),*hostAddr,oneNeg,*hostAddr-oneNeg);
+	    winout("Found Address %lx hostAddr %x oneNeg %x diff %x\n",(long)(*hostAddr),*hostAddr,oneNeg,*hostAddr-oneNeg);
 	}else{
 	    serverHostEnt=gethostbyname(out);
 	    if(serverHostEnt == NULL){
-	        fprintf(stderr,"Could Not Find Host (%s)\n",out);
+	        winout("Could Not Find Host (%s)\n",out);
 	        return 1;
 	    }
 	    copyl((char *)serverHostEnt->h_addr,(char *)&serverSocketAddr.sin_addr,serverHostEnt->h_length);
 	    *hostAddr=serverSocketAddr.sin_addr.s_addr;
  	    *hostAddr=htonl(*hostAddr);
-	    fprintf(stderr,"Found Address %lx\n",(long)*hostAddr);
+	    winout("Found Address %lx\n",(long)*hostAddr);
 	}
 
 	return 0;
@@ -552,7 +542,7 @@ SOCKET Listen::connectToServer(char *serverName,unsigned short *Port)
     memset(&serverSocketAddr, 0, sizeof(serverSocketAddr));
 
 	if(!(np=strrchr(serverName,':'))){
-	    fprintf(stderr,"Bad Address (%s)",serverName);
+	    winout("Bad Address (%s)",serverName);
 	    return result;
 	}else{
 	    *np=0;
@@ -564,11 +554,11 @@ SOCKET Listen::connectToServer(char *serverName,unsigned short *Port)
 	inet_pton(AF_INET, serverName, &hostAddr);
 	if((long)hostAddr != (long)oneNeg){
 	    serverSocketAddr.sin_addr.s_addr=hostAddr;
-	    fprintf(stderr,"Found Address %lx hostAddr %x oneNeg %x diff %x\n",(long)hostAddr,hostAddr,oneNeg,hostAddr-oneNeg);
+	    winout("Found Address %lx hostAddr %x oneNeg %x diff %x\n",(long)hostAddr,hostAddr,oneNeg,hostAddr-oneNeg);
 	}else{
 	    serverHostEnt=gethostbyname(serverName);
 	    if(serverHostEnt == NULL){
-	        fprintf(stderr,"Could Not Find Host (%s)\n",serverName);
+	        winout("Could Not Find Host (%s)\n",serverName);
 	        return result;
 	    }
 	    copyl((char *)serverHostEnt->h_addr,(char *)&serverSocketAddr.sin_addr,serverHostEnt->h_length);
@@ -578,23 +568,23 @@ SOCKET Listen::connectToServer(char *serverName,unsigned short *Port)
 	Try=0;
 	while(Try++ < 10){
 	    if((toServerSocket=socket(AF_INET,SOCK_STREAM,0)) < 0){
-            fprintf(stderr,"socket Error  (%ld)\n",(long)SOCKET_ERRNO);
+            winout("socket Error  (%ld)\n",(long)SOCKET_ERRNO);
 	        return toServerSocket;
 	    }
 
 	    ret=setsockopt( toServerSocket, SOL_SOCKET, SO_SNDBUF,
                   (char *)&buf_size, sizeof(int) );
-        if(ret < 0)fprintf(stderr,"setsockopt SO_SNDBUF failed\n");
+        if(ret < 0)winout("setsockopt SO_SNDBUF failed\n");
 
 	    ret=connect(toServerSocket,(struct sockaddr *)&serverSocketAddr,sizeof(serverSocketAddr));
 	    if(ret == -1){
                 if (SOCKET_ERRNO == SOCKET_ECONNREFUSED)  {
-                    fprintf(stderr,"Connection Refused  Try(%d)\n",Try);
+                    winout("Connection Refused  Try(%d)\n",Try);
                     closesocket(toServerSocket);
 					Sleep2(20);
                     continue;
                 }else{
-                    fprintf(stderr,"Connection Error  (%ld)\n",(long)SOCKET_ERRNO);
+                    winout("Connection Error  (%ld)\n",(long)SOCKET_ERRNO);
                     return ret;
                 }
 	    }

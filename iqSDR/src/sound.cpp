@@ -25,13 +25,13 @@ int soundClass::startRecord(char *fname)
 {
 
 	if(fname == NULL){
-	//	fprintf(stderr,"stop Record %s\n",fname);
+	//	winout("stop Record %s\n",fname);
 		if(outfile)sf_close(outfile);
 		outfile=NULL;
 	}else{
-	//	fprintf(stderr,"startRecord %s\n",fname);
+	//	winout("startRecord %s\n",fname);
 		outfile=sfopen(fname,faudio);
-		if(!outfile)fprintf(stderr,"Error Opening File %s for WAV data\n",fname);
+		if(!outfile)winout("Error Opening File %s for WAV data\n",fname);
 	}
 	return 0;
 }
@@ -42,7 +42,7 @@ SNDFILE *sfopen(char *filename,int faudio)
     
     sf_command (NULL, SFC_GET_LIB_VERSION, strbuffer, sizeof (strbuffer)) ;
     
-    if(pversion == 1)printf("sndfile version %s\n",strbuffer);
+    if(pversion == 1)winout("sndfile version %s\n",strbuffer);
     pversion=0;
     
     SF_INFO sfinfo;
@@ -60,7 +60,7 @@ SNDFILE *sfopen(char *filename,int faudio)
 
 soundClass::~soundClass()
 {
-	fprintf(stderr,"exit soundClass %p\n",this);
+	winout("exit soundClass %p\n",this);
 }
 int sound2( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
          double streamTime, RtAudioStreamStatus status, void *userData )
@@ -78,15 +78,15 @@ int soundClass::sound( void *outputBuffer, void *inputBuffer, unsigned int nBuff
 	short int *buffer = (short int *) outputBuffer;
 
 	//sdrClass *rx=(sdrClass *)userData;
-		
+	static long long int record=0;
 
-	if ( status )fprintf(stderr,"Stream underflow detected!\n");
+	if ( status )winout("Stream underflow detected!\n");
 
 	int ibuff = -1;
 	
 	if(bS)ibuff=bS->popBuffa();
 	
-	//fprintf(stderr,"ibuff %d bS %p\n",ibuff,bS);
+	//winout("ibuff %d bS %p\n",ibuff,bS);
 
 	if (ibuff >= 0){
 		short int *buff= bS->buffa[ibuff % NUM_ABUFF2];
@@ -104,17 +104,21 @@ int soundClass::sound( void *outputBuffer, void *inputBuffer, unsigned int nBuff
 		if(outfile){
 			size_t ret=sf_write_short(outfile,buff,nBufferFrames);
 			if(ret == 0){
-				fprintf(stderr,"Error sf_write_short \n");
+				winout("Error sf_write_short \n");
 			}
 		}
-		//fprintf(stderr,"ibuff %u amax %g amin %g nBufferFrames %u gain %g\n",ibuff,amax,amin,nBufferFrames,gain);
+		//winout("ibuff %u amax %g amin %g nBufferFrames %u gain %g\n",ibuff,amax,amin,nBufferFrames,gain);
 	}else{
 		for (unsigned int n=0; n<nBufferFrames*2; n++ ) {
 			  *buffer++ = 0;
 		}
+		
+		if(bS)winout("Audio Record %lld No Data\n",record);
 	}
 	
 	audioSync=0;
+	
+	++record;
     
   return 0;
 }
@@ -122,7 +126,7 @@ int soundClass::sound( void *outputBuffer, void *inputBuffer, unsigned int nBuff
 int soundClass::startSound()
 {
 	
-	//fprintf(stderr,"startSound Sleep faudio %g\n",faudio);
+	//winout("startSound Sleep faudio %g\n",faudio);
 	
 	if(soundRun)return 0;
 	
@@ -151,25 +155,25 @@ int soundClass::startSound()
 		dac.startStream();
 	}
 	catch (...) {
-		fprintf(stderr,"openStream error\n");
+		winout("openStream error\n");
 		//e.printMessage();
 		exit( 0 );
 	}
 	
 	while(soundRun >= 0){
-	    //fprintf(stderr,"startSound Sleeping %d\n",soundRun);
+	    //winout("startSound Sleeping %d\n",soundRun);
 		Sleep2(20);
 	}
 	
 	if (dac.isStreamOpen() ){
 		try {
-		   //fprintf(stderr,"call stopStream2\n");
+		   //winout("call stopStream2\n");
 			// Stop the stream
 			dac.stopStream();
-		  // fprintf(stderr,"return  stopStream2\n");
+		  // winout("return  stopStream2\n");
 		}
 		catch (...) {
-			fprintf(stderr,"stopStream error\n");
+			winout("stopStream error\n");
 			//e.printMessage();
 			exit( 0 );
 		}
@@ -178,7 +182,7 @@ int soundClass::startSound()
 	
 	soundRun=0;
 
-	//fprintf(stderr,"startSound soundRun %d  end\n",soundRun);
+	//winout("startSound soundRun %d  end\n",soundRun);
 
 	return 0;
 }
@@ -212,7 +216,7 @@ int soundClass::printAudio()
 	
 	int flag=0;
 
-	if(flag == 0)winout("id.size %ld\n",(long)id.size());
+	if(flag == 0)winout("Number of Devices : %ld\n",(long)id.size());
 
 	struct names name;
 	
@@ -256,7 +260,7 @@ int soundClass::printAudio()
 
 		}
 		catch (...) {
-			fprintf(stderr,"Error Doing Audio\n");
+			winout("Error Doing Audio\n");
 			break;
 		}
 

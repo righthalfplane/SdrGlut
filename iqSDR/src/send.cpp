@@ -28,10 +28,12 @@ int writeLab(SOCKET toServerSocket,char *Type,long size);
 
 long Bytes;
 
+void winout(const char *fmt, ...);
+
 int BasicPane::txPipe()
 {
 
-	fprintf(stderr,"txPipe \n");
+	winout("txPipe \n");
 	
 	int outFilenum=fileno(stdout);
 	
@@ -40,7 +42,7 @@ int BasicPane::txPipe()
       if(sdr->fillBuffer == 0){
 		int ret = write(outFilenum,sdr->sendBuff, sizeof(float)*2*sdr->size);
 		if(ret <= 0){
-			fprintf(stderr,"txPipe Write Error\n");
+			winout("txPipe Write Error\n");
 		}
       	sdr->fillBuffer=1;
 	  }
@@ -63,7 +65,7 @@ int BasicPane::SendStart(char *name,int type,int mode)
 	
 	
 	
-   // fprintf(stderr,"addressName %s mode %d\n",addressName,mode);
+   // winout("addressName %s mode %d\n",addressName,mode);
     
     rx->aminGlobal2=0;
     rx->amaxGlobal2=0;
@@ -75,13 +77,13 @@ int BasicPane::SendStart(char *name,int type,int mode)
     if(mode < 2){
         rx->send=(SOCKET)connectToServer((char *)name,&rx->Port);
         if(rx->send == -1){
-            fprintf(stderr,"TCP connect failed\n");
+            winout("TCP connect failed\n");
             return 1;
         }
     }else{
         if ((rx->send = socket(AF_INET, SOCK_DGRAM, 0)) == -1)
         {
-            fprintf(stderr,"UDP connect failed\n");
+            winout("UDP connect failed\n");
             return 1;
         }
         
@@ -90,7 +92,7 @@ int BasicPane::SendStart(char *name,int type,int mode)
         setsockopt(rx->send, SOL_SOCKET, SO_BROADCAST,
                    (const char *)&broadcast, sizeof broadcast);
 
-     // fprintf(stderr,"SendStart rx->name %s\n",rx->name);
+     // winout("SendStart rx->name %s\n",rx->name);
       
         if(mode == 3)return 0;
         
@@ -124,7 +126,7 @@ int BasicPane::rxSend()
     
     host= (struct hostent *) gethostbyname((char *)name);
     if(!host){
-        fprintf(stderr,"Host %s Not Found - sendAudio uses port 5000 no port should be specified\n",addressName);
+        winout("Host %s Not Found - sendAudio uses port 5000 no port should be specified\n",addressName);
         return 1;
     }
 
@@ -134,12 +136,12 @@ int BasicPane::rxSend()
     //bzero(&(server_addr.sin_zero),8);
     zerol((char *)&(server_addr.sin_zero),sizeof(server_addr.sin_zero));
 
-//	fprintf(stderr,"rxSend 1\n");
+//	winout("rxSend 1\n");
     sdr->fillBuffer=1;
     int mode=rx->sendMode;;
     int type=rx->dataType;
     while(sendFlag > 0){
- 	  //fprintf(stderr,"rxSend type %d fillBuffer %d mode %d\n",type,sdr->fillBuffer,mode);
+ 	  //winout("rxSend type %d fillBuffer %d mode %d\n",type,sdr->fillBuffer,mode);
  	  
  	  int ip=sdr->bS2->popBuff();
       if(ip >= 0){
@@ -173,7 +175,7 @@ int BasicPane::rxSend()
                rx->amaxGlobal2 = 0.8*rx->amaxGlobal2+0.2*amax;
                amax=rx->amaxGlobal2;
                
-               //printf("a amin %g amax %g ",amin,amax);
+               //winout("a amin %g amax %g ",amin,amax);
 
                double dnom=0.0;
                if((amax-amin) > 0){
@@ -207,7 +209,7 @@ int BasicPane::rxSend()
                    data[n]=(float)v;
                }
                
-              // fprintf(stderr,"f amin %g amax %g count %ld\n",amin,amax,count);
+              // winout("f amin %g amax %g count %ld\n",amin,amax,count);
 
                size=(long)(sdr->size*sizeof(float));
                if(mode == 0){
@@ -235,7 +237,7 @@ int BasicPane::rxSend()
                     if(v < amin)amin=v;
                 }
                 
-               // fprintf(stderr,"type 1 r amin %g amax %g sdr->size %d\n",amin,amax,sdr->size);
+               // winout("type 1 r amin %g amax %g sdr->size %d\n",amin,amax,sdr->size);
                 
                 average /= 2*sdr->size;
                 
@@ -251,7 +253,7 @@ int BasicPane::rxSend()
                 rx->amaxGlobal2 = 0.8*rx->amaxGlobal2+0.2*amax;
                 amax=rx->amaxGlobal2;
                 
-                //printf("a amin %g amax %g ",amin,amax);
+                //winout("a amin %g amax %g ",amin,amax);
                 
                 double dnom=0.0;
                 if((amax-amin) > 0){
@@ -283,7 +285,7 @@ int BasicPane::rxSend()
                    }
                     data[n]=(short int)v;
                 }
-               // printf(" f amin %g amax %g count %ld\n",amin,amax,count);
+               // winout(" f amin %g amax %g count %ld\n",amin,amax,count);
                 size=sdr->size*sizeof(short int);
                 if(mode == 0){
                     if(writeLab(rx->send,(char *)"SHOR",size))return 1;
@@ -310,7 +312,7 @@ int BasicPane::rxSend()
                    if(v > amax)amax=v;
                    if(v < amin)amin=v;
                }
-               //printf("r amin %g amax %g ",amin,amax);
+               //winout("r amin %g amax %g ",amin,amax);
                
                average /= 2*sdr->size;
                
@@ -326,7 +328,7 @@ int BasicPane::rxSend()
                rx->amaxGlobal2 = 0.8*rx->amaxGlobal2+0.2*amax;
                amax=rx->amaxGlobal2;
 
-               //printf("a amin %g amax %g ",amin,amax);
+               //winout("a amin %g amax %g ",amin,amax);
                double dnom=0.0;
                if((amax-amin) > 0){
                    dnom=255.0/(amax-amin);
@@ -357,7 +359,7 @@ int BasicPane::rxSend()
                  }
                    data[n]=(signed char)v;
                }
-               //printf(" f amin %g amax %g count %ld\n",amin,amax,count);
+               //winout(" f amin %g amax %g count %ld\n",amin,amax,count);
                size=sdr->size*sizeof(signed char);
                if(mode == 0){
                    if(writeLab(rx->send,(char *)"SIGN",size))return 1;
@@ -383,7 +385,7 @@ int BasicPane::rxSend()
                    if(v > amax)amax=v;
                    if(v < amin)amin=v;
                }
-               //printf("r amin %g amax %g ",amin,amax);
+               //winout("r amin %g amax %g ",amin,amax);
                
                average /= 2*sdr->size;
                
@@ -398,7 +400,7 @@ int BasicPane::rxSend()
                if(rx->amaxGlobal2 == 0.0)rx->amaxGlobal2=amax;
                rx->amaxGlobal2 = 0.8*rx->amaxGlobal2+0.2*amax;
                amax=rx->amaxGlobal2;
-               //printf("a a amin %g amax %g ",amin,amax);
+               //winout("a a amin %g amax %g ",amin,amax);
 
                double dnom=0.0;
                if((amax-amin) > 0){
@@ -431,7 +433,7 @@ int BasicPane::rxSend()
                   }
                    data[n]=(unsigned char)v;
                }
-              // printf("f  amin %g amax %g count %ld\n",amin,amax,count);
+              // winout("f  amin %g amax %g count %ld\n",amin,amax,count);
                size=sdr->size*sizeof(unsigned char);
                if(mode == 0){
                    if(writeLab(rx->send,(char *)"USIG",size))return 1;
@@ -459,7 +461,7 @@ int BasicPane::rxSend()
     if(rx->send >= 0){
         if(mode < 2){
             shutdown(rx->send,2);
-            fprintf(stderr,"shutdown mode %d\n",mode);
+            winout("shutdown mode %d\n",mode);
         }
         closesocket(rx->send);
     }
@@ -474,7 +476,7 @@ int BasicPane::sendAudio(int short *data,int length)
     struct hostent *host;
     int ret;
 
-    //fprintf(stderr,"sendAudio length %d sendMode %d controlSend %d\n",length,rx->sendMode,rx->controlSend);
+    //winout("sendAudio length %d sendMode %d controlSend %d\n",length,rx->sendMode,rx->controlSend);
     
     if(rx->sendMode < 3)return 0;
     
@@ -494,7 +496,7 @@ int BasicPane::sendAudio(int short *data,int length)
     host= (struct hostent *) gethostbyname((char *)broadcastname);
     
     if(!host){
-        fprintf(stderr,"Host %s Not Found - sendAudio uses port 5000 no port should be specified\n",broadcastname);
+        winout("Host %s Not Found - sendAudio uses port 5000 no port should be specified\n",broadcastname);
         return 1;
     }
     
@@ -512,10 +514,10 @@ int BasicPane::sendAudio(int short *data,int length)
     ret=sendto2(rx->send,(char *)data, length*2,
                  (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
     //static long nn=0;
-    //fprintf(stderr,"sendAudio length %d nn %ld\n",length,nn++);
-    if(ret)fprintf(stderr,"sendto2 Error\n");
+    //winout("sendAudio length %d nn %ld\n",length,nn++);
+    if(ret)winout("sendto2 Error\n");
     
-   // fprintf(stderr,"sendAudio rx->name %s ret %d length %d\n",addressName,ret,length);
+   // winout("sendAudio rx->name %s ret %d length %d\n",addressName,ret,length);
 
     
     //static FILE *out=NULL;
@@ -538,10 +540,10 @@ int sendto2(SOCKET socket,char *data,long size,struct sockaddr *server_addr,size
         if(n > 1472)n=1472;
         ret=(int)sendto(socket,data, n, 0, server_addr, (socklen_t)sizeaddr);
         if(ret == -1){
-            fprintf(stderr,"sendto error %d EMSGSIZE %d\n",errno,EMSGSIZE);
+            winout("sendto error %d EMSGSIZE %d\n",errno,EMSGSIZE);
             return 1;
         }
-        //fprintf(stderr,"socket %d ret %d\n",socket,ret);
+        //winout("socket %d ret %d\n",socket,ret);
         data += ret;
         size -= ret;
     }
@@ -553,14 +555,14 @@ int netWrite(SOCKET toServerSocket,char *buffout,long HdfSize)
 {
 	long n;
 	
-	//fprintf(stderr,"HdfSize %ld\n",HdfSize);
+	//winout("HdfSize %ld\n",HdfSize);
 	Bytes += HdfSize;
 	while(HdfSize > 0){
 		n=HdfSize;
 		if(n > 120000)n=120000;
         n=::send(toServerSocket,buffout,n,0);
 		if(n < 0){
-			fprintf(stderr,"Write Socket Error (%ld)\n",(long)errno);
+			winout("Write Socket Error (%ld)\n",(long)errno);
 			return 1;
 		}
 		buffout += n;
@@ -616,7 +618,7 @@ SOCKET connectToServer(char *serverName,unsigned short *Port)
     zerol((char *)&serverSocketAddr, sizeof(serverSocketAddr));
 
 	if(!(np=strrchr(serverName,':'))){
-	    printf("Bad Address (%s)",serverName);
+	    winout("Bad Address (%s)",serverName);
 	    return result;
 	}else{
 	    *np=0;
@@ -628,11 +630,11 @@ SOCKET connectToServer(char *serverName,unsigned short *Port)
 	inet_pton(AF_INET, serverName, &hostAddr);
 	if((long)hostAddr != (long)oneNeg){
 	    serverSocketAddr.sin_addr.s_addr=hostAddr;
-	    printf("Found Address %lx hostAddr %x oneNeg %x diff %x\n",(long)hostAddr,hostAddr,oneNeg,hostAddr-oneNeg);
+	    winout("Found Address %lx hostAddr %x oneNeg %x diff %x\n",(long)hostAddr,hostAddr,oneNeg,hostAddr-oneNeg);
 	}else{
 	    serverHostEnt=gethostbyname(serverName);
 	    if(serverHostEnt == NULL){
-	        printf("Could Not Find Host (%s)\n",serverName);
+	        winout("Could Not Find Host (%s)\n",serverName);
 	        return result;
 	    }
 	    copyl((char *)serverHostEnt->h_addr,(char *)&serverSocketAddr.sin_addr,serverHostEnt->h_length);
@@ -642,24 +644,24 @@ SOCKET connectToServer(char *serverName,unsigned short *Port)
 	Try=0;
 	while(Try++ < 4){
 	    if((toServerSocket=socket(AF_INET,SOCK_STREAM,0)) < 0){
-            printf("socket Error  (%ld)\n",(long)SOCKET_ERRNO);
+            winout("socket Error  (%ld)\n",(long)SOCKET_ERRNO);
 	        return toServerSocket;
 	    }
 
 	    ret=setsockopt( toServerSocket, SOL_SOCKET, SO_SNDBUF,
                   (char *)&buf_size, sizeof(int) );
-        if(ret < 0)printf("setsockopt SO_SNDBUF failed\n");
+        if(ret < 0)winout("setsockopt SO_SNDBUF failed\n");
 
 	
 	    ret=connect(toServerSocket,(struct sockaddr *)&serverSocketAddr,sizeof(serverSocketAddr));
 	    if(ret == -1){
                 if (SOCKET_ERRNO == SOCKET_ECONNREFUSED)  {
-                    printf("Connection Refused  Try(%d)\n",Try);
+                    winout("Connection Refused  Try(%d)\n",Try);
                     closesocket(toServerSocket);
                     std::this_thread::sleep_for(std::chrono::seconds(4));
                     continue;
                 }else{
-                    printf("Connection Error  (%ld)\n",(long)SOCKET_ERRNO);
+                    winout("Connection Error  (%ld)\n",(long)SOCKET_ERRNO);
                     return ret;
                 }
 	    }
