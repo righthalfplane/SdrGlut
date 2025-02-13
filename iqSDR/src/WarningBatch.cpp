@@ -190,6 +190,18 @@ void BatchWindow::OnFileSave(wxCommandEvent&(event))
     wxMessageBox(msg, _T("About iqSDR"), wxOK | wxICON_INFORMATION, this);
 }
 
+int BatchWindow::print=0;
+
+void BatchWindow::winout(char *buff)
+{
+		
+	if(BatchWindow::print){
+		WarningBatchHold(buff);
+	}else{
+		fprintf(stderr,"%s",buff);
+	}
+
+}
 void winout(const char *fmt, ...)
 {
 	char buff[4096];
@@ -204,9 +216,8 @@ void winout(const char *fmt, ...)
 
 	}
     va_end(arg);
-		
-	WarningBatchHold(buff);
-	 
+	
+	BatchWindow::winout(buff);
 }
 
 void WarningBatch(const char *message)

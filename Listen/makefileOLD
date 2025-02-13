@@ -5,7 +5,7 @@ CCFILES= main.cpp	Clisten.cpp cStack.cpp
 CCOBJS = main.o	Clisten.o cStack.o
 
 fireball:  ${COBJS} ${CCOBJS}
-	${CXX} ${CFLAGS} -o listen.x ${COBJS} ${CCOBJS}  -lrtaudio -lSoapySDR -lliquid
+	${CXX} ${CFLAGS} -o listen.x ${COBJS} ${CCOBJS}  -lrtaudio -lSoapySDR -lliquid -lpthread
 	rm main.o Clisten.o cStack.o
 
 

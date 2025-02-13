@@ -105,6 +105,7 @@ double rtime(void);
     ID_STARTSEND,
     ID_STOPSEND,
     ID_SWAPIQ,
+    ID_OSCILLOSCOPE,
     ID_ALPHA,
     ID_SOFTAUTOGAIN,
     ID_SETGAIN,
@@ -504,6 +505,8 @@ public:
 	
 	volatile int softAutoGain;
 	
+	volatile int oscilloscope;
+	
 	TopPane *gTopPane;
 	
 	double lineAlpha;
@@ -522,7 +525,9 @@ public:
 	volatile double verticalMaximum;
    
 	void render(wxPaintEvent& evt);
-	void render2();
+	void render1(wxPaintEvent& evt);
+	void render1a(wxPaintEvent& evt);
+	void render2(wxPaintEvent& evt);
 	void prepare3DViewport(int topleft_x, int topleft_y, int bottomrigth_x, int bottomrigth_y);
 	void prepare2DViewport(int topleft_x, int topleft_y, int bottomrigth_x, int bottomrigth_y);
 	void InitOpenGl();

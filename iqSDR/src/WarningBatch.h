@@ -79,6 +79,8 @@ public:
     void OnAbout(wxCommandEvent& event);
     void OnClose2(wxCloseEvent& event); 
     void OnIdle(wxIdleEvent& event); 
+    static void winout(char *buff);
+    static int print;
     
 #if wxUSE_FONTDLG
     void ChooseFont(wxCommandEvent& event);

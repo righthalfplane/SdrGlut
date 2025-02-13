@@ -1583,8 +1583,7 @@ int sdrClass::rxBuffer()
 					buff2[n]=buff[n];
 				}
 	        	
-	        	//if(!iWait)bS2->pushBuff(rx->witch);
-	        	
+	        	if(!iWait)bS2->pushBuff(rx->witch);
 	        	
              	++rx->witch;
 
