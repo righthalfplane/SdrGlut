@@ -321,7 +321,7 @@ int Radio::setFrequencyDuo(struct playData *rx)
     if(rx->fc < 0.5*rx->samplerate)rx->fc=0.5*rx->samplerate;
     
     try{
-        rx->device->setFrequency(SOAPY_SDR_RX,rx->channel,"RF",rx->fc-rx->foffset);
+        rx->device->setFrequency(SOAPY_SDR_RX,rx->channel,rx->fc-rx->foffset);
     }
     catch(...)
     {
@@ -726,6 +726,11 @@ int doRadioOpenRA(std::string argStr)
                     box[nb]->add_item((int)j,data);
 
                 }
+                
+                if(rate.size() <= 0){
+                    box[nb]->add_item((int)0,"2000000");
+                }
+                
                 SoapySDR::Device::unmake(devicer);
                 ++nb;
 

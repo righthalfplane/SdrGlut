@@ -1240,6 +1240,7 @@ selectionWindow::selectionWindow(wxWindow *frame, const wxString &title,wxTextCt
 
                 }
                 
+               
 				new wxStaticText(box,wxID_STATIC,wxT("Sample Rate :"),wxPoint(20,outset1+15), wxDefaultSize,wxALIGN_LEFT);
 
 				boxList[k]=new wxComboBox(box,ID_FREQUENCY+k,wxT("Mode"),wxPoint(110,outset1+11),wxDefaultSize,
@@ -1768,7 +1769,7 @@ BasicPane::BasicPane(wxWindow *frame, const wxString &title,class sdrClass *sdrI
 			snprintf(level, sizeof(level), "%.0f",sdr->rate[n]);
 			strings.Add(level);
 		}
-		
+				
 		new wxStaticText(panel22,wxID_STATIC,wxT("Sample Rate:"),wxPoint(10,12), wxDefaultSize,wxALIGN_LEFT);
 
 		sampleRateCombo=new wxComboBox(panel22,ID_COMBOSAMPLERATE,wxT("SAMPLES"),wxPoint(95,10),wxDefaultSize,
@@ -3819,6 +3820,221 @@ void Spectrum::render2(wxPaintEvent& evt )
     SwapBuffers();
 }
 
+void Spectrum::render1a(wxPaintEvent& evt )
+{
+	evt.Skip();
+	
+	//winout("Spectrum render nc %lld\n",nc++);
+
+    if(!IsShown()) return;
+    
+    //auto t1 = chrono::high_resolution_clock::now();
+    
+        
+    wxGLCanvas::SetCurrent(*m_context);
+    //wxPaintDC(this); // only to be used in paint events. use wxClientDC to paint outside the paint event
+    wxClientDC(this); // only to be used in paint events. use wxClientDC to paint outside the paint event
+ 
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+ 
+    // ------------- draw some 2D ----------------
+    prepare2DViewport(0,0,getWidth(), getHeight());
+    glLoadIdentity();
+ 
+    // white background
+    glColor4f(1, 1, 1, 1);
+    glBegin(GL_QUADS);
+    glVertex3f(0,0,0);
+    glVertex3f(getWidth(),0,0);
+    glVertex3f(getWidth(),getHeight(),0);
+    glVertex3f(0,getHeight(),0);
+    glEnd();
+    
+    //winout("render1a\n");
+    
+    int buffSendLength=0;
+    
+    float *buffSend2;
+    
+	if(!iWait){
+	/*
+  		uRect box;
+	
+ 		box.x=ftox(sdr->f-sdr->bw/(2.0));
+ 		box.y=0;
+ 		box.xsize=ftox(sdr->f+sdr->bw/(2.0))-ftox(sdr->f-sdr->bw/(2.0));
+ 		box.ysize=getHeight();
+ 		 		
+ 		DrawBox(&box,0);
+ 	*/
+ 	
+		glColor4f(0, 0, 1, 1);
+		
+		//winout("filterType %d\n",filterType);
+		
+		int ip = -1;
+ 	  	if(sdr->bS2)ip=sdr->bS2->popBuff();
+      	if(ip < 0)return;
+      	
+      	int witch=ip % NUM_DATA_BUFF;
+		buffSend2=sdr->bS2->buff[witch];
+      	
+      	buffSendLength=sdr->size;
+		
+		double amax=0;
+		for(int n=0;n<buffSendLength;++n){
+			double v=(buffSend2[2*n]*buffSend2[2*n]+buffSend2[2*n+1]*buffSend2[2*n+1]);
+        	if(v > 0.0)v=sqrt(v);
+         	if(v > amax)amax=v;
+		}
+		
+			
+		buffFlag=0;
+		
+		double ymin = -amax;
+		double ymax =  amax;	
+		if(ymin >= ymax)ymin=ymax-40;
+		
+		double dy=ymax-ymin;
+		
+		double iymin=0;
+		double iymax=getHeight()-20;
+		double idy=iymin-iymax;		
+		
+		double xmin=sdr->fw-0.5*sdr->samplewidth;
+		double xmax=sdr->fw+0.5*sdr->samplewidth;
+		double dx=xmax-xmin;
+
+		double ixmin=50;
+		double ixmax=getWidth();
+		double idx=ixmax-ixmin;
+
+		//int ixxmin,ixxmax,iyymin,iyymax;
+	
+		//ixxmin=100000000;
+		//ixxmax= -100000000;
+		//iyymin=100000000;
+		//iyymax= -100000000;
+	
+		int ixold=0;
+		int iyold=0;
+		int iflag=0;
+	
+		double xmin2=sdr->fc-0.5*sdr->samplerate;
+		double xmax2=sdr->fc+0.5*sdr->samplerate;
+		double dx2=xmax2-xmin2;
+		
+		//fprintf(stderr,"buffSendLength %ld lineAlpha %g\n",(long)buffSendLength,lineAlpha);
+			
+		for(int n=0;n<buffSendLength;++n){
+			double v;
+			v=buffSend2[2*n];
+			double x=dx2*n/((double)buffSendLength)+xmin2;
+			double y=v;
+			int ix;
+			int iy;
+			ix=(int)((x-xmin)*idx/dx+ixmin);
+			if(ix <= ixmin || ix >= ixmax)continue;
+			//if(ix < ixxmin)ixxmin=ix;
+			//if(ix > ixxmax)ixxmax=ix;
+			iy=(int)((y-ymin)*idy/dy+iymax);
+			if(iy <= iymin || iy >= iymax)continue;
+			//if(iy < iyymin)iyymin=iy;
+			//if(iy > iyymax)iyymax=iy;
+			if(iflag == 0){
+			  ixold=ix;
+			  iyold=iy;
+			  DrawLine(ixold, iyold, ix, iy);
+			  iflag=1;
+			}
+			DrawLine(ixold, iyold, ix, iy);
+			ixold=ix;
+			iyold=iy;
+		}
+	
+		
+		//fprintf(stderr,"ixxmin %d ixxmax %d getWidth() %d iyymin %d iyymax %d getHeight() %d\n",ixxmin,ixxmax,getWidth(),iyymin,iyymax,getHeight());
+
+		glColor4f(0, 0, 0, 1);
+
+		
+ 		{
+			double xmnc,xmxc,Large,Small;
+			double xmnc2,xmxc2;
+			double xmns,xmxs;
+			double cmin,cmax;
+			double fc=sdr->fw;
+			double bw=sdr->samplewidth/(2.0);
+			xmnc2=fc-bw;
+			xmxc2=fc+bw;
+			cmin= -((sdr->fc-xmnc2)/sdr->samplerate)+0.5;
+			xmnc=cmin*1.0/(double)sdr->ncut;
+			cmax= -((sdr->fc-xmxc2)/sdr->samplerate)+0.5;
+			xmxc=cmax*1.0/(double)sdr->ncut;
+			xmns=xmnc;
+			xmxs=xmxc;
+			//fprintf(stderr,"xmnc %g xmxc %g samplewidth %g samplescale %g\n",xmnc,xmxc,sdr->samplewidth,sdr->samplescale);
+			GridPlotNeat2(&xmnc,&xmxc,&Large,&Small);
+			//fprintf(stderr,"xmnc %g xmxc %g Large %g Small %g %g %g\n",xmnc,xmxc,Large,Small,xmnc/Large,xmxc/Large);
+			
+			dx=xmxs-xmns;
+			
+			for(double xp=xmnc;xp <= xmxc;xp += Large){
+				char cbuff[256];
+			    double xx=(xp-xmns)/dx;
+			    //fprintf(stderr,"xx %g ",xx);
+			    if(xx < 0.0 || xx > 1.0)continue;
+			    int ixx=(int)(idx*xx+ixmin);
+			    //fprintf(stderr,"ixx %d\n ",ixx);
+			    if(ixx < ixmin || ixx > ixmax)continue;
+ 				DrawLine3(ixx, 0, ixx, getHeight()-15);
+ 				sprintf(cbuff,"%g",xp);
+				DrawString(ixx-10,getHeight()-13, cbuff);
+			}
+			//winout(" idx %g\n",idx);
+			
+
+			xmnc=ymin;
+			xmxc=ymax;
+			//fprintf(stderr,"xmnc %g xmxc %g\n",xmnc,xmxc);
+			GridPlotNeat2(&xmnc,&xmxc,&Large,&Small);
+			//fprintf(stderr,"xmnc %g xmxc %g Large %g Small %g %g %g\n",xmnc,xmxc,Large,Small,xmnc/Large,xmxc/Large);
+			
+			for(double xp=xmnc;xp <= xmxc;xp += Large){
+				char cbuff[256];
+			    double xx=((xp-ymin)/(dy));
+			    if(xx < 0.0 || xx > 1.0)continue;
+			    int ixx=(int)(iymax+idy*xx);
+ 				DrawLine3(30, ixx, getWidth(), ixx);
+ 				sprintf(cbuff,"%g",xp);
+				DrawString(5,ixx-8,cbuff);
+			}
+			//winout(" idy %g\n",idy);
+		
+
+		
+ 		}
+		
+		
+
+		//auto t2 = chrono::high_resolution_clock::now();
+		//std::chrono::duration<double> difference = t2 - t1;
+		//std::cout << "Time "<< difference.count() << endl;
+		//winout("count %g\n",difference.count());
+
+	}
+
+	//winout("Spectrum done\n");
+
+	//fprintf(stderr,"Next 77\n");
+		
+    glFlush();
+    SwapBuffers();    
+    
+ 
+}
+ 
+
 int DrawBox(uRect *box,int offset)
 {
     if(box->xsize <= 0)return 0;
@@ -4344,220 +4560,7 @@ void Spectrum::prepare2DViewport(int topleft_x, int topleft_y, int bottomrigth_x
     glLoadIdentity();
 }
  
-void Spectrum::render1a(wxPaintEvent& evt )
-{
-	evt.Skip();
-	
-	//winout("Spectrum render nc %lld\n",nc++);
 
-    if(!IsShown()) return;
-    
-    //auto t1 = chrono::high_resolution_clock::now();
-    
-        
-    wxGLCanvas::SetCurrent(*m_context);
-    //wxPaintDC(this); // only to be used in paint events. use wxClientDC to paint outside the paint event
-    wxClientDC(this); // only to be used in paint events. use wxClientDC to paint outside the paint event
- 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
- 
-    // ------------- draw some 2D ----------------
-    prepare2DViewport(0,0,getWidth(), getHeight());
-    glLoadIdentity();
- 
-    // white background
-    glColor4f(1, 1, 1, 1);
-    glBegin(GL_QUADS);
-    glVertex3f(0,0,0);
-    glVertex3f(getWidth(),0,0);
-    glVertex3f(getWidth(),getHeight(),0);
-    glVertex3f(0,getHeight(),0);
-    glEnd();
-    
-    //winout("render1\n");
-    
-    int buffSendLength=0;
-    
-    float *buffSend2;
-    
-	if(!iWait){
-	/*
-  		uRect box;
-	
- 		box.x=ftox(sdr->f-sdr->bw/(2.0));
- 		box.y=0;
- 		box.xsize=ftox(sdr->f+sdr->bw/(2.0))-ftox(sdr->f-sdr->bw/(2.0));
- 		box.ysize=getHeight();
- 		 		
- 		DrawBox(&box,0);
- 	*/
- 	
-		glColor4f(0, 0, 1, 1);
-		
-		//winout("filterType %d\n",filterType);
-		
-		int ip = -1;
- 	  	if(sdr->bS2)ip=sdr->bS2->popBuff();
-      	if(ip < 0)return;
-      	
-      	int witch=ip % NUM_DATA_BUFF;
-		buffSend2=sdr->bS2->buff[witch];
-      	
-      	buffSendLength=sdr->size;
-		
-		double amax=0;
-		//double avg=0;
-		for(int n=0;n<buffSendLength;++n){
-			double v=(buffSend2[2*n]*buffSend2[2*n]+buffSend2[2*n+1]*buffSend2[2*n+1]);
-        	v=fabs(v);
-        	double mag=v;
-        	if(mag > amax)amax=mag;
-			//avg += mag;
-		}
-		
-		//avg /= buffSendLength;
-	
-		//double shift=-100-avg;
-		
-		
-		buffFlag=0;
-		
-		//double dnom=1;
-
-		double ymin = -amax;
-		double ymax =  amax;	
-		if(ymin >= ymax)ymin=ymax-40;
-		
-		double dy=ymax-ymin;
-		
-		double iymin=0;
-		double iymax=getHeight()-20;
-		double idy=iymin-iymax;		
-		
-		double xmin=0;
-		double xmax=1.0/sdr->ncut;
-		double dx=xmax-xmin;
-
-		double ixmin=50;
-		double ixmax=getWidth();
-		double idx=ixmax-ixmin;
-
-		//int ixxmin,ixxmax,iyymin,iyymax;
-	
-		//ixxmin=100000000;
-		//ixxmax= -100000000;
-		//iyymin=100000000;
-		//iyymax= -100000000;
-	
-		int ixold=0;
-		int iyold=0;
-		int iflag=0;
-	
-		double xmin2=0;
-		double xmax2=1.0/sdr->ncut;
-		double dx2=xmax2-xmin2;
-		
-		
-		//fprintf(stderr,"buffSendLength %ld lineAlpha %g\n",(long)buffSendLength,lineAlpha);
-			
-		for(int n=0;n<buffSendLength;++n){
-			double v=0;
-			v=buffSend2[2*n];
-			double x=dx2*n/((double)buffSendLength)+xmin2;
-			double y=v;
-			int ix;
-			int iy;
-			ix=(int)((x-xmin)*idx/dx+ixmin);
-			if(ix <= ixmin || ix >= ixmax)continue;
-			//if(ix < ixxmin)ixxmin=ix;
-			//if(ix > ixxmax)ixxmax=ix;
-			iy=(int)((y-ymin)*idy/dy+iymax);
-			if(iy <= iymin || iy >= iymax)continue;
-			//if(iy < iyymin)iyymin=iy;
-			//if(iy > iyymax)iyymax=iy;
-			//if(n > 99900)fprintf(stderr,"n %d ix %d iy %d\n",n,ix,iy);
-			if(iflag == 0){
-			  ixold=ix;
-			  iyold=iy;
-			  DrawLine(ixold, iyold, ix, iy);
-			  iflag=1;
-			}
-			DrawLine(ixold, iyold, ix, iy);
-			ixold=ix;
-			iyold=iy;
-		}
-	
-		
-		//fprintf(stderr,"ixxmin %d ixxmax %d getWidth() %d iyymin %d iyymax %d getHeight() %d\n",ixxmin,ixxmax,getWidth(),iyymin,iyymax,getHeight());
-
-		glColor4f(0, 0, 0, 1);
-
-		
- 		{
-			double xmnc,xmxc,Large,Small;
-			xmnc=0.0;
-			xmxc=1.0/sdr->ncut;
-			//fprintf(stderr,"xmnc %g xmxc %g samplewidth %g\n",xmnc,xmxc,sdr->samplewidth);
-			GridPlotNeat2(&xmnc,&xmxc,&Large,&Small);
-			//fprintf(stderr,"xmnc %g xmxc %g Large %g Small %g %g %g\n",xmnc,xmxc,Large,Small,xmnc/Large,xmxc/Large);
-			
-			for(double xp=xmnc;xp <= xmxc;xp += Large){
-				char cbuff[256];
-				sprintf(cbuff,"%g",xp);
-			    double xx=((xp-xmin)/dx);
-			    if(xx < 0.0 || xx > 1.0)continue;
-			    int ixx=(int)(idx*xx);
-			    if(ixx < ixmin || ixx > ixmax)continue;
- 				DrawLine3(ixx, 0, ixx, getHeight()-15);
- 				//winout(" %g ",xx);
- 				DrawString(ixx-10,getHeight()-13, cbuff);
-			}
-			//winout(" idx %g\n",idx);
-			
-
-			xmnc=ymin;
-			xmxc=ymax;
-			//fprintf(stderr,"xmnc %g xmxc %g\n",xmnc,xmxc);
-			GridPlotNeat2(&xmnc,&xmxc,&Large,&Small);
-			//fprintf(stderr,"xmnc %g xmxc %g Large %g Small %g %g %g\n",xmnc,xmxc,Large,Small,xmnc/Large,xmxc/Large);
-			
-			for(double xp=xmnc;xp <= xmxc;xp += Large){
-				char cbuff[256];
-				sprintf(cbuff,"%g",xp);
-			    double xx=((xp-ymin)/(dy));
-			    if(xx < 0.0 || xx > 1.0)continue;
-			    int ixx=(int)(iymax+idy*xx);
-			    //int ixx=(int)(iymax-xx*idy);
-				//winout(" %d %g ",ixx,xx);
- 				DrawLine3(30, ixx, getWidth(), ixx);
- 				//winout(" %g ",xx);
- 				DrawString(5,ixx-8,cbuff);
-			}
-			//winout(" idy %g\n",idy);
-		
-
-		
- 		}
-		
-		
-
-		//auto t2 = chrono::high_resolution_clock::now();
-		//std::chrono::duration<double> difference = t2 - t1;
-		//std::cout << "Time "<< difference.count() << endl;
-		//winout("count %g\n",difference.count());
-
-	}
-
-	//winout("Spectrum done\n");
-
-	//fprintf(stderr,"Next 77\n");
-		
-    glFlush();
-    SwapBuffers();    
-    
- 
-}
- 
 int testEM()
 {
     double xmnc,xmxc,Large,Small;
