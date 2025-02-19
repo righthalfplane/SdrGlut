@@ -8,7 +8,7 @@ void winout(const char *fmt, ...);
 
 int copyl(char *p1,char *p2,long n);
 
-char *ProgramVersion=(char *)"iqSDR-1257";
+char *ProgramVersion=(char *)"iqSDR-1294";
 
 //c++ -std=c++11 -o iqSDR.x iqSDR.cpp -lGLEW `/usr/local/bin/wx-config --cxxflags --libs --gl-libs` -lGLU -lGL
 
@@ -2014,7 +2014,7 @@ void BasicPane::OnCheckAuto(wxCommandEvent &event)
 		return;
 	}else if(id == ID_OSCILLOSCOPE){
 		int flag=event.GetSelection();
-		winout("ID_OSCILLOSCOPE flag %d\n",flag);
+		//winout("ID_OSCILLOSCOPE flag %d\n",flag);
 		gSpectrum->oscilloscope=flag;
 		return;
 	}
@@ -3163,6 +3163,13 @@ Spectrum::Spectrum(wxFrame* parent, int* args) :
     buffFlag=0;
     
     iWait=0;
+        
+    decodemode1= -11;
+    
+    buff2=NULL;
+	
+	buffSize = -10;
+
     
     filterType=FILTER_BLACKMANHARRIS7;
     
@@ -3412,16 +3419,6 @@ void Spectrum::render1(wxPaintEvent& evt )
     float *buffSend2;
     
 	if(!iWait){
-	/*
-  		uRect box;
-	
- 		box.x=ftox(sdr->f-sdr->bw/(2.0));
- 		box.y=0;
- 		box.xsize=ftox(sdr->f+sdr->bw/(2.0))-ftox(sdr->f-sdr->bw/(2.0));
- 		box.ysize=getHeight();
- 		 		
- 		DrawBox(&box,0);
- 	*/
  	
 		glColor4f(0, 0, 1, 1);
 		
@@ -3431,10 +3428,53 @@ void Spectrum::render1(wxPaintEvent& evt )
  	  	if(sdr->bS2)ip=sdr->bS2->popBuff();
       	if(ip < 0)return;
       	
+      	if(decodemode1 != sdr->decodemode){
+      		decodemode1=sdr->decodemode;
+      		double Ratio = (float)(sdr->bw/ sdr->samplerate);
+      		iqSampler1  = msresamp_crcf_create(Ratio, 60.0f);
+      	}
+    	
+		if(buffSize != sdr->size){
+			if(buff2)cFree((char *)buff2);
+			buff2=(float *)cMalloc(sizeof(float)*8*sdr->size,95288);
+			buffSize=sdr->size;
+		}
+      	
       	int witch=ip % NUM_DATA_BUFF;
 		buffSend2=sdr->bS2->buff[witch];
-      	
-      	buffSendLength=sdr->size;
+		
+		
+		double sint,cost;
+
+        for (int k = 0 ; k < sdr->size ; k++){
+            float r = buffSend2[k * 2];
+            float i = buffSend2[k * 2 + 1];
+            if(sdr->dt > 0){
+                buff2[k * 2] = (float)(r*sdr->coso - i*sdr->sino);
+                buff2[k * 2+ 1] = (float)(i*sdr->coso + r*sdr->sino);
+                sint=sdr->sino*sdr->cosdt+sdr->coso*sdr->sindt;
+                cost=sdr->coso*sdr->cosdt-sdr->sino*sdr->sindt;
+                sdr->coso=cost;
+                sdr->sino=sint;
+             }else{
+                buff2[k * 2] = r;
+                buff2[k * 2 + 1] = i;
+            }
+        }
+     
+		double r=sqrt(sdr->coso*sdr->coso+sdr->sino*sdr->sino);
+		sdr->coso /= r;
+		sdr->sino /= r;
+		
+		unsigned int num;
+	
+		num=0;
+ 
+		msresamp_crcf_execute(iqSampler1, (liquid_float_complex *)buff2, sdr->size, (liquid_float_complex *)buffSend2, &num);  // decimate
+		
+		//fprintf(stderr,"num %d\n",num);
+		
+      	buffSendLength=num;
 		
 		double amax=0;
 		for(int n=0;n<buffSendLength;++n){
@@ -3475,20 +3515,23 @@ void Spectrum::render1(wxPaintEvent& evt )
 		int iyold=0;
 		int iflag=0;
 	
-		double xmin2=sdr->fc-0.5*sdr->samplerate;
-		double xmax2=sdr->fc+0.5*sdr->samplerate;
-		double dx2=xmax2-xmin2;
+		//double xmin2=0;
+		//double xmax2=num;
+		//double dx2=xmax2-xmin2;
 		
 		//fprintf(stderr,"buffSendLength %ld lineAlpha %g\n",(long)buffSendLength,lineAlpha);
+		
+		double beta=sdr->samplewidth/sdr->samplerate;
 			
 		for(int n=0;n<buffSendLength;++n){
 			double v;
 			v=buffSend2[2*n];
-			double x=dx2*n/((double)buffSendLength)+xmin2;
+			double x=n/((double)buffSendLength);
 			double y=v;
 			int ix;
 			int iy;
-			ix=(int)((x-xmin)*idx/dx+ixmin);
+			ix=(int)((0.5+x/beta-0.5/beta)*idx+ixmin);
+			//fprintf(stderr,"n %d x %g y %g ix %d zoom %g\n",n,x,y,ix,sdr->samplewidth/sdr->samplerate);
 			if(ix <= ixmin || ix >= ixmax)continue;
 			//if(ix < ixxmin)ixxmin=ix;
 			//if(ix > ixxmax)ixxmax=ix;

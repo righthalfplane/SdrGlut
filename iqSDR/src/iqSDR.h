@@ -501,6 +501,14 @@ public:
 
 	int filterType;
 	
+	float *buff2;
+	
+	int buffSize;
+		
+	int decodemode1;
+	
+	msresamp_crcf iqSampler1;
+	
 	volatile int iWait; 
 	
 	volatile int softAutoGain;
