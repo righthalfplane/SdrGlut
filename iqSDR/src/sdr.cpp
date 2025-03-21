@@ -953,205 +953,211 @@ int sdrClass::findRadio()
     for(unsigned int k=0;k<resultsEnumerate.size();++k){
 		deviceArgs = resultsEnumerate[k];
 		
-		SoapySDR::Device *devicer= SoapySDR::Device::make(deviceArgs);;
+        try {
+			SoapySDR::Device *devicer= SoapySDR::Device::make(deviceArgs);;
 		
 	//	winout("2 findRadio samplerate %g devicer %p\n",samplerate,devicer);
 
 
-    	if(k == deviceNumber){
-        
-			device=devicer;
+			if(k == deviceNumber){
 		
-	    	mprint("device =  %ld selected\n",(long)k);
+				device=devicer;
+		
+				mprint("device =  %ld selected\n",(long)k);
 
-			for (SoapySDR::Kwargs::const_iterator it = deviceArgs.begin(); it != deviceArgs.end(); ++it) {
-				mprint("%s = %s ",it->first.c_str(), it->second.c_str());
-				if (it->first == "driver") {
-					//dev->setDriver(it->second);
-				} else if (it->first == "label" || it->first == "device") {
-					//dev->setName(it->second);
+				for (SoapySDR::Kwargs::const_iterator it = deviceArgs.begin(); it != deviceArgs.end(); ++it) {
+					mprint("%s = %s ",it->first.c_str(), it->second.c_str());
+					if (it->first == "driver") {
+						//dev->setDriver(it->second);
+					} else if (it->first == "label" || it->first == "device") {
+						//dev->setName(it->second);
+					}
 				}
-			}
 		
-    		mprint("\n\n");
+				mprint("\n\n");
 
 			
-			mprint("driver = %s\n",device->getDriverKey().c_str());
+				mprint("driver = %s\n",device->getDriverKey().c_str());
 			
-			mprint("hardware = %s\n",device->getHardwareKey().c_str());
-        
-			SoapySDR::Kwargs it=device->getHardwareInfo();
+				mprint("hardware = %s\n",device->getHardwareKey().c_str());
 		
-			for( SoapySDR::Kwargs::iterator  ii=it.begin(); ii!=it.end(); ++ii)
-			{
-					mprint("%s = %s ",ii->first.c_str(), ii->second.c_str());
-			}
-
-			
-    		mprint("\n\n");
-    		
-    		//winout("2 findRadio samplerate %g device %p\n",samplerate,device);
-
-			
-			        //query device info
-			antennaNames.clear();
-        	antennaNames = device->listAntennas(SOAPY_SDR_RX,  channel);
-        	mprint("Rx antennas: \n",(long)k);
-
-        	for (std::vector<std::string>::const_iterator ii = antennaNames.begin(); ii != antennaNames.end(); ++ii){
-       			mprint("%s\n",(*ii).c_str());
-        	}
-			        
-        	mprint("\n");
-        	
-        	mprint("Setting Info: \n");
-						
-        	SoapySDR::ArgInfoList args = device->getSettingInfo();
-        	if (args.size()) {
-            	for (SoapySDR::ArgInfoList::const_iterator args_i = args.begin(); args_i != args.end(); args_i++) {
-                	SoapySDR::ArgInfo arg = (*args_i);
-
-                	mprint("key %s value %s read %s type %d min %g max %g step %g\n",arg.key.c_str(),arg.value.c_str(),device->readSetting(arg.key).c_str(),
-                       	(int)arg.type,arg.range.minimum(),arg.range.maximum(),arg.range.step());
-
-            	}
-        	}
-        	mprint("\n");
-        	
-			
-	        if(setcount){          
-             	mprint("setcount %d\n",setcount);
-           		for(int k=0;k<setcount;++k){
-              		mprint("%s %s\n",set[k].c_str(),value[k].c_str());
-               		device->writeSetting(set[k],value[k]);
-                }
-        		mprint("\n");
-            }
-            
-            
-            streamFormat.clear();
-        	streamFormat=device->getStreamFormats(SOAPY_SDR_RX, channel);
-        	
-			for (size_t j = 0; j < streamFormat.size(); j++)
-			{
-				mprint("RX StreamFormats %lu %s\n",j, streamFormat[j].c_str());
-				if(j == streamFormat.size()-1)mprint("\n");
-			}
-			          
-        	rxGainRange=device->getGainRange(SOAPY_SDR_RX, channel);
-        
-            mprint("RF Gain range RX min %g max %g \n",rxGainRange.minimum(),rxGainRange.maximum());
-            
-            rxGainRangeList.clear();
-            rxGainNames.clear();
-            
-            rxGainRangeList.push_back(rxGainRange);
-            rxGainNames.push_back("RX Gain");
-           
-   
-            SoapySDR::RangeList rlist=device->getFrequencyRange(SOAPY_SDR_RX, channel);
-            
-        	for (size_t j = 0; j < rlist.size(); j++)
-        	{
-         	    mprint("FrequencyRange min %g max %g \n",rlist[j].minimum(),rlist[j].maximum());
-        	}
-
-        	band=device->listBandwidths(SOAPY_SDR_RX, channel);
-        	if(band.size()){
-                mprint("\nBandwidth MHZ ");  		
-				for (size_t j = 0; j <band.size(); j++)
+				SoapySDR::Kwargs it=device->getHardwareInfo();
+		
+				for( SoapySDR::Kwargs::iterator  ii=it.begin(); ii!=it.end(); ++ii)
 				{
-				   mprint(" %.2f ",band[j]/1.0e6);
+						mprint("%s = %s ",ii->first.c_str(), ii->second.c_str());
+				}
+
+			
+				mprint("\n\n");
+			
+				//winout("2 findRadio samplerate %g device %p\n",samplerate,device);
+
+			
+						//query device info
+				antennaNames.clear();
+				antennaNames = device->listAntennas(SOAPY_SDR_RX,  channel);
+				mprint("Rx antennas: \n",(long)k);
+
+				for (std::vector<std::string>::const_iterator ii = antennaNames.begin(); ii != antennaNames.end(); ++ii){
+					mprint("%s\n",(*ii).c_str());
+				}
+					
+				mprint("\n");
+			
+				mprint("Setting Info: \n");
+						
+				SoapySDR::ArgInfoList args = device->getSettingInfo();
+				if (args.size()) {
+					for (SoapySDR::ArgInfoList::const_iterator args_i = args.begin(); args_i != args.end(); args_i++) {
+						SoapySDR::ArgInfo arg = (*args_i);
+
+						mprint("key %s value %s read %s type %d min %g max %g step %g\n",arg.key.c_str(),arg.value.c_str(),device->readSetting(arg.key).c_str(),
+							(int)arg.type,arg.range.minimum(),arg.range.maximum(),arg.range.step());
+
+					}
+				}
+				mprint("\n");
+			
+			
+				if(setcount){          
+					mprint("setcount %d\n",setcount);
+					for(int k=0;k<setcount;++k){
+						mprint("%s %s\n",set[k].c_str(),value[k].c_str());
+						device->writeSetting(set[k],value[k]);
+					}
+					mprint("\n");
+				}
+			
+			
+				streamFormat.clear();
+				streamFormat=device->getStreamFormats(SOAPY_SDR_RX, channel);
+			
+				for (size_t j = 0; j < streamFormat.size(); j++)
+				{
+					mprint("RX StreamFormats %lu %s\n",j, streamFormat[j].c_str());
+					if(j == streamFormat.size()-1)mprint("\n");
+				}
+					  
+				rxGainRange=device->getGainRange(SOAPY_SDR_RX, channel);
+		
+				mprint("RF Gain range RX min %g max %g \n",rxGainRange.minimum(),rxGainRange.maximum());
+			
+				rxGainRangeList.clear();
+				rxGainNames.clear();
+			
+				rxGainRangeList.push_back(rxGainRange);
+				rxGainNames.push_back("RX Gain");
+		   
+   
+				SoapySDR::RangeList rlist=device->getFrequencyRange(SOAPY_SDR_RX, channel);
+			
+				for (size_t j = 0; j < rlist.size(); j++)
+				{
+					mprint("FrequencyRange min %g max %g \n",rlist[j].minimum(),rlist[j].maximum());
+				}
+
+				band=device->listBandwidths(SOAPY_SDR_RX, channel);
+				if(band.size()){
+					mprint("\nBandwidth MHZ ");  		
+					for (size_t j = 0; j <band.size(); j++)
+					{
+					   mprint(" %.2f ",band[j]/1.0e6);
+					}
+					mprint("\n\n");
+				}
+			
+
+				rate=device->listSampleRates(SOAPY_SDR_RX, channel);
+				if(rate.size()){
+					 mprint("SampleRates MHZ ");
+				}
+				for (size_t j = 0; j < rate.size(); j++)
+				{
+					mprint(" %.6f ",rate[j]/1.0e6);
 				}
 				mprint("\n\n");
-            }
-            
 
-			rate=device->listSampleRates(SOAPY_SDR_RX, channel);
-        	if(rate.size()){
-                 mprint("SampleRates MHZ ");
-      		}
-			for (size_t j = 0; j < rate.size(); j++)
-        	{
-           		mprint(" %.6f ",rate[j]/1.0e6);
-         	}
-            mprint("\n\n");
-
-            mprint("Gains: \n");  		
-			std::vector<std::string> names=device->listGains( SOAPY_SDR_RX, channel);
-			for (size_t j = 0; j < names.size(); j++)
-			{
-				mprint("%lu %s ",j, names[j].c_str());
+				mprint("Gains: \n");  		
+				std::vector<std::string> names=device->listGains( SOAPY_SDR_RX, channel);
+				for (size_t j = 0; j < names.size(); j++)
+				{
+					mprint("%lu %s ",j, names[j].c_str());
 			
-				SoapySDR::Range range3=device->getGainRange(SOAPY_SDR_RX, channel, names[j].c_str());
-				mprint("range max %g min %g\n",range3.maximum(),range3.minimum());
+					SoapySDR::Range range3=device->getGainRange(SOAPY_SDR_RX, channel, names[j].c_str());
+					mprint("range max %g min %g\n",range3.maximum(),range3.minimum());
 				
-				rxGainRangeList.push_back(range3);
-            	rxGainNames.push_back(names[j]);
+					rxGainRangeList.push_back(range3);
+					rxGainNames.push_back(names[j]);
 
-			}
+				}
 
-           mprint("\n");
-           
-           // winout("3 findRadio samplerate %g device %p channel %d\n",samplerate,device,channel);
+			   mprint("\n");
+		   
+			   // winout("3 findRadio samplerate %g device %p channel %d\n",samplerate,device,channel);
 
 
-			device->setSampleRate(SOAPY_SDR_RX, channel, samplerate);
+				device->setSampleRate(SOAPY_SDR_RX, channel, samplerate);
 			
 			
-	       // winout("4 findRadio samplerate %g device %p\n",samplerate,device);
+			   // winout("4 findRadio samplerate %g device %p\n",samplerate,device);
 		
 			
-			samplewidth=samplerate;
+				samplewidth=samplerate;
 			
-			device->setFrequency(SOAPY_SDR_RX, channel, fc);
+				device->setFrequency(SOAPY_SDR_RX, channel, fc);
 			
-  	       // winout("5 findRadio samplerate %g device %p fc %g\n",samplerate,device,fc);
-  	        
-      		mprint("samplerate %g\n",samplerate);
+			   // winout("5 findRadio samplerate %g device %p fc %g\n",samplerate,device,fc);
 			
-			//const std::vector<size_t> channels = {(size_t)0,(size_t)1};
+				mprint("samplerate %g\n",samplerate);
 			
-			const std::vector<size_t> channels = {(size_t)0};
+				//const std::vector<size_t> channels = {(size_t)0,(size_t)1};
+			
+				const std::vector<size_t> channels = {(size_t)0};
 						
-			rxStream = device->setupStream(SOAPY_SDR_RX, SOAPY_SDR_CF32, channels);
+				rxStream = device->setupStream(SOAPY_SDR_RX, SOAPY_SDR_CF32, channels);
 			
-			//rxStream = device->setupStream(SOAPY_SDR_RX, SOAPY_SDR_CS16, channels);
+				//rxStream = device->setupStream(SOAPY_SDR_RX, SOAPY_SDR_CS16, channels);
 			
-			//rxStream = device->setupStream(SOAPY_SDR_RX, SOAPY_SDR_CS12, channels);
+				//rxStream = device->setupStream(SOAPY_SDR_RX, SOAPY_SDR_CS12, channels);
 
-			device->activateStream(rxStream, 0, 0, 0); 
+				device->activateStream(rxStream, 0, 0, 0); 
 			
-			hasGainMode=device->hasGainMode(SOAPY_SDR_RX, channel);
+				hasGainMode=device->hasGainMode(SOAPY_SDR_RX, channel);
 
-       		mprint("hasGainMode: %d\n",hasGainMode);
+				mprint("hasGainMode: %d\n",hasGainMode);
 
-            if(hasGainMode){
-            	bool automatic=true;
-            	device->setGainMode(SOAPY_SDR_RX,channel, automatic);
-        		mprint("getGainMode: %d\n",device->getGainMode(SOAPY_SDR_RX, channel));
-        	}
+				if(hasGainMode){
+					bool automatic=true;
+					device->setGainMode(SOAPY_SDR_RX,channel, automatic);
+					mprint("getGainMode: %d\n",device->getGainMode(SOAPY_SDR_RX, channel));
+				}
 			
-			int hasFrequencyCorrection= device->hasFrequencyCorrection(SOAPY_SDR_RX, channel);
+				int hasFrequencyCorrection= device->hasFrequencyCorrection(SOAPY_SDR_RX, channel);
 			
-        	mprint("hasFrequencyCorrection: %d\n",hasFrequencyCorrection);
+				mprint("hasFrequencyCorrection: %d\n",hasFrequencyCorrection);
 			
-			if(hasFrequencyCorrection && PPM){
-			    device->setFrequencyCorrection(SOAPY_SDR_RX, channel,PPM);
+				if(hasFrequencyCorrection && PPM){
+					device->setFrequencyCorrection(SOAPY_SDR_RX, channel,PPM);
+				}
+			
+				if(rf_gain > 0){
+					mprint("RF Gain set to %g \n",rf_gain);
+					device->setGain(SOAPY_SDR_RX, channel,rf_gain);
+				}
+			
+				MTU=(unsigned long)device->getStreamMTU(rxStream);
+	
+				mprint("MTU %ld\n",(long)MTU);
+
+			}else{
+				 if(devicer)SoapySDR::Device::unmake(devicer);
 			}
+        } catch(const std::exception &e) {
+            std::string streamExceptionStr = e.what();
+            printf("findRadio Error: %s\n",streamExceptionStr.c_str());
+        }
 			
-			if(rf_gain > 0){
-              	mprint("RF Gain set to %g \n",rf_gain);
-              	device->setGain(SOAPY_SDR_RX, channel,rf_gain);
-            }
-            
-    		MTU=(unsigned long)device->getStreamMTU(rxStream);
-    
-    		mprint("MTU %ld\n",(long)MTU);
-
-		}else{
-			 if(devicer)SoapySDR::Device::unmake(devicer);
-		}
     }
     return 0;
 }
