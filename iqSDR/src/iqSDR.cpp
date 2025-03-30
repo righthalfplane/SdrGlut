@@ -8,7 +8,7 @@ void winout(const char *fmt, ...);
 
 int copyl(char *p1,char *p2,long n);
 
-char *ProgramVersion=(char *)"iqSDR-1294";
+char *ProgramVersion=(char *)"iqSDR-1301";
 
 //c++ -std=c++11 -o iqSDR.x iqSDR.cpp -lGLEW `/usr/local/bin/wx-config --cxxflags --libs --gl-libs` -lGLU -lGL
 
@@ -1307,6 +1307,8 @@ void selectionWindow::OnDevice(wxCommandEvent& event)
 	sdrIn->decodemode=boxMode->GetSelection();
 	sdrIn->startPlay();
 	
+	winout("OnDevice sdrIn->samplerate %g\n",sdrIn->samplerate);
+	
 	wxString name=deviceNames[id-ID_DEVICE];
 	
 	applFrame *grab=new applFrame(NULL,name,sdrIn);
@@ -1338,8 +1340,37 @@ EVT_PAINT(TopPane::render)
 EVT_LEFT_DOWN(TopPane::mouseDown)
 EVT_CHECKBOX(ID_RECORD, TopPane::Record)
 EVT_CHECKBOX(ID_FC, TopPane::Record)
-
+EVT_CHAR(TopPane::OnChar)    
 END_EVENT_TABLE()
+
+void TopPane::OnChar(wxKeyEvent& event) 
+{
+	event.Skip();
+	
+	int keycode=event.GetKeyCode();
+	
+	//winout("TopPane::OnChar %d\n",keycode);
+	
+    if(keycode == 'f'){
+        gSpectrum->iFreeze = !gSpectrum->iFreeze;
+     //   winout("iWait %d\n",iWait);
+    }
+	
+
+    if(keycode == 'n'){
+        sdr->iWait = !sdr->iWait;
+    //    winout("sdr->iWait %d\n",sdr->iWait);
+    }
+    
+    if(keycode == 'm' || keycode == 'M' ){
+		if(s->bS){
+		   s->bS=NULL;
+		}else{
+		   s->bS=sdr->bS;
+		}
+    }
+}
+
 
 #include <time.h>       /* time_t, struct tm, difftime, time, mktime */
 
@@ -1542,6 +1573,7 @@ EVT_BUTTON(ID_COMBOBUTTON, BasicPane::setSampleRate)
 EVT_SIZE(BasicPane::resized)
 EVT_SLIDER(SCROLL_GAIN,BasicPane::OnScroll)
 EVT_SLIDER(ID_SAMPLEWIDTH,BasicPane::setSampleWidth)
+EVT_SLIDER(ID_ROTATEDATA,BasicPane::setDataRotate)
 EVT_SLIDER(ID_MININUM,BasicPane::OnMinimun)
 EVT_SLIDER(ID_MAXINUM,BasicPane::OnMaximun)
 EVT_COMMAND_RANGE(ID_RXGAIN,ID_RXGAIN+99,wxEVT_SLIDER,BasicPane::setRxGain)
@@ -1641,54 +1673,24 @@ void BasicPane::stopSend(wxCommandEvent& event)
    // int id=event.GetId();
 }
 
-BasicPane::BasicPane(wxWindow *frame, const wxString &title,class sdrClass *sdrIn)
-    : wxWindow(frame,32000)
-    , m_timer(this,TIMER_ID)
+int BasicPane::SetScrolledWindow()
 {
-	m_timer.Start(50);
-	
-	zerol((char *)rx,sizeof(rxs));
-	
-	sendFlag=0;
-	
-	lineAlpha=0.1;
-	
-	softAutoGain=1;
-	
-	sdr=sdrIn;
-	
-	pBasicPane=this;
-	
-	gTopPane=pTopPane;
-	
-	gTopPane->sdr=sdr;
-	
-	gSpectrum=pSpectrum;
-	
-	gSpectrum->sdr=sdr;
-	
-	gSpectrum->gTopPane=pTopPane;
-	
-	gWaterFall=pWaterFall;
 
-	gWaterFall->sdr=sdr;
+	if(ScrolledWindow)ScrolledWindow->Destroy();
 	
-	gWaterFall->gTopPane=pTopPane;
-	
-	gWaterFall->gSpectrum=gSpectrum;
-	
-	ScrolledWindow = new wxScrolledWindow(this,wxID_ANY,wxPoint(0,0),
+	ScrolledWindow = new wxScrolledWindow(pBasicPane,ID_SCROLLED,wxPoint(0,0),
 	 	                                   wxSize(340,200),wxVSCROLL ); // wxHSCROLL
  	int pixX=10;
  	int pixY=10;
  	int ux=200;
  	int uy=200;
+ 	
  	ScrolledWindow->SetScrollbars(pixX,pixY,ux,uy);
  	
 	int yloc=0;
 
 	wxStaticBox *box = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Set Volume ",wxPoint(20,yloc), wxSize(230, 80),wxBORDER_SUNKEN );
-	box->SetToolTip(wxT("This is tool tip") );
+	box->SetToolTip(wxT("Set Volume") );
 
 	new wxSlider(box,SCROLL_GAIN,100,0,100,wxPoint(10,15),wxSize(210,30),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
 
@@ -1704,7 +1706,7 @@ BasicPane::BasicPane(wxWindow *frame, const wxString &title,class sdrClass *sdrI
 	cbox=new wxCheckBox(ScrolledWindow,ID_SWAPIQ, "&I/Q Swap",wxPoint(20,yloc), wxSize(230, 25));
 	cbox->SetValue(0);	
 	cbox=new wxCheckBox(ScrolledWindow,ID_OSCILLOSCOPE, "&Oscilloscope",wxPoint(120,yloc), wxSize(230, 25));
-	cbox->SetValue(0);	
+	cbox->SetValue(scrolledWindowFlag);	
 	yloc += 25;   
 
 	cbox=new wxCheckBox(ScrolledWindow,ID_SOFTAUTOGAIN, "&Software AGC",wxPoint(20,yloc), wxSize(230, 25));
@@ -1729,11 +1731,20 @@ BasicPane::BasicPane(wxWindow *frame, const wxString &title,class sdrClass *sdrI
 	
 
 	box = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Zoom",wxPoint(20,yloc), wxSize(230, 80),wxBORDER_SUNKEN );
-	box->SetToolTip(wxT("This is tool tip") );
-
+	box->SetToolTip(wxT("Zoom Data") );
 	new wxSlider(box,ID_SAMPLEWIDTH,200,0,200,wxPoint(10,15),wxSize(210,-1),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
 
 	yloc += 85;   
+	
+	
+	box = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Rotate Oscilloscope Data",wxPoint(20,yloc), wxSize(230, 80),wxBORDER_SUNKEN );
+	box->SetToolTip(wxT("Rotate Oscilloscope Data") );
+	new wxSlider(box,ID_ROTATEDATA,200,0,200,wxPoint(10,15),wxSize(210,-1),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
+
+	yloc += 85;   
+	
+	
+	
 
 	box = new wxStaticBox(ScrolledWindow, wxID_ANY, "Minimum Value ",wxPoint(20,yloc), wxSize(230, 80),wxBORDER_SUNKEN );
 	box->SetToolTip(wxT("This is tool tip") );
@@ -1953,15 +1964,66 @@ BasicPane::BasicPane(wxWindow *frame, const wxString &title,class sdrClass *sdrI
 		data.push_back(computers31[n]);
 		data.push_back(computers32[n]);
 		listctrlFreq->AppendItem( data );
+		yloc += 30;
 	}
 
 
     wxWindow::SetSize(wxDefaultCoord,wxDefaultCoord,280,100);
     
+    Refresh();
+    
     iRefresh=1;
     
-//    winout("BasicPane Done\n");
-    
+    winout("SetScrolledWindow Done yloc %d\n",yloc);
+
+	return 0;
+}
+
+BasicPane::BasicPane(wxWindow *frame, const wxString &title,class sdrClass *sdrIn)
+    : wxWindow(frame,32000)
+    , m_timer(this,TIMER_ID)
+{
+	m_timer.Start(50);
+	
+	zerol((char *)sx,sizeof(sxs));
+	
+	sendFlag=0;
+	
+	lineAlpha=0.1;
+	
+	softAutoGain=1;
+	
+	sdr=sdrIn;
+	
+	pBasicPane=this;
+	
+	gTopPane=pTopPane;
+	
+	gTopPane->sdr=sdr;
+	
+	gTopPane->gSpectrum=pSpectrum;
+	
+	gSpectrum=pSpectrum;
+	
+	gSpectrum->sdr=sdr;
+	
+	gSpectrum->gTopPane=pTopPane;
+	
+	gSpectrum->gBasicPane=pBasicPane;
+	
+	gWaterFall=pWaterFall;
+
+	gWaterFall->sdr=sdr;
+	
+	gWaterFall->gTopPane=pTopPane;
+	
+	gWaterFall->gSpectrum=gSpectrum;
+	
+	scrolledWindowFlag=0;
+	
+	ScrolledWindow=NULL;
+	
+    SetScrolledWindow();
 }
 
 void BasicPane::dataType(wxCommandEvent &event)
@@ -2016,6 +2078,9 @@ void BasicPane::OnCheckAuto(wxCommandEvent &event)
 		int flag=event.GetSelection();
 		//winout("ID_OSCILLOSCOPE flag %d\n",flag);
 		gSpectrum->oscilloscope=flag;
+		scrolledWindowFlag=flag;
+		sdr->initPlay();
+		//SetScrolledWindow();
 		return;
 	}
 	
@@ -2071,6 +2136,19 @@ void BasicPane::setSampleWidth(wxCommandEvent &event)
 	double samplewidth=event.GetSelection();
 	
 	sdr->setSampleWidth(samplewidth);	
+}
+void BasicPane::setDataRotate(wxCommandEvent &event)
+{
+	event.Skip();
+	
+	sampleDataRotate=event.GetSelection();
+	
+	sampleDataRotate=(200-sampleDataRotate)/200;
+	
+	Sleep2(100);
+	
+	//fprintf(stderr,"sampleDataRotate %g\n",sampleDataRotate);
+	
 }
 void BasicPane::OnTextBandWidth(wxCommandEvent &event)
 {
@@ -2287,7 +2365,9 @@ void BasicPane::OnTimer(wxTimerEvent &event){
 		Sleep2(10);
 		return;
 	}
-	//winout("BasicPane::OnTimer\n");
+	//static long count;
+	
+	//winout("BasicPane::OnTimer count %ld gSpectrum->iWait %d\n",count++,gSpectrum->iWait);
 	
 	if(gSpectrum->iWait){
 		iRefresh=1;
@@ -2321,7 +2401,13 @@ void BasicPane::OnTimer(wxTimerEvent &event){
 		iRefresh=0;
 		gTopPane->Refresh();
 		Refresh();
-		//winout("gTopPane->Refresh called f %g sdr->decodemode %d\n",sdr->f,sdr->decodemode);
+		if(ScrolledWindow){
+			ScrolledWindow->Refresh();
+			wxWindow *parent=ScrolledWindow->GetParent();
+			if(parent)parent->Refresh();
+			winout("Refresh parent\n");
+		}
+		winout("gTopPane->Refresh called f %g sdr->decodemode %d\n",sdr->f,sdr->decodemode);
 	}
 	
 	if(gSpectrum->buffFlag){
@@ -2511,14 +2597,7 @@ EVT_SIZE(WaterFall::resized)
 EVT_LEFT_DOWN(WaterFall::mouseDown)
 EVT_MOUSEWHEEL(WaterFall::mouseWheelMoved)
 EVT_CHAR(WaterFall::OnChar)    
-/*
-EVT_LEFT_UP(WaterFall::mouseReleased)
-EVT_RIGHT_DOWN(WaterFall::rightClick)
-EVT_LEAVE_WINDOW(WaterFall::mouseLeftWindow)
-EVT_KEY_DOWN(WaterFall::keyPressed)
-EVT_KEY_UP(WaterFall::keyReleased)
-EVT_TIMER(TIMER_ID,WaterFall::OnTimer)
-*/
+
 END_EVENT_TABLE()
 
 void WaterFall::OnChar(wxKeyEvent& event) 
@@ -2528,6 +2607,18 @@ void WaterFall::OnChar(wxKeyEvent& event)
 	event.Skip();
 	
     int keycode=event.GetKeyCode();
+    
+   // winout("WaterFall::OnChar %d\n",keycode);
+    
+    if(keycode == 'w'){
+        iWait = !iWait;
+       // winout("iWait %d\n",iWait);
+    }
+
+    if(keycode == 'n'){
+        sdr->iWait = !sdr->iWait;
+       // winout("sdr->iWait %d\n",sdr->iWait);
+    }
 
     if(keycode == 'm' || keycode == 'M' ){
 		if(s->bS){
@@ -2652,6 +2743,7 @@ void WaterFall::render( wxPaintEvent& evt )
 
     if(!IsShown()) return;
     
+    if(iWait)return;
     
     float *magnitude=gSpectrum->buffSend10;
     
@@ -3095,16 +3187,21 @@ void Spectrum::OnChar(wxKeyEvent& event)
 	
 	int keycode=event.GetKeyCode();
 	
-	winout("Spectrum::OnChar %d\n",keycode);
+	//winout("Spectrum::OnChar %d\n",keycode);
 	
+    if(keycode == 'f'){
+        iFreeze = !iFreeze;
+     //   winout("iWait %d\n",iWait);
+    }
+    
     if(keycode == 'w'){
         iWait = !iWait;
-        winout("iWait %d\n",iWait);
+     //   winout("iWait %d\n",iWait);
     }
 
     if(keycode == 'n'){
         sdr->iWait = !sdr->iWait;
-        winout("sdr->iWait %d\n",sdr->iWait);
+     //   winout("sdr->iWait %d\n",sdr->iWait);
     }
     
     if(keycode == 'm' || keycode == 'M' ){
@@ -3134,6 +3231,8 @@ Spectrum::Spectrum(wxFrame* parent, int* args) :
 	verticalMinimum=-130;
 		
 	verticalMaximum=-30;
+	
+	amaxGlobal=0;
 
 	m_context = new wxGLContext(this);    
 	
@@ -3165,6 +3264,10 @@ Spectrum::Spectrum(wxFrame* parent, int* args) :
     iWait=0;
         
     decodemode1= -11;
+    
+    iFreeze=0;
+    
+    buff1=NULL;
     
     buff2=NULL;
 	
@@ -3418,6 +3521,8 @@ void Spectrum::render1(wxPaintEvent& evt )
     
     float *buffSend2;
     
+    double amax=0;
+    
 	if(!iWait){
  	
 		glColor4f(0, 0, 1, 1);
@@ -3426,64 +3531,171 @@ void Spectrum::render1(wxPaintEvent& evt )
 		
 		int ip = -1;
  	  	if(sdr->bS2)ip=sdr->bS2->popBuff();
-      	if(ip < 0)return;
+      	if(ip < 0){ 	    	
+ 			winout("render1 ip %d\n",ip);
+      	    return;
+      	}
       	
       	if(decodemode1 != sdr->decodemode){
       		decodemode1=sdr->decodemode;
-      		double Ratio = (float)(sdr->bw/ sdr->samplerate);
+      		double Ratio = (float)(sdr->bw/sdr->samplerate);
       		iqSampler1  = msresamp_crcf_create(Ratio, 60.0f);
       	}
     	
 		if(buffSize != sdr->size){
 			if(buff2)cFree((char *)buff2);
 			buff2=(float *)cMalloc(sizeof(float)*8*sdr->size,95288);
+			if(buff1)cFree((char *)buff1);
+			buff1=(float *)cMalloc(sizeof(float)*8*sdr->size,95288);
 			buffSize=sdr->size;
 		}
       	
       	int witch=ip % NUM_DATA_BUFF;
 		buffSend2=sdr->bS2->buff[witch];
 		
-		
 		double sint,cost;
-
-        for (int k = 0 ; k < sdr->size ; k++){
-            float r = buffSend2[k * 2];
-            float i = buffSend2[k * 2 + 1];
-            if(sdr->dt > 0){
-                buff2[k * 2] = (float)(r*sdr->coso - i*sdr->sino);
-                buff2[k * 2+ 1] = (float)(i*sdr->coso + r*sdr->sino);
-                sint=sdr->sino*sdr->cosdt+sdr->coso*sdr->sindt;
-                cost=sdr->coso*sdr->cosdt-sdr->sino*sdr->sindt;
-                sdr->coso=cost;
-                sdr->sino=sint;
-             }else{
-                buff2[k * 2] = r;
-                buff2[k * 2 + 1] = i;
-            }
-        }
-     
-		double r=sqrt(sdr->coso*sdr->coso+sdr->sino*sdr->sino);
-		sdr->coso /= r;
-		sdr->sino /= r;
 		
 		unsigned int num;
-	
-		num=0;
- 
-		msresamp_crcf_execute(iqSampler1, (liquid_float_complex *)buff2, sdr->size, (liquid_float_complex *)buffSend2, &num);  // decimate
 		
-		//fprintf(stderr,"num %d\n",num);
+		if(iFreeze){
+			for (int k = 0 ; k < sdr->size ; k++){
+				float r = buff1[k * 2];
+				float i = buff1[k * 2 + 1];
+				float rr=r;
+				float ii=i;
+				if(sdr->dt > 0){
+					rr = (float)(r*sdr->coso - i*sdr->sino);
+					ii = (float)(i*sdr->coso + r*sdr->sino);
+					sint=sdr->sino*sdr->cosdt+sdr->coso*sdr->sindt;
+					cost=sdr->coso*sdr->cosdt-sdr->sino*sdr->sindt;
+					sdr->coso=cost;
+					sdr->sino=sint;
+				 }else{
+					buff2[k * 2] = r;
+					buff2[k * 2 + 1] = i;
+					continue;
+				}       
+				if(gBasicPane->sampleDataRotate > 0.0){
+					//fprintf(stderr,"gBasicPane->sampleDataRotate \n");
+					//gBasicPane->sampleDataRotate=0.5;
+					int nn=gBasicPane->sampleDataRotate*(sdr->size-1)+k;
+					if(nn > sdr->size-1){
+						nn -= sdr->size;
+					}
+					//fprintf(stderr,"nn %d k %d\n",nn,k);
+					buff2[nn * 2] = rr;
+					buff2[nn * 2+ 1] = ii;
+				}else{
+					buff2[k * 2] = rr;
+					buff2[k * 2+ 1] = ii;
+				}
+			}
+	
+			//if(gBasicPane->sampleDataRotate > 0.0)exit(1);
+  
+	 
+			double r=sqrt(sdr->coso*sdr->coso+sdr->sino*sdr->sino);
+		
+			if(r > 0.0){
+				sdr->coso /= r;	
+				sdr->sino /= r;
+			}
+		
+		
+			if(isnan(sdr->coso)){
+			//	winout("NaN found\n");
+				sdr->initPlay();
+				return;
+			}		
+		
+	
+			num=0;
+ 
+			msresamp_crcf_execute(iqSampler1, (liquid_float_complex *)buff2, sdr->size, (liquid_float_complex *)buffSend2, &num);  // decimate
+
+			//fprintf(stderr,"1 num %d iFreeze %d\n",num,iFreeze);
+		}else{
+			for (int k = 0 ; k < sdr->size ; k++){
+				float r = buffSend2[k * 2];
+				float i = buffSend2[k * 2 + 1];
+				float rr=r;
+				float ii=i;
+				buff1[k * 2] = rr;
+				buff1[k * 2+ 1] = ii;
+				if(sdr->dt > 0){
+					rr = (float)(r*sdr->coso - i*sdr->sino);
+					ii = (float)(i*sdr->coso + r*sdr->sino);
+					sint=sdr->sino*sdr->cosdt+sdr->coso*sdr->sindt;
+					cost=sdr->coso*sdr->cosdt-sdr->sino*sdr->sindt;
+					sdr->coso=cost;
+					sdr->sino=sint;
+				 }else{
+					buff2[k * 2] = r;
+					buff2[k * 2 + 1] = i;
+					continue;
+				}       
+				if(gBasicPane->sampleDataRotate > 0.0){
+					//fprintf(stderr,"gBasicPane->sampleDataRotate \n");
+					//gBasicPane->sampleDataRotate=0.5;
+					int nn=gBasicPane->sampleDataRotate*(sdr->size-1)+k;
+					if(nn > sdr->size-1){
+						nn -= sdr->size;
+					}
+					//fprintf(stderr,"nn %d k %d\n",nn,k);
+					buff2[nn * 2] = rr;
+					buff2[nn * 2+ 1] = ii;
+				}else{
+					buff2[k * 2] = rr;
+					buff2[k * 2+ 1] = ii;
+				}
+			}
+	
+			//if(gBasicPane->sampleDataRotate > 0.0)exit(1);
+  
+	 
+			double r=sqrt(sdr->coso*sdr->coso+sdr->sino*sdr->sino);
+		
+			if(r > 0.0){
+				sdr->coso /= r;	
+				sdr->sino /= r;
+			}
+		
+		
+			if(isnan(sdr->coso)){
+			//	winout("NaN found\n");
+				sdr->initPlay();
+				return;
+			}		
+		
+	
+			num=0;
+ 
+			msresamp_crcf_execute(iqSampler1, (liquid_float_complex *)buff2, sdr->size, (liquid_float_complex *)buffSend2, &num);  // decimate
+
+			//fprintf(stderr,"2 num %d iFreeze %d\n",num,iFreeze);
+		}
+		
 		
       	buffSendLength=num;
 		
-		double amax=0;
+		amax=0;
 		for(int n=0;n<buffSendLength;++n){
 			double v=(buffSend2[2*n]*buffSend2[2*n]+buffSend2[2*n+1]*buffSend2[2*n+1]);
         	if(v > 0.0)v=sqrt(v);
          	if(v > amax)amax=v;
 		}
 		
-			
+		if(amaxGlobal == 0.0)amaxGlobal=amax;
+        amaxGlobal = 0.99*amaxGlobal+0.01*amax;
+		amax=amaxGlobal;
+		
+		//winout("amaxGlobal %g\n",amaxGlobal);
+		
+		//static long int count1;
+
+		//winout("Spectrum render 1 count %ld amax %g ip %d num %d amax2 %g cosdt %g sindt %g  coso %g sino %g\n",count1++,
+		//       amax,ip,num,amax2,sdr->cosdt,sdr->sindt,sdr->coso,sdr->sino);
+		       			
 		buffFlag=0;
 		
 		double ymin = -amax;
@@ -3619,15 +3831,17 @@ void Spectrum::render1(wxPaintEvent& evt )
 		//std::chrono::duration<double> difference = t2 - t1;
 		//std::cout << "Time "<< difference.count() << endl;
 		//winout("count %g\n",difference.count());
+    	glFlush();
+    	SwapBuffers();    
 
 	}
+	
+	//static long int count1;
 
-	//winout("Spectrum done\n");
+	//winout("Spectrum render 1 count %ld amax %g iWait %d\n",count1++,amax,iWait);
 
 	//fprintf(stderr,"Next 77\n");
 		
-    glFlush();
-    SwapBuffers();    
     
  
 }
@@ -3832,6 +4046,8 @@ void Spectrum::render2(wxPaintEvent& evt )
 				DrawString(5,ixx-8,cbuff);
 			}
 			//winout(" idy %g\n",idy);
+    		glFlush();
+    		SwapBuffers();
 		
  		}
 		
@@ -3859,8 +4075,6 @@ void Spectrum::render2(wxPaintEvent& evt )
 
 	//winout("Spectrum done\n");
 		
-    glFlush();
-    SwapBuffers();
 }
 
 void Spectrum::render1a(wxPaintEvent& evt )

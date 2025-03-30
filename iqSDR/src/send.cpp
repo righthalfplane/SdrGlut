@@ -52,7 +52,7 @@ int BasicPane::txPipe()
 }
 int BasicPane::SendStart(char *name,int type,int mode)
 {
-    if(!rx)return 0;
+    if(!sx)return 0;
 
 	//++mode;
 	
@@ -67,21 +67,21 @@ int BasicPane::SendStart(char *name,int type,int mode)
 	
    // winout("addressName %s mode %d\n",addressName,mode);
     
-    rx->aminGlobal2=0;
-    rx->amaxGlobal2=0;
+    sx->aminGlobal2=0;
+    sx->amaxGlobal2=0;
 
-    rx->name=name;
-    rx->dataType=type;
-    rx->sendMode=mode;
+    sx->name=name;
+    sx->dataType=type;
+    sx->sendMode=mode;
     
     if(mode < 2){
-        rx->send=(SOCKET)connectToServer((char *)name,&rx->Port);
-        if(rx->send == -1){
+        sx->send=(SOCKET)connectToServer((char *)name,&sx->Port);
+        if(sx->send == -1){
             winout("TCP connect failed\n");
             return 1;
         }
     }else{
-        if ((rx->send = socket(AF_INET, SOCK_DGRAM, 0)) == -1)
+        if ((sx->send = socket(AF_INET, SOCK_DGRAM, 0)) == -1)
         {
             winout("UDP connect failed\n");
             return 1;
@@ -89,19 +89,19 @@ int BasicPane::SendStart(char *name,int type,int mode)
         
         int broadcast=1;
  
-        setsockopt(rx->send, SOL_SOCKET, SO_BROADCAST,
+        setsockopt(sx->send, SOL_SOCKET, SO_BROADCAST,
                    (const char *)&broadcast, sizeof broadcast);
 
-     // winout("SendStart rx->name %s\n",rx->name);
+     // winout("SendStart sx->name %s\n",rx->name);
       
         if(mode == 3)return 0;
         
     }
  
-    if(rx->sendBuff1)cFree((char *)rx->sendBuff1);
-    rx->sendBuff1=(float *)cMalloc(2*sdr->size*sizeof(float),18887);
-    if(rx->sendBuff2)cFree((char *)rx->sendBuff2);
-    rx->sendBuff2=(float *)cMalloc(2*sdr->size*sizeof(float),18888);
+    if(sx->sendBuff1)cFree((char *)sx->sendBuff1);
+    sx->sendBuff1=(float *)cMalloc(2*sdr->size*sizeof(float),18887);
+    if(sx->sendBuff2)cFree((char *)sx->sendBuff2);
+    sx->sendBuff2=(float *)cMalloc(2*sdr->size*sizeof(float),18888);
       	
     std::thread(&BasicPane::rxSend,this).detach();
 
@@ -117,7 +117,7 @@ int BasicPane::rxSend()
     int ret=0;
     long size=2;
     
-    if(!rx)return 0;
+    if(!sx)return 0;
     
     copyl(addressName,name,strlen(addressName)+1);
     
@@ -138,8 +138,8 @@ int BasicPane::rxSend()
 
 //	winout("rxSend 1\n");
     sdr->fillBuffer=1;
-    int mode=rx->sendMode;;
-    int type=rx->dataType;
+    int mode=sx->sendMode;;
+    int type=sx->dataType;
     while(sendFlag > 0){
  	  //winout("rxSend type %d fillBuffer %d mode %d\n",type,sdr->fillBuffer,mode);
  	  
@@ -167,13 +167,13 @@ int BasicPane::rxSend()
                
                amax -= average;
                
-               if(rx->aminGlobal2 == 0.0)rx->aminGlobal2=amin;
-               rx->aminGlobal2 = 0.8*rx->aminGlobal2+0.2*amin;
-               amin=rx->aminGlobal2;
+               if(sx->aminGlobal2 == 0.0)sx->aminGlobal2=amin;
+               sx->aminGlobal2 = 0.8*sx->aminGlobal2+0.2*amin;
+               amin=sx->aminGlobal2;
                
-               if(rx->amaxGlobal2 == 0.0)rx->amaxGlobal2=amax;
-               rx->amaxGlobal2 = 0.8*rx->amaxGlobal2+0.2*amax;
-               amax=rx->amaxGlobal2;
+               if(sx->amaxGlobal2 == 0.0)sx->amaxGlobal2=amax;
+               sx->amaxGlobal2 = 0.8*sx->amaxGlobal2+0.2*amax;
+               amax=sx->amaxGlobal2;
                
                //winout("a amin %g amax %g ",amin,amax);
 
@@ -186,7 +186,7 @@ int BasicPane::rxSend()
                
                double gain=0.9;
                
-               float *data=(float *)rx->sendBuff2;
+               float *data=(float *)sx->sendBuff2;
                
                amin =  1e33;
                amax = -1e33;
@@ -213,17 +213,17 @@ int BasicPane::rxSend()
 
                size=(long)(sdr->size*sizeof(float));
                if(mode == 0){
-                   if(writeLab(rx->send,(char *)"FLOA",size))return 1;
-                   if(netWrite(rx->send,(char *)data,size))return 1;
-                   if(writeLab(rx->send,(char *)"FLOA",size))return 1;
-                   if(netWrite(rx->send,(char *)&data[sdr->size],size))return 1;    
+                   if(writeLab(sx->send,(char *)"FLOA",size))return 1;
+                   if(netWrite(sx->send,(char *)data,size))return 1;
+                   if(writeLab(sx->send,(char *)"FLOA",size))return 1;
+                   if(netWrite(sx->send,(char *)&data[sdr->size],size))return 1;    
                }else if(mode == 1){
-                  if(netWrite(rx->send,(char *)rx->sendBuff2,size))return 1;
-                  if(netWrite(rx->send,(char *)&rx->sendBuff2[sdr->size],size))return 1;
+                  if(netWrite(sx->send,(char *)sx->sendBuff2,size))return 1;
+                  if(netWrite(sx->send,(char *)&sx->sendBuff2[sdr->size],size))return 1;
             	}else{
-                	ret=sendto2(rx->send,(char *)rx->sendBuff2, size,
+                	ret=sendto2(sx->send,(char *)sx->sendBuff2, size,
                             (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
-                	ret=sendto2(rx->send,(char *)&rx->sendBuff2[sdr->size], size,
+                	ret=sendto2(sx->send,(char *)&sx->sendBuff2[sdr->size], size,
                             (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
                }
             }else if(type == 1){
@@ -245,13 +245,13 @@ int BasicPane::rxSend()
                 
                 amax -= average;
                 
-                if(rx->aminGlobal2 == 0.0)rx->aminGlobal2=amin;
-                rx->aminGlobal2 = 0.8*rx->aminGlobal2+0.2*amin;
-                amin=rx->aminGlobal2;
+                if(sx->aminGlobal2 == 0.0)sx->aminGlobal2=amin;
+                sx->aminGlobal2 = 0.8*sx->aminGlobal2+0.2*amin;
+                amin=sx->aminGlobal2;
                 
-                if(rx->amaxGlobal2 == 0.0)rx->amaxGlobal2=amax;
-                rx->amaxGlobal2 = 0.8*rx->amaxGlobal2+0.2*amax;
-                amax=rx->amaxGlobal2;
+                if(sx->amaxGlobal2 == 0.0)sx->amaxGlobal2=amax;
+                sx->amaxGlobal2 = 0.8*sx->amaxGlobal2+0.2*amax;
+                amax=sx->amaxGlobal2;
                 
                 //winout("a amin %g amax %g ",amin,amax);
                 
@@ -264,7 +264,7 @@ int BasicPane::rxSend()
                 
                 double gain=0.9;
                 
-                short int *data=(short int *)rx->sendBuff2;
+                short int *data=(short int *)sx->sendBuff2;
                 
                 amin =  1e33;
                 amax = -1e33;
@@ -288,18 +288,18 @@ int BasicPane::rxSend()
                // winout(" f amin %g amax %g count %ld\n",amin,amax,count);
                 size=sdr->size*sizeof(short int);
                 if(mode == 0){
-                    if(writeLab(rx->send,(char *)"SHOR",size))return 1;
-                    if(netWrite(rx->send,(char *)data,size))return 1;
-                    if(writeLab(rx->send,(char *)"SHOR",size))return 1;
-                    if(netWrite(rx->send,(char *)&data[sdr->size],size))return 1;
+                    if(writeLab(sx->send,(char *)"SHOR",size))return 1;
+                    if(netWrite(sx->send,(char *)data,size))return 1;
+                    if(writeLab(sx->send,(char *)"SHOR",size))return 1;
+                    if(netWrite(sx->send,(char *)&data[sdr->size],size))return 1;
                 }else if(mode == 1){
-                    if(netWrite(rx->send,(char *)rx->sendBuff2,size))return 1;
-                    if(netWrite(rx->send,(char *)&data[sdr->size],size))return 1;
+                    if(netWrite(sx->send,(char *)sx->sendBuff2,size))return 1;
+                    if(netWrite(sx->send,(char *)&data[sdr->size],size))return 1;
                 }else{
 
-                    ret=sendto2(rx->send,(char *)rx->sendBuff2, size,
+                    ret=sendto2(sx->send,(char *)sx->sendBuff2, size,
                                 (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
-                    ret=sendto2(rx->send,(char *)&data[sdr->size], size,
+                    ret=sendto2(sx->send,(char *)&data[sdr->size], size,
                            (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
                 }
            }else if(type == 2){
@@ -320,13 +320,13 @@ int BasicPane::rxSend()
                
                amax -= average;
                
-               if(rx->aminGlobal2 == 0.0)rx->aminGlobal2=amin;
-               rx->aminGlobal2 = 0.8*rx->aminGlobal2+0.2*amin;
-               amin=rx->aminGlobal2;
+               if(sx->aminGlobal2 == 0.0)sx->aminGlobal2=amin;
+               sx->aminGlobal2 = 0.8*sx->aminGlobal2+0.2*amin;
+               amin=sx->aminGlobal2;
                
-               if(rx->amaxGlobal2 == 0.0)rx->amaxGlobal2=amax;
-               rx->amaxGlobal2 = 0.8*rx->amaxGlobal2+0.2*amax;
-               amax=rx->amaxGlobal2;
+               if(sx->amaxGlobal2 == 0.0)sx->amaxGlobal2=amax;
+               sx->amaxGlobal2 = 0.8*sx->amaxGlobal2+0.2*amax;
+               amax=sx->amaxGlobal2;
 
                //winout("a amin %g amax %g ",amin,amax);
                double dnom=0.0;
@@ -338,7 +338,7 @@ int BasicPane::rxSend()
                
                double gain=0.9;
                
-               signed char *data=(signed char *)rx->sendBuff2;
+               signed char *data=(signed char *)sx->sendBuff2;
                
                amin =  1e33;
                amax = -1e33;
@@ -362,17 +362,17 @@ int BasicPane::rxSend()
                //winout(" f amin %g amax %g count %ld\n",amin,amax,count);
                size=sdr->size*sizeof(signed char);
                if(mode == 0){
-                   if(writeLab(rx->send,(char *)"SIGN",size))return 1;
-                   if(netWrite(rx->send,(char *)data,size))return 1;
-                   if(writeLab(rx->send,(char *)"SIGN",size))return 1;
-                   if(netWrite(rx->send,(char *)&data[sdr->size],size))return 1;
+                   if(writeLab(sx->send,(char *)"SIGN",size))return 1;
+                   if(netWrite(sx->send,(char *)data,size))return 1;
+                   if(writeLab(sx->send,(char *)"SIGN",size))return 1;
+                   if(netWrite(sx->send,(char *)&data[sdr->size],size))return 1;
                }else if(mode == 1){
-                   if(netWrite(rx->send,(char *)rx->sendBuff2,size))return 1;
-                   if(netWrite(rx->send,(char *)&data[sdr->size],size))return 1;
+                   if(netWrite(sx->send,(char *)sx->sendBuff2,size))return 1;
+                   if(netWrite(sx->send,(char *)&data[sdr->size],size))return 1;
                }else{
-                   ret=sendto2(rx->send,(char *)rx->sendBuff2, size,
+                   ret=sendto2(sx->send,(char *)sx->sendBuff2, size,
                                (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
-                   ret=sendto2(rx->send,(char *)&data[sdr->size], size,
+                   ret=sendto2(sx->send,(char *)&data[sdr->size], size,
                           (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
                }
            }else if(type == 3){
@@ -393,13 +393,13 @@ int BasicPane::rxSend()
                
                amax -= average;
                
-               if(rx->aminGlobal2 == 0.0)rx->aminGlobal2=amin;
-               rx->aminGlobal2 = 0.8*rx->aminGlobal2+0.2*amin;
-               amin=rx->aminGlobal2;
+               if(sx->aminGlobal2 == 0.0)sx->aminGlobal2=amin;
+               sx->aminGlobal2 = 0.8*sx->aminGlobal2+0.2*amin;
+               amin=sx->aminGlobal2;
                
-               if(rx->amaxGlobal2 == 0.0)rx->amaxGlobal2=amax;
-               rx->amaxGlobal2 = 0.8*rx->amaxGlobal2+0.2*amax;
-               amax=rx->amaxGlobal2;
+               if(sx->amaxGlobal2 == 0.0)sx->amaxGlobal2=amax;
+               sx->amaxGlobal2 = 0.8*sx->amaxGlobal2+0.2*amax;
+               amax=sx->amaxGlobal2;
                //winout("a a amin %g amax %g ",amin,amax);
 
                double dnom=0.0;
@@ -411,7 +411,7 @@ int BasicPane::rxSend()
                               
                double gain=0.9;
                
-               unsigned char *data=(unsigned char *)rx->sendBuff2;
+               unsigned char *data=(unsigned char *)sx->sendBuff2;
                
                amin =  1e33;
                amax = -1e33;
@@ -436,17 +436,17 @@ int BasicPane::rxSend()
               // winout("f  amin %g amax %g count %ld\n",amin,amax,count);
                size=sdr->size*sizeof(unsigned char);
                if(mode == 0){
-                   if(writeLab(rx->send,(char *)"USIG",size))return 1;
-                   if(netWrite(rx->send,(char *)data,size))return 1;
-                   if(writeLab(rx->send,(char *)"USIG",size))return 1;
-                   if(netWrite(rx->send,(char *)&data[sdr->size],size))return 1;
+                   if(writeLab(sx->send,(char *)"USIG",size))return 1;
+                   if(netWrite(sx->send,(char *)data,size))return 1;
+                   if(writeLab(sx->send,(char *)"USIG",size))return 1;
+                   if(netWrite(sx->send,(char *)&data[sdr->size],size))return 1;
                }else if(mode == 1){
-                   if(netWrite(rx->send,(char *)rx->sendBuff2,size))return 1;
-                   if(netWrite(rx->send,(char *)&data[sdr->size],size))return 1;
+                   if(netWrite(sx->send,(char *)sx->sendBuff2,size))return 1;
+                   if(netWrite(sx->send,(char *)&data[sdr->size],size))return 1;
               }else{
-                   ret=sendto2(rx->send,(char *)rx->sendBuff2, size,
+                   ret=sendto2(sx->send,(char *)sx->sendBuff2, size,
                                (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
-                   ret=sendto2(rx->send,(char *)&data[sdr->size], size,
+                   ret=sendto2(sx->send,(char *)&data[sdr->size], size,
                                (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
                }
            }
@@ -458,12 +458,12 @@ int BasicPane::rxSend()
   
     sdr->fillBuffer = 0;
 
-    if(rx->send >= 0){
+    if(sx->send >= 0){
         if(mode < 2){
-            shutdown(rx->send,2);
+            shutdown(sx->send,2);
             winout("shutdown mode %d\n",mode);
         }
-        closesocket(rx->send);
+        closesocket(sx->send);
     }
     
     return ret;
@@ -476,13 +476,13 @@ int BasicPane::sendAudio(int short *data,int length)
     struct hostent *host;
     int ret;
 
-    //winout("sendAudio length %d sendMode %d controlSend %d\n",length,rx->sendMode,rx->controlSend);
+    //winout("sendAudio length %d sendMode %d controlSend %d\n",length,sx->sendMode,sx->controlSend);
     
-    if(rx->sendMode < 3)return 0;
+    if(sx->sendMode < 3)return 0;
     
     if(sendFlag <= 0){
-        if(rx->send)closesocket(rx->send);
-        rx->send=0;
+        if(sx->send)closesocket(sx->send);
+        sx->send=0;
         return 0;
     }
     
@@ -511,13 +511,13 @@ int BasicPane::sendAudio(int short *data,int length)
     //bzero(&(server_addr.sin_zero),8);
     zerol((char *)&(server_addr.sin_zero),sizeof(server_addr.sin_zero));
     
-    ret=sendto2(rx->send,(char *)data, length*2,
+    ret=sendto2(sx->send,(char *)data, length*2,
                  (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
     //static long nn=0;
     //winout("sendAudio length %d nn %ld\n",length,nn++);
     if(ret)winout("sendto2 Error\n");
     
-   // winout("sendAudio rx->name %s ret %d length %d\n",addressName,ret,length);
+   // winout("sendAudio sx->name %s ret %d length %d\n",addressName,ret,length);
 
     
     //static FILE *out=NULL;

@@ -106,6 +106,8 @@ double rtime(void);
     ID_STOPSEND,
     ID_SWAPIQ,
     ID_OSCILLOSCOPE,
+    ID_SCROLLED,
+    ID_ROTATEDATA,
     ID_ALPHA,
     ID_SOFTAUTOGAIN,
     ID_SETGAIN,
@@ -169,6 +171,7 @@ struct paletteDraw{
         
 };
 
+class Spectrum;
 
 class TopPane : public wxWindow
 {
@@ -201,6 +204,8 @@ public:
 	int nchar;
 	
 	int idoFC;
+	
+	Spectrum *gSpectrum;
 
 	wxFrame *frame;
     
@@ -213,7 +218,6 @@ public:
 	wxCheckBox *rbox2;
 
 	// events
-	void OnTimer(wxTimerEvent &event);
 	void OnCombo(wxCommandEvent& event);
 	void mouseMoved(wxMouseEvent& event);
 	void mouseDown(wxMouseEvent& event);
@@ -253,6 +257,8 @@ public:
     void OnDirectSelected(wxCommandEvent& event);
     void OnBandSelected(wxCommandEvent& event);
     void OnSampleRateSelected(wxCommandEvent& event);
+    void OnChar(wxKeyEvent& event);
+
 
 	WaterFall *gWaterFall;
 	
@@ -271,9 +277,10 @@ public:
 	wxMenu *paletteMenu;
 
 	int SampleFrequency;
+	
+    wxGridBagSizer*     m_gbs;
 
 private:
-    wxGridBagSizer*     m_gbs;
     wxPanel*            m_panel;
     wxButton*           m_hideBtn;
     wxButton*           m_showBtn;
@@ -337,7 +344,6 @@ public:
 	void doQuit();
 	void OnFile(wxCommandEvent& event );
 
-	void OnTimer(wxTimerEvent &event);
 	void OnCombo(wxCommandEvent& event);
 	void mouseMoved(wxMouseEvent& event);
 	void mouseDown(wxMouseEvent& event);
@@ -450,7 +456,6 @@ public:
 	void OnIdle(wxIdleEvent& event); 
 
 
-	void OnTimer(wxTimerEvent &event);
 	void OnCombo(wxCommandEvent& event);
 	void mouseMoved(wxMouseEvent& event);
 	void mouseDown(wxMouseEvent& event);
@@ -501,6 +506,10 @@ public:
 
 	int filterType;
 	
+	int iFreeze;
+	
+	float *buff1;
+	
 	float *buff2;
 	
 	int buffSize;
@@ -517,6 +526,8 @@ public:
 	
 	TopPane *gTopPane;
 	
+	BasicPane *gBasicPane;
+	
 	double lineAlpha;
 	
 	class sdrClass *sdr;
@@ -531,6 +542,8 @@ public:
  	volatile double verticalMinimum;
 	
 	volatile double verticalMaximum;
+	
+	volatile double amaxGlobal;
    
 	void render(wxPaintEvent& evt);
 	void render1(wxPaintEvent& evt);
@@ -656,6 +669,10 @@ public:
 
 	void resized(wxSizeEvent& evt);
 	
+	int SetScrolledWindow();
+	
+	int scrolledWindowFlag;
+	
 	int SendStart(char *name,int type,int mode);
 	
 	int sendAudio(int short *data,int length);
@@ -696,6 +713,8 @@ public:
 	
 	double lineAlpha;
 	
+	double sampleDataRotate;
+	
 	wxComboBox *fftCombo;
 	
 	wxComboBox *filterCombo;
@@ -714,9 +733,9 @@ public:
 	
 	wxTextCtrl *textAlpha;
 	
-	struct sendData rxs;
+	struct sendData sxs;
 	
-	struct sendData *rx=&rxs;
+	struct sendData *sx=&sxs;
 	
 	char addressName[256];
 	
@@ -776,6 +795,7 @@ public:
     void setBandwidth( wxCommandEvent& event );
     void OnTextBandWidth(wxCommandEvent& event);
     void setSampleWidth(wxCommandEvent& event);
+    void setDataRotate(wxCommandEvent& event);
     void setRxGain(wxCommandEvent& event);
 	DECLARE_EVENT_TABLE()
 }; 

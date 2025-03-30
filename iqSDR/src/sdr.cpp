@@ -796,7 +796,7 @@ int sdrClass::run()
 }
 int sdrClass::startPlay()
 {
-	//winout("startPlay\n");
+	winout("1 startPlay samplerate %g\n",samplerate);
 
 	if(inData == IN_RADIO){
 		if(findRadio() || device == NULL){
@@ -804,6 +804,8 @@ int sdrClass::startPlay()
 			return 1;
 		}
 	}
+	
+	winout("2 startPlay samplerate %g\n",samplerate);
 	
 	initPlay();
 
@@ -1581,15 +1583,17 @@ int sdrClass::rxBuffer()
           
                 }
 
-	        	if(!iWait)bS->pushBuff(rx->witch);
+	        	if(!iWait){
+	        	    bS->pushBuff(rx->witch);
 
-	        	float *buff2=bS2->buff[rx->witch % NUM_DATA_BUFF];
+	        	    float *buff2=bS2->buff[rx->witch % NUM_DATA_BUFF];
 
-				for(int n=0;n<rx->size*2;++n){
-					buff2[n]=buff[n];
-				}
+				    for(int n=0;n<rx->size*2;++n){
+					    buff2[n]=buff[n];
+				    }
 	        	
-	        	if(!iWait)bS2->pushBuff(rx->witch);
+	        	    bS2->pushBuff(rx->witch);
+	        	}
 	        	
              	++rx->witch;
 
@@ -1634,7 +1638,7 @@ int sdrClass::initPlay()
     	w=2.0*pi*(fc - f);
     	sindt=sin(w*dt);
     	cosdt=cos(w*dt);
-    	if(Debug)mprint("fc %f f %f dt %g samplerate %d\n",fc,f,dt,samplerate);
+    	if(Debug)mprint("fc %f f %f dt %g samplerate %g\n",fc,f,dt,samplerate);
     }
     
 	return 0;
