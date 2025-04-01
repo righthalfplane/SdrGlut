@@ -796,7 +796,7 @@ int sdrClass::run()
 }
 int sdrClass::startPlay()
 {
-	winout("1 startPlay samplerate %g\n",samplerate);
+	//winout("1 startPlay samplerate %g\n",samplerate);
 
 	if(inData == IN_RADIO){
 		if(findRadio() || device == NULL){
@@ -805,7 +805,7 @@ int sdrClass::startPlay()
 		}
 	}
 	
-	winout("2 startPlay samplerate %g\n",samplerate);
+	//winout("2 startPlay samplerate %g\n",samplerate);
 	
 	initPlay();
 
@@ -1584,6 +1584,8 @@ int sdrClass::rxBuffer()
                 }
 
 	        	if(!iWait){
+	        		//fprintf(stderr,"push witch %d ip %d\n",witch,witch % NUM_DATA_BUFF);
+
 	        	    bS->pushBuff(rx->witch);
 
 	        	    float *buff2=bS2->buff[rx->witch % NUM_DATA_BUFF];

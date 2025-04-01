@@ -210,9 +210,7 @@ public:
 	wxFrame *frame;
     
 	void render(wxPaintEvent& evt);
-	
-	void render2();
-	
+		
 	wxCheckBox *rbox;
 	
 	wxCheckBox *rbox2;
@@ -506,6 +504,8 @@ public:
 
 	int filterType;
 	
+	int iHaveData;
+	
 	int iFreeze;
 	
 	float *buff1;
@@ -618,7 +618,6 @@ public:
 	int SetWindow();
     int FloatToImage(float *d,long length,struct paletteDraw *pd,unsigned char *bp);
 	void render(wxPaintEvent& evt);
-	void render2();
 	void prepare3DViewport(int topleft_x, int topleft_y, int bottomrigth_x, int bottomrigth_y);
 	void prepare2DViewport(int topleft_x, int topleft_y, int bottomrigth_x, int bottomrigth_y);
 	void InitOpenGl();
