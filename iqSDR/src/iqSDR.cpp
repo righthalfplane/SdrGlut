@@ -8,7 +8,7 @@ void winout(const char *fmt, ...);
 
 int copyl(char *p1,char *p2,long n);
 
-std::string ProgramVersion="iqSDR-1308";
+std::string ProgramVersion="iqSDR-1309";
 
 //c++ -std=c++11 -o iqSDR.x iqSDR.cpp -lGLEW `/usr/local/bin/wx-config --cxxflags --libs --gl-libs` -lGLU -lGL
 
@@ -223,8 +223,6 @@ startWaveFile::startWaveFile(wxWindow *frame,const wxString& title)
  	pbox=new wxCheckBox(this,ID_PAUSE, "&Pause",wxPoint(40,230), wxSize(130, 30));
 	pbox->SetValue(0);	
    
-    
-    
   	const char *file=title;
   	
    if ((infile = sf_open (file, SFM_READ, &sfinfo))  == NULL)
@@ -249,13 +247,13 @@ startWaveFile::startWaveFile(wxWindow *frame,const wxString& title)
 
 	s->faudio=sfinfo.samplerate;
     
-//	winout("sfinfo.samplerate %d sfinfo.channels %d sfinfo.frames %lld\n",sfinfo.samplerate,sfinfo.channels,sfinfo.frames);
+	//winout("sfinfo.samplerate %d sfinfo.channels %d sfinfo.frames %lld\n",sfinfo.samplerate,sfinfo.channels,sfinfo.frames);
 
 	bS=new cStack;
 
 	bS->setBuff(2000000,sfinfo.samplerate);
 
-	nReadBlock=(int)(sfinfo.samplerate/40.0);
+	nReadBlock=(int)(sfinfo.samplerate/s->ncut);
 
 	s->bS=bS;
 
@@ -300,7 +298,7 @@ int startWaveFile::wavBuffer()
 	 //	sendAudio(data,readcount);
 
 		bS->pushBuffa(audioOut-1);
-		//winout("audioOut %ld readcount %d\n",audioOut,readcount);
+	//	winout("audioOut %ld readcount %d\n",audioOut,readcount);
 		if(s->bS == bS)s->audioSync=1;
 
 	}
