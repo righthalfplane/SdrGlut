@@ -237,6 +237,8 @@ public:
  
 class WaterFall;
 
+class BasicPane;
+
 class applFrame : public wxFrame
 {
 public:
@@ -260,6 +262,8 @@ public:
 
 	WaterFall *gWaterFall;
 	
+	BasicPane *gBasicPane;
+
 	wxMenu *actionMenu;
 	
 	wxMenu *directMenu;
@@ -512,6 +516,8 @@ public:
 	
 	float *buff2;
 	
+	float *buff3;
+	
 	int buffSize;
 		
 	int decodemode1;
@@ -607,6 +613,8 @@ public:
 	
 	Spectrum *gSpectrum;
 	
+	BasicPane *gBasicPane;
+	
 	class sdrClass *sdr;
 	
 	void startRadio2();
@@ -654,6 +662,7 @@ struct sendData{
 };
 
 
+class BasicPane;
 
 class BasicPane : public wxWindow
 {
@@ -691,6 +700,10 @@ public:
 	WaterFall *gWaterFall;
 	
 	TopPane *gTopPane;
+	
+	applFrame *gapplFrame;
+	
+	BasicPane *gBasicPane;
 
 	wxRadioBox *radioBoxp;
 	

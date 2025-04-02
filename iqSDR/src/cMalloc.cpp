@@ -152,7 +152,7 @@ void checkall(void)
 	count=0;
 	for(k=0;k<maxgiven;++k){
 	    if(given[k]){
-		    sprintf(buff,"checkall k %d %ld tag %d\n",k,(long)given[k],tagm[k]);
+		    sprintf(buff,"checkall k %d %p tag %d\n",k,given[k],tagm[k]);
 		    fprintf(stderr,"%s\n",buff);
 	        ++count;
     		r=givenLength[k]-4;

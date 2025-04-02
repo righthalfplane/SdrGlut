@@ -8,7 +8,7 @@ void winout(const char *fmt, ...);
 
 int copyl(char *p1,char *p2,long n);
 
-char *ProgramVersion=(char *)"iqSDR-1306";
+std::string ProgramVersion="iqSDR-1308";
 
 //c++ -std=c++11 -o iqSDR.x iqSDR.cpp -lGLEW `/usr/local/bin/wx-config --cxxflags --libs --gl-libs` -lGLU -lGL
 
@@ -572,17 +572,17 @@ void applFrame::About(wxCommandEvent &event)
 {
 
 	int item=event.GetId();
-    if(item == wxID_ABOUT)wxMessageBox("iqSDR(c) 2025 Dale Ranta");
+    if(item == wxID_ABOUT)wxMessageBox(ProgramVersion+"(c) 2025 Dale Ranta");
     if(item == ID_EXIT)startIt->OnQuit(event);
 }
 
 void applFrame::resized(wxSizeEvent& evt)
 {
- evt.Skip();
+ 	evt.Skip();
 
-//const wxSize size = evt.GetSize() * GetContentScaleFactor();
+	//const wxSize size = evt.GetSize() * GetContentScaleFactor();
 
-//winout("applFrame::resized %d %d %f\n", size.x,size.y,GetContentScaleFactor());
+	//winout("applFrame::resized %d %d %f\n", size.x,size.y,GetContentScaleFactor());
 	Refresh();
 
 }
@@ -750,6 +750,9 @@ applFrame::applFrame(wxFrame* parent,wxString title,class sdrClass *sdrIn)
     
     gWaterFall=pWaterFall;
     
+    gBasicPane=pBasicPane;
+    
+    pBasicPane->gapplFrame=this;
 
     m_gbs->AddGrowableCol(1);
     m_gbs->AddGrowableCol(2);
@@ -955,12 +958,11 @@ applFrame::~applFrame()
 			applFrame *grab=grabList[k];
 			if(grab == this){
 			    grabList[k]=NULL;
-			    //winout("applFrame remove from list\n");
+//			    winout("applFrame remove from list\n");
 			}
 		}
 	}
 
-	checkall();
 	
 	//winout("exit applFrame %p\n",this);
 
@@ -970,7 +972,7 @@ void startWindow::OnAbout(wxCommandEvent& event)
 {
 	event.Skip();
 	
-	wxMessageBox("iqSDR(c) 2025 Dale Ranta");
+	wxMessageBox(ProgramVersion+"(c) 2025 Dale Ranta");
 
 }
 void startWindow::OnRadio(wxCommandEvent& event)
@@ -1003,6 +1005,8 @@ void startWindow::doQuit()
 			if(grab)delete grab;
 		}
 	}
+	
+	checkall();
 
 	wxWindow *parent=GetParent();
 	
@@ -1678,7 +1682,7 @@ int BasicPane::SetScrolledWindow()
 
 	if(ScrolledWindow)ScrolledWindow->Destroy();
 	
-	ScrolledWindow = new wxScrolledWindow(pBasicPane,ID_SCROLLED,wxPoint(0,0),
+	ScrolledWindow = new wxScrolledWindow(gBasicPane,ID_SCROLLED,wxPoint(0,0),
 	 	                                   wxSize(340,200),wxVSCROLL ); // wxHSCROLL
  	int pixX=10;
  	int pixY=10;
@@ -1745,7 +1749,6 @@ int BasicPane::SetScrolledWindow()
 	
 	
 	
-
 	box = new wxStaticBox(ScrolledWindow, wxID_ANY, "Minimum Value ",wxPoint(20,yloc), wxSize(230, 80),wxBORDER_SUNKEN );
 	box->SetToolTip(wxT("This is tool tip") );
 
@@ -1967,14 +1970,13 @@ int BasicPane::SetScrolledWindow()
 		yloc += 30;
 	}
 
-
     wxWindow::SetSize(wxDefaultCoord,wxDefaultCoord,280,100);
     
     Refresh();
     
     iRefresh=1;
     
-    winout("SetScrolledWindow Done yloc %d\n",yloc);
+  //  winout("SetScrolledWindow Done yloc %d\n",yloc);
 
 	return 0;
 }
@@ -1997,6 +1999,8 @@ BasicPane::BasicPane(wxWindow *frame, const wxString &title,class sdrClass *sdrI
 	
 	pBasicPane=this;
 	
+	gBasicPane=pBasicPane;
+	
 	gTopPane=pTopPane;
 	
 	gTopPane->sdr=sdr;
@@ -2018,6 +2022,8 @@ BasicPane::BasicPane(wxWindow *frame, const wxString &title,class sdrClass *sdrI
 	gWaterFall->gTopPane=pTopPane;
 	
 	gWaterFall->gSpectrum=gSpectrum;
+	
+	gWaterFall->gBasicPane=pBasicPane;
 	
 	scrolledWindowFlag=0;
 	
@@ -2079,15 +2085,22 @@ void BasicPane::OnCheckAuto(wxCommandEvent &event)
 		//winout("ID_OSCILLOSCOPE flag %d\n",flag);
 		gSpectrum->oscilloscope=flag;
 		scrolledWindowFlag=flag;
+		SetScrolledWindow();
+		wxSize size = gapplFrame->GetClientSize();
+		size.x += 4;
+		size.y += 4;
+		gapplFrame->SetClientSize(size);
+		size.x -= 4;
+		size.y -= 4;
+		gapplFrame->SetClientSize(size);
 		sdr->initPlay();
 		if(flag == 1){		
 		    gSpectrum->sdr->bS2->mutex1.lock();
 			gSpectrum->sdr->bS2->bufftop=0;
 			gSpectrum->sdr->witch=0;
 		    gSpectrum->sdr->bS2->mutex1.unlock();
-		    fprintf(stderr,"Clear Buffer\n");
+		    //fprintf(stderr,"Clear Buffer\n");
 		}
-		//SetScrolledWindow();
 		return;
 	}
 	
@@ -2277,6 +2290,8 @@ void BasicPane::OnText(wxCommandEvent &event)
 	sdr->samplerate=atof(rates);
 	sdr->samplewidth=sdr->samplerate;
 	
+	//fprintf(stderr,"samplerate %g\n",sdr->samplerate);
+	
 	sdr->startPlay();
 	
 	std::thread(&sdrClass::run,sdr).detach();
@@ -2410,9 +2425,6 @@ void BasicPane::OnTimer(wxTimerEvent &event){
 		Refresh();
 		if(ScrolledWindow){
 			ScrolledWindow->Refresh();
-			wxWindow *parent=ScrolledWindow->GetParent();
-			if(parent)parent->Refresh();
-			//winout("Refresh parent\n");
 		}
 		//winout("gTopPane->Refresh called f %g sdr->decodemode %d\n",sdr->f,sdr->decodemode);
 	}
@@ -2549,29 +2561,6 @@ void BasicPane::OnCombo(wxCommandEvent& event){
 void BasicPane::OnButton2(wxCommandEvent& event) 
 {    
 	event.Skip();
-
-   // int id=event.GetId();
-    
-   // int flag=event.GetValue();
-     
-   //	winout("OnButton2 id %d flag %d\n",id,flag);
-    
-
-	//sdr->printDevices();
-	
-/*
-	wxFrame *frame= new wxFrame(NULL, wxID_ANY, wxT("Device Select"), wxDefaultPosition, wxSize(400,400));
-	
-	selectionWindow *s=new selectionWindow(frame, "Device");
-	
-	s->gBasicPane=this;
-
-	frame->Show();
-*/
-	
-//	wxWindow::SetSize(wxDefaultCoord,wxDefaultCoord,200,200);
-	
-//	winout("Select Device OUT\n");
 
 }
 void BasicPane::radioBox(wxCommandEvent& event) 
@@ -3284,6 +3273,8 @@ Spectrum::Spectrum(wxFrame* parent, int* args) :
     buff1=NULL;
     
     buff2=NULL;
+    
+    buff3=NULL;
 	
 	buffSize = -10;
 
@@ -3430,6 +3421,12 @@ Spectrum::~Spectrum()
 	buffSend10=NULL;
 	buffSend2=NULL;
 	buffSend=NULL;
+    if(buff1)cFree((char *)buff1);
+    if(buff2)cFree((char *)buff2);
+    if(buff3)cFree((char *)buff3);
+    buff1=NULL;
+    buff2=NULL;
+    buff3=NULL;
 	//winout("exit Spectrum %p\n",this);
 
 }
@@ -3549,11 +3546,13 @@ void Spectrum::render1(wxPaintEvent& evt )
       	}
     	
 		if(buffSize != sdr->size){
-			if(buff2)cFree((char *)buff2);
-			buff2=(float *)cMalloc(sizeof(float)*8*sdr->size,95288);
+			buffSize=sdr->size;
 			if(buff1)cFree((char *)buff1);
 			buff1=(float *)cMalloc(sizeof(float)*8*sdr->size,95288);
-			buffSize=sdr->size;
+			if(buff2)cFree((char *)buff2);
+			buff2=(float *)cMalloc(sizeof(float)*8*sdr->size,95288);
+			if(buff3)cFree((char *)buff3);
+			buff3=(float *)cMalloc(sizeof(float)*8*sdr->size,95288);
 			iHaveData=0;
 		}
 		
@@ -3702,18 +3701,19 @@ void Spectrum::render1(wxPaintEvent& evt )
 	*/
 		num=0;
  
-		msresamp_crcf_execute(iqSampler1, (liquid_float_complex *)&buff2[0], sdr->size, (liquid_float_complex *)buffSend2, &num);  // decimate
+ 		msresamp_crcf_reset(iqSampler1);
+		msresamp_crcf_execute(iqSampler1, (liquid_float_complex *)&buff2[0], sdr->size, (liquid_float_complex *)&buff3[0], &num);  // decimate
 		
       	buffSendLength=num;
 		
 		//int nmax=-1;
 		amax=0;
 		for(int n=0;n<buffSendLength;++n){
-			double v=(buffSend2[2*n]*buffSend2[2*n]+buffSend2[2*n+1]*buffSend2[2*n+1]);
+			double v=(buff3[2*n]*buff3[2*n]+buff3[2*n+1]*buff3[2*n+1]);
         	if(v > 0.0)v=sqrt(v);
          	if(v > amax){
          		amax=v;
-         	   // nmax=n;
+         	   //nmax=n;
          	}
 		}
 		
@@ -3771,7 +3771,7 @@ void Spectrum::render1(wxPaintEvent& evt )
 			
 		for(int n=0;n<buffSendLength;++n){
 			double v;
-			v=buffSend2[2*n];
+			v=buff3[2*n];
 			double x=n/((double)buffSendLength);
 			double y=v;
 			int ix;

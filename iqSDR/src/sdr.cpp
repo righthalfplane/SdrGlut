@@ -656,8 +656,13 @@ sdrClass::~sdrClass()
 	
 	waitPointer("doWhat(2)",&doWhat,0);
 	
+	//winout("sendBuff %p\n",sendBuff);
+	
 	if(sendBuff)cFree((char *)sendBuff);
 	sendBuff=NULL;
+
+	if(saveBuff)cFree((char *)saveBuff);
+	saveBuff=NULL;
 
 	s->bS=NULL;
 	    
@@ -674,7 +679,7 @@ int sdrClass::setDataSave(int length)
 	saveCall=0;
 	Sleep2(10);
 	if(saveBuff)cFree((char *)saveBuff);
-	saveBuff=(float *)cMalloc(length*2*sizeof(float),9999);
+	saveBuff=(float *)cMalloc(length*2*sizeof(float),9949);
 	saveLength=length;
 	saveCall=1;
 	return 0;
@@ -785,9 +790,7 @@ int sdrClass::run()
 	if(outFile)fclose(outFile);
 	
 	if(inFile)fclose(inFile);
-		
-	checkall();
-	
+			
 	//winout("End of Setup\n");
 	
 	frame=-2;
@@ -833,6 +836,7 @@ int sdrClass::playRadio()
 	fillBuffer=0;
 	if(sendBuff)cFree((char *)sendBuff);
 	sendBuff=(float *)cMalloc(size*2*sizeof(float),76868);
+	//fprintf(stderr,"run %p\n",sendBuff);
 	if(!sendBuff){
 		winout("Error playRadio cMalloc Failed\n");
 		return 1;	
