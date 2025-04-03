@@ -1,8 +1,10 @@
 CXXFLAGS =  -std=c++11  -O2  -DWINDOWS_LONG_NAMES -I/usr/include  -I/opt/X11/include `/opt/wxWidgets/bin/wx-config --cxxflags` -Wall -DGL_SILENCE_DEPRECATION -Wno-return-type-c-linkage -Wno-deprecated-declarations
 
-CCFILES= ./src/sdr.cpp ./src/mThread.cpp ./src/cMalloc.cpp ./src/iqSDR.cpp ./src/bStack.cpp ./src/sound.cpp ./src/getPalette.cpp ./src/send.cpp ./src/Clisten.cpp ./src/WarningBatch.cpp
+CCFILES= ./src/sdr.cpp ./src/mThread.cpp ./src/cMalloc.cpp ./src/iqSDR.cpp ./src/bStack.cpp ./src/sound.cpp ./src/getPalette.cpp \
+         ./src/send.cpp ./src/Clisten.cpp ./src/WarningBatch.cpp ./src/graphics.cpp
  
-CCOBJS = ./src/sdr.o ./src/mThread.o ./src/cMalloc.o ./src/iqSDR.o ./src/bStack.o ./src/sound.o ./src/getPalette.o ./src/send.o ./src/Clisten.o ./src/WarningBatch.o
+CCOBJS = ./src/sdr.o ./src/mThread.o ./src/cMalloc.o ./src/iqSDR.o ./src/bStack.o ./src/sound.o ./src/getPalette.o \
+         ./src/send.o ./src/Clisten.o ./src/WarningBatch.o ./src/graphics.o
  
 fireball:  ${COBJS} ${CCOBJS}
 	${CXX} ${CFLAGS} -o iqSDR.x ${COBJS} ${CCOBJS}   -lrtaudio -lSoapySDR -lliquid -framework OpenAL -lsndfile  `/opt/wxWidgets/bin/wx-config --cxxflags --libs --gl-libs` -lfftw3f

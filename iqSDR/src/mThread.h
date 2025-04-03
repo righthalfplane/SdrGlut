@@ -17,6 +17,8 @@ extern      "C"
 
 	int Sleep2(int ms);
 	
+	double rtime(void);
+	
 	extern int mprintFlag;
 
 #if defined c_plusplus || defined __cplusplus

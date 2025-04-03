@@ -48,6 +48,9 @@
 
 #include "sdr.h"
 
+#include "graphics.h"
+
+
 double rtime(void);
 
 #define FLOAT_NOT_SET ((double)(-1.23e-21))
@@ -117,13 +120,6 @@ double rtime(void);
     ID_EXIT,
 };
 
-
-typedef struct uRectStruct {
-    int x;
-    int y;
-    int xsize;
-    int ysize;
-} uRect;
 
  struct WaterFall4{
     unsigned char *data;
@@ -556,7 +552,7 @@ public:
 	void render1a(wxPaintEvent& evt);
 	void render2(wxPaintEvent& evt);
 	void prepare3DViewport(int topleft_x, int topleft_y, int bottomrigth_x, int bottomrigth_y);
-	void prepare2DViewport(int topleft_x, int topleft_y, int bottomrigth_x, int bottomrigth_y);
+	//void prepare2DViewport(int topleft_x, int topleft_y, int bottomrigth_x, int bottomrigth_y);
 	void InitOpenGl();
 	int doTestSpeed();
     
@@ -627,7 +623,7 @@ public:
     int FloatToImage(float *d,long length,struct paletteDraw *pd,unsigned char *bp);
 	void render(wxPaintEvent& evt);
 	void prepare3DViewport(int topleft_x, int topleft_y, int bottomrigth_x, int bottomrigth_y);
-	void prepare2DViewport(int topleft_x, int topleft_y, int bottomrigth_x, int bottomrigth_y);
+	//void prepare2DViewport(int topleft_x, int topleft_y, int bottomrigth_x, int bottomrigth_y);
 	void InitOpenGl();
 	int doTestSpeed();
     

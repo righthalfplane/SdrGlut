@@ -43,10 +43,7 @@ int cFree(char *p);
 
 int zerol(unsigned char *s,unsigned long n);
 
-
-static int GetTime(long *Seconds,long *milliseconds);
-
-static double rtime(void);
+double rtime(void);
 
 std::vector<SoapySDR::Kwargs> resultsEnumerate;
          
@@ -2125,7 +2122,6 @@ int sdrClass::printInfo(void)
     return 0;
 }
 
-
 int mstrncpy(char *out,char *in,long n)
 {
 	if(!out || !in || (n <= 0))return 1;
@@ -2154,35 +2150,6 @@ char *strsave(char *s,int tag)
 		mstrncpy(p,s,length);
 	return(p);
 }
-static double rtime(void)
-{
-	long milliseconds;
-	long Seconds;
-	double ret;
-
-
-	GetTime(&Seconds, &milliseconds);
-
-	ret = (double)Seconds + (double)milliseconds / 1000.;
-
-	return ret;
-
-}
-static int GetTime(long *Seconds, long *milliseconds)
-{
-	struct timeb t;
-
-	if (!Seconds || !milliseconds)return 1;
-
-
-	ftime(&t);
-
-	*Seconds = (long)t.time;
-	*milliseconds = t.millitm;
-
-	return 0;
-}
-
 
 int zerol(unsigned char *s,unsigned long n)
 {
