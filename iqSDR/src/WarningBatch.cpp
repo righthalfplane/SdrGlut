@@ -95,7 +95,7 @@ void BatchWindow::OnIdle(wxIdleEvent& event)
  void BatchWindow::OnQuit(wxCommandEvent&(event))
  {
      event.Skip();
-      extern startWindow *startIt;
+      extern StartWindow *startIt;
 	  startIt->doQuit();
 
  }

@@ -132,40 +132,6 @@ double rtime(void);
     int ysize;
 };
 
-struct paletteDraw{
-    
-    unsigned char palette[768];
-    unsigned char *buffer;  
-    
-    double sPmin;
-    double sPmax;
-    
-    double dmin;
-    double dmax;
-
-    int ScreenBits;
-    int sType;			/* Scale Type */
-        
-    long top;
-    long left;
-    long xsize;
-    long ysize;
-
-    int paletteFont;       
-              
-    int LabeledPalette;
-    int UsePlotScales;
-    int UsePlotTime;
-    int UsePlotRange;
-       
-    double red;
-    double green;
-    double blue;
-
-    int AreaFill;
-    int Rotate1d;
-        
-};
 
 class Spectrum;
 
@@ -235,11 +201,11 @@ class WaterFall;
 
 class BasicPane;
 
-class applFrame : public wxFrame
+class ApplFrame : public wxFrame
 {
 public:
-    applFrame(wxFrame* parent,wxString title,class sdrClass *sdrIn);
-    ~applFrame();
+    ApplFrame(wxFrame* parent,wxString title,class sdrClass *sdrIn);
+    ~ApplFrame();
 
 	void About(wxCommandEvent &event );
     void OnHideBtn(wxCommandEvent&);
@@ -294,13 +260,13 @@ private:
 class BasicPane;
 
 
-class selectionWindow : public wxWindow
+class SelectionWindow : public wxWindow
 {
     wxGLContext*	m_context;
 
 public:
-	selectionWindow(wxWindow *frame, const wxString& title,wxTextCtrl *text);
-	virtual ~selectionWindow();
+	SelectionWindow(wxWindow *frame, const wxString& title,wxTextCtrl *text);
+	virtual ~SelectionWindow();
     
 	void resized(wxSizeEvent& evt);
     
@@ -361,13 +327,13 @@ public:
 	DECLARE_EVENT_TABLE()
 }; 
  
-class startWaveFile : public wxWindow
+class StartWaveFile : public wxWindow
 {
  //   wxGLContext*	m_context;
 
 public:
-	startWaveFile(wxWindow *frame, const wxString& title);
-	virtual ~startWaveFile();
+	StartWaveFile(wxWindow *frame, const wxString& title);
+	virtual ~StartWaveFile();
 	void mouseDown(wxMouseEvent& event);
 	
 	void OnScroll(wxCommandEvent& event);
@@ -402,13 +368,13 @@ public:
 
 };
 
-class startWindow : public wxWindow
+class StartWindow : public wxWindow
 {
     wxGLContext*	m_context;
 
 public:
-	startWindow(wxWindow *frame, const wxString& title);
-	virtual ~startWindow();
+	StartWindow(wxWindow *frame, const wxString& title);
+	virtual ~StartWindow();
     
 	void resized(wxSizeEvent& evt);
     
@@ -420,7 +386,7 @@ public:
 	
 	wxFrame *frame7;
 	
-	applFrame *grab;
+	ApplFrame *grab;
 
 	wxRadioBox *radioBoxp;
 	wxTextCtrl *text;
@@ -697,7 +663,7 @@ public:
 	
 	TopPane *gTopPane;
 	
-	applFrame *gapplFrame;
+	ApplFrame *gApplFrame;
 	
 	BasicPane *gBasicPane;
 
@@ -808,9 +774,6 @@ public:
 	DECLARE_EVENT_TABLE()
 }; 
  
- 
- 
-
 int cFree(char *p);
 
 #endif

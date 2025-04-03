@@ -8,7 +8,7 @@ void winout(const char *fmt, ...);
 
 int copyl(char *p1,char *p2,long n);
 
-std::string ProgramVersion="iqSDR-1316";
+std::string ProgramVersion="iqSDR-1318";
 
 //c++ -std=c++11 -o iqSDR.x iqSDR.cpp -lGLEW `/usr/local/bin/wx-config --cxxflags --libs --gl-libs` -lGLU -lGL
 
@@ -39,10 +39,10 @@ char WarningBuff[256];
 GLuint vboId = 0;                   // ID of VBO for vertex arrays
 
 
-startWindow *startIt;
+StartWindow *startIt;
 soundClass *s;
 
-std::vector<applFrame *> grabList;
+std::vector<ApplFrame *> grabList;
 
 BasicPane *pBasicPane;
 Spectrum *pSpectrum;
@@ -93,7 +93,7 @@ bool MyApp::OnInit()
     // testEM();
         
  	wxFrame *frame2 = new wxFrame(NULL,wxID_ANY,ProgramVersion);
-	startIt=new startWindow(frame2, "Controls");
+	startIt=new StartWindow(frame2, "Controls");
 	frame2->SetSize(wxDefaultCoord,wxDefaultCoord,155,300);
 	frame2->Show();
 	
@@ -106,15 +106,15 @@ bool MyApp::OnInit()
 
 IMPLEMENT_APP(MyApp)
 
-BEGIN_EVENT_TABLE(startWaveFile, wxWindow)
-EVT_LEFT_DOWN(startWaveFile::mouseDown)
-EVT_SLIDER(SCROLL_TIME2,startWaveFile::OnScroll)
-EVT_SLIDER(SCROLL_GAIN2,startWaveFile::OnScroll)
-EVT_CHECKBOX(ID_PAUSE, startWaveFile::Pause)
-EVT_TIMER(TIMER_ID2,startWaveFile::OnIdle)
+BEGIN_EVENT_TABLE(StartWaveFile, wxWindow)
+EVT_LEFT_DOWN(StartWaveFile::mouseDown)
+EVT_SLIDER(SCROLL_TIME2,StartWaveFile::OnScroll)
+EVT_SLIDER(SCROLL_GAIN2,StartWaveFile::OnScroll)
+EVT_CHECKBOX(ID_PAUSE, StartWaveFile::Pause)
+EVT_TIMER(TIMER_ID2,StartWaveFile::OnIdle)
 END_EVENT_TABLE()
 
-void startWaveFile::Pause(wxCommandEvent& event) 
+void StartWaveFile::Pause(wxCommandEvent& event) 
 {    
 	event.Skip();
 
@@ -124,7 +124,7 @@ void startWaveFile::Pause(wxCommandEvent& event)
 
 //   winout("Pause iPause %d\n",iPause);
 }
-void startWaveFile::OnIdle(wxTimerEvent &event)
+void StartWaveFile::OnIdle(wxTimerEvent &event)
 {
 	if(iPause)return;
 	
@@ -140,7 +140,7 @@ void startWaveFile::OnIdle(wxTimerEvent &event)
 }
 
 
-void startWaveFile::OnScroll(wxCommandEvent &event)
+void StartWaveFile::OnScroll(wxCommandEvent &event)
 {
 	event.Skip();
 	
@@ -162,7 +162,7 @@ void startWaveFile::OnScroll(wxCommandEvent &event)
 	
 }
 
-startWaveFile::startWaveFile(wxWindow *frame,const wxString& title)
+StartWaveFile::StartWaveFile(wxWindow *frame,const wxString& title)
     : wxWindow(frame,32000), m_timer(this,TIMER_ID2)
 {
 	m_timer.Start(2000);
@@ -225,14 +225,14 @@ startWaveFile::startWaveFile(wxWindow *frame,const wxString& title)
 
 	wavFlag=2;
 
-	std::thread(&startWaveFile::wavBuffer,this).detach();
+	std::thread(&StartWaveFile::wavBuffer,this).detach();
 	
 	std::thread(&soundClass::startSound,s).detach();
 
 	
 }
 
-int startWaveFile::wavBuffer()
+int StartWaveFile::wavBuffer()
 {
 	extern soundClass *s;
 
@@ -274,7 +274,7 @@ int startWaveFile::wavBuffer()
 	return 0;
 }
 
-void startWaveFile::mouseDown(wxMouseEvent& event) 
+void StartWaveFile::mouseDown(wxMouseEvent& event) 
 {
 	extern soundClass *s;
 	event.Skip();
@@ -282,7 +282,7 @@ void startWaveFile::mouseDown(wxMouseEvent& event)
 	s->bS=bS;
 }
 
-startWaveFile::~startWaveFile()
+StartWaveFile::~StartWaveFile()
 {
 	extern soundClass *s;
 
@@ -298,11 +298,11 @@ startWaveFile::~startWaveFile()
 	if(bS)delete bS;
 	bS=NULL;
 	
-	//winout("exit startWaveFile %p\n",this);
+	//winout("exit StartWaveFile %p\n",this);
 
 }
 
-void startWindow::openArgcArgv(int argc,char **argv)
+void StartWindow::openArgcArgv(int argc,char **argv)
 {
 	double fc=101.5;
 	double samplerate=2e6;
@@ -434,7 +434,7 @@ void startWindow::openArgcArgv(int argc,char **argv)
 
 	sdrIn->startPlay();
 
-	applFrame *grab=new applFrame(NULL,name,sdrIn);
+	ApplFrame *grab=new ApplFrame(NULL,name,sdrIn);
 	grab->Show();
 
 	grabList.push_back(grab);
@@ -455,7 +455,7 @@ void startWindow::openArgcArgv(int argc,char **argv)
 	
 }
 
-startWindow::startWindow(wxWindow *frame, const wxString &title)
+StartWindow::StartWindow(wxWindow *frame, const wxString &title)
     : wxWindow(frame,32000)
 {
 	 wxStaticBox *box = new wxStaticBox(this, wxID_ANY, "&Start Options",wxPoint(10,10), wxSize(135, 175),wxBORDER_SUNKEN );
@@ -481,20 +481,20 @@ startWindow::startWindow(wxWindow *frame, const wxString &title)
 
 }
 
-startWindow::~startWindow()
+StartWindow::~StartWindow()
 {
-	//winout("exit startWindow %p\n",this);
+	//winout("exit StartWindow %p\n",this);
 }
-BEGIN_EVENT_TABLE(startWindow, wxWindow)
-EVT_BUTTON(ID_ABOUT, startWindow::OnAbout)
-EVT_BUTTON(ID_RADIO, startWindow::OnRadio)
-EVT_BUTTON(ID_QUIT, startWindow::OnQuit)
-EVT_BUTTON(ID_FILE, startWindow::OnFile)
-//EVT_BUTTON(ID_TEST, startWindow::OnTest)
-EVT_IDLE(startWindow::OnIdle)
+BEGIN_EVENT_TABLE(StartWindow, wxWindow)
+EVT_BUTTON(ID_ABOUT, StartWindow::OnAbout)
+EVT_BUTTON(ID_RADIO, StartWindow::OnRadio)
+EVT_BUTTON(ID_QUIT, StartWindow::OnQuit)
+EVT_BUTTON(ID_FILE, StartWindow::OnFile)
+//EVT_BUTTON(ID_TEST, StartWindow::OnTest)
+EVT_IDLE(StartWindow::OnIdle)
 END_EVENT_TABLE()
 
-void startWindow::OnIdle(wxIdleEvent& event)
+void StartWindow::OnIdle(wxIdleEvent& event)
 {
 	extern int WarningBatchHoldDump(void);
 	
@@ -506,11 +506,11 @@ void startWindow::OnIdle(wxIdleEvent& event)
 }
 
 
-void startWindow::openWindows(char *name)
+void StartWindow::openWindows(char *name)
 {
 	wxString title=name;
 		
-	grab=new applFrame(NULL,name,NULL);
+	grab=new ApplFrame(NULL,name,NULL);
 	grab->Show();
 	
 	grabList.push_back(grab);
@@ -520,19 +520,19 @@ void startWindow::openWindows(char *name)
 #define SPAN(r, c)       wxGBSpan(r,c)
 
 
-wxBEGIN_EVENT_TABLE(applFrame, wxFrame)
-EVT_MENU_RANGE(INPUT_MENU,INPUT_MENU+99,applFrame::OnInputSelect)
-EVT_MENU_RANGE(OUTPUT_MENU,OUTPUT_MENU+99,applFrame::OnOuputSelect)
-EVT_MENU_RANGE(ID_PALETTE,ID_PALETTE+99,applFrame::OnPaletteSelected)
-EVT_MENU_RANGE(ID_OPTIONS,ID_OPTIONS+99,applFrame::OnOptionsSelected)
-EVT_MENU_RANGE(ID_DIRECT,ID_DIRECT+99,applFrame::OnDirectSelected)
-EVT_MENU_RANGE(ID_BAND,ID_BAND+99,applFrame::OnBandSelected)
-EVT_MENU_RANGE(ID_SAMPLERATE,ID_SAMPLERATE+99,applFrame::OnSampleRateSelected)
-EVT_SIZE(applFrame::resized)
-EVT_MENU(wxID_ABOUT, applFrame::About)
-EVT_MENU(ID_EXIT, applFrame::About)
+wxBEGIN_EVENT_TABLE(ApplFrame, wxFrame)
+EVT_MENU_RANGE(INPUT_MENU,INPUT_MENU+99,ApplFrame::OnInputSelect)
+EVT_MENU_RANGE(OUTPUT_MENU,OUTPUT_MENU+99,ApplFrame::OnOuputSelect)
+EVT_MENU_RANGE(ID_PALETTE,ID_PALETTE+99,ApplFrame::OnPaletteSelected)
+EVT_MENU_RANGE(ID_OPTIONS,ID_OPTIONS+99,ApplFrame::OnOptionsSelected)
+EVT_MENU_RANGE(ID_DIRECT,ID_DIRECT+99,ApplFrame::OnDirectSelected)
+EVT_MENU_RANGE(ID_BAND,ID_BAND+99,ApplFrame::OnBandSelected)
+EVT_MENU_RANGE(ID_SAMPLERATE,ID_SAMPLERATE+99,ApplFrame::OnSampleRateSelected)
+EVT_SIZE(ApplFrame::resized)
+EVT_MENU(wxID_ABOUT, ApplFrame::About)
+EVT_MENU(ID_EXIT, ApplFrame::About)
 wxEND_EVENT_TABLE()
-void applFrame::About(wxCommandEvent &event)
+void ApplFrame::About(wxCommandEvent &event)
 {
 
 	int item=event.GetId();
@@ -540,19 +540,19 @@ void applFrame::About(wxCommandEvent &event)
     if(item == ID_EXIT)startIt->OnQuit(event);
 }
 
-void applFrame::resized(wxSizeEvent& evt)
+void ApplFrame::resized(wxSizeEvent& evt)
 {
  	evt.Skip();
 
 	//const wxSize size = evt.GetSize() * GetContentScaleFactor();
 
-	//winout("applFrame::resized %d %d %f\n", size.x,size.y,GetContentScaleFactor());
+	//winout("ApplFrame::resized %d %d %f\n", size.x,size.y,GetContentScaleFactor());
 	Refresh();
 
 }
 
 
-applFrame::applFrame(wxFrame* parent,wxString title,class sdrClass *sdrIn)
+ApplFrame::ApplFrame(wxFrame* parent,wxString title,class sdrClass *sdrIn)
     : wxFrame(parent, wxID_ANY, "wxGridBagSizer Test Frame")
 {
 	sdr=sdrIn;
@@ -716,7 +716,7 @@ applFrame::applFrame(wxFrame* parent,wxString title,class sdrClass *sdrIn)
     
     gBasicPane=pBasicPane;
     
-    pBasicPane->gapplFrame=this;
+    pBasicPane->gApplFrame=this;
 
     m_gbs->AddGrowableCol(1);
     m_gbs->AddGrowableCol(2);
@@ -733,7 +733,7 @@ applFrame::applFrame(wxFrame* parent,wxString title,class sdrClass *sdrIn)
     //frame7->Show();
 }
 
-void applFrame::OnSampleRateSelected(wxCommandEvent& event)
+void ApplFrame::OnSampleRateSelected(wxCommandEvent& event)
 {
 	event.Skip();
 
@@ -769,7 +769,7 @@ void applFrame::OnSampleRateSelected(wxCommandEvent& event)
 
 }
 
-void applFrame::OnBandSelected(wxCommandEvent& event)
+void ApplFrame::OnBandSelected(wxCommandEvent& event)
 {
 	event.Skip();
 
@@ -804,7 +804,7 @@ void applFrame::OnBandSelected(wxCommandEvent& event)
 
 
 }
-void applFrame::OnOptionsSelected(wxCommandEvent& event){
+void ApplFrame::OnOptionsSelected(wxCommandEvent& event){
 	event.Skip();
 
 	//int item=event.GetId()-ID_OPTIONS;
@@ -820,7 +820,7 @@ void applFrame::OnOptionsSelected(wxCommandEvent& event){
     
 }
 
-void applFrame::OnDirectSelected(wxCommandEvent& event){
+void ApplFrame::OnDirectSelected(wxCommandEvent& event){
 	event.Skip();
 
 	//int item=event.GetId()-ID_DIRECT;
@@ -842,7 +842,7 @@ void applFrame::OnDirectSelected(wxCommandEvent& event){
 
 }
 
-void applFrame::OnPaletteSelected(wxCommandEvent& event){
+void ApplFrame::OnPaletteSelected(wxCommandEvent& event){
 	event.Skip();
 
 	int item=event.GetId()-ID_PALETTE;
@@ -871,7 +871,7 @@ void applFrame::OnPaletteSelected(wxCommandEvent& event){
 	Refresh();
 }
 
-void applFrame::OnInputSelect(wxCommandEvent& event){
+void ApplFrame::OnInputSelect(wxCommandEvent& event){
 	int item=event.GetId()-INPUT_MENU;
 	//winout("OnInputSelect %d INPUT_MENU %d\n",item,INPUT_MENU);
 	int n=item/10;
@@ -882,7 +882,7 @@ void applFrame::OnInputSelect(wxCommandEvent& event){
 	//startAudio();
 }
 
-void applFrame::OnOuputSelect(wxCommandEvent& event){
+void ApplFrame::OnOuputSelect(wxCommandEvent& event){
 	int item=event.GetId()-OUTPUT_MENU;
 	//winout("OnOuputSelect %d OUTPUT_MENU %d\n",item,OUTPUT_MENU);
 	int n=item/10;
@@ -913,58 +913,58 @@ void applFrame::OnOuputSelect(wxCommandEvent& event){
 
 }
 
-applFrame::~applFrame()
+ApplFrame::~ApplFrame()
 {
-//	winout("applFrame::~applFrame\n");
+//	winout("ApplFrame::~ApplFrame\n");
 	
 	if(grabList.size() > 0){
-		for(std::vector<applFrame *>::size_type k=0;k<grabList.size();++k){
-			applFrame *grab=grabList[k];
+		for(std::vector<ApplFrame *>::size_type k=0;k<grabList.size();++k){
+			ApplFrame *grab=grabList[k];
 			if(grab == this){
 			    grabList[k]=NULL;
-//			    winout("applFrame remove from list\n");
+//			    winout("ApplFrame remove from list\n");
 			}
 		}
 	}
 
 	
-	//winout("exit applFrame %p\n",this);
+	//winout("exit ApplFrame %p\n",this);
 
 }
 
-void startWindow::OnAbout(wxCommandEvent& event)
+void StartWindow::OnAbout(wxCommandEvent& event)
 {
 	event.Skip();
 	
 	wxMessageBox(ProgramVersion+"(c) 2025 Dale Ranta");
 
 }
-void startWindow::OnRadio(wxCommandEvent& event)
+void StartWindow::OnRadio(wxCommandEvent& event)
 {	
 	event.Skip();
 
 	wxFrame *frame= new wxFrame(NULL, wxID_ANY, wxT("Device Select"), wxDefaultPosition, wxSize(400,500));
 		
-	new selectionWindow(frame, "Device",textDevice);
+	new SelectionWindow(frame, "Device",textDevice);
 	
 	frame->Show();
 		
 }
-void startWindow::OnFile(wxCommandEvent& event)
+void StartWindow::OnFile(wxCommandEvent& event)
 {
 	event.Skip();
 
 	OpenFile();
 }
-void startWindow::OnQuit(wxCommandEvent& event)
+void StartWindow::OnQuit(wxCommandEvent& event)
 {
 	doQuit();
 }
-void startWindow::doQuit()
+void StartWindow::doQuit()
 {
 
 	if(grabList.size() > 0){
-		for(std::vector<applFrame *>::size_type k=0;k<grabList.size();++k){
+		for(std::vector<ApplFrame *>::size_type k=0;k<grabList.size();++k){
 			grab=grabList[k];
 			if(grab)delete grab;
 		}
@@ -976,17 +976,17 @@ void startWindow::doQuit()
 	
 	parent->Destroy();
 }
-void startWindow::openWavFile(const char *file)
+void StartWindow::openWavFile(const char *file)
 {
 	
  	wxFrame *frame2 = new wxFrame(NULL,wxID_ANY,file);
-	new startWaveFile(frame2,file);
+	new StartWaveFile(frame2,file);
 	frame2->SetSize(wxDefaultCoord,wxDefaultCoord,340,300);
 	frame2->Show();
 	
 	
 }
-void startWindow::openIQFile(const char *file)
+void StartWindow::openIQFile(const char *file)
 {
 	char name[512];
 	
@@ -1039,7 +1039,7 @@ void startWindow::openIQFile(const char *file)
 	}
 	sdrIn->startPlay();
 	
-	applFrame *grab=new applFrame(NULL,file,sdrIn);
+	ApplFrame *grab=new ApplFrame(NULL,file,sdrIn);
 	grab->Show();
 	
 	grabList.push_back(grab);
@@ -1058,7 +1058,7 @@ void startWindow::openIQFile(const char *file)
 
 }
 
-void startWindow::OpenFile()
+void StartWindow::OpenFile()
 {
 
 	static int index=0;
@@ -1112,7 +1112,7 @@ void startWindow::OpenFile()
 }
 
 
-selectionWindow::selectionWindow(wxWindow *frame, const wxString &title,wxTextCtrl *textDevice)
+SelectionWindow::SelectionWindow(wxWindow *frame, const wxString &title,wxTextCtrl *textDevice)
     : wxWindow(frame,32000)
 {
 
@@ -1227,26 +1227,26 @@ selectionWindow::selectionWindow(wxWindow *frame, const wxString &title,wxTextCt
    }
  
 }
-selectionWindow::~selectionWindow()
+SelectionWindow::~SelectionWindow()
 {
 	//delete m_context;
-	//winout("selectionWindow::~selectionWindow\n");
-	//winout("exit selectionWindow %p\n",this);
+	//winout("SelectionWindow::~SelectionWindow\n");
+	//winout("exit SelectionWindow %p\n",this);
 
 }
 
-BEGIN_EVENT_TABLE(selectionWindow, wxWindow)
-EVT_COMMAND_RANGE(ID_DEVICE,ID_DEVICE+199,wxEVT_BUTTON,selectionWindow::OnDevice)
+BEGIN_EVENT_TABLE(SelectionWindow, wxWindow)
+EVT_COMMAND_RANGE(ID_DEVICE,ID_DEVICE+199,wxEVT_BUTTON,SelectionWindow::OnDevice)
 END_EVENT_TABLE()
 
-void selectionWindow::killMe() 
+void SelectionWindow::killMe() 
 {
 		
 	wxWindow *parent=GetParent();
 	if(parent)parent->Destroy();
 	
 }
-void selectionWindow::OnDevice(wxCommandEvent& event) 
+void SelectionWindow::OnDevice(wxCommandEvent& event) 
 {
 
 	event.Skip();
@@ -1279,7 +1279,7 @@ void selectionWindow::OnDevice(wxCommandEvent& event)
 	
 	wxString name=deviceNames[id-ID_DEVICE];
 	
-	applFrame *grab=new applFrame(NULL,name,sdrIn);
+	ApplFrame *grab=new ApplFrame(NULL,name,sdrIn);
 	grab->Show();
 	
 	grabList.push_back(grab);
@@ -2047,13 +2047,13 @@ void BasicPane::OnCheckAuto(wxCommandEvent &event)
 		gSpectrum->oscilloscope=flag;
 		scrolledWindowFlag=flag;
 		SetScrolledWindow();
-		wxSize size = gapplFrame->GetClientSize();
+		wxSize size = gApplFrame->GetClientSize();
 		size.x += 4;
 		size.y += 4;
-		gapplFrame->SetClientSize(size);
+		gApplFrame->SetClientSize(size);
 		size.x -= 4;
 		size.y -= 4;
-		gapplFrame->SetClientSize(size);
+		gApplFrame->SetClientSize(size);
 		sdr->initPlay();
 		if(flag == 1){		
 		    gSpectrum->sdr->bS2->mutex1.lock();

@@ -22,6 +22,42 @@ typedef struct uRectStruct {
     int ysize;
 } uRect;
 
+struct paletteDraw{
+    
+    unsigned char palette[768];
+    unsigned char *buffer;  
+    
+    double sPmin;
+    double sPmax;
+    
+    double dmin;
+    double dmax;
+
+    int ScreenBits;
+    int sType;			/* Scale Type */
+        
+    long top;
+    long left;
+    long xsize;
+    long ysize;
+
+    int paletteFont;       
+              
+    int LabeledPalette;
+    int UsePlotScales;
+    int UsePlotTime;
+    int UsePlotRange;
+       
+    double red;
+    double green;
+    double blue;
+
+    int AreaFill;
+    int Rotate1d;
+        
+};
+
+
 #define FILTER_RECTANGULAR     0
 #define FILTER_HANN            1
 #define FILTER_HAMMING         2
