@@ -529,6 +529,506 @@ int BasicPane::sendAudio(int short *data,int length)
     return 0;
 }
 
+int BasicPane2::txPipe()
+{
+
+	winout("txPipe \n");
+	
+	int outFilenum=fileno(stdout);
+	
+	sdr->fillBuffer=1;
+    while(sendFlag > 0){
+      if(sdr->fillBuffer == 0){
+		int ret = write(outFilenum,sdr->sendBuff, sizeof(float)*2*sdr->size);
+		if(ret <= 0){
+			winout("txPipe Write Error\n");
+		}
+      	sdr->fillBuffer=1;
+	  }
+	}
+	sdr->fillBuffer=0;
+	return 0;
+}
+int BasicPane2::SendStart(char *name,int type,int mode)
+{
+    if(!sx)return 0;
+
+	//++mode;
+	
+	if(mode == 4){
+		std::thread(&BasicPane2::txPipe,this).detach();
+		return 0;
+	}
+	
+	copyl(name,addressName,strlen(name)+1);
+	
+	
+	
+   // winout("addressName %s mode %d\n",addressName,mode);
+    
+    sx->aminGlobal2=0;
+    sx->amaxGlobal2=0;
+
+    sx->name=name;
+    sx->dataType=type;
+    sx->sendMode=mode;
+    
+    if(mode < 2){
+        sx->send=(SOCKET)connectToServer((char *)name,&sx->Port);
+        if(sx->send == -1){
+            winout("TCP connect failed\n");
+            return 1;
+        }
+    }else{
+        if ((sx->send = socket(AF_INET, SOCK_DGRAM, 0)) == -1)
+        {
+            winout("UDP connect failed\n");
+            return 1;
+        }
+        
+        int broadcast=1;
+ 
+        setsockopt(sx->send, SOL_SOCKET, SO_BROADCAST,
+                   (const char *)&broadcast, sizeof broadcast);
+
+     // winout("SendStart sx->name %s\n",rx->name);
+      
+        if(mode == 3)return 0;
+        
+    }
+ 
+    if(sx->sendBuff1)cFree((char *)sx->sendBuff1);
+    sx->sendBuff1=(float *)cMalloc(2*sdr->size*sizeof(float),18887);
+    if(sx->sendBuff2)cFree((char *)sx->sendBuff2);
+    sx->sendBuff2=(float *)cMalloc(2*sdr->size*sizeof(float),18888);
+      	
+    std::thread(&BasicPane2::rxSend,this).detach();
+
+    return 0;
+}
+
+int BasicPane2::rxSend()
+{
+    
+    struct sockaddr_in server_addr;
+    struct hostent *host;
+    char name[256];
+    int ret=0;
+    long size=2;
+    
+    if(!sx)return 0;
+    
+    copyl(addressName,name,strlen(addressName)+1);
+    
+    char *find=strrchr(name,':');
+	if(find)*find=0;
+    
+    host= (struct hostent *) gethostbyname((char *)name);
+    if(!host){
+        winout("Host %s Not Found - sendAudio uses port 5000 no port should be specified\n",addressName);
+        return 1;
+    }
+
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(5000);
+    server_addr.sin_addr = *((struct in_addr *)host->h_addr);
+    //bzero(&(server_addr.sin_zero),8);
+    zerol((char *)&(server_addr.sin_zero),sizeof(server_addr.sin_zero));
+
+//	winout("rxSend 1\n");
+    sdr->fillBuffer=1;
+    int mode=sx->sendMode;;
+    int type=sx->dataType;
+    while(sendFlag > 0){
+ 	  //winout("rxSend type %d fillBuffer %d mode %d\n",type,sdr->fillBuffer,mode);
+ 	  
+ 	  int ip=sdr->bS2->popBuff();
+      if(ip >= 0){
+			int witch=ip % NUM_DATA_BUFF;
+			float *buf=sdr->bS2->buff[witch];
+			for(int n=0;n<2*sdr->size;++n){
+				sdr->sendBuff[n]=buf[n];
+			}
+           if(type == 0){
+               double amin =  1e33;
+               double amax = -1e33;
+               double average=0;
+               for(int n=0;n<2*sdr->size;++n){
+                   double v=sdr->sendBuff[n];
+                   average += v;
+                   if(v > amax)amax=v;
+                   if(v < amin)amin=v;
+               }
+                              
+               average /= 2*sdr->size;
+               
+               amin -= average;
+               
+               amax -= average;
+               
+               if(sx->aminGlobal2 == 0.0)sx->aminGlobal2=amin;
+               sx->aminGlobal2 = 0.8*sx->aminGlobal2+0.2*amin;
+               amin=sx->aminGlobal2;
+               
+               if(sx->amaxGlobal2 == 0.0)sx->amaxGlobal2=amax;
+               sx->amaxGlobal2 = 0.8*sx->amaxGlobal2+0.2*amax;
+               amax=sx->amaxGlobal2;
+               
+               //winout("a amin %g amax %g ",amin,amax);
+
+               double dnom=0.0;
+               if((amax-amin) > 0){
+                   dnom=2.0/(amax-amin);
+               }else{
+                   dnom=1.0;
+               }
+               
+               double gain=0.9;
+               
+               float *data=(float *)sx->sendBuff2;
+               
+               amin =  1e33;
+               amax = -1e33;
+               
+               long int count=0;
+
+               for(int n=0;n<2*sdr->size;++n){
+                   double v;
+                   v=sdr->sendBuff[n];
+                   v=gain*((v-average)*dnom);
+                   if(v < amin)amin=v;
+                   if(v > amax)amax=v;
+                   if(v < -1.0){
+                       v = -1.0;
+                       ++count;
+                   }else if(v > 1.0){
+                       v=1.0;
+                       ++count;
+                   }
+                   data[n]=(float)v;
+               }
+               
+              // winout("f amin %g amax %g count %ld\n",amin,amax,count);
+
+               size=(long)(sdr->size*sizeof(float));
+               if(mode == 0){
+                   if(writeLab(sx->send,(char *)"FLOA",size))return 1;
+                   if(netWrite(sx->send,(char *)data,size))return 1;
+                   if(writeLab(sx->send,(char *)"FLOA",size))return 1;
+                   if(netWrite(sx->send,(char *)&data[sdr->size],size))return 1;    
+               }else if(mode == 1){
+                  if(netWrite(sx->send,(char *)sx->sendBuff2,size))return 1;
+                  if(netWrite(sx->send,(char *)&sx->sendBuff2[sdr->size],size))return 1;
+            	}else{
+                	ret=sendto2(sx->send,(char *)sx->sendBuff2, size,
+                            (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
+                	ret=sendto2(sx->send,(char *)&sx->sendBuff2[sdr->size], size,
+                            (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
+               }
+            }else if(type == 1){
+                double amin =  1e33;
+                double amax = -1e33;
+                double average=0;
+                for(int n=0;n<2*sdr->size;++n){
+                   double v=sdr->sendBuff[n];
+                    average += v;
+                    if(v > amax)amax=v;
+                    if(v < amin)amin=v;
+                }
+                
+               // winout("type 1 r amin %g amax %g sdr->size %d\n",amin,amax,sdr->size);
+                
+                average /= 2*sdr->size;
+                
+                amin -= average;
+                
+                amax -= average;
+                
+                if(sx->aminGlobal2 == 0.0)sx->aminGlobal2=amin;
+                sx->aminGlobal2 = 0.8*sx->aminGlobal2+0.2*amin;
+                amin=sx->aminGlobal2;
+                
+                if(sx->amaxGlobal2 == 0.0)sx->amaxGlobal2=amax;
+                sx->amaxGlobal2 = 0.8*sx->amaxGlobal2+0.2*amax;
+                amax=sx->amaxGlobal2;
+                
+                //winout("a amin %g amax %g ",amin,amax);
+                
+                double dnom=0.0;
+                if((amax-amin) > 0){
+                    dnom=65534.0/(amax-amin);
+                }else{
+                    dnom=65534.0;
+                }
+                
+                double gain=0.9;
+                
+                short int *data=(short int *)sx->sendBuff2;
+                
+                amin =  1e33;
+                amax = -1e33;
+                
+              //  long int count=0;
+
+                for(int n=0;n<2*sdr->size;++n){          
+                    double v=sdr->sendBuff[n];
+                    v=gain*((v-average)*dnom);
+                    if(v < amin)amin=v;
+                    if(v > amax)amax=v;
+                    if(v < -32768){
+                        v = -32768;
+             //           ++count;
+                    }else if(v > 32767){
+                        v=32767;
+             //           ++count;
+                   }
+                    data[n]=(short int)v;
+                }
+               // winout(" f amin %g amax %g count %ld\n",amin,amax,count);
+                size=sdr->size*sizeof(short int);
+                if(mode == 0){
+                    if(writeLab(sx->send,(char *)"SHOR",size))return 1;
+                    if(netWrite(sx->send,(char *)data,size))return 1;
+                    if(writeLab(sx->send,(char *)"SHOR",size))return 1;
+                    if(netWrite(sx->send,(char *)&data[sdr->size],size))return 1;
+                }else if(mode == 1){
+                    if(netWrite(sx->send,(char *)sx->sendBuff2,size))return 1;
+                    if(netWrite(sx->send,(char *)&data[sdr->size],size))return 1;
+                }else{
+
+                    ret=sendto2(sx->send,(char *)sx->sendBuff2, size,
+                                (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
+                    ret=sendto2(sx->send,(char *)&data[sdr->size], size,
+                           (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
+                }
+           }else if(type == 2){
+               double amin =  1e33;
+               double amax = -1e33;
+               double average=0;
+               for(int n=0;n<2*sdr->size;++n){
+                   double v=sdr->sendBuff[n];
+                   average += v;
+                   if(v > amax)amax=v;
+                   if(v < amin)amin=v;
+               }
+               //winout("r amin %g amax %g ",amin,amax);
+               
+               average /= 2*sdr->size;
+               
+               amin -= average;
+               
+               amax -= average;
+               
+               if(sx->aminGlobal2 == 0.0)sx->aminGlobal2=amin;
+               sx->aminGlobal2 = 0.8*sx->aminGlobal2+0.2*amin;
+               amin=sx->aminGlobal2;
+               
+               if(sx->amaxGlobal2 == 0.0)sx->amaxGlobal2=amax;
+               sx->amaxGlobal2 = 0.8*sx->amaxGlobal2+0.2*amax;
+               amax=sx->amaxGlobal2;
+
+               //winout("a amin %g amax %g ",amin,amax);
+               double dnom=0.0;
+               if((amax-amin) > 0){
+                   dnom=255.0/(amax-amin);
+               }else{
+                   dnom=255.0;
+               }
+               
+               double gain=0.9;
+               
+               signed char *data=(signed char *)sx->sendBuff2;
+               
+               amin =  1e33;
+               amax = -1e33;
+               
+             //  long int count=0;
+
+               for(int n=0;n<2*sdr->size;++n){
+                   double v=sdr->sendBuff[n];
+                   v=gain*((v-average)*dnom);
+                   if(v < amin)amin=v;
+                   if(v > amax)amax=v;
+                   if(v < -128){
+               //        ++count;
+                       v = -128;
+                   }else if(v > 127){
+                       v=127;
+              //         ++count;
+                 }
+                   data[n]=(signed char)v;
+               }
+               //winout(" f amin %g amax %g count %ld\n",amin,amax,count);
+               size=sdr->size*sizeof(signed char);
+               if(mode == 0){
+                   if(writeLab(sx->send,(char *)"SIGN",size))return 1;
+                   if(netWrite(sx->send,(char *)data,size))return 1;
+                   if(writeLab(sx->send,(char *)"SIGN",size))return 1;
+                   if(netWrite(sx->send,(char *)&data[sdr->size],size))return 1;
+               }else if(mode == 1){
+                   if(netWrite(sx->send,(char *)sx->sendBuff2,size))return 1;
+                   if(netWrite(sx->send,(char *)&data[sdr->size],size))return 1;
+               }else{
+                   ret=sendto2(sx->send,(char *)sx->sendBuff2, size,
+                               (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
+                   ret=sendto2(sx->send,(char *)&data[sdr->size], size,
+                          (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
+               }
+           }else if(type == 3){
+               double amin =  1e33;
+               double amax = -1e33;
+               double average=0;
+               for(int n=0;n<2*sdr->size;++n){
+                   double v=sdr->sendBuff[n];
+                   average += v;
+                   if(v > amax)amax=v;
+                   if(v < amin)amin=v;
+               }
+               //winout("r amin %g amax %g ",amin,amax);
+               
+               average /= 2*sdr->size;
+               
+               amin -= average;
+               
+               amax -= average;
+               
+               if(sx->aminGlobal2 == 0.0)sx->aminGlobal2=amin;
+               sx->aminGlobal2 = 0.8*sx->aminGlobal2+0.2*amin;
+               amin=sx->aminGlobal2;
+               
+               if(sx->amaxGlobal2 == 0.0)sx->amaxGlobal2=amax;
+               sx->amaxGlobal2 = 0.8*sx->amaxGlobal2+0.2*amax;
+               amax=sx->amaxGlobal2;
+               //winout("a a amin %g amax %g ",amin,amax);
+
+               double dnom=0.0;
+               if((amax-amin) > 0){
+                   dnom=255.0/(amax-amin);
+               }else{
+                   dnom=255.0;
+               }
+                              
+               double gain=0.9;
+               
+               unsigned char *data=(unsigned char *)sx->sendBuff2;
+               
+               amin =  1e33;
+               amax = -1e33;
+               
+               
+              // long int count=0;
+               
+               for(int n=0;n<2*sdr->size;++n){
+                   double v=sdr->sendBuff[n];
+                   v=gain*((v-average)*dnom+141.0);
+                   if(v < amin)amin=v;
+                   if(v > amax)amax=v;
+                   if(v < 0){
+                       v = 0;
+                //       ++count;
+                   }else if(v > 255){
+                       v=255;
+                //       ++count;
+                  }
+                   data[n]=(unsigned char)v;
+               }
+              // winout("f  amin %g amax %g count %ld\n",amin,amax,count);
+               size=sdr->size*sizeof(unsigned char);
+               if(mode == 0){
+                   if(writeLab(sx->send,(char *)"USIG",size))return 1;
+                   if(netWrite(sx->send,(char *)data,size))return 1;
+                   if(writeLab(sx->send,(char *)"USIG",size))return 1;
+                   if(netWrite(sx->send,(char *)&data[sdr->size],size))return 1;
+               }else if(mode == 1){
+                   if(netWrite(sx->send,(char *)sx->sendBuff2,size))return 1;
+                   if(netWrite(sx->send,(char *)&data[sdr->size],size))return 1;
+              }else{
+                   ret=sendto2(sx->send,(char *)sx->sendBuff2, size,
+                               (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
+                   ret=sendto2(sx->send,(char *)&data[sdr->size], size,
+                               (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
+               }
+           }
+           sdr->fillBuffer = 1;
+        }else{
+            Sleep2(10);
+        }
+    }
+  
+    sdr->fillBuffer = 0;
+
+    if(sx->send >= 0){
+        if(mode < 2){
+            shutdown(sx->send,2);
+            winout("shutdown mode %d\n",mode);
+        }
+        closesocket(sx->send);
+    }
+    
+    return ret;
+}
+
+int BasicPane2::sendAudio(int short *data,int length)
+{
+    char broadcastname[256];
+    struct sockaddr_in server_addr;
+    struct hostent *host;
+    int ret;
+
+    //winout("sendAudio length %d sendMode %d controlSend %d\n",length,sx->sendMode,sx->controlSend);
+    
+    if(sx->sendMode < 3)return 0;
+    
+    if(sendFlag <= 0){
+        if(sx->send)closesocket(sx->send);
+        sx->send=0;
+        return 0;
+    }
+    
+    
+    if(addressName[0]){
+        mstrncpy(broadcastname,(char *)addressName,sizeof(broadcastname));
+    }else{
+        mstrncpy(broadcastname,(char *)"0.0.0.0",sizeof(broadcastname));
+    }
+
+    host= (struct hostent *) gethostbyname((char *)broadcastname);
+    
+    if(!host){
+        winout("Host %s Not Found - sendAudio uses port 5000 no port should be specified\n",broadcastname);
+        return 1;
+    }
+    
+    //host= (struct hostent *) gethostbyname((char *)"127.0.0.1");
+    //host= (struct hostent *) gethostbyname((char *)"0.0.0.0");
+    // host= (struct hostent *) gethostbyname((char *)"192.255.255.255");
+    //host= (struct hostent *) gethostbyname((char *)"192.168.0.255");
+    
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(5000);
+    server_addr.sin_addr = *((struct in_addr *)host->h_addr);
+    //bzero(&(server_addr.sin_zero),8);
+    zerol((char *)&(server_addr.sin_zero),sizeof(server_addr.sin_zero));
+    
+    ret=sendto2(sx->send,(char *)data, length*2,
+                 (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
+    //static long nn=0;
+    //winout("sendAudio length %d nn %ld\n",length,nn++);
+    if(ret)winout("sendto2 Error\n");
+    
+   // winout("sendAudio sx->name %s ret %d length %d\n",addressName,ret,length);
+
+    
+    //static FILE *out=NULL;
+
+    //if(!out)out=fopen("junk2.raw","wb");
+    
+    //if(out)fwrite(data,2,length,out);
+
+    return 0;
+}
+
+
 int sendto2(SOCKET socket,char *data,long size,struct sockaddr *server_addr,size_t sizeaddr)
 {
     int ret;

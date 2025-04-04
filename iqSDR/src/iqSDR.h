@@ -115,6 +115,7 @@ double rtime(void);
     ID_SOFTAUTOGAIN,
     ID_SETGAIN,
     ID_RXFREQUENCY,
+    ID_SWEEP,
     ID_FC=ID_RXFREQUENCY+100,
     ID_VIEWSELECTED,
     ID_EXIT,
@@ -132,6 +133,7 @@ double rtime(void);
     int ysize;
 };
 
+class Sweep;
 
 class Spectrum;
 
@@ -275,6 +277,8 @@ public:
 	float angle;
 	
 
+	wxCheckBox *pSweep;
+
 	wxRadioBox *radioBoxp;
 	wxTextCtrl *text;
 	
@@ -377,6 +381,7 @@ public:
 	virtual ~StartWindow();
     
 	void resized(wxSizeEvent& evt);
+	
     
 	int getWidth();
 	int getHeight();
@@ -389,6 +394,7 @@ public:
 	ApplFrame *grab;
 
 	wxRadioBox *radioBoxp;
+	
 	wxTextCtrl *text;
 	
 	wxTextCtrl *textDevice;
@@ -775,5 +781,455 @@ public:
 }; 
  
 int cFree(char *p);
+
+class TopPane2;
+class BasicPane2;
+class Spectrum2;
+class WaterFall2;
+
+
+class TopPane2 : public wxWindow
+{
+    wxGLContext*	m_context;
+
+public:
+	TopPane2(wxWindow *frame, const wxString& title);
+	virtual ~TopPane2();
+    
+
+	void resized(wxSizeEvent& evt);
+    
+	int getWidth();
+	int getHeight();
+	float angle;
+	
+	wxRadioBox *radioBoxp;
+	wxTextCtrl *text;
+	
+	wxTimer m_timer;
+	
+	class sdrClass *sdr;
+	
+	const wxPoint pt =  wxPoint(160,-5);
+	
+	wxSize fontSize;
+	
+	wxFont *font;
+	
+	int nchar;
+	
+	int idoFC;
+	
+	Spectrum2 *gSpectrum2;
+
+	wxFrame *frame;
+    
+	void render(wxPaintEvent& evt);
+		
+	wxCheckBox *rbox;
+	
+	wxCheckBox *rbox2;
+
+	// events
+	void OnCombo(wxCommandEvent& event);
+	void mouseMoved(wxMouseEvent& event);
+	void mouseDown(wxMouseEvent& event);
+	void mouseWheelMoved(wxMouseEvent& event);
+	void mouseReleased(wxMouseEvent& event);
+	void rightClick(wxMouseEvent& event);
+	void mouseLeftWindow(wxMouseEvent& event);
+	void keyPressed(wxKeyEvent& event);
+	void keyReleased(wxKeyEvent& event);
+	void OnChar(wxKeyEvent& event);
+    void DeleteRow( wxCommandEvent& event );
+    void OnButton( wxCommandEvent& event );
+    void Record( wxCommandEvent& event );
+    void startRadio( wxCommandEvent& event );
+    void radioBox( wxCommandEvent& event );
+    
+	DECLARE_EVENT_TABLE()
+}; 
+
+
+class Spectrum2 : public wxGLCanvas
+{
+    wxGLContext*	m_context;
+
+public:
+	Spectrum2(wxFrame* parent, int* args);
+	virtual ~Spectrum2();
+    
+	void resized(wxSizeEvent& evt);
+	
+	float scaleFactor;
+    
+	int getWidth();
+	int getHeight();
+	float angle;
+	
+	float *buffSend10;
+	float *buffSend2;
+	float *buffSend;
+	int buffSendLength;
+	fftwf_plan p1;
+	double lineDumpInterval;
+	double lineTime;
+	
+	volatile int buffFlag;
+	
+	char **argv;
+	int argc;
+
+	int filterType;
+	
+	int iHaveData;
+	
+	int iFreeze;
+	
+	float *buff1;
+	
+	float *buff2;
+	
+	float *buff3;
+	
+	int buffSize;
+		
+	int decodemode1;
+	
+	msresamp_crcf iqSampler1;
+	
+	volatile int iWait; 
+	
+	volatile int softAutoGain;
+	
+	volatile int oscilloscope;
+	
+	TopPane2 *gTopPane2;
+	
+	BasicPane2 *gBasicPane2;
+	
+	double lineAlpha;
+	
+	class sdrClass *sdr;
+	
+	void startRadio2();
+	
+	int ftox(double frequency);
+	
+	double ftime(); 
+	std::chrono::high_resolution_clock *startTime;
+		
+ 	volatile double verticalMinimum;
+	
+	volatile double verticalMaximum;
+	
+	volatile double amaxGlobal;
+   
+	void render(wxPaintEvent& evt);
+	void render1(wxPaintEvent& evt);
+	void render1a(wxPaintEvent& evt);
+	void render2(wxPaintEvent& evt);
+	void prepare3DViewport(int topleft_x, int topleft_y, int bottomrigth_x, int bottomrigth_y);
+	//void prepare2DViewport(int topleft_x, int topleft_y, int bottomrigth_x, int bottomrigth_y);
+	void InitOpenGl();
+	int doTestSpeed();
+    
+	// events
+	void OnIdle(wxIdleEvent& event);
+	void mouseMoved(wxMouseEvent& event);
+	void mouseDown(wxMouseEvent& event);
+	void mouseWheelMoved(wxMouseEvent& event);
+	void mouseReleased(wxMouseEvent& event);
+	void rightClick(wxMouseEvent& event);
+	void mouseLeftWindow(wxMouseEvent& event);
+	void keyPressed(wxKeyEvent& event);
+	void keyReleased(wxKeyEvent& event);
+	void OnChar(wxKeyEvent& event);
+    void DeleteRow( wxCommandEvent& event );
+    
+	DECLARE_EVENT_TABLE()
+};
+
+class WaterFall2 : public wxGLCanvas
+{
+    wxGLContext*	m_context;
+
+public:
+	WaterFall2(wxFrame* parent, int* args);
+	virtual ~WaterFall2();
+    
+	void resized(wxSizeEvent& evt);
+	
+	float scaleFactor;
+    
+	int getWidth();
+	int getHeight();
+	float angle;
+	
+	volatile double verticalMinimum;
+	
+	volatile double verticalMaximum;
+		
+	volatile int buffFlag;
+	 
+	volatile int iWait; 
+	
+	struct WaterFall4 water;
+	
+	struct paletteDraw pd;
+	
+	double pmin;
+	
+    double pmax;
+
+	
+	TopPane2 *gTopPane2;
+	
+	Spectrum2 *gSpectrum2;
+	
+	BasicPane2 *gBasicPane2;
+	
+	class sdrClass *sdr;
+	
+	void startRadio2();
+	
+	int ftox(double frequency);
+	
+	double ftime(); 
+	std::chrono::high_resolution_clock *startTime;
+	int SetWindow();
+    int FloatToImage(float *d,long length,struct paletteDraw *pd,unsigned char *bp);
+	void render(wxPaintEvent& evt);
+	void prepare3DViewport(int topleft_x, int topleft_y, int bottomrigth_x, int bottomrigth_y);
+	//void prepare2DViewport(int topleft_x, int topleft_y, int bottomrigth_x, int bottomrigth_y);
+	void InitOpenGl();
+	int doTestSpeed();
+    
+	// events
+	void OnIdle(wxIdleEvent& event);
+	void mouseMoved(wxMouseEvent& event);
+	void mouseDown(wxMouseEvent& event);
+	void mouseWheelMoved(wxMouseEvent& event);
+	void mouseReleased(wxMouseEvent& event);
+	void rightClick(wxMouseEvent& event);
+	void mouseLeftWindow(wxMouseEvent& event);
+	void keyPressed(wxKeyEvent& event);
+	void keyReleased(wxKeyEvent& event);
+	void OnChar(wxKeyEvent& event);
+    void DeleteRow( wxCommandEvent& event );
+    
+	DECLARE_EVENT_TABLE()
+};
+
+class BasicPane2;
+
+
+class BasicPane2 : public wxWindow
+{
+    wxGLContext*	m_context;
+
+public:
+	BasicPane2(wxWindow *frame, const wxString& title,class sdrClass *sdrIn);
+	virtual ~BasicPane2();
+    
+
+	wxScrolledWindow *ScrolledWindow;
+
+	void resized(wxSizeEvent& evt);
+	
+	int SetScrolledWindow();
+	
+	int scrolledWindowFlag;
+	
+	int SendStart(char *name,int type,int mode);
+	
+	int sendAudio(int short *data,int length);
+	
+	int rxSend();
+	
+	int txPipe();
+    
+	int getWidth();
+	int getHeight();
+	float angle;
+	
+	int softAutoGain;
+
+	Spectrum2 *gSpectrum2;
+	
+	WaterFall2 *gWaterFall2;
+	
+	TopPane2 *gTopPane2;
+	
+	Sweep *gSweep;
+	
+	BasicPane2 *gBasicPane2;
+
+	wxRadioBox *radioBoxp;
+	
+	wxTextCtrl *text;
+	
+	wxRadioBox *modeBox;
+	
+	wxTimer m_timer;
+	
+	class sdrClass *sdr;
+
+	wxFrame *frame;
+    
+	void render(wxPaintEvent& evt);
+	
+	int iRefresh;
+	
+	volatile int sendFlag;
+	
+	double lineAlpha;
+	
+	double sampleDataRotate;
+	
+	wxComboBox *fftCombo;
+	
+	wxComboBox *filterCombo;
+	
+	wxComboBox *antennaCombo;
+	
+	wxComboBox *sampleRateCombo;
+	
+	wxComboBox *bandwidthCombo;
+	
+	wxRadioBox *sendTypeBox;
+	
+	wxRadioBox *sendModeBox;
+	
+	wxTextCtrl *sendAddress;
+	
+	wxTextCtrl *textAlpha;
+	
+	struct sendData sxs;
+	
+	struct sendData *sx=&sxs;
+	
+	char addressName[256];
+	
+	wxTextCtrl *rangeMin;
+	
+	wxTextCtrl *rangeMax;
+		
+	wxDataViewListCtrl *listctrlFreq;
+	
+	  wxString computers31[35] =
+      { "2","3","4","5","6",
+      	"7","8","9","10","11","12","13",
+        "14","15","16","17","18", "19","20","21","22","23",
+      	"24","25","26","27","28", "29","30","31","32","33",
+        "34","35","36"};
+
+	  wxString computers32[35] =
+       { "57","63","69","79","85",
+       	 "177","183","189","195","201","207","213",
+         "473","479","485","491","497", "503","509","515","521","527",
+      	 "533","539","545","551","557", "563","569","575","581","587",
+         "593","599","605"};
+
+	
+
+	// events
+	void OnViewSelected(wxDataViewEvent &event);
+	void OnTimer(wxTimerEvent &event);
+	void OnCombo(wxCommandEvent& event);
+	void OnComboFilter(wxCommandEvent& event);
+	void OnComboAntenna(wxCommandEvent& event);
+	void OnComboSampleRate(wxCommandEvent& event);
+	void mouseMoved(wxMouseEvent& event);
+	void mouseDown(wxMouseEvent& event);
+	void mouseWheelMoved(wxMouseEvent& event);
+	void mouseReleased(wxMouseEvent& event);
+	void rightClick(wxMouseEvent& event);
+	void mouseLeftWindow(wxMouseEvent& event);
+	void keyPressed(wxKeyEvent& event);
+	void keyReleased(wxKeyEvent& event);
+	void OnChar(wxKeyEvent& event);
+    void DeleteRow( wxCommandEvent& event );
+    void OnButton( wxCommandEvent& event );
+    void OnButton2( wxCommandEvent& event );
+    void startRadio( wxCommandEvent& event );
+    void startSend( wxCommandEvent& event );
+    void stopSend( wxCommandEvent& event );
+    void radioBox( wxCommandEvent& event );
+    void dataType( wxCommandEvent& event );
+    void dataMode( wxCommandEvent& event );
+    void OnScroll(wxCommandEvent& event);
+    void OnText(wxCommandEvent& event);
+    void setSampleRate( wxCommandEvent& event );
+    void OnMinimun(wxCommandEvent& event);
+    void OnMaximun(wxCommandEvent& event);
+    void OnCheckAuto(wxCommandEvent& event);
+    void setBandwidth( wxCommandEvent& event );
+    void OnTextBandWidth(wxCommandEvent& event);
+    void setSampleWidth(wxCommandEvent& event);
+    void setDataRotate(wxCommandEvent& event);
+    void setRxGain(wxCommandEvent& event);
+	DECLARE_EVENT_TABLE()
+}; 
+ 
+
+
+
+class Sweep : public wxFrame
+{
+public:
+    Sweep(wxFrame* parent,wxString title,class sdrClass *sdrIn);
+    ~Sweep();
+
+	void About(wxCommandEvent &event );
+    void OnHideBtn(wxCommandEvent&);
+    void OnShowBtn(wxCommandEvent&);
+    void OnMoveBtn(wxCommandEvent&);
+    void OnInputSelect(wxCommandEvent& event);
+    void OnOuputSelect(wxCommandEvent& event);
+    void resized(wxSizeEvent& evt);
+    void OnPaletteSelected(wxCommandEvent& event);
+    void OnOptionsSelected(wxCommandEvent& event);
+    void OnDirectSelected(wxCommandEvent& event);
+    void OnBandSelected(wxCommandEvent& event);
+    void OnSampleRateSelected(wxCommandEvent& event);
+    void OnChar(wxKeyEvent& event);
+
+
+	WaterFall2 *gWaterFall2;
+	
+	BasicPane2 *gBasicPane2;
+
+	wxMenu *actionMenu;
+	
+	wxMenu *directMenu;
+	
+	wxMenu *bandMenu;
+	
+	wxMenu *sampleRateMenu;
+	
+	class sdrClass *sdr;
+
+	wxMenuItem *itm;
+	
+	wxMenu *paletteMenu;
+
+	int SampleFrequency;
+	
+    wxGridBagSizer*     m_gbs;
+
+private:
+    wxPanel*            m_panel;
+    wxButton*           m_hideBtn;
+    wxButton*           m_showBtn;
+    wxTextCtrl*         m_hideTxt;
+
+    wxButton*           m_moveBtn1;
+    wxButton*           m_moveBtn2;
+    wxGBPosition        m_lastPos;
+
+    wxDECLARE_EVENT_TABLE();
+};
+
 
 #endif

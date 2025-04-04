@@ -84,9 +84,11 @@
 #define IN_UDP	 4
 
 
-extern int sendAudio(int short *data,int length);
 
 class sdrClass;
+
+extern int sendAudio(sdrClass *sdr,int short *data,int length);
+
 
 typedef int (sdrClass::*A_pmf_t)();
 
@@ -99,6 +101,10 @@ extern std::vector<SoapySDR::Kwargs> resultsEnumerate;
 extern char *strsave(char *s,int tag);
 
 class soundClass;
+
+class BasicPane2;
+
+class BasicPane;
 
 extern soundClass *s;
 
@@ -267,6 +273,10 @@ public:
  	cStack *bS2;
  	
  	std::vector<std::string> streamFormat;
+ 	
+    BasicPane2 *gBasicPane2;
+
+    BasicPane *gBasicPane;
  	 	
  	
  	class Listen *l;

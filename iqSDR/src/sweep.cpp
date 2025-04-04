@@ -1,4 +1,4 @@
-﻿#include "iqSDR.h"
+#include "iqSDR.h"
 #include "WarningBatch.h"
 #include <string.h>
 #include <vector>
@@ -8,522 +8,43 @@ void winout(const char *fmt, ...);
 
 int copyl(char *p1,char *p2,long n);
 
-std::string ProgramVersion="iqSDR-1331";
-
 void *cMalloc(unsigned long r, int tag);
 
 void checkall(void);
 
-char WarningBuff[256];
+extern StartWindow *startIt;
 
-GLuint vboId = 0;                   // ID of VBO for vertex arrays
+extern soundClass *s;
 
+extern std::string ProgramVersion;
 
-StartWindow *startIt;
+static std::vector<Sweep *> grabList;
 
-soundClass *s;
+BasicPane2 *pBasicPane2;
+Spectrum2 *pSpectrum2;
+WaterFall2 *pWaterFall2;
+TopPane2 *pTopPane2;
 
-extern std::vector<Sweep *> sgrabList;
-
-
-std::vector<ApplFrame *> grabList;
-
-static BasicPane *pBasicPane;
-static Spectrum *pSpectrum;
-static WaterFall *pWaterFall;
-static TopPane *pTopPane;
 static ostringstream outs;
-extern  BasicPane2 *pBasicPane2;
 
-int sendAudio(sdrClass *sdr,int short *data,int length)
-{
-	if(sdr->gBasicPane)sdr->gBasicPane->sendAudio(data,length);
-	if(sdr->gBasicPane2)sdr->gBasicPane2->sendAudio(data,length);
-	return 0;
-}
+std::vector<Sweep *> sgrabList;
 
-
-class MyApp: public wxApp
-{
-    virtual bool OnInit();
-    
-    //wxFrame *frame;
-   // wxFrame *frame2;
-   // Spectrum2 *glPane2;
-public:
-    
-};
-
- 
-bool MyApp::OnInit()
-{
-
-/*
-    if ( !wxApp::OnInit() )
-        return false;
-*/
-      
-    SoapySDR_setLogLevel(SOAPY_SDR_NOTICE);
-        
-    s=new soundClass;
-  	s->soundRun=0;   
-    std::thread(&soundClass::startSound,s).detach(); 
-    while(s->soundRun == 0){
-    	//winout("s->soundRun  %d\n",s->soundRun);
-   		 Sleep2(5);
-    }
-    
-    
-
-   
-    // testEM();
-        
- 	wxFrame *frame2 = new wxFrame(NULL,wxID_ANY,ProgramVersion);
-	startIt=new StartWindow(frame2, "Controls");
-	frame2->SetSize(wxDefaultCoord,wxDefaultCoord,155,300);
-	frame2->Show();
-	
-	//winout("startIt %p\n",startIt);
-	
-	startIt->openArgcArgv(argc,argv);
-	
-    return true;
-} 
-
-IMPLEMENT_APP(MyApp)
-
-BEGIN_EVENT_TABLE(StartWaveFile, wxWindow)
-EVT_LEFT_DOWN(StartWaveFile::mouseDown)
-EVT_SLIDER(SCROLL_TIME2,StartWaveFile::OnScroll)
-EVT_SLIDER(SCROLL_GAIN2,StartWaveFile::OnScroll)
-EVT_CHECKBOX(ID_PAUSE, StartWaveFile::Pause)
-EVT_TIMER(TIMER_ID2,StartWaveFile::OnIdle)
-END_EVENT_TABLE()
-
-void StartWaveFile::Pause(wxCommandEvent& event) 
-{    
-	event.Skip();
-
-   //int flag=event.GetValue();
-       
-    iPause=pbox->GetValue();
-
-//   winout("Pause iPause %d\n",iPause);
-}
-void StartWaveFile::OnIdle(wxTimerEvent &event)
-{
-	if(iPause)return;
-	
-	if(sliderTime){
-		if(s->bS != bS)return;
-		if(sfinfo.samplerate > 0){
-			sliderTime->SetValue(CurrentFrame/sfinfo.samplerate);
-		}else{
-			sliderTime->SetValue(0);
-		}
-	}
-	sliderTime->Refresh();
-}
-
-
-void StartWaveFile::OnScroll(wxCommandEvent &event)
-{
-	event.Skip();
-	
-	float value=event.GetSelection();
-
-	if(event.GetId() == SCROLL_GAIN2){
-		//winout("OnScroll value %g %d \n",value,event.GetId());
-		gain=0.01*value;
-		s->gain=gain;
-		return;
-	}else if(event.GetId() == SCROLL_TIME2){
-		// winout("OnScroll value %g %d \n",value,event.GetId());
-		sf_count_t ret=sf_seek(infile, value*sfinfo.samplerate, SEEK_SET);
-        if(ret < 0)winout("sf_seek error\n");
-		CurrentFrame=value*sfinfo.samplerate;
-		return;
-	}
-	
-	
-}
-
-StartWaveFile::StartWaveFile(wxWindow *frame,const wxString& title)
-    : wxWindow(frame,32000), m_timer(this,TIMER_ID2)
-{
-	m_timer.Start(2000);
-
-
-	CurrentFrame=0;
-	
-	gain=1.0;
-	
-	iPause=0;
-	
-	 wxStaticBox *box = new wxStaticBox(this, wxID_ANY, "&Volume",wxPoint(40,10), wxSize(270, 100),wxBORDER_SUNKEN );
-	 //box->SetToolTip(wxT("This is tool tip") );
-
-    wxSlider *sliderGain=new wxSlider(box,SCROLL_GAIN2,100,0,100,wxPoint(20,10),wxSize(240,-1),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
-    sliderGain->SetValue(100);
-    
- 	box = new wxStaticBox(this, wxID_ANY, "&Time",wxPoint(40,120), wxSize(270, 100),wxBORDER_SUNKEN );
-	 //box->SetToolTip(wxT("This is tool tip") );
-   
-    sliderTime=new wxSlider(box,SCROLL_TIME2,5,0,100,wxPoint(20,10),wxSize(240,-1),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
-    sliderTime->SetValue(0);
-    
- 	pbox=new wxCheckBox(this,ID_PAUSE, "&Pause",wxPoint(40,230), wxSize(130, 30));
-	pbox->SetValue(0);	
-   
-  	const char *file=title;
-  	
-   if ((infile = sf_open (file, SFM_READ, &sfinfo))  == NULL)
-    {
-        fprintf (stderr,"Not able to open input file %s\n", file) ;
-        infile=NULL;
-        return;
-    }
-    
-	s->soundRun = -1;
-	while(s->soundRun == -1){
-		//winout("Wait soundRun %d\n",s->soundRun);
-		Sleep2(10);
-	}
-    
-	if(sfinfo.samplerate > 0){
-		sliderTime->SetMax(sfinfo.frames/sfinfo.samplerate); 
-	}else{
-		sliderTime->SetMax(100); 
-	}
-    sliderTime->SetValue(0);
-
-	s->faudio=sfinfo.samplerate;
-    
-	//winout("sfinfo.samplerate %d sfinfo.channels %d sfinfo.frames %lld\n",sfinfo.samplerate,sfinfo.channels,sfinfo.frames);
-
-	bS=new cStack;
-
-	bS->setBuff(2000000,sfinfo.samplerate);
-
-	nReadBlock=(int)(sfinfo.samplerate/s->ncut);
-
-	s->bS=bS;
-
-	wavFlag=2;
-
-	std::thread(&StartWaveFile::wavBuffer,this).detach();
-	
-	std::thread(&soundClass::startSound,s).detach();
-
-	
-}
-
-int StartWaveFile::wavBuffer()
-{
-	extern soundClass *s;
-
-	s->audioSync=0;
-	long int audioOut=0;
-	while(wavFlag == 2){
-		while(s->audioSync == 1 && wavFlag == 2)Sleep2(5);
-		if(iPause){
-			Sleep2(5);
-			continue;
-		}
-		bS->mutexo.lock();
-		short *data=bS->buffa[audioOut++ % NUM_ABUFF2];
-		bS->mutexo.unlock();
-	 	int readcount = (int)sf_readf_short(infile,data,nReadBlock);
-	 	if(readcount <= 0){
-	 		sf_seek(infile, 0, SEEK_SET);
-	 		CurrentFrame=0;
-	 		continue;
-	 	}
-	 	if(sfinfo.channels == 2){
-	 		for(int n=0;n<readcount;++n){
-	 			data[n]=data[2*n];
-	 		}
-	 	}
-	 	
-	 	CurrentFrame += readcount;
-	 	 	
-	 //	sendAudio(data,readcount);
-
-		bS->pushBuffa(audioOut-1);
-	//	winout("audioOut %ld readcount %d\n",audioOut,readcount);
-		if(s->bS == bS)s->audioSync=1;
-
-	}
-
-	wavFlag=1;
-	
-	return 0;
-}
-
-void StartWaveFile::mouseDown(wxMouseEvent& event) 
-{
-	extern soundClass *s;
-	event.Skip();
-	s->gain=gain;
-	s->bS=bS;
-}
-
-StartWaveFile::~StartWaveFile()
-{
-	extern soundClass *s;
-
-	s->bS=NULL;
-	
-	wavFlag=0;
-	
-	while(wavFlag == 0)Sleep2(5);
-
-	if(infile)sf_close(infile) ;
-	infile=NULL;
-	
-	if(bS)delete bS;
-	bS=NULL;
-	
-	//winout("exit StartWaveFile %p\n",this);
-
-}
-
-void StartWindow::openArgcArgv(int argc,char **argv)
-{
-	double fc=101.5;
-	double samplerate=2e6;
-	FILE *outFile=NULL;
-	FILE *inFile=NULL;
-	int tcp_ip=0;
-	int ipipe=0;
-	int debug=0;
-	char *name;
-	int type= -1;
-	int udp=0;
-	int pipeout=0;
-	int cat=0;
-
-	if(argc < 2)return;
-
-	for(int n=1;n<argc;++n){
-		wxString name=argv[n];
-		if(name == "-pipe"){
-		    ipipe=1;
-			winout("pipe input\n");
-		}else if(name == "-pipeout"){
-			pipeout=1;
-		}else if(name == "-float"){
-			type=TYPE_FLOAT;
-		}else if(name == "-short"){
-			type=TYPE_SHORT;
-		}else if(name == "-unsignedshort"){
-			type=TYPE_UNSIGNEDSHORT;
-		}else if(name == "-signed"){
-			type=TYPE_SIGNED;
-		}else if(name == "-unsigned"){
-			type=TYPE_UNSIGNED;
-		}else if(name == "-debug"){
-			debug=1;
-			winout("debug %d\n",debug);
-		}else if(name == "-udp"){
-			udp=1;
-			//winout("tcp_ip %d input\n",tcp_ip);
-		}else if(name == "-tcp"){
-			tcp_ip=1;
-			//winout("tcp_ip %d input\n",tcp_ip);
-		}else if(name == "-cat"){
-			cat=1;
-			//winout("tcp_ip %d input\n",tcp_ip);
-		}else if(name == "-fc"){		
-			fc=atof(argv[++n]);	
-		}else if(name == "-samplerate"){		
-			samplerate=atof(argv[++n]);	
-	    }else if(name == "-outFile"){
-	    	name=argv[++n];
-	    	if(name == "-"){
-	    		outFile=stdout;
-	    		winout("outFile=stdout\n");
-	    	}else{
-				 outFile=fopen(argv[n],"wb");
-				 if(outFile == NULL){
-					 winout("Could Not Open %s to Write\n",argv[n]);
-				 }
-	         }
-	    }else if(name == "-inFile"){
-	         inFile=fopen(argv[++n],"rb");
-	         if(inFile == NULL){
-	             winout("Could Not Open %s to Write\n",argv[n]);
-	         }
-		}
-	
-	}
-	
-	fc *= 1e6;
-		
-	//winout("fc %g MHZ samplerate %g\n",fc/1e6,samplerate);
-	
-    class sdrClass *sdrIn= new sdrClass;
-	
-	name=(char *)"Piped Data";
-		
-	sdrIn->f=fc;
-	sdrIn->fc=fc;
-	sdrIn->fw=fc;
-	sdrIn->samplerate=samplerate;
-	sdrIn->samplewidth=samplerate;
-	sdrIn->deviceNumber=0;
-	sdrIn->decodemode=MODE_FM;
-	sdrIn->outFile=outFile;
-	sdrIn->Debug=debug;
-	sdrIn->data_type=type;
-	if(inFile){
-		sdrIn->inFile=inFile;
-		sdrIn->inData=IN_FILE;
-	}else if(udp){
-		sdrIn->inData=IN_UDP;			
-		sdrIn->l=new Listen(LISTEN_UDP);
-		sdrIn->l->Debug=debug;
-		sdrIn->l->samplerate=samplerate;
-		sdrIn->l->binary=pipeout;
-		sdrIn->l->cat=cat;
-		sdrIn->l->data_type=type;
-		copyl(argv[1],sdrIn->l->name,(long)strlen(argv[1])+1);
-		std::thread(&Listen::WaitFor,sdrIn->l).detach();
-		name=(char *)"UDP Data";
-		if(cat)return;
-	}else if(tcp_ip){
-		sdrIn->inData=IN_TCPIP;			
-		sdrIn->l=new Listen(LISTEN_TCP);
-		sdrIn->l->Debug=debug;
-		sdrIn->l->samplerate=samplerate;
-		sdrIn->l->binary=pipeout;
-		sdrIn->l->cat=cat;
-		sdrIn->l->data_type=type;
-		copyl(argv[1],sdrIn->l->name,(long)strlen(argv[1])+1);
-		std::thread(&Listen::WaitFor,sdrIn->l).detach();
-		name=(char *)"TCP/IP Data";
-		if(cat)return;
-	}else if(ipipe){
-		sdrIn->inData=IN_PIPE;
-		sdrIn->inFilenum=fileno(stdin);
-	}
-
-	
-/*
-	sdrIn->inFile=fopen(file,"rb");
-	if(sdrIn->inFile == NULL){
-	    winout("Could Not Open %s to Read\n",file);
-	    return;
-	}
-*/
-
-
-	sdrIn->startPlay();
-
-	ApplFrame *grab=new ApplFrame(NULL,name,sdrIn);
-	grab->Show();
-
-	grabList.push_back(grab);
-
-	gBasicPane=pBasicPane;
-	
-
-	grab->SetLabel(name);
-
-	gBasicPane->gSpectrum->iWait=1;
-
-	gBasicPane->gSpectrum->Spectrum::startRadio2();   	
-
-	Sleep2(50);
-
-	gBasicPane->gSpectrum->iWait=0;
-	
-	sdrIn->gBasicPane=gBasicPane;
-
-	
-	//winout("samplerate %g samplewidth %g\n",sdrIn->samplerate,sdrIn->samplewidth);
-	
-}
-
-StartWindow::StartWindow(wxWindow *frame, const wxString &title)
-    : wxWindow(frame,32000)
-{
-
-	 wxStaticBox *box = new wxStaticBox(this, wxID_ANY, "&Start Options",wxPoint(10,10), wxSize(135, 175),wxBORDER_SUNKEN );
-	 box->SetToolTip(wxT("This is tool tip") );
-
-  	new wxButton(box,ID_ABOUT,wxT("About"),wxPoint(20,25));
-  	
-  	new wxButton(box,ID_RADIO,wxT("Radio"),wxPoint(20,55));
-  	
-    new wxButton(box,ID_FILE,wxT("File"),wxPoint(20,85));
-   	
-    new wxButton (box,ID_QUIT,wxT("Quit"),wxPoint(20,115));
-      
-    wxStaticBox *box2 = new wxStaticBox(this, wxID_ANY, "&Device String",wxPoint(10,190), wxSize(135, 75),wxBORDER_SUNKEN );
-	box2->SetToolTip(wxT("Enter Device String") );
-
-    textDevice=new wxTextCtrl(box2,ID_TEXTCTRL,wxT(""),
-          wxPoint(5,15), wxSize(120, 30));
-                    
-    grab=NULL;
-
-   //   wxString value=text->GetValue();
-
-}
-
-StartWindow::~StartWindow()
-{
-	//winout("exit StartWindow %p\n",this);
-}
-BEGIN_EVENT_TABLE(StartWindow, wxWindow)
-EVT_BUTTON(ID_ABOUT, StartWindow::OnAbout)
-EVT_BUTTON(ID_RADIO, StartWindow::OnRadio)
-EVT_BUTTON(ID_QUIT, StartWindow::OnQuit)
-EVT_BUTTON(ID_FILE, StartWindow::OnFile)
-//EVT_BUTTON(ID_TEST, StartWindow::OnTest)
-EVT_IDLE(StartWindow::OnIdle)
-END_EVENT_TABLE()
-
-void StartWindow::OnIdle(wxIdleEvent& event)
-{
-	extern int WarningBatchHoldDump(void);
-	
-	static long long ip=0;
-	
-	if(++ip > 100)WarningBatchHoldDump();
-	
-	event.Skip();
-}
-
-
-void StartWindow::openWindows(char *name)
-{
-	wxString title=name;
-		
-	grab=new ApplFrame(NULL,name,NULL);
-	grab->Show();
-	
-	grabList.push_back(grab);
-	
-}
 #define POS(r, c)        wxGBPosition(r,c)
 #define SPAN(r, c)       wxGBSpan(r,c)
 
-
-wxBEGIN_EVENT_TABLE(ApplFrame, wxFrame)
-EVT_MENU_RANGE(INPUT_MENU,INPUT_MENU+99,ApplFrame::OnInputSelect)
-EVT_MENU_RANGE(OUTPUT_MENU,OUTPUT_MENU+99,ApplFrame::OnOuputSelect)
-EVT_MENU_RANGE(ID_PALETTE,ID_PALETTE+99,ApplFrame::OnPaletteSelected)
-EVT_MENU_RANGE(ID_OPTIONS,ID_OPTIONS+99,ApplFrame::OnOptionsSelected)
-EVT_MENU_RANGE(ID_DIRECT,ID_DIRECT+99,ApplFrame::OnDirectSelected)
-EVT_MENU_RANGE(ID_BAND,ID_BAND+99,ApplFrame::OnBandSelected)
-EVT_MENU_RANGE(ID_SAMPLERATE,ID_SAMPLERATE+99,ApplFrame::OnSampleRateSelected)
-EVT_SIZE(ApplFrame::resized)
-EVT_MENU(wxID_ABOUT, ApplFrame::About)
-EVT_MENU(ID_EXIT, ApplFrame::About)
+wxBEGIN_EVENT_TABLE(Sweep, wxFrame)
+EVT_MENU_RANGE(INPUT_MENU,INPUT_MENU+99,Sweep::OnInputSelect)
+EVT_MENU_RANGE(OUTPUT_MENU,OUTPUT_MENU+99,Sweep::OnOuputSelect)
+EVT_MENU_RANGE(ID_PALETTE,ID_PALETTE+99,Sweep::OnPaletteSelected)
+EVT_MENU_RANGE(ID_OPTIONS,ID_OPTIONS+99,Sweep::OnOptionsSelected)
+EVT_MENU_RANGE(ID_DIRECT,ID_DIRECT+99,Sweep::OnDirectSelected)
+EVT_MENU_RANGE(ID_BAND,ID_BAND+99,Sweep::OnBandSelected)
+EVT_MENU_RANGE(ID_SAMPLERATE,ID_SAMPLERATE+99,Sweep::OnSampleRateSelected)
+EVT_SIZE(Sweep::resized)
+EVT_MENU(wxID_ABOUT, Sweep::About)
+EVT_MENU(ID_EXIT, Sweep::About)
 wxEND_EVENT_TABLE()
-void ApplFrame::About(wxCommandEvent &event)
+void Sweep::About(wxCommandEvent &event)
 {
 
 	int item=event.GetId();
@@ -531,19 +52,19 @@ void ApplFrame::About(wxCommandEvent &event)
     if(item == ID_EXIT)startIt->OnQuit(event);
 }
 
-void ApplFrame::resized(wxSizeEvent& evt)
+void Sweep::resized(wxSizeEvent& evt)
 {
  	evt.Skip();
 
 	//const wxSize size = evt.GetSize() * GetContentScaleFactor();
 
-	//winout("ApplFrame::resized %d %d %f\n", size.x,size.y,GetContentScaleFactor());
+	//winout("Sweep::resized %d %d %f\n", size.x,size.y,GetContentScaleFactor());
 	Refresh();
 
 }
 
 
-ApplFrame::ApplFrame(wxFrame* parent,wxString title,class sdrClass *sdrIn)
+Sweep::Sweep(wxFrame* parent,wxString title,class sdrClass *sdrIn)
     : wxFrame(parent, wxID_ANY, "wxGridBagSizer Test Frame")
 {
 	sdr=sdrIn;
@@ -695,19 +216,21 @@ ApplFrame::ApplFrame(wxFrame* parent,wxString title,class sdrClass *sdrIn)
 
 //    m_gbs->Add(  new wxTextCtrl(frame7, wxID_ANY, "POS(0,0)"),   POS(0,0) , SPAN(1,3), wxEXPAND  );
     
-    m_gbs->Add(new TopPane(this, "TopPane"),   POS(0,0) , SPAN(1,3), wxEXPAND  );
-    
-    m_gbs->Add(new Spectrum(this, args),   POS(1,1), SPAN(2,2), wxEXPAND  );
-    
-    m_gbs->Add(new WaterFall(this, args),   POS(3,1) , SPAN(2,2), wxEXPAND  );
 
-    m_gbs->Add(new BasicPane(this, "Controls", sdrIn),   POS(1,0) , SPAN(4,1), wxEXPAND  );
     
-    gWaterFall=pWaterFall;
+    m_gbs->Add(new TopPane2(this, "TopPane2"),   POS(0,0) , SPAN(1,3), wxEXPAND  );
     
-    gBasicPane=pBasicPane;
+    m_gbs->Add(new Spectrum2(this, args),   POS(1,1), SPAN(2,2), wxEXPAND  );
     
-    pBasicPane->gApplFrame=this;
+    m_gbs->Add(new WaterFall2(this, args),   POS(3,1) , SPAN(2,2), wxEXPAND  );
+
+    m_gbs->Add(new BasicPane2(this, "Controls", sdrIn),   POS(1,0) , SPAN(4,1), wxEXPAND  );
+    
+    gWaterFall2=pWaterFall2;
+    
+    gBasicPane2=pBasicPane2;
+    
+    pBasicPane2->gSweep=this;
 
     m_gbs->AddGrowableCol(1);
     m_gbs->AddGrowableCol(2);
@@ -719,12 +242,13 @@ ApplFrame::ApplFrame(wxFrame* parent,wxString title,class sdrClass *sdrIn)
     this->SetSizerAndFit(m_gbs);
     SetClientSize(this->GetSize());
 
-    pSpectrum->iWait=1;
+    pSpectrum2->iWait=1;
+
  
     //frame7->Show();
 }
 
-void ApplFrame::OnSampleRateSelected(wxCommandEvent& event)
+void Sweep::OnSampleRateSelected(wxCommandEvent& event)
 {
 	event.Skip();
 
@@ -760,7 +284,7 @@ void ApplFrame::OnSampleRateSelected(wxCommandEvent& event)
 
 }
 
-void ApplFrame::OnBandSelected(wxCommandEvent& event)
+void Sweep::OnBandSelected(wxCommandEvent& event)
 {
 	event.Skip();
 
@@ -795,7 +319,7 @@ void ApplFrame::OnBandSelected(wxCommandEvent& event)
 
 
 }
-void ApplFrame::OnOptionsSelected(wxCommandEvent& event){
+void Sweep::OnOptionsSelected(wxCommandEvent& event){
 	event.Skip();
 
 	//int item=event.GetId()-ID_OPTIONS;
@@ -811,7 +335,7 @@ void ApplFrame::OnOptionsSelected(wxCommandEvent& event){
     
 }
 
-void ApplFrame::OnDirectSelected(wxCommandEvent& event){
+void Sweep::OnDirectSelected(wxCommandEvent& event){
 	event.Skip();
 
 	//int item=event.GetId()-ID_DIRECT;
@@ -833,7 +357,7 @@ void ApplFrame::OnDirectSelected(wxCommandEvent& event){
 
 }
 
-void ApplFrame::OnPaletteSelected(wxCommandEvent& event){
+void Sweep::OnPaletteSelected(wxCommandEvent& event){
 	event.Skip();
 
 	int item=event.GetId()-ID_PALETTE;
@@ -848,9 +372,9 @@ void ApplFrame::OnPaletteSelected(wxCommandEvent& event){
 	//winout("name %s\n",name);
 	
 	for(int n=0;n<256;++n){
-		gWaterFall->pd.palette[3*n]=pal[3*n]*255;
-		gWaterFall->pd.palette[3*n+1]=pal[3*n+1]*255;
-		gWaterFall->pd.palette[3*n+2]=pal[3*n+2]*255;
+		gWaterFall2->pd.palette[3*n]=pal[3*n]*255;
+		gWaterFall2->pd.palette[3*n+1]=pal[3*n+1]*255;
+		gWaterFall2->pd.palette[3*n+2]=pal[3*n+2]*255;
 	}
 	
 	for(int n=0;n<27;++n){
@@ -862,7 +386,7 @@ void ApplFrame::OnPaletteSelected(wxCommandEvent& event){
 	Refresh();
 }
 
-void ApplFrame::OnInputSelect(wxCommandEvent& event){
+void Sweep::OnInputSelect(wxCommandEvent& event){
 	int item=event.GetId()-INPUT_MENU;
 	//winout("OnInputSelect %d INPUT_MENU %d\n",item,INPUT_MENU);
 	int n=item/10;
@@ -873,7 +397,7 @@ void ApplFrame::OnInputSelect(wxCommandEvent& event){
 	//startAudio();
 }
 
-void ApplFrame::OnOuputSelect(wxCommandEvent& event){
+void Sweep::OnOuputSelect(wxCommandEvent& event){
 	int item=event.GetId()-OUTPUT_MENU;
 	//winout("OnOuputSelect %d OUTPUT_MENU %d\n",item,OUTPUT_MENU);
 	int n=item/10;
@@ -904,443 +428,43 @@ void ApplFrame::OnOuputSelect(wxCommandEvent& event){
 
 }
 
-ApplFrame::~ApplFrame()
+Sweep::~Sweep()
 {
-//	winout("ApplFrame::~ApplFrame\n");
+//	winout("Sweep::~Sweep\n");
 	
-	if(grabList.size() > 0){
-		for(std::vector<ApplFrame *>::size_type k=0;k<grabList.size();++k){
-			ApplFrame *grab=grabList[k];
+	if(sgrabList.size() > 0){
+		for(std::vector<Sweep *>::size_type k=0;k<sgrabList.size();++k){
+			Sweep *grab=sgrabList[k];
 			if(grab == this){
-			    grabList[k]=NULL;
-//			    winout("ApplFrame remove from list\n");
+			    sgrabList[k]=NULL;
+//			    winout("Sweep remove from list\n");
 			}
 		}
 	}
 
 	
-	//winout("exit ApplFrame %p\n",this);
+	//winout("exit Sweep %p\n",this);
 
 }
-
-void StartWindow::OnAbout(wxCommandEvent& event)
-{
-	event.Skip();
-	
-	wxMessageBox(ProgramVersion+"(c) 2025 Dale Ranta");
-
-}
-void StartWindow::OnRadio(wxCommandEvent& event)
-{	
-	event.Skip();
-
-	wxFrame *frame= new wxFrame(NULL, wxID_ANY, wxT("Device Select"), wxDefaultPosition, wxSize(400,500));
-		
-	new SelectionWindow(frame, "Device",textDevice);
-	
-	frame->Show();
-		
-}
-void StartWindow::OnFile(wxCommandEvent& event)
-{
-	event.Skip();
-
-	OpenFile();
-}
-void StartWindow::OnQuit(wxCommandEvent& event)
-{
-	doQuit();
-}
-void StartWindow::doQuit()
-{
-
-	if(grabList.size() > 0){
-		for(std::vector<ApplFrame *>::size_type k=0;k<grabList.size();++k){
-			grab=grabList[k];
-			if(grab)delete grab;
-		}
-	}
-	
-	checkall();
-
-	wxWindow *parent=GetParent();
-	
-	parent->Destroy();
-}
-void StartWindow::openWavFile(const char *file)
-{
-	
- 	wxFrame *frame2 = new wxFrame(NULL,wxID_ANY,file);
-	new StartWaveFile(frame2,file);
-	frame2->SetSize(wxDefaultCoord,wxDefaultCoord,340,300);
-	frame2->Show();
-	
-	
-}
-void StartWindow::openIQFile(const char *file)
-{
-	char name[512];
-	
-	mstrncpy(name,(char *)file,sizeof(name));
-	
-	//winout("openIQFile %s name %s\n",file,name);
-	
-	double samplerate=0;
-	double fc=0;
-	
-	
-    char *end=strrchr(name,'_');
-    if(end){
-        samplerate=0;
-        end--;
-        unsigned long num=1;
-        while(isdigit(*end)){
-            samplerate += num*(*end-'0');
-            num *= 10;
-            --end;
-        }
-        fc=0;
-        end--;
-        num=1;
-        while(isdigit(*end)){
-            fc += num*(*end-'0');
-            num *= 10;
-            --end;
-        }
-        
-    }else{
-        samplerate=200000;
-    	fc=90000000;
-    }
-    
-    class sdrClass *sdrIn= new sdrClass;
-	
-	sdrIn->f=fc;
-	sdrIn->fc=fc;
-	sdrIn->fw=fc;
-	sdrIn->samplerate=samplerate;
-	sdrIn->samplewidth=samplerate;
-	sdrIn->deviceNumber=0;
-	sdrIn->decodemode=MODE_FM;
-	sdrIn->inData=IN_FILE;
-	sdrIn->inFile=fopen(file,"rb");
-	if(sdrIn->inFile == NULL){
-	    winout("Could Not Open %s to Read\n",file);
-	    return;
-	}
-	sdrIn->startPlay();
-	
-	ApplFrame *grab=new ApplFrame(NULL,file,sdrIn);
-	grab->Show();
-	
-	grabList.push_back(grab);
-	
-	gBasicPane=pBasicPane;
-	
-	grab->SetLabel(file);
-
-     gBasicPane->gSpectrum->iWait=1;
-	
-     gBasicPane->gSpectrum->Spectrum::startRadio2();   	
-     
-     Sleep2(50);
-     
-     gBasicPane->gSpectrum->iWait=0;
-     
-     sdrIn->gBasicPane=gBasicPane;
-
-
-}
-
-void StartWindow::OpenFile()
-{
-
-	static int index=0;
-    
-    wxFileDialog filedlg(this, _("Open File"), "", "",
-                       "I/Q files (*.raw)|*.raw|"
-                       "Wav files (*.wav)|*.wav|"
-                       "TexT files (*.txt)|*.txt" 
-                       , wxFD_OPEN|wxFD_FILE_MUST_EXIST);
-                         
-    filedlg.SetFilterIndex(index);
-
-    if (filedlg.ShowModal() == wxID_OK)
-    {
-    
-        
-        wxString name = filedlg.GetPath();
-        
-        const char *file=name.ToUTF8().data();
-        
-        int Index=filedlg.GetFilterIndex();
-        
-        winout("OpenFile file %s Index %d\n",file,Index);
-        
-        if(Index == 0)
-        {     
-    		openIQFile(file);
-    	} 
-    	else if(Index == 1)
-    	{
-    		openWavFile(file);
-    	}
-    	else if(Index == 2)
-    	{
-    		//getSlices((const char *)psz);
-    	}
-    	else if(Index == 3)
-    	{
-    		//getText((const char *)psz);
-    	}
-    	else if(Index == 4)
-    	{
-    		//VtkFrame::GetNCSASlices((const char *)psz);
-    	}
-    	else if(Index == 5)
-    	{
-    		//VtkFrame::GetVtkSlices((const char *)psz);
-    	}
-    	
-    }
-}
-
-
-SelectionWindow::SelectionWindow(wxWindow *frame, const wxString &title,wxTextCtrl *textDevice)
-    : wxWindow(frame,32000)
-{
-
-	gBasicPane=NULL;
-			
-	wxString s=textDevice->GetValue();
-	
-	const char *textDevicePointer=s;
-	
-	if(resultsEnumerate.size() < 1){
-		if(doEnumerate((char *)textDevicePointer))return;
-	}
-	
-	size_t length;
-	
-	std::vector<SoapySDR::Kwargs> results=resultsEnumerate;
-
-    length=results.size();
-    
-	if(length == 0){
-		winout("Error: enumerate Found No Devices - Try Again !\n");
-		return;
-	}
-	
-	pSweep=new wxCheckBox(this,ID_SWEEP, "&Frequency Sweep",wxPoint(20,5), wxSize(230, 25));
-	wxStaticBox *box2 = new wxStaticBox(this, wxID_ANY, "&Parameters",wxPoint(10,35), wxSize(300, 100),wxBORDER_SUNKEN );
-	box2->SetToolTip(wxT("Device Setup Parameters") );
-	new wxStaticText(box2,wxID_STATIC,wxT("Frequency(MHZ)"),wxPoint(20,15), wxDefaultSize,wxALIGN_LEFT);
-	text=new wxTextCtrl(box2,ID_TEXTCTRL,wxT("101.5"),wxPoint(130,10), wxSize(80, 25));
-	new wxStaticText(box2,wxID_STATIC,wxT("Mode :"),wxPoint(20,43), wxDefaultSize,wxALIGN_LEFT);
-	
-	wxArrayString strings;
-	
-	strings.Add("AM");
-	strings.Add("NAM");
-	strings.Add("FM");
-	strings.Add("NBFM");
-	strings.Add("USB");
-	strings.Add("LSB");
-	strings.Add("CW");
-	
-	boxMode=new wxComboBox(box2,ID_COMBOMODE,wxT("Mode"),wxPoint(130,40),wxDefaultSize,
-	                   strings,wxCB_DROPDOWN);
-	boxMode->SetSelection(2);
-	wxStaticBox *box = new wxStaticBox(this, wxID_ANY, "&Device",wxPoint(10,120), wxSize(300, 60+2*length*45),wxBORDER_SUNKEN );
-	box->SetToolTip(wxT("Select The Device") );
-
-    int outset1=15;
-
-    SoapySDR::Kwargs deviceArgs;
-    
-    deviceNames.clear();
-        
-     for(size_t k=0;k<length;++k){
-        std::string name;
-        
-        name="";
-        
- 
-        try {
-
-            deviceArgs = results[k];
-            for (SoapySDR::Kwargs::const_iterator it = deviceArgs.begin(); it != deviceArgs.end(); ++it) {
-               // winout("%s=%s\n",it->first.c_str(),it->second.c_str());
-                if (it->first == "driver") {
-                    if(it->second == "audio")break;
-                    if(it->second == "redpitaya"){
-                        name=it->second;
-                    }
-                } else if (it->first == "device") {
-                    if(it->second == "HackRF One")continue;
-                    name=it->second;
-                } else if (it->first == "label") {
-                    name=it->second;
-                }
-            }
-	  		deviceNames.push_back(name);
-            if(name != ""){
-                
-				SoapySDR::Device *devicer = SoapySDR::Device::make(deviceArgs);
-	  			
-	  			
-				new wxButton(box,ID_DEVICE+k,name,wxPoint(20,5+outset1));
-				outset1 += 40;
-				strings.Clear();
-
-                std::vector<double> rate=devicer->listSampleRates(SOAPY_SDR_RX,0);
-                for (size_t j = 0; j < rate.size(); j++)
-                {
-                    char data[256];
-                    unsigned long long irate=rate[j];
-                    sprintf(data,"%llu",irate);
-                    strings.Add(data);
-
-                }
-                
-               
-				new wxStaticText(box,wxID_STATIC,wxT("Sample Rate :"),wxPoint(20,outset1+15), wxDefaultSize,wxALIGN_LEFT);
-
-				boxList[k]=new wxComboBox(box,ID_FREQUENCY+k,wxT("Mode"),wxPoint(110,outset1+11),wxDefaultSize,
-				   strings,wxCB_DROPDOWN);
-				boxList[k]->SetSelection(0);
-
-				outset1 += 45;
-
-				SoapySDR::Device::unmake(devicer); 
-            }
-            
-        } catch(const std::exception &e) {
-            std::string streamExceptionStr = e.what();
-            winout("doRadioOpen Error: %s\n",streamExceptionStr.c_str());
-        }
-   }
- 
-}
-SelectionWindow::~SelectionWindow()
-{
-	//delete m_context;
-	//winout("SelectionWindow::~SelectionWindow\n");
-	//winout("exit SelectionWindow %p\n",this);
-
-}
-
-BEGIN_EVENT_TABLE(SelectionWindow, wxWindow)
-EVT_COMMAND_RANGE(ID_DEVICE,ID_DEVICE+199,wxEVT_BUTTON,SelectionWindow::OnDevice)
+BEGIN_EVENT_TABLE(TopPane2, wxWindow)
+EVT_MOTION(TopPane2::mouseMoved)
+EVT_PAINT(TopPane2::render)
+EVT_LEFT_DOWN(TopPane2::mouseDown)
+EVT_CHECKBOX(ID_RECORD, TopPane2::Record)
+EVT_CHECKBOX(ID_FC, TopPane2::Record)
+EVT_CHAR(TopPane2::OnChar)    
 END_EVENT_TABLE()
 
-void SelectionWindow::killMe() 
-{
-		
-	wxWindow *parent=GetParent();
-	if(parent)parent->Destroy();
-	
-}
-void SelectionWindow::OnDevice(wxCommandEvent& event) 
-{
-
-	event.Skip();
-    
-	int id=event.GetId();
-	
-	wxString frequency=boxList[id-ID_DEVICE]->GetValue();
-	
-	const char *modeFrequency=frequency;
-
-	wxString value=text->GetValue();
-	
-	const char *modeFC=value;
-	
-	double fc=atof(modeFC);
-	fc *= 1e6;
-
-	class sdrClass *sdrIn= new sdrClass;
-	
-	sdrIn->f=fc;
-	sdrIn->fc=fc;
-	sdrIn->fw=fc;
-	sdrIn->samplerate=atof(modeFrequency);
-	sdrIn->samplewidth=sdrIn->samplerate;
-	sdrIn->deviceNumber=id-ID_DEVICE;
-	sdrIn->decodemode=boxMode->GetSelection();
-	sdrIn->startPlay();
-	
-	winout("OnDevice sdrIn->samplerate %g Sweep %d\n",sdrIn->samplerate,pSweep->GetValue());
-	
-	wxString name=deviceNames[id-ID_DEVICE];
-	
-	if(pSweep->GetValue()){
-		extern BasicPane2 *pBasicPane2;
-	
-		Sweep *sgrab=new Sweep(NULL,name,sdrIn);
-		sgrab->Show();
-		sgrabList.push_back(sgrab);
-	
-		sgrab->SetLabel(deviceNames[id-ID_DEVICE]);
-				
-		pBasicPane2->gSpectrum2->Spectrum2::startRadio2();
-	
-		Sleep2(50);
-
-		pBasicPane2->gSpectrum2->iWait=0;
-		pBasicPane2->iRefresh=1;
-		
-		sdrIn->gBasicPane2=pBasicPane2;
-
-	
-	}else{
-	
-		ApplFrame *grab=new ApplFrame(NULL,name,sdrIn);
-		grab->Show();
-	
-		grabList.push_back(grab);
-	
-		gBasicPane=pBasicPane;
-	
-		grab->SetLabel(deviceNames[id-ID_DEVICE]);
-			
-		gBasicPane->gSpectrum->Spectrum::startRadio2();
-	
-		Sleep2(50);
-
-		gBasicPane->gSpectrum->iWait=0;
-		gBasicPane->iRefresh=1;
-		
-		sdrIn->gBasicPane=pBasicPane;
-
-	}
-
-	killMe();
-
-//	winout("OnDevice  11\n");
-   
-    
-}
-
-BEGIN_EVENT_TABLE(TopPane, wxWindow)
-EVT_MOTION(TopPane::mouseMoved)
-EVT_PAINT(TopPane::render)
-EVT_LEFT_DOWN(TopPane::mouseDown)
-EVT_CHECKBOX(ID_RECORD, TopPane::Record)
-EVT_CHECKBOX(ID_FC, TopPane::Record)
-EVT_CHAR(TopPane::OnChar)    
-END_EVENT_TABLE()
-
-void TopPane::OnChar(wxKeyEvent& event) 
+void TopPane2::OnChar(wxKeyEvent& event) 
 {
 	event.Skip();
 	
 	int keycode=event.GetKeyCode();
 	
-	//winout("TopPane::OnChar %d\n",keycode);
+	//winout("TopPane2::OnChar %d\n",keycode);
 	
     if(keycode == 'f'){
-        gSpectrum->iFreeze = !gSpectrum->iFreeze;
+        gSpectrum2->iFreeze = !gSpectrum2->iFreeze;
      //   winout("iWait %d\n",iWait);
     }
 	
@@ -1359,7 +483,7 @@ void TopPane::OnChar(wxKeyEvent& event)
     }
 }
 
-void TopPane::Record(wxCommandEvent& event) 
+void TopPane2::Record(wxCommandEvent& event) 
 {    
 	event.Skip();
 	
@@ -1395,7 +519,7 @@ void TopPane::Record(wxCommandEvent& event)
      
 }
 
-TopPane::TopPane(wxWindow *frame, const wxString &title)
+TopPane2::TopPane2(wxWindow *frame, const wxString &title)
     : wxWindow(frame,32000)
 {
 	
@@ -1413,7 +537,7 @@ TopPane::TopPane(wxWindow *frame, const wxString &title)
 	
 	idoFC=0;
 	
-	pTopPane=this;
+	pTopPane2=this;
 		
 	rbox=new wxCheckBox(this,ID_RECORD, "&record", wxPoint(20,0), wxSize(80, 40));
 	rbox->SetValue(0);	
@@ -1423,15 +547,15 @@ TopPane::TopPane(wxWindow *frame, const wxString &title)
 
 	wxWindow::SetSize(wxDefaultCoord,wxDefaultCoord,400,40);
 }
-TopPane::~TopPane()
+TopPane2::~TopPane2()
 {
-	//winout("TopPane::~TopPane\n");
-	//winout("exit TopPane %p\n",this);
+	//winout("TopPane2::~TopPane2\n");
+	//winout("exit TopPane2 %p\n",this);
 
 }
 
 
-void TopPane::mouseDown(wxMouseEvent& event)
+void TopPane2::mouseDown(wxMouseEvent& event)
 {
 	event.Skip();
 
@@ -1467,14 +591,14 @@ void TopPane::mouseDown(wxMouseEvent& event)
 			sdr->setFrequency((double)fl);
 		}
 		
-//		winout("TopPane::mouseDown f %lld k %d nchar %d up %d %f\n",fl,k,nchar,up,value);
+//		winout("TopPane2::mouseDown f %lld k %d nchar %d up %d %f\n",fl,k,nchar,up,value);
 		Refresh();
 
 	}
 }
 
 
-void TopPane::mouseMoved(wxMouseEvent& event)
+void TopPane2::mouseMoved(wxMouseEvent& event)
 {
 	event.Skip();
 
@@ -1482,7 +606,7 @@ void TopPane::mouseMoved(wxMouseEvent& event)
 	
 	nchar=(p.x-pt.x)/fontSize.x;
 
-	//winout("TopPane::mouseMoved diff %d character %d\n",p.x-pt.x,nchar);
+	//winout("TopPane2::mouseMoved diff %d character %d\n",p.x-pt.x,nchar);
 	
 	Refresh();
 	
@@ -1490,7 +614,7 @@ void TopPane::mouseMoved(wxMouseEvent& event)
 
 #include <wx/graphics.h>
 
-void TopPane::render( wxPaintEvent& evt )
+void TopPane2::render( wxPaintEvent& evt )
 {
 	evt.Skip();
 	
@@ -1501,7 +625,7 @@ void TopPane::render( wxPaintEvent& evt )
 	dc.SetTextForeground(*wxBLACK);
 	dc.SetTextBackground(*wxWHITE);
 	
-	//winout("TopPane f %g \n",sdr->f);
+	//winout("TopPane2 f %g \n",sdr->f);
 
 	if(sdr){
 		char freq[50];
@@ -1533,48 +657,47 @@ void TopPane::render( wxPaintEvent& evt )
 	}
 
 	
-//	winout("TopPane:render\n");
+//	winout("TopPane2:render\n");
 }
-
-BEGIN_EVENT_TABLE(BasicPane, wxWindow)
-EVT_RADIOBOX(ID_DATATYPE,BasicPane::dataType)
-EVT_RADIOBOX(ID_DATAMODE,BasicPane::dataMode)
-//EVT_MOTION(Spectrum2::mouseMoved)
-EVT_PAINT(BasicPane::render)
-EVT_TIMER(TIMER_ID,BasicPane::OnTimer)
-EVT_LEFT_DOWN(BasicPane::mouseDown)
-EVT_BUTTON(ID_STARTRADIO, BasicPane::startRadio)
-EVT_RADIOBOX(ID_RADIOBOX, BasicPane::radioBox)
-EVT_COMBOBOX(ID_COMBOBOX,BasicPane::OnCombo)
-EVT_COMBOBOX(ID_COMBOMODE,BasicPane::OnCombo)
-EVT_COMBOBOX(ID_COMBOFILTER,BasicPane::OnComboFilter)
-EVT_COMBOBOX(ID_COMBOANTENNA,BasicPane::OnComboAntenna)
-EVT_COMBOBOX(ID_COMBOSAMPLERATE,BasicPane::OnComboSampleRate)
-EVT_COMBOBOX(ID_COMBOBANDWIDTH,BasicPane::setBandwidth)
-//EVT_TEXT(ID_COMBOSAMPLERATE, BasicPane::OnText)
-EVT_TEXT_ENTER(ID_COMBOSAMPLERATE, BasicPane::OnText)
-EVT_TEXT_ENTER(ID_COMBOBANDWIDTH, BasicPane::OnTextBandWidth)
-EVT_BUTTON(ID_COMBOBUTTON, BasicPane::setSampleRate)
-EVT_SIZE(BasicPane::resized)
-EVT_SLIDER(SCROLL_GAIN,BasicPane::OnScroll)
-EVT_SLIDER(ID_SAMPLEWIDTH,BasicPane::setSampleWidth)
-EVT_SLIDER(ID_ROTATEDATA,BasicPane::setDataRotate)
-EVT_SLIDER(ID_MININUM,BasicPane::OnMinimun)
-EVT_SLIDER(ID_MAXINUM,BasicPane::OnMaximun)
-EVT_COMMAND_RANGE(ID_RXGAIN,ID_RXGAIN+99,wxEVT_SLIDER,BasicPane::setRxGain)
-EVT_CHECKBOX(ID_CHECKAUTO,BasicPane::OnCheckAuto)
-EVT_CHECKBOX(ID_SWAPIQ,BasicPane::OnCheckAuto)
-EVT_CHECKBOX(ID_OSCILLOSCOPE,BasicPane::OnCheckAuto)
-EVT_CHECKBOX(ID_SOFTAUTOGAIN,BasicPane::OnCheckAuto)
-EVT_CHECKBOX(ID_SETGAIN,BasicPane::OnCheckAuto)
-EVT_BUTTON(ID_STARTSEND, BasicPane::startSend)
-EVT_BUTTON(ID_STOPSEND, BasicPane::stopSend)
-EVT_BUTTON(ID_ALPHA, BasicPane::stopSend)
-EVT_DATAVIEW_ITEM_ACTIVATED(ID_VIEWSELECTED, BasicPane::OnViewSelected)
-EVT_DATAVIEW_SELECTION_CHANGED(ID_VIEWSELECTED, BasicPane::OnViewSelected)
+BEGIN_EVENT_TABLE(BasicPane2, wxWindow)
+EVT_RADIOBOX(ID_DATATYPE,BasicPane2::dataType)
+EVT_RADIOBOX(ID_DATAMODE,BasicPane2::dataMode)
+//EVT_MOTION(Spectrum22::mouseMoved)
+EVT_PAINT(BasicPane2::render)
+EVT_TIMER(TIMER_ID,BasicPane2::OnTimer)
+EVT_LEFT_DOWN(BasicPane2::mouseDown)
+EVT_BUTTON(ID_STARTRADIO, BasicPane2::startRadio)
+EVT_RADIOBOX(ID_RADIOBOX, BasicPane2::radioBox)
+EVT_COMBOBOX(ID_COMBOBOX,BasicPane2::OnCombo)
+EVT_COMBOBOX(ID_COMBOMODE,BasicPane2::OnCombo)
+EVT_COMBOBOX(ID_COMBOFILTER,BasicPane2::OnComboFilter)
+EVT_COMBOBOX(ID_COMBOANTENNA,BasicPane2::OnComboAntenna)
+EVT_COMBOBOX(ID_COMBOSAMPLERATE,BasicPane2::OnComboSampleRate)
+EVT_COMBOBOX(ID_COMBOBANDWIDTH,BasicPane2::setBandwidth)
+//EVT_TEXT(ID_COMBOSAMPLERATE, BasicPane2::OnText)
+EVT_TEXT_ENTER(ID_COMBOSAMPLERATE, BasicPane2::OnText)
+EVT_TEXT_ENTER(ID_COMBOBANDWIDTH, BasicPane2::OnTextBandWidth)
+EVT_BUTTON(ID_COMBOBUTTON, BasicPane2::setSampleRate)
+EVT_SIZE(BasicPane2::resized)
+EVT_SLIDER(SCROLL_GAIN,BasicPane2::OnScroll)
+EVT_SLIDER(ID_SAMPLEWIDTH,BasicPane2::setSampleWidth)
+EVT_SLIDER(ID_ROTATEDATA,BasicPane2::setDataRotate)
+EVT_SLIDER(ID_MININUM,BasicPane2::OnMinimun)
+EVT_SLIDER(ID_MAXINUM,BasicPane2::OnMaximun)
+EVT_COMMAND_RANGE(ID_RXGAIN,ID_RXGAIN+99,wxEVT_SLIDER,BasicPane2::setRxGain)
+EVT_CHECKBOX(ID_CHECKAUTO,BasicPane2::OnCheckAuto)
+EVT_CHECKBOX(ID_SWAPIQ,BasicPane2::OnCheckAuto)
+EVT_CHECKBOX(ID_OSCILLOSCOPE,BasicPane2::OnCheckAuto)
+EVT_CHECKBOX(ID_SOFTAUTOGAIN,BasicPane2::OnCheckAuto)
+EVT_CHECKBOX(ID_SETGAIN,BasicPane2::OnCheckAuto)
+EVT_BUTTON(ID_STARTSEND, BasicPane2::startSend)
+EVT_BUTTON(ID_STOPSEND, BasicPane2::stopSend)
+EVT_BUTTON(ID_ALPHA, BasicPane2::stopSend)
+EVT_DATAVIEW_ITEM_ACTIVATED(ID_VIEWSELECTED, BasicPane2::OnViewSelected)
+EVT_DATAVIEW_SELECTION_CHANGED(ID_VIEWSELECTED, BasicPane2::OnViewSelected)
 END_EVENT_TABLE()
-void dummpy11(){;}
-void BasicPane::OnViewSelected(wxDataViewEvent& event) 
+void dummpy12(){;}
+void BasicPane2::OnViewSelected(wxDataViewEvent& event) 
 {    
 	event.Skip();
 	
@@ -1590,10 +713,10 @@ void BasicPane::OnViewSelected(wxDataViewEvent& event)
 		
 	sdr->setFrequencyFC(atof(freq)*1e6);
 	
-	gTopPane->Refresh();
+	gTopPane2->Refresh();
 
 }
-void BasicPane::startSend(wxCommandEvent& event) 
+void BasicPane2::startSend(wxCommandEvent& event) 
 {    
 	event.Skip();
 	
@@ -1614,7 +737,7 @@ void BasicPane::startSend(wxCommandEvent& event)
 
    // int id=event.GetId();
 }
-void BasicPane::stopSend(wxCommandEvent& event) 
+void BasicPane2::stopSend(wxCommandEvent& event) 
 {    
 	event.Skip();
 	
@@ -1630,21 +753,21 @@ void BasicPane::stopSend(wxCommandEvent& event)
 		
 		if(lineAlpha > 1.0)lineAlpha=1.0;
 		
-		gSpectrum->lineAlpha=lineAlpha;
+		gSpectrum2->lineAlpha=lineAlpha;
 		
 		wxString value1=rangeMin->GetValue();
 	
 		const char *alpha1=value1;
 
-		gWaterFall->pd.sPmin=atof(alpha1);
+		gWaterFall2->pd.sPmin=atof(alpha1);
 	
 		wxString value2=rangeMax->GetValue();
 	
 		const char *alpha2=value2;
 
-		gWaterFall->pd.sPmax=atof(alpha2);
+		gWaterFall2->pd.sPmax=atof(alpha2);
 		
-		//winout("UsePlotScales %d sPmin %g sPmax %g\n",gWaterFall->pd.UsePlotScales,gWaterFall->pd.sPmin,gWaterFall->pd.sPmax);
+		//winout("UsePlotScales %d sPmin %g sPmax %g\n",gWaterFall2->pd.UsePlotScales,gWaterFall2->pd.sPmin,gWaterFall2->pd.sPmax);
 			
 		return;
 	}
@@ -1658,12 +781,12 @@ void BasicPane::stopSend(wxCommandEvent& event)
    // int id=event.GetId();
 }
 
-int BasicPane::SetScrolledWindow()
+int BasicPane2::SetScrolledWindow()
 {
 
 	if(ScrolledWindow)ScrolledWindow->Destroy();
 	
-	ScrolledWindow = new wxScrolledWindow(gBasicPane,ID_SCROLLED,wxPoint(0,0),
+	ScrolledWindow = new wxScrolledWindow(gBasicPane2,ID_SCROLLED,wxPoint(0,0),
 	 	                                   wxSize(340,200),wxVSCROLL ); // wxHSCROLL
  	int pixX=10;
  	int pixY=10;
@@ -1962,7 +1085,7 @@ int BasicPane::SetScrolledWindow()
 	return 0;
 }
 
-BasicPane::BasicPane(wxWindow *frame, const wxString &title,class sdrClass *sdrIn)
+BasicPane2::BasicPane2(wxWindow *frame, const wxString &title,class sdrClass *sdrIn)
     : wxWindow(frame,32000)
     , m_timer(this,TIMER_ID)
 {
@@ -1978,33 +1101,33 @@ BasicPane::BasicPane(wxWindow *frame, const wxString &title,class sdrClass *sdrI
 	
 	sdr=sdrIn;
 	
-	pBasicPane=this;
+	pBasicPane2=this;
 	
-	gBasicPane=pBasicPane;
+	gBasicPane2=pBasicPane2;
 	
-	gTopPane=pTopPane;
+	gTopPane2=pTopPane2;
 	
-	gTopPane->sdr=sdr;
+	gTopPane2->sdr=sdr;
 	
-	gTopPane->gSpectrum=pSpectrum;
+	gTopPane2->gSpectrum2=pSpectrum2;
 	
-	gSpectrum=pSpectrum;
+	gSpectrum2=pSpectrum2;
 	
-	gSpectrum->sdr=sdr;
+	gSpectrum2->sdr=sdr;
 	
-	gSpectrum->gTopPane=pTopPane;
+	gSpectrum2->gTopPane2=pTopPane2;
 	
-	gSpectrum->gBasicPane=pBasicPane;
+	gSpectrum2->gBasicPane2=pBasicPane2;
 	
-	gWaterFall=pWaterFall;
+	gWaterFall2=pWaterFall2;
 
-	gWaterFall->sdr=sdr;
+	gWaterFall2->sdr=sdr;
 	
-	gWaterFall->gTopPane=pTopPane;
+	gWaterFall2->gTopPane2=pTopPane2;
 	
-	gWaterFall->gSpectrum=gSpectrum;
+	gWaterFall2->gSpectrum2=gSpectrum2;
 	
-	gWaterFall->gBasicPane=pBasicPane;
+	gWaterFall2->gBasicPane2=pBasicPane2;
 	
 	scrolledWindowFlag=0;
 	
@@ -2013,7 +1136,7 @@ BasicPane::BasicPane(wxWindow *frame, const wxString &title,class sdrClass *sdrI
     SetScrolledWindow();
 }
 
-void BasicPane::dataType(wxCommandEvent &event)
+void BasicPane2::dataType(wxCommandEvent &event)
 {
 	event.Skip();
 	
@@ -2024,7 +1147,7 @@ void BasicPane::dataType(wxCommandEvent &event)
 	//winout("dataType %s GetSelection %d\n",mode,event.GetSelection());
 	
 }
-void BasicPane::dataMode(wxCommandEvent &event)
+void BasicPane2::dataMode(wxCommandEvent &event)
 {
 	event.Skip();
 	
@@ -2035,7 +1158,7 @@ void BasicPane::dataMode(wxCommandEvent &event)
 	//winout("dataMode %s GetSelection %d\n",mode,event.GetSelection());
 	
 }
-void BasicPane::OnCheckAuto(wxCommandEvent &event)
+void BasicPane2::OnCheckAuto(wxCommandEvent &event)
 {
 	event.Skip();
 	
@@ -2046,40 +1169,40 @@ void BasicPane::OnCheckAuto(wxCommandEvent &event)
 		return;
 	}else if(id == ID_SOFTAUTOGAIN){
 		softAutoGain=event.GetSelection();
-		gSpectrum->softAutoGain=softAutoGain;
+		gSpectrum2->softAutoGain=softAutoGain;
 		return;
 	}else if(id == ID_SETGAIN){
 		int flag=event.GetSelection();
 		if(flag){
 		    char value[256];
-			gWaterFall->pd.UsePlotScales=1;
-		    sprintf(value,"%g",gWaterFall->pmin);
+			gWaterFall2->pd.UsePlotScales=1;
+		    sprintf(value,"%g",gWaterFall2->pmin);
 		    rangeMin->SetValue(value);
-		    sprintf(value,"%g",gWaterFall->pmax);
+		    sprintf(value,"%g",gWaterFall2->pmax);
 		    rangeMax->SetValue(value);
 		}else{
-			gWaterFall->pd.UsePlotScales=0;	
+			gWaterFall2->pd.UsePlotScales=0;	
 		}
 		return;
 	}else if(id == ID_OSCILLOSCOPE){
 		int flag=event.GetSelection();
 		//winout("ID_OSCILLOSCOPE flag %d\n",flag);
-		gSpectrum->oscilloscope=flag;
+		gSpectrum2->oscilloscope=flag;
 		scrolledWindowFlag=flag;
 		SetScrolledWindow();
-		wxSize size = gApplFrame->GetClientSize();
+		wxSize size = gSweep->GetClientSize();
 		size.x += 4;
 		size.y += 4;
-		gApplFrame->SetClientSize(size);
+		gSweep->SetClientSize(size);
 		size.x -= 4;
 		size.y -= 4;
-		gApplFrame->SetClientSize(size);
+		gSweep->SetClientSize(size);
 		sdr->initPlay();
 		if(flag == 1){		
-		    gSpectrum->sdr->bS2->mutex1.lock();
-			gSpectrum->sdr->bS2->bufftop=0;
-			gSpectrum->sdr->witch=0;
-		    gSpectrum->sdr->bS2->mutex1.unlock();
+		    gSpectrum2->sdr->bS2->mutex1.lock();
+			gSpectrum2->sdr->bS2->bufftop=0;
+			gSpectrum2->sdr->witch=0;
+		    gSpectrum2->sdr->bS2->mutex1.unlock();
 		    //fprintf(stderr,"Clear Buffer\n");
 		}
 		return;
@@ -2111,7 +1234,7 @@ void BasicPane::OnCheckAuto(wxCommandEvent &event)
 }
 
 
-void BasicPane::setRxGain(wxCommandEvent &event)
+void BasicPane2::setRxGain(wxCommandEvent &event)
 {
 	event.Skip();
 	
@@ -2130,7 +1253,7 @@ void BasicPane::setRxGain(wxCommandEvent &event)
 	
 	//sdr->setSampleWidth(samplewidth);	
 }
-void BasicPane::setSampleWidth(wxCommandEvent &event)
+void BasicPane2::setSampleWidth(wxCommandEvent &event)
 {
 	event.Skip();
 	
@@ -2138,7 +1261,7 @@ void BasicPane::setSampleWidth(wxCommandEvent &event)
 	
 	sdr->setSampleWidth(samplewidth);	
 }
-void BasicPane::setDataRotate(wxCommandEvent &event)
+void BasicPane2::setDataRotate(wxCommandEvent &event)
 {
 	event.Skip();
 	
@@ -2151,7 +1274,7 @@ void BasicPane::setDataRotate(wxCommandEvent &event)
 	//fprintf(stderr,"sampleDataRotate %g\n",sampleDataRotate);
 	
 }
-void BasicPane::OnTextBandWidth(wxCommandEvent &event)
+void BasicPane2::OnTextBandWidth(wxCommandEvent &event)
 {
 	event.Skip();
 	
@@ -2176,7 +1299,7 @@ void BasicPane::OnTextBandWidth(wxCommandEvent &event)
 	std::thread(&sdrClass::run,sdr).detach();
 	
 }
-void BasicPane::setBandwidth(wxCommandEvent &event)
+void BasicPane2::setBandwidth(wxCommandEvent &event)
 {
 	event.Skip();
 	
@@ -2206,27 +1329,27 @@ void BasicPane::setBandwidth(wxCommandEvent &event)
 	std::thread(&sdrClass::run,sdr).detach();
 
 }
-void BasicPane::OnMinimun(wxCommandEvent &event)
+void BasicPane2::OnMinimun(wxCommandEvent &event)
 {
 	event.Skip();
 
 	float gain=event.GetSelection();
-	gSpectrum->verticalMinimum=gain;
+	gSpectrum2->verticalMinimum=gain;
 	//winout("min gain %g\n",gain);
-	if(gain+20 > gSpectrum->verticalMaximum)gSpectrum->verticalMaximum=gain+20;
+	if(gain+20 > gSpectrum2->verticalMaximum)gSpectrum2->verticalMaximum=gain+20;
 
 }
-void BasicPane::OnMaximun(wxCommandEvent &event)
+void BasicPane2::OnMaximun(wxCommandEvent &event)
 {
 	event.Skip();
 	float gain=event.GetSelection();
-	gSpectrum->verticalMaximum=gain;
+	gSpectrum2->verticalMaximum=gain;
 	//winout("max gain %g\n",gain);
-	if(gain-20 < gSpectrum->verticalMinimum)gSpectrum->verticalMinimum=gain-20;
+	if(gain-20 < gSpectrum2->verticalMinimum)gSpectrum2->verticalMinimum=gain-20;
 
 }
 
-void BasicPane::setSampleRate(wxCommandEvent &event)
+void BasicPane2::setSampleRate(wxCommandEvent &event)
 {
 	event.Skip();
 	winout("setSampleRate\n");
@@ -2252,7 +1375,7 @@ void BasicPane::setSampleRate(wxCommandEvent &event)
 
 }
 
-void BasicPane::OnText(wxCommandEvent &event)
+void BasicPane2::OnText(wxCommandEvent &event)
 {
 	event.Skip();
 		
@@ -2279,7 +1402,7 @@ void BasicPane::OnText(wxCommandEvent &event)
 	
 }
 
-void BasicPane::OnScroll(wxCommandEvent &event)
+void BasicPane2::OnScroll(wxCommandEvent &event)
 {
 	event.Skip();
 	//int which=event.GetId();
@@ -2294,7 +1417,7 @@ void BasicPane::OnScroll(wxCommandEvent &event)
 	//setgain(value,f.p[which]);
 }
 
- void BasicPane::OnComboFilter(wxCommandEvent& event){
+ void BasicPane2::OnComboFilter(wxCommandEvent& event){
 
 	event.Skip();
 	
@@ -2306,44 +1429,44 @@ void BasicPane::OnScroll(wxCommandEvent &event)
 	
 	winout("Filter %s %d\n",number.c_str(),filterCombo->GetSelection());
 	
-	gSpectrum->filterType=filterCombo->GetSelection();
+	gSpectrum2->filterType=filterCombo->GetSelection();
 
 
 }
  
- void BasicPane::render( wxPaintEvent& evt )
+ void BasicPane2::render( wxPaintEvent& evt )
 {
 	evt.Skip();
-	//winout("BasicPane:render sdr->decodemode %d\n",sdr->decodemode);
+	//winout("BasicPane2:render sdr->decodemode %d\n",sdr->decodemode);
 	modeBox->SetSelection(sdr->decodemode);
 
 }
 
- void BasicPane::resized(wxSizeEvent& evt)
+ void BasicPane2::resized(wxSizeEvent& evt)
 {
 //	wxGLCanvas::OnSize(evt);
-	//winout("BasicPane::resized %d %d\n",getWidth(),getHeight());
+	//winout("BasicPane2::resized %d %d\n",getWidth(),getHeight());
 	ScrolledWindow->SetSize(0,0,getWidth(),getHeight());
 	evt.Skip();
    	Refresh();
 }
 
-int BasicPane::getWidth()
+int BasicPane2::getWidth()
 {
     return GetSize().x;
 }
  
-int BasicPane::getHeight()
+int BasicPane2::getHeight()
 {
     return GetSize().y;
 }
 
-void BasicPane::mouseMoved(wxMouseEvent& event) {	event.Skip();}
+void BasicPane2::mouseMoved(wxMouseEvent& event) {	event.Skip();}
 
-void BasicPane::mouseDown(wxMouseEvent& event) {	event.Skip(); winout("BasicPane::mouseDown\n");}
+void BasicPane2::mouseDown(wxMouseEvent& event) {	event.Skip(); winout("BasicPane2::mouseDown\n");}
 
 /*
-void BasicPane::OnButton(wxCommandEvent& event) 
+void BasicPane2::OnButton(wxCommandEvent& event) 
 {
 //    event.Skip();
 
@@ -2355,64 +1478,64 @@ void BasicPane::OnButton(wxCommandEvent& event)
 }
 */
 
-void BasicPane::startRadio(wxCommandEvent& event) 
+void BasicPane2::startRadio(wxCommandEvent& event) 
 {    
 	event.Skip();
 	
 }
 
-void BasicPane::OnTimer(wxTimerEvent &event){
+void BasicPane2::OnTimer(wxTimerEvent &event){
 		event.Skip();
 
-	if(!gSpectrum){
+	if(!gSpectrum2){
 		Sleep2(10);
 		return;
 	}
 	//static long count;
 	
-	//winout("BasicPane::OnTimer count %ld gSpectrum->iWait %d\n",count++,gSpectrum->iWait);
+	//winout("BasicPane2::OnTimer count %ld gSpectrum2->iWait %d\n",count++,gSpectrum2->iWait);
 	
-	if(gSpectrum->iWait){
+	if(gSpectrum2->iWait){
 		iRefresh=1;
 		Sleep2(10);
 		return;
 	}
 	
-	//winout("BasicPane::OnTimer gSpectrum->iWait %d gSpectrum->sdr %p\n",gSpectrum->iWait,gSpectrum->sdr);
+	//winout("BasicPane2::OnTimer gSpectrum2->iWait %d gSpectrum2->sdr %p\n",gSpectrum2->iWait,gSpectrum2->sdr);
 	
 	//auto t1 = std::chrono::high_resolution_clock::now();
 
 	
-	if(gSpectrum->sdr->saveFlag){
+	if(gSpectrum2->sdr->saveFlag){
 		
-		for(int n=0;n<gSpectrum->buffSendLength;++n){
-			gSpectrum->buffSend2[2*n]=gSpectrum->sdr->saveBuff[2*n];
-			gSpectrum->buffSend2[2*n+1]=gSpectrum->sdr->saveBuff[2*n+1];
+		for(int n=0;n<gSpectrum2->buffSendLength;++n){
+			gSpectrum2->buffSend2[2*n]=gSpectrum2->sdr->saveBuff[2*n];
+			gSpectrum2->buffSend2[2*n+1]=gSpectrum2->sdr->saveBuff[2*n+1];
 			//if(fabs(buff[2*n]) > amax)amax=fabs(buff[2*n]);
 		}
 		
 		//winout("sdr->saveFlag %d buffSendLength %d buffFlag %d\n",sdr->saveFlag,buffSendLength,buffFlag);
 		
-		gSpectrum->buffFlag=1;
+		gSpectrum2->buffFlag=1;
 		
-	    gSpectrum->sdr->saveFlag=0;
+	    gSpectrum2->sdr->saveFlag=0;
 	}else{
 		//winout("Save Not Set\n");
 	}
 	
 	if(iRefresh){
 		iRefresh=0;
-		gTopPane->Refresh();
+		gTopPane2->Refresh();
 		Refresh();
 		if(ScrolledWindow){
 			ScrolledWindow->Refresh();
 		}
-		//winout("gTopPane->Refresh called f %g sdr->decodemode %d\n",sdr->f,sdr->decodemode);
+		//winout("gTopPane2->Refresh called f %g sdr->decodemode %d\n",sdr->f,sdr->decodemode);
 	}
 	
-	if(gSpectrum->buffFlag){
-		gSpectrum->Refresh();
-		gWaterFall->Refresh();
+	if(gSpectrum2->buffFlag){
+		gSpectrum2->Refresh();
+		gWaterFall2->Refresh();
 	}else{
 	 // winout("OnTimer Skip call\n");
 	}
@@ -2427,7 +1550,7 @@ void BasicPane::OnTimer(wxTimerEvent &event){
 
 
 
-void BasicPane::OnComboSampleRate(wxCommandEvent& event)
+void BasicPane2::OnComboSampleRate(wxCommandEvent& event)
 {
 	event.Skip();
 
@@ -2462,7 +1585,7 @@ void BasicPane::OnComboSampleRate(wxCommandEvent& event)
 	std::thread(&sdrClass::run,sdr).detach();
 }
 
-void BasicPane::OnComboAntenna(wxCommandEvent& event)
+void BasicPane2::OnComboAntenna(wxCommandEvent& event)
 {
 		event.Skip();
 		
@@ -2476,7 +1599,7 @@ void BasicPane::OnComboAntenna(wxCommandEvent& event)
 
 }
 
-void BasicPane::OnCombo(wxCommandEvent& event){
+void BasicPane2::OnCombo(wxCommandEvent& event){
 	//int ngroup=event.GetSelection();
 //	winout("OnCombo %d IsChecked %d\n",item,event.IsChecked());
 //	noteCheckBox=event.IsChecked();
@@ -2484,7 +1607,7 @@ void BasicPane::OnCombo(wxCommandEvent& event){
 		event.Skip();
 		
 		
-	//winout("BasicPane::OnCombo\n");
+	//winout("BasicPane2::OnCombo\n");
 
 	wxString number=event.GetString();
 	
@@ -2493,58 +1616,58 @@ void BasicPane::OnCombo(wxCommandEvent& event){
 	number.ToCDouble(&value);
 	
 
-    if(!gSpectrum->buffSend10){
+    if(!gSpectrum2->buffSend10){
     	winout("Radio Not Running\n");
     	return;
 	}
 	
-    gSpectrum->iWait=1;
+    gSpectrum2->iWait=1;
 	Sleep2(20);
-	gSpectrum->sdr->saveCall=0;
+	gSpectrum2->sdr->saveCall=0;
 	Sleep2(20);
-	gSpectrum->buffSendLength=0;
-	gSpectrum->buffFlag=1;
+	gSpectrum2->buffSendLength=0;
+	gSpectrum2->buffFlag=1;
 	
 	int np=(int)value;
 	
 
-	if(gSpectrum->buffSend)cFree((char *)gSpectrum->buffSend);
-	gSpectrum->buffSend=(float *)cMalloc(sizeof(float)*8*np,9588);
+	if(gSpectrum2->buffSend)cFree((char *)gSpectrum2->buffSend);
+	gSpectrum2->buffSend=(float *)cMalloc(sizeof(float)*8*np,9588);
 	
-	if(gSpectrum->buffSend2)cFree((char *)gSpectrum->buffSend2);
-	gSpectrum->buffSend2=(float *)cMalloc(sizeof(float)*8*np,95889);
+	if(gSpectrum2->buffSend2)cFree((char *)gSpectrum2->buffSend2);
+	gSpectrum2->buffSend2=(float *)cMalloc(sizeof(float)*8*np,95889);
 	
-	if(gSpectrum->buffSend10)cFree((char *)gSpectrum->buffSend10);
-	gSpectrum->buffSend10=(float *)cMalloc(sizeof(float)*8*np,9889);
+	if(gSpectrum2->buffSend10)cFree((char *)gSpectrum2->buffSend10);
+	gSpectrum2->buffSend10=(float *)cMalloc(sizeof(float)*8*np,9889);
 
 	
-	memset(gSpectrum->buffSend10, 0, sizeof(float)*8*np);
+	memset(gSpectrum2->buffSend10, 0, sizeof(float)*8*np);
 		
 	
-	gSpectrum->p1 = fftwf_plan_dft_1d(np,(fftwf_complex *)gSpectrum->buffSend2, (fftwf_complex *)gSpectrum->buffSend, FFTW_FORWARD, FFTW_ESTIMATE);
+	gSpectrum2->p1 = fftwf_plan_dft_1d(np,(fftwf_complex *)gSpectrum2->buffSend2, (fftwf_complex *)gSpectrum2->buffSend, FFTW_FORWARD, FFTW_ESTIMATE);
 
 
-	gSpectrum->sdr->setDataSave(np);
+	gSpectrum2->sdr->setDataSave(np);
 	
 
-	gSpectrum->buffFlag=0;
+	gSpectrum2->buffFlag=0;
 	
-	gSpectrum->iWait=0;
+	gSpectrum2->iWait=0;
 	
-	gSpectrum->buffSendLength=np;
+	gSpectrum2->buffSendLength=np;
 
 
-//	winout("np %d iWait %d saveCall %d iWait %p\n",np,gSpectrum->iWait,gSpectrum->sdr->saveCall,&gSpectrum->iWait);
+//	winout("np %d iWait %d saveCall %d iWait %p\n",np,gSpectrum2->iWait,gSpectrum2->sdr->saveCall,&gSpectrum2->iWait);
 	
 }
 
 
-void BasicPane::OnButton2(wxCommandEvent& event) 
+void BasicPane2::OnButton2(wxCommandEvent& event) 
 {    
 	event.Skip();
 
 }
-void BasicPane::radioBox(wxCommandEvent& event) 
+void BasicPane2::radioBox(wxCommandEvent& event) 
 {
 	event.Skip();
 	
@@ -2555,29 +1678,24 @@ void BasicPane::radioBox(wxCommandEvent& event)
 	sdr->setMode(mode);
 	
 }
-
-
-BasicPane::~BasicPane()
+BasicPane2::~BasicPane2()
 {
-	//winout("exit1 BasicPane %p thread %llx\n",this,(long long)std::this_thread::get_id);
+	//winout("exit1 BasicPane2 %p thread %llx\n",this,(long long)std::this_thread::get_id);
 	if(sdr)delete sdr;
 	sdr=NULL;
-	//winout("exit2 BasicPane %p thread %llx\n",this,(long long)std::this_thread::get_id);
+	//winout("exit2 BasicPane2 %p thread %llx\n",this,(long long)std::this_thread::get_id);
 }
-
-
-
-BEGIN_EVENT_TABLE(WaterFall, wxGLCanvas)
-EVT_MOTION(WaterFall::mouseMoved)
-EVT_PAINT(WaterFall::render)
-EVT_SIZE(WaterFall::resized)
-EVT_LEFT_DOWN(WaterFall::mouseDown)
-EVT_MOUSEWHEEL(WaterFall::mouseWheelMoved)
-EVT_CHAR(WaterFall::OnChar)    
+BEGIN_EVENT_TABLE(WaterFall2, wxGLCanvas)
+EVT_MOTION(WaterFall2::mouseMoved)
+EVT_PAINT(WaterFall2::render)
+EVT_SIZE(WaterFall2::resized)
+EVT_LEFT_DOWN(WaterFall2::mouseDown)
+EVT_MOUSEWHEEL(WaterFall2::mouseWheelMoved)
+EVT_CHAR(WaterFall2::OnChar)    
 
 END_EVENT_TABLE()
 
-void WaterFall::OnChar(wxKeyEvent& event) 
+void WaterFall2::OnChar(wxKeyEvent& event) 
 {
 	extern soundClass *s;
 
@@ -2585,7 +1703,7 @@ void WaterFall::OnChar(wxKeyEvent& event)
 	
     int keycode=event.GetKeyCode();
     
-   // winout("WaterFall::OnChar %d\n",keycode);
+   // winout("WaterFall2::OnChar %d\n",keycode);
     
     if(keycode == 'w'){
         iWait = !iWait;
@@ -2607,7 +1725,7 @@ void WaterFall::OnChar(wxKeyEvent& event)
 	
 }
 
-void WaterFall::mouseWheelMoved(wxMouseEvent& event)
+void WaterFall2::mouseWheelMoved(wxMouseEvent& event)
 {
 	event.Skip();
 	if(sdr){
@@ -2624,11 +1742,11 @@ void WaterFall::mouseWheelMoved(wxMouseEvent& event)
 		}else{
 			sdr->setFrequency(frequency);
 		}
-		gTopPane->Refresh();
+		gTopPane2->Refresh();
 //		winout("bw %g %ld\n",sdr->bw,(long)event.ControlDown());
 	}
 }
-void WaterFall::mouseDown(wxMouseEvent& event) 
+void WaterFall2::mouseDown(wxMouseEvent& event) 
 {
 	extern soundClass *s;
 	event.Skip();
@@ -2643,36 +1761,36 @@ void WaterFall::mouseDown(wxMouseEvent& event)
 			sdr->setFrequency(fx);
 		}
 		s->bS=sdr->bS;
-		gTopPane->Refresh();
+		gTopPane2->Refresh();
 
 	}
 }
 // some useful events to use
-void WaterFall::mouseMoved(wxMouseEvent& event) {
+void WaterFall2::mouseMoved(wxMouseEvent& event) {
 	//winout("mouseMoved \n");
 		event.Skip();
 
 }
-WaterFall::~WaterFall()
+WaterFall2::~WaterFall2()
 {
 	if(m_context)delete m_context;
 	
 	if(water.data)cFree((char *)water.data);
 	water.data=NULL;
 
-	//winout("exit WaterFall %p\n",this);
+	//winout("exit WaterFall2 %p\n",this);
 }
 
-int WaterFall::getWidth()
+int WaterFall2::getWidth()
 {
     return (int)(GetSize().x*scaleFactor);
 }
  
-int WaterFall::getHeight()
+int WaterFall2::getHeight()
 {
     return (int)(GetSize().y*scaleFactor);
 }
-void WaterFall::resized(wxSizeEvent& evt)
+void WaterFall2::resized(wxSizeEvent& evt)
 {
 	evt.Skip();
 	
@@ -2682,7 +1800,7 @@ void WaterFall::resized(wxSizeEvent& evt)
 	
    	Refresh();
 }
-int WaterFall::ftox(double frequency){
+int WaterFall2::ftox(double frequency){
 
 	int x;
 	
@@ -2691,23 +1809,23 @@ int WaterFall::ftox(double frequency){
 	return x;
 }
 
-void WaterFall::render( wxPaintEvent& evt )
+void WaterFall2::render( wxPaintEvent& evt )
 {
 	evt.Skip();
-//   winout("WaterFall::render\n");
+//   winout("WaterFall2::render\n");
 
     if(!IsShown()) return;
     
     if(iWait)return;
     
-    float *magnitude=gSpectrum->buffSend10;
+    float *magnitude=gSpectrum2->buffSend10;
     
-    int length=gSpectrum->buffSendLength;
+    int length=gSpectrum2->buffSendLength;
     
     //auto t1 = chrono::high_resolution_clock::now();
     
 
-   // winout("WaterFall render 2\n");
+   // winout("WaterFall2 render 2\n");
         
     wxGLCanvas::SetCurrent(*m_context);
     wxPaintDC(this); // only to be used in paint events. use wxClientDC to paint outside the paint event
@@ -2870,7 +1988,7 @@ void WaterFall::render( wxPaintEvent& evt )
  		DrawBox(&box,0);
 */
 
-//	winout("Waterfall f %p\n",&sdr->f);
+//	winout("WaterFall2 f %p\n",&sdr->f);
 
     	if(range)delete [] range;
     	range=NULL;
@@ -2880,7 +1998,7 @@ void WaterFall::render( wxPaintEvent& evt )
     	glFlush();
     	SwapBuffers();
     }
-int WaterFall::SetWindow()
+int WaterFall2::SetWindow()
 {
     
     //CheckSceneBuffer(scene);
@@ -2913,7 +2031,7 @@ int WaterFall::SetWindow()
     
     water.data=(unsigned char *)cMalloc(2*xsize*ysize*3,9999);
     
-  //  winout("WaterFall::SetWindow\n");
+  //  winout("WaterFall2::SetWindow\n");
     
     if(!water.data)return 1;
     
@@ -2933,7 +2051,7 @@ int WaterFall::SetWindow()
     return 0;
 }
 
- int WaterFall::FloatToImage(float *d,long length,struct paletteDraw *pd,unsigned char *bp)
+ int WaterFall2::FloatToImage(float *d,long length,struct paletteDraw *pd,unsigned char *bp)
 {
         double dmin;
         double dmax;
@@ -3033,7 +2151,7 @@ int WaterFall::SetWindow()
         return 0;
 }   
 
-WaterFall::WaterFall(wxFrame* parent, int* args) :
+WaterFall2::WaterFall2(wxFrame* parent, int* args) :
     //wxGLCanvas(parent, wxID_ANY, args, wxDefaultPosition, wxSize(800,600), wxFULL_REPAINT_ON_RESIZE)
    // wxGLCanvas(parent, wxID_ANY, args, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE)
    // wxGLCanvas(parent, wxID_ANY, args, wxPoint(200,0), wxSize(800,200), wxFULL_REPAINT_ON_RESIZE)
@@ -3046,7 +2164,7 @@ WaterFall::WaterFall(wxFrame* parent, int* args) :
 	
 	water.data=NULL;
 
-	pWaterFall=this;
+	pWaterFall2=this;
 	
 	scaleFactor=1.0;
 	
@@ -3088,42 +2206,42 @@ WaterFall::WaterFall(wxFrame* parent, int* args) :
 }
 
 
-BEGIN_EVENT_TABLE(Spectrum, wxGLCanvas)
-EVT_MOTION(Spectrum::mouseMoved)
-EVT_LEFT_DOWN(Spectrum::mouseDown)
-EVT_LEFT_UP(Spectrum::mouseReleased)
-EVT_RIGHT_DOWN(Spectrum::rightClick)
-EVT_LEAVE_WINDOW(Spectrum::mouseLeftWindow)
-EVT_SIZE(Spectrum::resized)
-//EVT_KEY_DOWN(Spectrum::keyPressed)
-//EVT_KEY_UP(Spectrum::keyReleased)
-EVT_MOUSEWHEEL(Spectrum::mouseWheelMoved)
-EVT_PAINT(Spectrum::render)
-EVT_CHAR(Spectrum::OnChar)    
-//EVT_BUTTON(ID_DELETE,Spectrum::DeleteRow )
-EVT_IDLE(Spectrum::OnIdle)
+BEGIN_EVENT_TABLE(Spectrum2, wxGLCanvas)
+EVT_MOTION(Spectrum2::mouseMoved)
+EVT_LEFT_DOWN(Spectrum2::mouseDown)
+EVT_LEFT_UP(Spectrum2::mouseReleased)
+EVT_RIGHT_DOWN(Spectrum2::rightClick)
+EVT_LEAVE_WINDOW(Spectrum2::mouseLeftWindow)
+EVT_SIZE(Spectrum2::resized)
+//EVT_KEY_DOWN(Spectrum2::keyPressed)
+//EVT_KEY_UP(Spectrum2::keyReleased)
+EVT_MOUSEWHEEL(Spectrum2::mouseWheelMoved)
+EVT_PAINT(Spectrum2::render)
+EVT_CHAR(Spectrum2::OnChar)    
+//EVT_BUTTON(ID_DELETE,Spectrum2::DeleteRow )
+EVT_IDLE(Spectrum2::OnIdle)
 END_EVENT_TABLE()
 
-void Spectrum::OnIdle(wxIdleEvent& event)
+void Spectrum2::OnIdle(wxIdleEvent& event)
 {	
 	event.Skip();
 	if(oscilloscope == 1){
-	    //fprintf(stderr,"Spectrum::OnIdle\n");
+	    //fprintf(stderr,"Spectrum2::OnIdle\n");
 		Refresh();
 	}
 }
 
 // some useful events to use
-void Spectrum::mouseMoved(wxMouseEvent& event) {
+void Spectrum2::mouseMoved(wxMouseEvent& event) {
 	//winout("mouseMoved \n");
 	event.Skip();
 }
-void Spectrum::mouseReleased(wxMouseEvent& event) {event.Skip();}
-void Spectrum::rightClick(wxMouseEvent& event) {event.Skip();}
-void Spectrum::mouseLeftWindow(wxMouseEvent& event) {event.Skip();}
-void Spectrum::keyReleased(wxKeyEvent& event) {event.Skip();}
+void Spectrum2::mouseReleased(wxMouseEvent& event) {event.Skip();}
+void Spectrum2::rightClick(wxMouseEvent& event) {event.Skip();}
+void Spectrum2::mouseLeftWindow(wxMouseEvent& event) {event.Skip();}
+void Spectrum2::keyReleased(wxKeyEvent& event) {event.Skip();}
 
-void Spectrum::mouseWheelMoved(wxMouseEvent& event)
+void Spectrum2::mouseWheelMoved(wxMouseEvent& event)
 {
 	event.Skip();
 	if(sdr){
@@ -3140,19 +2258,19 @@ void Spectrum::mouseWheelMoved(wxMouseEvent& event)
 			sdr->setFrequency(frequency);
 		}
 	
-		gTopPane->Refresh();
+		gTopPane2->Refresh();
 //		winout("bw %g %ld\n",sdr->bw,(long)event.ControlDown());
 	}
 
 }
 
-void Spectrum::OnChar(wxKeyEvent& event) 
+void Spectrum2::OnChar(wxKeyEvent& event) 
 {
 	event.Skip();
 	
 	int keycode=event.GetKeyCode();
 	
-	//winout("Spectrum::OnChar %d\n",keycode);
+	//winout("Spectrum2::OnChar %d\n",keycode);
 	
     if(keycode == 'f'){
         iFreeze = !iFreeze;
@@ -3180,11 +2298,11 @@ void Spectrum::OnChar(wxKeyEvent& event)
 	
 }
   
-int InitGL=0;
+extern int InitGL;
 
 
 
-Spectrum::Spectrum(wxFrame* parent, int* args) :
+Spectrum2::Spectrum2(wxFrame* parent, int* args) :
     //wxGLCanvas(parent, wxID_ANY, args, wxDefaultPosition, wxSize(800,600), wxFULL_REPAINT_ON_RESIZE)
    // wxGLCanvas(parent, wxID_ANY, args, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE)
    // wxGLCanvas(parent, wxID_ANY, args, wxPoint(200,0), wxSize(800,200), wxFULL_REPAINT_ON_RESIZE)
@@ -3206,7 +2324,7 @@ Spectrum::Spectrum(wxFrame* parent, int* args) :
 	
 	lineAlpha=0.1;
 	
-	pSpectrum=this;
+	pSpectrum2=this;
 	
 
     // To avoid flashing on MSW
@@ -3253,12 +2371,12 @@ Spectrum::Spectrum(wxFrame* parent, int* args) :
     
   //  winout("Groups of triangles %ld vender %s\n",triangle,glGetString(GL_VENDOR));
   
-	//Bind(wxEVT_CHAR, &Spectrum::OnChar, this);    
+	//Bind(wxEVT_CHAR, &Spectrum2::OnChar, this);    
 }
 
 
 
-void Spectrum::InitOpenGl()
+void Spectrum2::InitOpenGl()
 {
     if(InitGL) return;
     //
@@ -3282,7 +2400,7 @@ void Spectrum::InitOpenGl()
    InitGL=1;
    
 }
-double Spectrum::ftime()
+double Spectrum2::ftime()
 {
 	//auto t1=startTime->now();
 	//std::chrono::time_point<std::chrono::system_clock> tt = std::chrono::system_clock::now();
@@ -3292,7 +2410,7 @@ double Spectrum::ftime()
 	return t5.count();
 }
 
-void Spectrum::startRadio2() 
+void Spectrum2::startRadio2() 
 {
 	//winout("startRadio2 Start sdr %p thread %llx\n",sdr,(long long)std::this_thread::get_id);
 	
@@ -3326,7 +2444,7 @@ void Spectrum::startRadio2()
 }
 
 
-void Spectrum::keyPressed(wxKeyEvent& event) 
+void Spectrum2::keyPressed(wxKeyEvent& event) 
 {
     wxString key;
     long keycode = event.GetKeyCode();
@@ -3349,7 +2467,7 @@ void Spectrum::keyPressed(wxKeyEvent& event)
     
 	event.Skip();
 }
-int Spectrum::doTestSpeed()
+int Spectrum2::doTestSpeed()
 {
     
 	double start,end;
@@ -3375,7 +2493,7 @@ int Spectrum::doTestSpeed()
 
 }
 
-Spectrum::~Spectrum()
+Spectrum2::~Spectrum2()
 {
 	if(m_context)delete m_context;
     
@@ -3391,30 +2509,30 @@ Spectrum::~Spectrum()
     buff1=NULL;
     buff2=NULL;
     buff3=NULL;
-	//winout("exit Spectrum %p\n",this);
+	//winout("exit Spectrum2 %p\n",this);
 
 }
 
-void Spectrum::resized(wxSizeEvent& evt)
+void Spectrum2::resized(wxSizeEvent& evt)
 {
 //	wxGLCanvas::OnSize(evt);
-	//winout("Spectrum::resized %d %d\n",getWidth(),getHeight());
+	//winout("Spectrum2::resized %d %d\n",getWidth(),getHeight());
 	evt.Skip();
 	scaleFactor=GetContentScaleFactor();
 	Refresh();
 }
  
  
-int Spectrum::getWidth()
+int Spectrum2::getWidth()
 {
     return (int)(GetSize().x*scaleFactor);
 }
  
-int Spectrum::getHeight()
+int Spectrum2::getHeight()
 {
     return (int)(GetSize().y*scaleFactor);
 }
-void Spectrum::mouseDown(wxMouseEvent& event) 
+void Spectrum2::mouseDown(wxMouseEvent& event) 
 {
 	extern soundClass *s;
 
@@ -3433,16 +2551,16 @@ void Spectrum::mouseDown(wxMouseEvent& event)
 				sdr->setFrequency(fx);
 			}
 			s->bS=sdr->bS;
-			//winout("Spectrum::mouseDown %p %p\n",s->bS,sdr->bS);
-			gTopPane->Refresh();
+			//winout("Spectrum2::mouseDown %p %p\n",s->bS,sdr->bS);
+			gTopPane2->Refresh();
 		}
 	}else{
-		winout("Spectrum::mouseDown x %d y %d\n",pp3.x,pp3.y);
+		winout("Spectrum2::mouseDown x %d y %d\n",pp3.x,pp3.y);
 	}
 
 }
 
-int Spectrum::ftox(double frequency){
+int Spectrum2::ftox(double frequency){
 
 	int x;
 	
@@ -3450,7 +2568,7 @@ int Spectrum::ftox(double frequency){
 
 	return x;
 }
-void Spectrum::render(wxPaintEvent& evt )
+void Spectrum2::render(wxPaintEvent& evt )
 {
 	if(oscilloscope == 1){
 		render1(evt);	
@@ -3459,11 +2577,11 @@ void Spectrum::render(wxPaintEvent& evt )
 	}
 }
 
-void Spectrum::render1(wxPaintEvent& evt )
+void Spectrum2::render1(wxPaintEvent& evt )
 {
 	evt.Skip();
 	
-	//winout("Spectrum render nc %lld\n",nc++);
+	//winout("Spectrum2 render nc %lld\n",nc++);
 
     if(!IsShown()) return;
     
@@ -3555,10 +2673,10 @@ void Spectrum::render1(wxPaintEvent& evt )
 					buff2[k * 2 + 1] = i;
 					continue;
 				}       
-				if(gBasicPane->sampleDataRotate > 0.0){
+				if(gBasicPane2->sampleDataRotate > 0.0){
 					//fprintf(stderr,"gBasicPane->sampleDataRotate \n");
 					//gBasicPane->sampleDataRotate=0.5;
-					int nn=gBasicPane->sampleDataRotate*(sdr->size-1)+k;
+					int nn=gBasicPane2->sampleDataRotate*(sdr->size-1)+k;
 					if(nn > sdr->size-1){
 						nn -= sdr->size;
 					}
@@ -3610,10 +2728,10 @@ void Spectrum::render1(wxPaintEvent& evt )
 					buff2[k * 2 + 1] = i;
 					continue;
 				}       
-				if(gBasicPane->sampleDataRotate > 0.0){
+				if(gBasicPane2->sampleDataRotate > 0.0){
 					//fprintf(stderr,"gBasicPane->sampleDataRotate \n");
 					//gBasicPane->sampleDataRotate=0.5;
-					int nn=gBasicPane->sampleDataRotate*(sdr->size-1)+k;
+					int nn=gBasicPane2->sampleDataRotate*(sdr->size-1)+k;
 					if(nn > sdr->size-1){
 						nn -= sdr->size;
 					}
@@ -3691,7 +2809,7 @@ void Spectrum::render1(wxPaintEvent& evt )
 		
 		//static long int count1;
 
-		//winout("Spectrum render 1 count %ld amax %g ip %d num %d amax2 %g cosdt %g sindt %g  coso %g sino %g\n",count1++,
+		//winout("Spectrum2 render 1 count %ld amax %g ip %d num %d amax2 %g cosdt %g sindt %g  coso %g sino %g\n",count1++,
 		//       amax,ip,num,amax2,sdr->cosdt,sdr->sindt,sdr->coso,sdr->sino);
 		       			
 		buffFlag=0;
@@ -3835,7 +2953,7 @@ void Spectrum::render1(wxPaintEvent& evt )
 	
 	//static long int count1;
 
-	//winout("Spectrum render 1 count %ld amax %g iWait %d\n",count1++,amax,iWait);
+	//winout("Spectrum2 render 1 count %ld amax %g iWait %d\n",count1++,amax,iWait);
 
 	//fprintf(stderr,"Next 77\n");
 		
@@ -3843,7 +2961,7 @@ void Spectrum::render1(wxPaintEvent& evt )
  
 }
  
-void Spectrum::render2(wxPaintEvent& evt )
+void Spectrum2::render2(wxPaintEvent& evt )
 {
 	evt.Skip();
 	
@@ -3853,7 +2971,7 @@ void Spectrum::render2(wxPaintEvent& evt )
 	tick++;
 	tick=10;
 */
-	//winout("Spectrum render nc %lld\n",nc++);
+	//winout("Spectrum2 render nc %lld\n",nc++);
 
     if(!IsShown()) return;
     
@@ -4070,15 +3188,15 @@ void Spectrum::render2(wxPaintEvent& evt )
 
 	}
 
-	//winout("Spectrum done\n");
+	//winout("Spectrum2 done\n");
 		
 }
 
-void Spectrum::render1a(wxPaintEvent& evt )
+void Spectrum2::render1a(wxPaintEvent& evt )
 {
 	evt.Skip();
 	
-	//winout("Spectrum render nc %lld\n",nc++);
+	//winout("Spectrum2 render nc %lld\n",nc++);
 
     if(!IsShown()) return;
     
@@ -4278,7 +3396,7 @@ void Spectrum::render1a(wxPaintEvent& evt )
 
 	}
 
-	//winout("Spectrum done\n");
+	//winout("Spectrum2 done\n");
 
 	//fprintf(stderr,"Next 77\n");
 		
@@ -4287,7 +3405,6 @@ void Spectrum::render1a(wxPaintEvent& evt )
     
  
 }
-
 
 
 

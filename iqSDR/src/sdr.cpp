@@ -640,6 +640,11 @@ sdrClass::sdrClass()
     deviceString=(char *)"";
     
     audioThreads=1;
+    
+	gBasicPane2=NULL;
+
+    gBasicPane=NULL;
+
       	
 }
 sdrClass::~sdrClass()
@@ -2051,8 +2056,7 @@ int sdrClass::doAudio(float *aBuff,float *wBuff,struct Filters *f)
 		}
 	}
 
-
-	sendAudio(data,length);
+	sendAudio(rx,data,length);
 	
 	bS->pushBuffa(audioOut);
 	
