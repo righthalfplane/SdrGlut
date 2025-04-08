@@ -26,6 +26,13 @@
 
 #include <string.h>
 
+#if __has_include(<hdf/df.h>)
+#include <hdf/df.h>
+#else
+#include <df.h>
+#endif
+
+
 #if !wxUSE_GLCANVAS
     #error "OpenGL required: set wxUSE_GLCANVAS to 1 and rebuild the library"
 #endif
@@ -116,9 +123,75 @@ double rtime(void);
     ID_SETGAIN,
     ID_RXFREQUENCY,
     ID_SWEEP,
+    ID_SWEEPSTOP,
+    ID_XMIN,
+    ID_XMAX,
     ID_FC=ID_RXFREQUENCY+100,
     ID_VIEWSELECTED,
     ID_EXIT,
+};
+
+#define NUM_BUFFERS 5
+
+struct SDS2Dout{
+    char *path;
+    char *name;
+    char *pioName;
+    long ixmax;
+    long iymax;
+    long izmax;
+    double *data;
+    double xmin;
+    double xmax;
+    double ymin;
+    double ymax;
+    double zmin;
+    double zmax;
+    double vmin;
+    double vmax;
+    double time;
+    int type;
+    int n;
+};
+
+struct playSweep{
+    unsigned char start;
+    double reals[2*32768*2];
+    double imags[2*32768*2];
+    double data[2*32768*2];
+
+    int samplerate;
+
+	double fc;
+
+    int channel;
+    int size; 
+
+    volatile int frame;
+
+ 	int ncut;
+
+ 	double aminGlobal3;
+
+ 	int FFTfilter;
+	
+	long FFTcount;
+	float *sweepBuff;
+	double sweepLower;
+	double sweepUpper;
+	double sweepLower2;
+	double sweepUpper2;
+	double sweepSize;
+	double crop;
+	int sweepFound;
+	int sweep;
+	FILE *out;
+	char *s2dName;
+	double *buffout;
+
+	
+ 	unsigned char end;
+  	double junk22;
 };
 
 
@@ -900,6 +973,8 @@ public:
 	
 	volatile int iWait; 
 	
+	long int nrow;
+	
 	volatile int softAutoGain;
 	
 	volatile int oscilloscope;
@@ -907,6 +982,8 @@ public:
 	TopPane2 *gTopPane2;
 	
 	BasicPane2 *gBasicPane2;
+	
+	Sweep *gSweep;
 	
 	double lineAlpha;
 	
@@ -974,6 +1051,8 @@ public:
 	 
 	volatile int iWait; 
 	
+	long int nrow;
+	
 	struct WaterFall4 water;
 	
 	struct paletteDraw pd;
@@ -989,6 +1068,9 @@ public:
 	
 	BasicPane2 *gBasicPane2;
 	
+	Sweep *gSweep;
+
+	
 	class sdrClass *sdr;
 	
 	void startRadio2();
@@ -1000,6 +1082,8 @@ public:
 	int SetWindow();
     int FloatToImage(float *d,long length,struct paletteDraw *pd,unsigned char *bp);
 	void render(wxPaintEvent& evt);
+	void render1(wxPaintEvent& evt);
+	void render2(wxPaintEvent& evt);
 	void prepare3DViewport(int topleft_x, int topleft_y, int bottomrigth_x, int bottomrigth_y);
 	//void prepare2DViewport(int topleft_x, int topleft_y, int bottomrigth_x, int bottomrigth_y);
 	void InitOpenGl();
@@ -1114,6 +1198,15 @@ public:
 	wxTextCtrl *rangeMin;
 	
 	wxTextCtrl *rangeMax;
+	
+	wxTextCtrl *sweepLower;
+	wxTextCtrl *sweepUpper;
+	wxTextCtrl *sweepSize;
+	wxTextCtrl *sweepCrop;
+	wxButton   *sweepButton;
+	wxButton   *stopButton;
+	wxTextCtrl *sweepXmin;
+	wxTextCtrl *sweepXmax;
 		
 	wxDataViewListCtrl *listctrlFreq;
 	
@@ -1194,11 +1287,14 @@ public:
     void OnBandSelected(wxCommandEvent& event);
     void OnSampleRateSelected(wxCommandEvent& event);
     void OnChar(wxKeyEvent& event);
+    
 
 
 	WaterFall2 *gWaterFall2;
 	
 	BasicPane2 *gBasicPane2;
+	
+	Spectrum2 *gSpectrum2;
 
 	wxMenu *actionMenu;
 	
@@ -1217,6 +1313,23 @@ public:
 	int SampleFrequency;
 	
     wxGridBagSizer*     m_gbs;
+    
+    int updateSweep1(double fmins,double fmaxs);
+    int updateSweep2(double fmins,double fmaxs,int pass);
+    int sweepRadio();
+    int fftIndex(double frequency);
+
+
+    struct playSweep rxs;	
+	struct playSweep *rx;
+	volatile int threadexit;
+	double *magnitude2;
+	long int FFTlength;
+	struct SDS2Dout sdsout;
+	double lineTime;
+	double lineDumpInterval;
+	
+	
 
 private:
     wxPanel*            m_panel;
@@ -1230,6 +1343,14 @@ private:
 
     wxDECLARE_EVENT_TABLE();
 };
+
+#define DATA_TYPE_DOUBLE 	0
+#define DATA_TYPE_FLOAT  	1
+#define DATA_TYPE_BYTE   	2
+#define DATA_TYPE_DOUBLE_3D 3
+#define DATA_TYPE_FLOAT_3D  4
+
+
 
 
 #endif

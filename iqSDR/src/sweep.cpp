@@ -3,6 +3,7 @@
 #include <string.h>
 #include <vector>
 #include <string>
+#include <time.h>
 
 void winout(const char *fmt, ...);
 
@@ -14,11 +15,24 @@ void checkall(void);
 
 extern StartWindow *startIt;
 
+extern char WarningBuff[256];
+
 extern soundClass *s;
 
 extern std::string ProgramVersion;
 
 static std::vector<Sweep *> grabList;
+
+int fft(double *data,int nn,int isign);
+int doFFT2(double *x,double *y,long length,int direction);
+int doWindow(double *x,double *y,long length,int type);
+int writesds(struct SDS2Dout *sdsout);
+static int writesds2dFloat(struct SDS2Dout *sdsout);
+static int writesds2dBytes(struct SDS2Dout *sdsout);
+static int writesds2dDouble(struct SDS2Dout *sdsout);
+static int writesds3dFloat(struct SDS2Dout *sdsout);
+static int writesds3dDouble(struct SDS2Dout *sdsout);
+int Warning(char *mess);
 
 BasicPane2 *pBasicPane2;
 Spectrum2 *pSpectrum2;
@@ -186,7 +200,7 @@ Sweep::Sweep(wxFrame* parent,wxString title,class sdrClass *sdrIn)
  	
  /*
 
-    sdr->rx->device->writeSetting("direct_samp",value);
+    sdr->device->writeSetting("direct_samp",value);
  */
 
     wxMenuBar *menuBar = new wxMenuBar();
@@ -230,7 +244,13 @@ Sweep::Sweep(wxFrame* parent,wxString title,class sdrClass *sdrIn)
     
     gBasicPane2=pBasicPane2;
     
+    gSpectrum2=pSpectrum2;
+    
     pBasicPane2->gSweep=this;
+    
+    pSpectrum2->gSweep=this;
+    
+    pWaterFall2->gSweep=this;
 
     m_gbs->AddGrowableCol(1);
     m_gbs->AddGrowableCol(2);
@@ -244,8 +264,390 @@ Sweep::Sweep(wxFrame* parent,wxString title,class sdrClass *sdrIn)
 
     pSpectrum2->iWait=1;
 
- 
+	rx=&rxs;
+	zerol((unsigned char *)&rxs,(&rxs.end-&rxs.start)+1);
+	threadexit=0;
+	FFTlength=32768;
+	rx->FFTcount=4096;
+	
+	magnitude2=(double *)cMalloc(FFTlength*sizeof(double),9854);
+	if(!magnitude2){
+		winout("Error magnitude2\n");
+		return;
+	}
+	
+	zerol((char *)&sdsout,sizeof(struct SDS2Dout));
+
+    lineDumpInterval=0.1;
+    lineTime=rtime()+lineDumpInterval;
+
     //frame7->Show();
+}
+
+#ifdef _MSC_VER
+struct tm *localtime_r (const time_t *timer, struct tm *result)
+{
+    struct tm *local_result = localtime (timer);
+    if (local_result == NULL || result == NULL) return NULL;
+    memcpy (result, local_result, sizeof (struct tm));
+    return result;
+}
+#endif
+
+int Sweep::sweepRadio()
+{
+
+	gSpectrum2->iWait=1;
+	
+	mprint("sweepLower %g MHZ sweepUpper %g MHZ sweepSize %g crop %g\n",rx->sweepLower,rx->sweepUpper,rx->sweepSize,rx->crop);
+	
+	rx->sweepLower *= 1e6;
+	
+	rx->sweepUpper *= 1e6;
+	
+	double rateSave=sdr->device->getSampleRate(SOAPY_SDR_RX, rx->channel);
+	
+	double fw=sdr->fw;
+	double fc=sdr->fc;
+	double samplewidth=sdr->samplewidth;
+	
+	sdr->setSampleWidth(rx->samplerate);
+	
+		
+	double rate=sdr->device->getSampleRate(SOAPY_SDR_RX, rx->channel);
+	
+	rx->samplerate=rate;
+	
+	int saveLength=sdr->saveLength;
+	sdr->setDataSave(rx->FFTcount);
+	
+	double lower=  1e33;
+	double upper= -1e33;
+	
+	for(double n=rx->sweepLower;n<=rx->sweepUpper;n += rx->samplerate*(1.0-rx->crop)){
+		double fc,fmins,fmaxs;
+		fc=n+rx->samplerate*0.5*(1.0-rx->crop);
+		fmins=fc-rx->samplerate*0.5*(1.0-rx->crop);
+		fmaxs=fc+rx->samplerate*0.5*(1.0-rx->crop);
+		if(fmins < lower)lower=fmins;
+		if(fmaxs > upper)upper=fmaxs;
+	}	
+	
+	rx->sweepLower2=lower;
+	rx->sweepUpper2=upper;
+	
+	
+	int counts=0;
+	for(double n=rx->sweepLower2;n<=rx->sweepUpper2;n += rx->sweepSize){
+		++counts;
+	}
+	
+	mprint("steps %g counts %d\n",(upper-lower)/rx->sweepSize,counts);
+	
+
+	mprint("sweep Steps %d lower %g upper %g \n",counts,lower,upper);
+	
+	rx->sweepBuff=(float *)cMalloc(2*(counts+10)*sizeof(float),5790);
+	if(!rx->sweepBuff){
+		mprint("56 cMalloc Errror %ld\n",(long)(2*(counts+10)*sizeof(float)));
+		sdr->setDataSave(saveLength);
+		return 1;
+	}
+
+	zerol((char *)rx->sweepBuff,2*(counts+10)*sizeof(float));
+  
+	rx->ncut=sdr->ncut;
+	
+	int size=(int)rate/rx->ncut;
+
+	rx->size=size;
+
+	mprint("rate %f rx->size %d\n",rate,rx->size);
+	
+	//rx->cs->setBuff(rx);
+
+
+	rx->frame=0;
+	
+//	rx->doWhat=Work;
+	
+	sdr->iWait=0;
+	
+	Sleep2(100);
+
+	std::vector<float> db;
+	std::vector<std::vector<float>> list;
+	list.clear();
+	
+	
+	sdr->device->setFrequency(SOAPY_SDR_RX,rx->channel,"RF",lower);
+	
+	int itWas=-1;
+	int pass2=0;
+	while(1){
+		if(itWas != sdr->witch){
+			itWas=sdr->witch;
+			if(pass2++ >= 11)break;
+		}else{
+			Sleep2(5);
+		}
+	}
+
+	itWas=-1;
+	int pass=0;
+	threadexit=0;
+  	while(!threadexit){	
+		char t_str[50];
+		time_t time_now;
+		struct tm cal_time = {0};
+		time_now = time(NULL);
+		mprint("sweep %d\n",pass++);
+		for(double n=rx->sweepLower;n<=rx->sweepUpper;n += rx->samplerate*(1.0-rx->crop)){
+			localtime_r(&time_now, &cal_time);
+		    strftime(t_str, 50, "%Y-%m-%d, %H:%M:%S,", &cal_time);
+			double fc,fmins,fmaxs;
+			fc=n+rx->samplerate*0.5*(1.0-rx->crop);
+			fmins=fc-rx->samplerate*0.5*(1.0-rx->crop);
+			fmaxs=fc+rx->samplerate*0.5*(1.0-rx->crop);
+		    mprint("fc %g fmins %g fmaxs %g\n",fc/1e6,fmins/1e6,fmaxs/1e6);
+		    if(fmins < lower)lower=fmins;
+		    if(fmaxs > upper)upper=fmaxs;
+			rx->fc=fc;
+			sdr->device->setFrequency(SOAPY_SDR_RX,rx->channel,"RF",rx->fc);
+			Sleep2(100);
+			rx->aminGlobal3=0;
+			int pass2=0;
+			db.clear();
+			zerol((char *)magnitude2,FFTlength*sizeof(double));
+			while(1){
+				if(itWas != sdr->witch){
+					itWas=sdr->witch;
+				    if(sdr->retFlag <= 0){
+				        fprintf(stderr,"Skip Bad Read Data\n");
+				        continue;
+				    }
+					updateSweep1(fmins,fmaxs);
+					if(pass2++ >= 10)break;
+				}else{
+					Sleep2(5);
+				}
+			}
+			//if(fc > 769e6 && fc < 771e6)zerol((char *)magnitude2,FFTlength*sizeof(double));
+			updateSweep2(fmins,fmaxs,pass2);
+			if(rx->out){
+			    //fprintf(stderr,"rx->sweepFound %d\n",rx->sweepFound);
+			    fprintf(rx->out,"%s ",t_str);
+			    fprintf(rx->out," %.0f, %.0f, %.2f, %.0f,",fmins,fmaxs,rx->sweepSize,(double)rx->samplerate/(double)rx->ncut);
+			    for(int n=0;n<rx->sweepFound;++n){
+			        fprintf(rx->out," %.2f, ",rx->sweepBuff[n]);
+			        db.push_back(rx->sweepBuff[n]);
+			    }
+			    fprintf(rx->out,"\n");
+			    list.push_back(db);
+			}else{
+			    for(int n=0;n<rx->sweepFound;++n){
+			        db.push_back(rx->sweepBuff[n]);
+			    }
+			    list.push_back(db);			
+			}
+
+		}
+ 	    mprint("\n");
+		
+   	}      
+    //rx->doWhat=Wait;
+    
+    sdr->iWait=1;
+  
+    rx->frame=-1;
+
+	if(rx->sweepBuff)cFree((char *)rx->sweepBuff);
+	
+	rx->buffout=NULL;
+
+	if(list.size() > 0){
+		long ysize=list.size();
+		long xsize=0;
+		for(int nl=0;nl<ysize;++nl){
+		   // fprintf(stderr,"size %ld\n",(long)list[nl].size());
+			if(list[nl].size() > xsize)xsize=(long)list[nl].size();
+		}
+		
+		int shift=ysize/pass;
+		
+		fprintf(stderr,"xsize %ld ysize %ld pass %d shift %d\n",xsize,ysize,pass,shift);
+		
+		rx->buffout=(double *)cMalloc(xsize*ysize*sizeof(double),7777);
+		if(!rx->buffout){
+			fprintf(stderr,"Out of Memory\n");
+			sdr->setDataSave(saveLength);
+			return 1;
+		}
+		
+		double xmin=1e33;
+		double xmax=-1e33;
+		
+		int xsizel=xsize*shift;
+		int ysizel=ysize/shift;
+		int ny,nx;
+		
+		nx=0;
+		ny=0;
+		for(int nl=0;nl<ysize;++nl){
+		  //  fprintf(stderr,"size %ld\n",(long)list[nl].size());
+			for(int nc=0;nc<xsize;++nc){
+				double f;
+				if(nc == 0)f=0.0;
+				if(nc < list[nl].size()){
+					f=list[nl][nc];
+				}
+				rx->buffout[nx++ +ny*xsizel]=f;				
+				if(f > xmax)xmax=f;
+				if(f < xmin)xmin=f;
+			}
+			if(nx >= xsizel){
+			    nx=0;
+			    ny++;
+			}
+		}
+
+		sdsout.path=(char *)"sweepFile.s2d";
+		//sdsout.path=rx->s2dName;
+		sdsout.name=(char *)"Power Sweep";
+		sdsout.ixmax=xsizel;
+		sdsout.iymax=ysizel;
+		sdsout.xmin=lower;
+		sdsout.xmax=upper;
+		sdsout.ymin=0;
+		sdsout.ymax=ysizel;
+		sdsout.zmin=0;
+		sdsout.zmax=0;
+		sdsout.time=0.0;
+		sdsout.n=0;
+		sdsout.pioName=(char *)"Power(db)";	
+		sdsout.type=DATA_TYPE_FLOAT;	
+		if(sdsout.data)cFree((char *)sdsout.data);
+		sdsout.data=rx->buffout;
+			
+		if(writesds(&sdsout))goto OutOfHere;
+
+	}
+ 	
+	
+OutOfHere:
+
+	sdr->setDataSave(saveLength);
+	sdr->setSampleWidth(rateSave);
+    sdr->fw=fw;
+    sdr->samplewidth=samplewidth;
+    sdr->setFrequencyFC(fc);
+    gSpectrum2->iWait=0;
+
+    //sdr->iWait=0;
+
+	//if(buffout)cFree((char *)buffout);
+	
+	return 0;
+}
+
+int Sweep::updateSweep1(double fmins,double fmaxs)
+{
+    double *real,*imag;
+    double amin,amax,v;
+    
+    if(!rx)return 0;
+    
+    if(rx->FFTcount > FFTlength){
+        fprintf(stderr," FFTlength %ld\n",FFTlength);
+        return 1;
+    }
+    
+    int length=rx->FFTcount;
+    
+    for(int k=0;k<length;++k){
+        rx->reals[k]=sdr->saveBuff[2*k];
+        rx->imags[k]=sdr->saveBuff[2*k+1];
+    }
+
+    real=rx->reals;
+    imag=rx->imags;
+    
+     
+    doWindow(real,imag,length,rx->FFTfilter);
+    
+    double *data=rx->data;
+    
+    for(int n=0;n<length;++n){
+        data[2*n]=real[n]*pow(-1.0,n);
+        data[2*n+1]=imag[n]*pow(-1.0,n);
+    }
+        
+    fft(data,(int)length,1);
+
+       
+    amin =  1e33;
+    amax = -1e33;
+
+    
+     for(int n=0;n<length;++n){
+        v=(data[2*n]*data[2*n]+data[2*n+1]*data[2*n+1]);
+        //if(v > 0.0)v=10*log10(v);
+        magnitude2[length-n-1] += v;
+        if(v < amin)amin=v;
+        if(v > amax)amax=v;
+    }
+    
+   // fprintf(stderr,"fmins %g fmaxs %g amin %g amax %g\n",fmins/1e6,fmaxs/1e6,amin,amax);
+     
+    
+    return 0;
+}
+int Sweep::updateSweep2(double fmins,double fmaxs,int pass)
+{
+    
+    if(!rx)return 0;
+    
+    rx->sweepFound=0;
+	int counts=0;
+	for(double n=rx->sweepLower2;n<=rx->sweepUpper2;n += rx->sweepSize){
+	    double ff=n+0.5*rx->sweepSize;
+		++counts;
+		if(ff < fmins || ff > fmaxs){
+			//fprintf(stderr,"skip - ff %g fmins %g fmaxs %g \n",ff/1e6,fmins/1e6,fmaxs/1e6);
+			continue;
+		}
+		
+		int n1=fftIndex(ff-0.5*rx->sweepSize);
+		int n2=fftIndex(ff+0.5*rx->sweepSize);
+		//if(n1 == rx->FFTcount/2 || n2 == rx->FFTcount/2)continue;
+		if(n1 < 0 || n2 < 0){
+			fprintf(stderr,"skip - ff %g fc %g samplerate %d n1 %d n2 %d\n",ff/1e6,rx->fc/1e6,rx->samplerate,n1,n2);
+		    continue;
+		}
+		double maxs=0.0;
+		int nv=0;
+		for(int m=n1;m<=n2;++m){
+ 	    	maxs += magnitude2[m];
+ 			++nv;
+ 		}
+ 		
+ 		maxs=maxs/((double)pass*nv);
+ 		if(maxs > 0.0)maxs=10*log10(maxs); 		
+		rx->sweepBuff[rx->sweepFound++]=maxs;
+		//fprintf(stderr,"%g %g n1 %d n2 %d maxs %g\n",n,ff/1e6,n1,n2,maxs);
+		//fprintf(stderr,"ff %g maxs %g rx->sweepFound %d pass*nv %d n1 %d n2 %d\n",ff/1e6,maxs,rx->sweepFound,pass*nv,n1,n2);
+	}
+	
+	return 0;
+}
+int Sweep::fftIndex(double frequency)
+{
+    if(!rx)return -1;
+    double fac=((frequency - rx->fc)+0.5*rx->samplerate)/((double)rx->samplerate);
+    int index=(int)((rx->FFTcount-1)*fac);
+    if(index >= 0 && index < rx->FFTcount)return index;
+    fprintf(stderr,"frequency %g fc %g index %d %g\n",frequency/1e6,rx->fc,index,fac);
+    return -1;
 }
 
 void Sweep::OnSampleRateSelected(wxCommandEvent& event)
@@ -468,6 +870,12 @@ void TopPane2::OnChar(wxKeyEvent& event)
      //   winout("iWait %d\n",iWait);
     }
 	
+    if(keycode == 's'){
+        gSpectrum2->iFreeze = 1;
+        gSpectrum2->iHaveData=0;
+     //   winout("iWait %d\n",iWait);
+    }
+	
 
     if(keycode == 'n'){
         sdr->iWait = !sdr->iWait;
@@ -584,7 +992,7 @@ void TopPane2::mouseDown(wxMouseEvent& event)
 		}else{
 			fl -= value;
 		}
-		
+		//fprintf(stderr,"fl %lld\n",fl);
 		if(idoFC){
 			sdr->setFrequencyFC((double)fl);
 		}else{
@@ -676,6 +1084,10 @@ EVT_COMBOBOX(ID_COMBOSAMPLERATE,BasicPane2::OnComboSampleRate)
 EVT_COMBOBOX(ID_COMBOBANDWIDTH,BasicPane2::setBandwidth)
 //EVT_TEXT(ID_COMBOSAMPLERATE, BasicPane2::OnText)
 EVT_TEXT_ENTER(ID_COMBOSAMPLERATE, BasicPane2::OnText)
+//EVT_TEXT(ID_XMIN, BasicPane2::OnText)
+EVT_TEXT_ENTER(ID_XMIN, BasicPane2::OnText)
+//EVT_TEXT(ID_XMAX, BasicPane2::OnText)
+EVT_TEXT_ENTER(ID_XMAX, BasicPane2::OnText)
 EVT_TEXT_ENTER(ID_COMBOBANDWIDTH, BasicPane2::OnTextBandWidth)
 EVT_BUTTON(ID_COMBOBUTTON, BasicPane2::setSampleRate)
 EVT_SIZE(BasicPane2::resized)
@@ -693,6 +1105,8 @@ EVT_CHECKBOX(ID_SETGAIN,BasicPane2::OnCheckAuto)
 EVT_BUTTON(ID_STARTSEND, BasicPane2::startSend)
 EVT_BUTTON(ID_STOPSEND, BasicPane2::stopSend)
 EVT_BUTTON(ID_ALPHA, BasicPane2::stopSend)
+EVT_BUTTON(ID_SWEEP, BasicPane2::stopSend)
+EVT_BUTTON(ID_SWEEPSTOP, BasicPane2::stopSend)
 EVT_DATAVIEW_ITEM_ACTIVATED(ID_VIEWSELECTED, BasicPane2::OnViewSelected)
 EVT_DATAVIEW_SELECTION_CHANGED(ID_VIEWSELECTED, BasicPane2::OnViewSelected)
 END_EVENT_TABLE()
@@ -770,6 +1184,42 @@ void BasicPane2::stopSend(wxCommandEvent& event)
 		//winout("UsePlotScales %d sPmin %g sPmax %g\n",gWaterFall2->pd.UsePlotScales,gWaterFall2->pd.sPmin,gWaterFall2->pd.sPmax);
 			
 		return;
+	}else if(event.GetId() == ID_SWEEP){
+	
+		wxString value=sweepLower->GetValue();
+	
+		const char *alpha=value;
+
+		gSweep->rx->sweepLower=atof(alpha);
+
+		value=sweepUpper->GetValue();
+	
+		alpha=value;
+
+		gSweep->rx->sweepUpper=atof(alpha);
+
+		value=sweepSize->GetValue();
+	
+		alpha=value;
+
+		gSweep->rx->sweepSize=atof(alpha);
+
+		value=sweepCrop->GetValue();
+	
+		alpha=value;
+
+		gSweep->rx->crop=atof(alpha);
+	
+		winout("ID_SWEEP %g %g %g %g\n",gSweep->rx->sweepLower,gSweep->rx->sweepUpper,gSweep->rx->sweepSize,gSweep->rx->crop);
+		
+		//gSweep->sweepRadio();
+		
+		std::thread(&Sweep::sweepRadio,gSweep).detach();
+		
+		return;
+	}else if(event.GetId() == ID_SWEEPSTOP){
+		winout("Stop at End of Sweep Pass\n");
+		gSweep->threadexit=1;
 	}
 	
 	sendFlag=0;
@@ -797,13 +1247,53 @@ int BasicPane2::SetScrolledWindow()
  	
 	int yloc=0;
 
-	wxStaticBox *box = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Set Volume ",wxPoint(20,yloc), wxSize(230, 80),wxBORDER_SUNKEN );
-	box->SetToolTip(wxT("Set Volume") );
-
-	new wxSlider(box,SCROLL_GAIN,100,0,100,wxPoint(10,15),wxSize(210,30),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
-
-	yloc += 85;   
+	wxStaticBox *box=NULL;
 	
+	if(!scrolledWindowFlag){
+		box = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Set Volume ",wxPoint(20,yloc), wxSize(230, 80),wxBORDER_SUNKEN );
+		box->SetToolTip(wxT("Set Volume") );
+
+		new wxSlider(box,SCROLL_GAIN,100,0,100,wxPoint(10,15),wxSize(210,30),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
+
+		yloc += 85;   
+	}else{
+	    wxStaticBox *box2 = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Sweep Lower",wxPoint(10,yloc), wxSize(110, 75),wxBORDER_SUNKEN );
+    	    sweepLower=new wxTextCtrl(box2,ID_TEXTCTRL,wxT("80"),
+          	wxPoint(5,15), wxSize(100, 30));
+
+	    box2 = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Sweep Upper",wxPoint(135,yloc), wxSize(110, 75),wxBORDER_SUNKEN );
+    	    sweepUpper=new wxTextCtrl(box2,ID_TEXTCTRL,wxT("108"),
+          	wxPoint(5,15), wxSize(100, 30));
+		    yloc += 85;   
+
+	    box2 = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Sweep Size",wxPoint(10,yloc), wxSize(110, 75),wxBORDER_SUNKEN );
+    	    sweepSize=new wxTextCtrl(box2,ID_TEXTCTRL,wxT("5000"),
+          	wxPoint(5,15), wxSize(100, 30));
+		    
+	    box2 = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Sweep Crop",wxPoint(135,yloc), wxSize(110, 75),wxBORDER_SUNKEN );
+    	    sweepCrop=new wxTextCtrl(box2,ID_TEXTCTRL,wxT("0"),
+          	wxPoint(5,15), wxSize(100, 30));
+		    yloc += 85;   
+		    
+	    box2 = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Sweep xmin",wxPoint(10,yloc), wxSize(110, 75),wxBORDER_SUNKEN );
+    	    sweepXmin=new wxTextCtrl(box2,ID_XMIN,wxT("80"),
+          	wxPoint(5,15), wxSize(100, 30));
+          	sweepXmin->SetWindowStyle(wxTE_PROCESS_ENTER);
+
+		    
+	    box2 = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Sweep xmax",wxPoint(135,yloc), wxSize(110, 75),wxBORDER_SUNKEN );
+    	    sweepXmax=new wxTextCtrl(box2,ID_XMAX,wxT("120"),
+          	wxPoint(5,15), wxSize(100, 30));
+          	sweepXmax->SetWindowStyle(wxTE_PROCESS_ENTER);
+		    yloc += 85;   
+		    
+		    sweepButton=new wxButton(ScrolledWindow,ID_SWEEP,wxT("Start"),wxPoint(20,yloc));
+		    
+		    stopButton=new wxButton(ScrolledWindow,ID_SWEEPSTOP,wxT("Stop"),wxPoint(120,yloc));
+		    		    
+		    yloc += 25;   
+
+	}
 	wxCheckBox *cbox;
 	if(sdr->hasGainMode){
 		cbox=new wxCheckBox(ScrolledWindow,ID_CHECKAUTO, "&Hardware AGC",wxPoint(20,yloc), wxSize(230, 25));
@@ -811,9 +1301,11 @@ int BasicPane2::SetScrolledWindow()
 		yloc += 25;   
 	}
 	
-	cbox=new wxCheckBox(ScrolledWindow,ID_SWAPIQ, "&I/Q Swap",wxPoint(20,yloc), wxSize(100, 25));
+	cbox=new wxCheckBox(ScrolledWindow,ID_SWAPIQ, "&I/Q Swap",wxPoint(20,yloc), wxSize(90, 25));
 	cbox->SetValue(0);	
-	cbox=new wxCheckBox(ScrolledWindow,ID_OSCILLOSCOPE, "&Oscilloscope",wxPoint(120,yloc), wxSize(120, 25));
+	
+	
+	cbox=new wxCheckBox(ScrolledWindow,ID_OSCILLOSCOPE, "&Frequency Sweep",wxPoint(110,yloc), wxSize(130, 25));
 	cbox->SetValue(scrolledWindowFlag);	
 	yloc += 25;   
 
@@ -850,8 +1342,6 @@ int BasicPane2::SetScrolledWindow()
 	new wxSlider(box,ID_ROTATEDATA,200,0,200,wxPoint(10,15),wxSize(210,-1),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
 
 	yloc += 85;   
-	
-	
 	
 	box = new wxStaticBox(ScrolledWindow, wxID_ANY, "Minimum Value ",wxPoint(20,yloc), wxSize(230, 80),wxBORDER_SUNKEN );
 	box->SetToolTip(wxT("This is tool tip") );
@@ -930,20 +1420,22 @@ int BasicPane2::SetScrolledWindow()
 
 	}
 	
- 	wxPanel *panel1 = new wxPanel(ScrolledWindow,wxID_ANY, wxPoint(20,yloc), wxSize(230, 200),wxBORDER_SUNKEN | wxFULL_REPAINT_ON_RESIZE,wxT("Control2"));
+	if(!scrolledWindowFlag){
 	
-	     wxString computers1[] =
-      { "AM", "NAM","FM","NBFM","USB","LSB","CW" };
+		wxPanel *panel1 = new wxPanel(ScrolledWindow,wxID_ANY, wxPoint(20,yloc), wxSize(230, 200),wxBORDER_SUNKEN | wxFULL_REPAINT_ON_RESIZE,wxT("Control2"));
+	
+			 wxString computers1[] =
+		  { "AM", "NAM","FM","NBFM","USB","LSB","CW" };
 	
 	
-	modeBox=new wxRadioBox(panel1, ID_RADIOBOX,
-		"Choose Mode", wxPoint(20,10), wxDefaultSize,
-		 7, computers1, 0, wxRA_SPECIFY_ROWS);
+		modeBox=new wxRadioBox(panel1, ID_RADIOBOX,
+			"Choose Mode", wxPoint(20,10), wxDefaultSize,
+			 7, computers1, 0, wxRA_SPECIFY_ROWS);
 		 
-	modeBox->SetSelection(sdr->decodemode);
+		modeBox->SetSelection(sdr->decodemode);
 
-	yloc += 205;
-	
+		yloc += 205;
+	}
   	
  	wxPanel *panel2 = new wxPanel(ScrolledWindow,wxID_ANY, wxPoint(20,yloc), wxSize(230, 100),wxBORDER_SUNKEN | wxFULL_REPAINT_ON_RESIZE,wxT("Control2"));
 	panel2->SetToolTip(wxT("This is tool tip2") );
@@ -1001,79 +1493,83 @@ int BasicPane2::SetScrolledWindow()
 
     yloc += 110;
     
+	if(!scrolledWindowFlag){
+		   wxPanel *panel3 = new wxPanel(ScrolledWindow,wxID_ANY, wxPoint(20,yloc), wxSize(230, 270),wxBORDER_SUNKEN | wxFULL_REPAINT_ON_RESIZE,wxT("Control2"));
 
-       wxPanel *panel3 = new wxPanel(ScrolledWindow,wxID_ANY, wxPoint(20,yloc), wxSize(230, 270),wxBORDER_SUNKEN | wxFULL_REPAINT_ON_RESIZE,wxT("Control2"));
-
-      wxString computers2[] =
-      { "Float", "Short int","Signed char","Unsigned char" };
-      
-	  sendTypeBox=new wxRadioBox(panel3, ID_DATATYPE,
-		"Data Type", wxPoint(2,10), wxSize(120, 140),
-		 4, computers2, 0, wxRA_SPECIFY_ROWS);
+		  wxString computers2[] =
+		  { "Float", "Short int","Signed char","Unsigned char" };
+	  
+		  sendTypeBox=new wxRadioBox(panel3, ID_DATATYPE,
+			"Data Type", wxPoint(2,10), wxSize(120, 140),
+			 4, computers2, 0, wxRA_SPECIFY_ROWS);
 		 
-	sendTypeBox->SetSelection(1);
+		sendTypeBox->SetSelection(1);
 
-      wxString computers3[] =
-      { "Listen","TCP/IP","UDP","Speakers","Pipe" };
-      
-	  sendModeBox=new wxRadioBox(panel3, ID_DATAMODE,
-		"Send Mode", wxPoint(125,10), wxSize(120, 140),
-		 5, computers3, 0, wxRA_SPECIFY_ROWS);
+		  wxString computers3[] =
+		  { "Listen","TCP/IP","UDP","Speakers","Pipe" };
+	  
+		  sendModeBox=new wxRadioBox(panel3, ID_DATAMODE,
+			"Send Mode", wxPoint(125,10), wxSize(120, 140),
+			 5, computers3, 0, wxRA_SPECIFY_ROWS);
 		 
-	sendModeBox->SetSelection(1);
+		sendModeBox->SetSelection(1);
 	
-	wxStaticBox *box22 = new wxStaticBox(panel3, wxID_ANY, "&Net-Address",wxPoint(15,170), wxSize(210, 60),wxBORDER_SUNKEN );
+		wxStaticBox *box22 = new wxStaticBox(panel3, wxID_ANY, "&Net-Address",wxPoint(15,170), wxSize(210, 60),wxBORDER_SUNKEN );
 
-    sendAddress=new wxTextCtrl(box22,ID_TEXTCTRL,wxT("192.168.1.3:3500"),
-          wxPoint(5,15), wxSize(190, 30));
+		sendAddress=new wxTextCtrl(box22,ID_TEXTCTRL,wxT("192.168.1.3:3500"),
+			  wxPoint(5,15), wxSize(190, 30));
 
-  	new wxButton(panel3,ID_STARTSEND,wxT("Start"),wxPoint(20,235));
-  	
-  	new wxButton(panel3,ID_STOPSEND,wxT("Stop"),wxPoint(140,235));
-
- 	yloc += 285;
+		new wxButton(panel3,ID_STARTSEND,wxT("Start"),wxPoint(20,235));
 	
-	wxStaticBox *box33 = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Alpha",wxPoint(20,yloc), wxSize(225, 220),wxBORDER_SUNKEN );
-	box33->SetToolTip(wxT("Click Apply To Activate") );
+		new wxButton(panel3,ID_STOPSEND,wxT("Stop"),wxPoint(140,235));
 
-    textAlpha=new wxTextCtrl(box33,ID_TEXTCTRL,wxT("0.1"),
-          wxPoint(5,15), wxSize(220, 30));
-	textAlpha->SetToolTip(wxT("Click Apply To Activate") );
-          
-    cbox=new wxCheckBox(box33,ID_SETGAIN, "&Power Range",wxPoint(20,50), wxSize(230, 25));
-	cbox->SetValue(0);	
-
-
-	new wxStaticText(box33,wxID_STATIC,wxT("pmin:"),wxPoint(20,94), wxSize(50, 30),wxALIGN_LEFT);
-
-          
-    rangeMin=new wxTextCtrl(box33,ID_TEXTCTRL,wxT("-120"),
-          wxPoint(75,90), wxSize(100, 30));
-          
-  	new wxStaticText(box33,wxID_STATIC,wxT("pmax:"),wxPoint(20,124), wxSize(50, 30),wxALIGN_LEFT);
-        
-          
-    rangeMax=new wxTextCtrl(box33,ID_TEXTCTRL,wxT("-30"),
-          wxPoint(75,120), wxSize(100, 30));
-          
-    
-  	new wxButton(box33,ID_ALPHA,wxT("Apply"),wxPoint(10,160));
+		yloc += 285;
+ 	}
 	
-	yloc += 210;
+	if(!scrolledWindowFlag){
+		wxStaticBox *box33 = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Alpha",wxPoint(20,yloc), wxSize(225, 220),wxBORDER_SUNKEN );
+		box33->SetToolTip(wxT("Click Apply To Activate") );
+
+		textAlpha=new wxTextCtrl(box33,ID_TEXTCTRL,wxT("0.1"),
+			  wxPoint(5,15), wxSize(220, 30));
+		textAlpha->SetToolTip(wxT("Click Apply To Activate") );
+		  
+		cbox=new wxCheckBox(box33,ID_SETGAIN, "&Power Range",wxPoint(20,50), wxSize(230, 25));
+		cbox->SetValue(0);	
+
+
+		new wxStaticText(box33,wxID_STATIC,wxT("pmin:"),wxPoint(20,94), wxSize(50, 30),wxALIGN_LEFT);
+
+		  
+		rangeMin=new wxTextCtrl(box33,ID_TEXTCTRL,wxT("-120"),
+			  wxPoint(75,90), wxSize(100, 30));
+		  
+		new wxStaticText(box33,wxID_STATIC,wxT("pmax:"),wxPoint(20,124), wxSize(50, 30),wxALIGN_LEFT);
+		
+		  
+		rangeMax=new wxTextCtrl(box33,ID_TEXTCTRL,wxT("-30"),
+			  wxPoint(75,120), wxSize(100, 30));
+		  
 	
-	listctrlFreq = new wxDataViewListCtrl( ScrolledWindow, ID_VIEWSELECTED,wxPoint(20,yloc),wxSize(225, 190));
-	listctrlFreq->AppendTextColumn( "Channel" );
-	listctrlFreq->AppendTextColumn( "Freq" );
+		new wxButton(box33,ID_ALPHA,wxT("Apply"),wxPoint(10,160));
 	
-	wxVector<wxVariant> data;
-	for(unsigned int n=0;n<sizeof(computers31)/sizeof(wxString);++n){
-		data.clear();
-		data.push_back(computers31[n]);
-		data.push_back(computers32[n]);
-		listctrlFreq->AppendItem( data );
-		yloc += 30;
+		yloc += 210;
 	}
-
+	
+	if(!scrolledWindowFlag){
+		listctrlFreq = new wxDataViewListCtrl( ScrolledWindow, ID_VIEWSELECTED,wxPoint(20,yloc),wxSize(225, 190));
+		listctrlFreq->AppendTextColumn( "Channel" );
+		listctrlFreq->AppendTextColumn( "Freq" );
+	
+		wxVector<wxVariant> data;
+		for(unsigned int n=0;n<sizeof(computers31)/sizeof(wxString);++n){
+			data.clear();
+			data.push_back(computers31[n]);
+			data.push_back(computers32[n]);
+			listctrlFreq->AppendItem( data );
+			yloc += 30;
+		}
+	}
     wxWindow::SetSize(wxDefaultCoord,wxDefaultCoord,280,100);
     
     Refresh();
@@ -1132,6 +1628,8 @@ BasicPane2::BasicPane2(wxWindow *frame, const wxString &title,class sdrClass *sd
 	scrolledWindowFlag=0;
 	
 	ScrolledWindow=NULL;
+	
+	modeBox=NULL;
 	
     SetScrolledWindow();
 }
@@ -1378,6 +1876,38 @@ void BasicPane2::setSampleRate(wxCommandEvent &event)
 void BasicPane2::OnText(wxCommandEvent &event)
 {
 	event.Skip();
+	
+	int id=event.GetId();
+	
+	wxString value=sweepXmin->GetValue();
+
+	const char *alpha=value;
+
+	double xmin=atof(alpha)*1e6;
+
+	value=sweepXmax->GetValue();
+
+	alpha=value;
+
+	double xmax=atof(alpha)*1e6;	
+	
+	if(id == ID_XMIN){
+		winout("ID_XMIN %d xmin %g xmax %g\n",id,xmin,xmax);
+		if(xmax <= xmin){
+			xmax=xmin+2.0e6;
+		}
+		gSweep->rx->sweepLower=xmin;
+		gSweep->rx->sweepUpper=xmax;
+		return;
+	}else if(id == ID_XMAX){
+		winout("ID_XMAX %d xmin %g xmax %g\n",id,xmin,xmax);
+		if(xmin >= xmax){
+			xmin=xmax-2.0e6;
+		}
+		gSweep->rx->sweepLower=xmin;
+		gSweep->rx->sweepUpper=xmax;
+		return;
+	}
 		
 	wxString rates=event.GetString();
 	
@@ -1438,7 +1968,7 @@ void BasicPane2::OnScroll(wxCommandEvent &event)
 {
 	evt.Skip();
 	//winout("BasicPane2:render sdr->decodemode %d\n",sdr->decodemode);
-	modeBox->SetSelection(sdr->decodemode);
+	if(!scrolledWindowFlag)modeBox->SetSelection(sdr->decodemode);
 
 }
 
@@ -1811,6 +2341,14 @@ int WaterFall2::ftox(double frequency){
 
 void WaterFall2::render( wxPaintEvent& evt )
 {
+	if(gSpectrum2->oscilloscope == 1){
+		render1(evt);	
+	}else{
+		render2(evt);
+	}
+}
+void WaterFall2::render1( wxPaintEvent& evt )
+{
 	evt.Skip();
 //   winout("WaterFall2::render\n");
 
@@ -1818,6 +2356,211 @@ void WaterFall2::render( wxPaintEvent& evt )
     
     if(iWait)return;
     
+    struct SDS2Dout *sds=&gSweep->sdsout;
+    
+    if(!sds->data){
+    	return;
+    }
+    
+    if(gSpectrum2->nrow >= sds->iymax)gSpectrum2->nrow=0;
+    
+    //fprintf(stderr,"gSpectrum2->nrow %ld\n",gSpectrum2->nrow);
+    
+    double *magnitude=&sds->data[gSpectrum2->nrow*sds->ixmax];    
+    
+    int length=sds->ixmax;
+    
+    //auto t1 = chrono::high_resolution_clock::now();
+    
+
+   // winout("WaterFall2 render 2\n");
+        
+    wxGLCanvas::SetCurrent(*m_context);
+    wxPaintDC(this); // only to be used in paint events. use wxClientDC to paint outside the paint event
+    //wxClientDC(this); // only to be used in paint events. use wxClientDC to paint outside the paint event
+    
+ //   const wxSize ClientSize = GetClientSize();
+    
+   
+    glPixelStorei(GL_UNPACK_ALIGNMENT,1);
+
+ 
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+ 
+    // ------------- draw some 2D ----------------
+    prepare2DViewport(0,0,getWidth(), getHeight());
+    glLoadIdentity();
+ 
+    // white background
+    glColor4f(1, 1, 1, 1);
+    glBegin(GL_QUADS);
+    glVertex3f(0,0,0);
+    glVertex3f(getWidth(),0,0);
+    glVertex3f(getWidth(),getHeight(),0);
+    glVertex3f(0,getHeight(),0);
+    glEnd();
+    
+
+	double *range = new double[length];
+	float *magnitude2 = new float[length];
+
+    pmin =  1e33;
+    pmax = -1e33;
+
+    double rmin=sds->xmin;
+    double rmax=sds->xmax;
+    
+    double ddx=(rmax-rmin)/(double)(length);
+    for(int n=0;n<length;++n){
+        double r;
+        r=sds->xmin+n*ddx;
+        range[n]=r;
+        double v=magnitude[n];
+        if(v < pmin)pmin=v;
+        if(v > pmax)pmax=v;
+        magnitude2[n]=v;
+    }    
+
+    if(!pd.UsePlotScales){
+    	pd.dmin=pmin;
+    	pd.dmax=pmax;
+    	pd.sPmin=pmin;
+    	pd.sPmax=pmax;
+    }
+    
+//   winout("rmin %g rmax %g amin %g amax %g\n",rmin,rmax,amin,amax);
+    
+    
+    if(water.nline >= water.ysize)water.nline=0;
+    
+    unsigned char *wateric= new unsigned char[length*3];
+    
+    FloatToImage(magnitude2,length,&pd,wateric);
+/*
+    int ns1=3*water.xsize*(water.ysize-water.nline-1);
+    int ns2=3*water.xsize*water.ysize+3*water.xsize*(water.ysize-1-water.nline++);
+*/
+    int ns1=3*water.xsize*(water.nline+water.ysize);
+    int ns2=3*water.xsize*(water.nline++);
+
+	double gxmin=gSweep->rx->sweepLower;
+	double gxmax=gSweep->rx->sweepUpper;
+
+    int nmin,nmax;
+    nmin=length-1;
+    nmax=0;
+    for(int n=0;n<length;++n){
+        if(range[n] <= gxmin)nmin=n;
+        if(range[n] <= gxmax)nmax=n;
+    }
+    
+
+    double dxn = -1;
+    if(nmax-nmin){
+        dxn=(double)(nmax-nmin)/(double)(length-1);
+    }else{
+        nmin=0;
+        dxn = 1;
+    }
+    
+    
+    //winout("nmin %d nmax %d dxn %g\n",nmin,nmax,dxn);
+   
+    
+    double dxw=(double)(water.xsize-1)/(double)(length-1);
+   
+    
+    int ics=wateric[(int)(2*dxn+nmin)];
+    
+    for(int nnn=0;nnn<length;++nnn){
+        int ic;
+        
+        int n=nnn*dxn+nmin+0.5;
+        
+        int next=(nnn+1)*dxn+nmin+0.5;
+        
+        ic=wateric[n];
+ 
+        int nn=nnn*dxw+0.5;
+        
+        int nn2=next*dxw+0.5;
+        
+        
+
+//            winout("nn %d nn2 %d nnn %d n %d next %d ic %d ics %d\n",nn,nn2,nnn,n,next,ic,ics);
+
+        if(ic > ics)ics=ic;
+        
+        if(nn == nn2){
+        	//winout("2 nn %d nn2 %d nnn %d\n",nn,nn2,nnn);
+           continue;
+        }
+        ic=ics;
+        
+        ics=wateric[next];
+        
+        if(nn < 0 || nn >= water.SRect.xsize){
+            winout("nn %d nn2 %d nnn %d n %d next %d ic %d ics %d\n",nn,nn2,nnn,n,next,ic,ics);
+			exit(1);
+        }
+                
+        water.data[ns1+3*nn]=pd.palette[3*ic];
+        water.data[ns1+3*nn+1]=pd.palette[3*ic+1];
+        water.data[ns1+3*nn+2]=pd.palette[3*ic+2];
+        
+        water.data[ns2+3*nn]=pd.palette[3*ic];
+        water.data[ns2+3*nn+1]=pd.palette[3*ic+1];
+        water.data[ns2+3*nn+2]=pd.palette[3*ic+2];
+        
+    }    
+    
+    water.SRect.y=water.ysize+1-water.nline;
+    
+   // winout("x %d y %d xsize %d ysize %d \n",water.SRect.x,water.SRect.y,water.SRect.xsize,water.SRect.ysize);
+
+    int xsize=water.SRect.xsize;
+    
+    int ysize=water.SRect.ysize;
+    
+    int nline=water.nline;
+         
+    glDrawPixels(xsize,ysize,GL_RGB, GL_UNSIGNED_BYTE, &water.data[nline*xsize*3]);
+
+    glColor4f(0, 0, 0, 1);
+	int xs=ftox(sdr->f-sdr->bw/2.0);
+	DrawLine(xs, 0, xs, getHeight());
+	xs=ftox(sdr->f+sdr->bw/2.0);
+	DrawLine(xs, 0, xs, getHeight());
+	
+//	winout("xs %d iWait %d\n",xs,iWait);
+
+/*
+ 		
+ 		//winout(" left %d right %d center %d xsize %d bw %g\n",ftox(sdr->f-sdr->bw/2.0),ftox(sdr->f+sdr->bw/2.0),ftox(sdr->f),box.xsize,sdr->bw);
+ 		
+ 		DrawBox(&box,0);
+*/
+
+//	winout("WaterFall2 f %p\n",&sdr->f);
+
+    	if(range)delete [] range;
+    	range=NULL;
+    	if(wateric)delete [] wateric;
+    	wateric=NULL;
+
+    	glFlush();
+    	SwapBuffers();
+}
+
+void WaterFall2::render2( wxPaintEvent& evt )
+{
+	evt.Skip();
+//   winout("WaterFall2::render\n");
+
+    if(!IsShown()) return;
+    
+    if(iWait)return;
+        
     float *magnitude=gSpectrum2->buffSend10;
     
     int length=gSpectrum2->buffSendLength;
@@ -1997,7 +2740,8 @@ void WaterFall2::render( wxPaintEvent& evt )
 
     	glFlush();
     	SwapBuffers();
-    }
+}
+
 int WaterFall2::SetWindow()
 {
     
@@ -2201,7 +2945,8 @@ WaterFall2::WaterFall2(wxFrame* parent, int* args) :
 		pd.palette[3*n+1]=pal[3*n+1]*255;
 		pd.palette[3*n+2]=pal[3*n+2]*255;
 	}
-
+	
+	nrow=0;
 
 }
 
@@ -2225,7 +2970,7 @@ END_EVENT_TABLE()
 void Spectrum2::OnIdle(wxIdleEvent& event)
 {	
 	event.Skip();
-	if(oscilloscope == 1){
+	if(oscilloscope == 1 && !gSweep->sdsout.data){
 	    //fprintf(stderr,"Spectrum2::OnIdle\n");
 		Refresh();
 	}
@@ -2360,6 +3105,7 @@ Spectrum2::Spectrum2(wxFrame* parent, int* args) :
 	
 	buffSize = -10;
 
+	nrow=0;
     
     filterType=FILTER_BLACKMANHARRIS7;
     
@@ -2543,13 +3289,14 @@ void Spectrum2::mouseDown(wxMouseEvent& event)
 	if(buffSendLength){
 		if(sdr){
 		    double fx=sdr->fw-0.5*sdr->samplewidth + sdr->samplewidth*(pp3.x)/((double)getWidth());
-			//winout("mouseDown x %d y %d sdr->fc %g sdr->f %g sdr->samplerate %g fx %g width %d\n",p1.x,p1.y,sdr->fc,sdr->f,sdr->samplerate,fx,getWidth());
-			//winout(" fx %g\n",fx);
+			//winout("mouseDown x %d y %d sdr->fc %g sdr->f %g sdr->samplerate %g fx %g width %d\n",pp3.x,pp3.y,sdr->fc,sdr->f,sdr->samplerate,fx,getWidth());
+			//winout(" fx %g sdr->fw %g\n",fx,sdr->fw);
 			if(sdr->samplescale < 0.98){
 				sdr->setCenterFrequency(fx);
 			}else{
 				sdr->setFrequency(fx);
 			}
+			sdr->iWait=0;
 			s->bS=sdr->bS;
 			//winout("Spectrum2::mouseDown %p %p\n",s->bS,sdr->bS);
 			gTopPane2->Refresh();
@@ -2583,8 +3330,19 @@ void Spectrum2::render1(wxPaintEvent& evt )
 	
 	//winout("Spectrum2 render nc %lld\n",nc++);
 
-    if(!IsShown()) return;
+    if(!IsShown())return;
     
+    if(rtime() < lineTime)return;
+
+    lineTime=rtime()+lineDumpInterval;
+
+    struct SDS2Dout *sds=&gSweep->sdsout;
+    
+    if(!sds->data){
+    	return;
+    }
+    
+        
     //auto t1 = chrono::high_resolution_clock::now();
     
         
@@ -2611,9 +3369,10 @@ void Spectrum2::render1(wxPaintEvent& evt )
     
     int buffSendLength=0;
     
-    float *buffSend2;
+    double *buffSend2;
     
-    double amax=0;
+    double amax=-1e33;
+    double amin=1e33;
     
 	if(!iWait){
  	
@@ -2623,153 +3382,84 @@ void Spectrum2::render1(wxPaintEvent& evt )
 		
       	if(decodemode1 != sdr->decodemode){
       		decodemode1=sdr->decodemode;
-      		double Ratio = (float)(sdr->bw/sdr->samplerate);
+      		double Ratio = (float)(sds->ixmax/sdr->samplerate);
       		iqSampler1  = msresamp_crcf_create(Ratio, 60.0f);
       	}
     	
-		if(buffSize != sdr->size){
-			buffSize=sdr->size;
+		if(buffSize != sds->ixmax){
+			buffSize=sds->ixmax;
 			if(buff1)cFree((char *)buff1);
-			buff1=(float *)cMalloc(sizeof(float)*8*sdr->size,95288);
+			buff1=(float *)cMalloc(sizeof(float)*8*sds->ixmax,95288);
 			if(buff2)cFree((char *)buff2);
-			buff2=(float *)cMalloc(sizeof(float)*8*sdr->size,95288);
+			buff2=(float *)cMalloc(sizeof(float)*8*sds->ixmax,95288);
 			if(buff3)cFree((char *)buff3);
-			buff3=(float *)cMalloc(sizeof(float)*8*sdr->size,95288);
+			buff3=(float *)cMalloc(sizeof(float)*8*sds->ixmax,95288);
 			iHaveData=0;
+		}      	
+      	
+      	if(!iFreeze || !iHaveData){
+      		nrow++;
+			if(nrow >= sds->iymax)nrow=0;
 		}
 		
-		int ip = -1;
- 	  	if(sdr->bS2)ip=sdr->bS2->popBuff();
-      	if(ip < 0){ 	    	
- 			//winout("render1 ip %d\n",ip);
-      	    return;
-      	}
-      	
-      	
-      	int witch=ip % NUM_DATA_BUFF;
-		buffSend2=sdr->bS2->buff[witch];
-		
+		buffSend2=&sds->data[nrow*sds->ixmax]; 
+				
 		//fprintf(stderr,"witch %d ip %d\n",witch,ip);
-		
-		double sint,cost;
-		
+				
 		unsigned int num;
 		
+		//fprintf(stderr,"iFreeze %d iHaveData %d\n ",iFreeze,iHaveData);
+		
 		if(iFreeze && iHaveData){
-			for (int k = 0 ; k < sdr->size ; k++){
-				float r = buff1[k * 2];
-				float i = buff1[k * 2 + 1];
+			for (int k = 0 ; k < sds->ixmax; k++){
+				float r = buff1[k];
 				float rr=r;
-				float ii=i;
-				if(sdr->dt > 0){
-					rr = (float)(r*sdr->coso - i*sdr->sino);
-					ii = (float)(i*sdr->coso + r*sdr->sino);
-					sint=sdr->sino*sdr->cosdt+sdr->coso*sdr->sindt;
-					cost=sdr->coso*sdr->cosdt-sdr->sino*sdr->sindt;
-					sdr->coso=cost;
-					sdr->sino=sint;
-				 }else{
-					buff2[k * 2] = r;
-					buff2[k * 2 + 1] = i;
-					continue;
-				}       
+				buff2[k] = r;
 				if(gBasicPane2->sampleDataRotate > 0.0){
-					//fprintf(stderr,"gBasicPane->sampleDataRotate \n");
 					//gBasicPane->sampleDataRotate=0.5;
-					int nn=gBasicPane2->sampleDataRotate*(sdr->size-1)+k;
-					if(nn > sdr->size-1){
-						nn -= sdr->size;
+					int nn=gBasicPane2->sampleDataRotate*(sds->ixmax-1)+k;
+					if(nn > sds->ixmax-1){
+						nn -= sds->ixmax;
 					}
 					//fprintf(stderr,"nn %d k %d\n",nn,k);
-					buff2[nn * 2] = rr;
-					buff2[nn * 2+ 1] = ii;
+					buff2[nn] = rr;
 				}else{
-					buff2[k * 2] = rr;
-					buff2[k * 2+ 1] = ii;
+					buff2[k] = rr;
 				}
 			}
-	
-			//if(gBasicPane->sampleDataRotate > 0.0)exit(1);
-  
-	 
-			double r=sqrt(sdr->coso*sdr->coso+sdr->sino*sdr->sino);
 		
-			if(r > 0.0){
-				sdr->coso /= r;	
-				sdr->sino /= r;
-			}
-		
-		
-			if(isnan(sdr->coso)){
-				winout("NaN found\n");
-				sdr->initPlay();
-				return;
-			}		
-		
-	
 			//fprintf(stderr,"1 num %d iFreeze %d\n",num,iFreeze);
 		}else{
-			for (int k = 0 ; k < sdr->size ; k++){
-				float r = buffSend2[k * 2];
-				float i = buffSend2[k * 2 + 1];
+			for (int k = 0 ; k < sds->ixmax; k++){
+				float r = buffSend2[k];
 				float rr=r;
-				float ii=i;
-				buff1[k * 2] = rr;
-				buff1[k * 2+ 1] = ii;
-				if(sdr->dt > 0){
-					rr = (float)(r*sdr->coso - i*sdr->sino);
-					ii = (float)(i*sdr->coso + r*sdr->sino);
-					sint=sdr->sino*sdr->cosdt+sdr->coso*sdr->sindt;
-					cost=sdr->coso*sdr->cosdt-sdr->sino*sdr->sindt;
-					sdr->coso=cost;
-					sdr->sino=sint;
-				 }else{
-					buff2[k * 2] = r;
-					buff2[k * 2 + 1] = i;
-					continue;
-				}       
+				buff1[k] = rr;
+				buff2[k] = r;
 				if(gBasicPane2->sampleDataRotate > 0.0){
 					//fprintf(stderr,"gBasicPane->sampleDataRotate \n");
 					//gBasicPane->sampleDataRotate=0.5;
-					int nn=gBasicPane2->sampleDataRotate*(sdr->size-1)+k;
-					if(nn > sdr->size-1){
-						nn -= sdr->size;
+					int nn=gBasicPane2->sampleDataRotate*(sds->ixmax-1)+k;
+					if(nn > sds->ixmax-1){
+						nn -= sds->ixmax;
 					}
 					//fprintf(stderr,"nn %d k %d\n",nn,k);
-					buff2[nn * 2] = rr;
-					buff2[nn * 2+ 1] = ii;
+					buff2[nn] = rr;
 				}else{
-					buff2[k * 2] = rr;
-					buff2[k * 2+ 1] = ii;
+					buff2[k] = rr;
 				}
 			}
 	
 			//if(gBasicPane->sampleDataRotate > 0.0)exit(1);
-  
-	 
-			double r=sqrt(sdr->coso*sdr->coso+sdr->sino*sdr->sino);
-		
-			if(r > 0.0){
-				sdr->coso /= r;	
-				sdr->sino /= r;
-			}
-		
-		
-			if(isnan(sdr->coso)){
-			//	winout("NaN found\n");
-				sdr->initPlay();
-				return;
-			}		
 		
 			iHaveData=1;
 			//fprintf(stderr,"2 num %d iFreeze %d\n",num,iFreeze);
 		}
 		
-		
-		//int nmax2=-1;
-		//double amax2=0;
 /*		
-		for(int n=0;n<sdr->size;++n){
+		int nmax2=-1;
+		double amax2=0;
+		
+		for(int n=0;n<sds->ixmax;++n){
 			double v=(buff2[2*n]*buff2[2*n]+buff2[2*n+1]*buff2[2*n+1]);
         	if(v > 0.0)v=sqrt(v);
          	if(v > amax2){
@@ -2780,27 +3470,36 @@ void Spectrum2::render1(wxPaintEvent& evt )
 */
 		buff2[0]=buff2[0];
 		buff2[1]=buff2[1];
-			
+
 		num=0;
- 
+ /*
  		msresamp_crcf_reset(iqSampler1);
-		msresamp_crcf_execute(iqSampler1, (liquid_float_complex *)&buff2[0], sdr->size, (liquid_float_complex *)&buff3[0], &num);  // decimate
+		msresamp_crcf_execute(iqSampler1, (liquid_float_complex *)&buff2[0], sds->ixmax, (liquid_float_complex *)&buff3[0], &num);  // decimate
+*/
+		for(int n=0;n<sds->ixmax;++n){
+			buff3[n]=buff2[n];
+		}
 		
+		num=sds->ixmax;
+
       	buffSendLength=num;
 		
 		//int nmax=-1;
-		amax=0;
 		for(int n=0;n<buffSendLength;++n){
-			double v=(buff3[2*n]*buff3[2*n]+buff3[2*n+1]*buff3[2*n+1]);
-        	if(v > 0.0)v=sqrt(v);
+			double v=buff3[n];
          	if(v > amax){
          		amax=v;
-         	   //nmax=n;
+         	  // nmax=n;
+         	}
+         	if(v < amin){
+         		amin=v;
          	}
 		}
 		
-		//winout("amax %g num %d %d amax2 %g nmax2 %d\n",amax,num,nmax,amax2,nmax2);
-		//winout("amax %g num %d num %d\n",amax,num,nmax);
+		//static long int count=0;
+		
+		//winout("amax %g num %d %d amax2 %g nmax2 %d sds->ixmax %ld\n",amax,num,nmax,amax2,nmax2,sds->ixmax);
+		//winout("count %ld xmin %g xmax %g ymin %g ymax %g ixmax %ld iymax %ld\n",count++,sds->xmin,sds->xmax,sds->ymin,sds->ymax,sds->ixmax,sds->iymax);
 		
 		if(amaxGlobal == 0.0)amaxGlobal=amax;
         amaxGlobal = 0.9*amaxGlobal+0.1*amax;
@@ -2814,7 +3513,7 @@ void Spectrum2::render1(wxPaintEvent& evt )
 		       			
 		buffFlag=0;
 		
-		double ymin = -amax;
+		double ymin =  amin;
 		double ymax =  amax;	
 		if(ymin >= ymax)ymin=ymax-40;
 		
@@ -2824,13 +3523,25 @@ void Spectrum2::render1(wxPaintEvent& evt )
 		double iymax=getHeight()-20;
 		double idy=iymin-iymax;		
 		
-		double xmin=sdr->fw-0.5*sdr->samplewidth;
-		double xmax=sdr->fw+0.5*sdr->samplewidth;
+		double xmin=sds->xmin;
+		double xmax=sds->xmax;
 		double dx=xmax-xmin;
 
-		double ixmin=50;
+		double gxmin=gSweep->rx->sweepLower;
+		double gxmax=gSweep->rx->sweepUpper;
+		//double gdx=gxmax-gxmin;
+		
+		double ixmin=0;
 		double ixmax=getWidth();
 		double idx=ixmax-ixmin;
+		
+
+		int nmin=(sds->ixmax-1)*(gxmin-xmin)/dx;
+		int nmax=(sds->ixmax-1)*(gxmax-xmin)/dx;
+		int dn=nmax-nmin;
+
+		//fprintf(stderr,"gxmain %g gxmax %g nmin %d nmax %d dn %d\n",gxmin,gxmax,nmin,nmax,dn);
+
 
 		//int ixxmin,ixxmax,iyymin,iyymax;
 	
@@ -2843,27 +3554,24 @@ void Spectrum2::render1(wxPaintEvent& evt )
 		int iyold=0;
 		int iflag=0;
 	
-		//double xmin2=0;
-		//double xmax2=num;
-		//double dx2=xmax2-xmin2;
 		
-		//fprintf(stderr,"buffSendLength %ld lineAlpha %g\n",(long)buffSendLength,lineAlpha);
-		
-		double beta=sdr->samplewidth/sdr->samplerate;
+		double ddx=(xmax-xmin)/sds->ixmax;
 			
-		for(int n=0;n<buffSendLength;++n){
+		for(int n=0;n<sds->ixmax;++n){
 			double v;
-			v=buff3[2*n];
-			double x=n/((double)buffSendLength);
+			v=buff3[n];
 			double y=v;
+			double x=n*ddx+xmin;
+			if(x < gxmin || x > gxmax)continue;
 			int ix;
 			int iy;
-			ix=(int)((0.5+x/beta-0.5/beta)*idx+ixmin);
-			//fprintf(stderr,"n %d x %g y %g ix %d zoom %g\n",n,x,y,ix,sdr->samplewidth/sdr->samplerate);
+			ix=(int)(n-nmin)*idx/dn+ixmin;
+			//fprintf(stderr,"n %d x %g y %g ix %d xmin %g xmax %g\n",n,x,y,ix,xmin,xmax);
 			if(ix <= ixmin || ix >= ixmax)continue;
 			//if(ix < ixxmin)ixxmin=ix;
 			//if(ix > ixxmax)ixxmax=ix;
 			iy=(int)((y-ymin)*idy/dy+iymax);
+			//fprintf(stderr,"iy %d iymax %g iymin %g y %g dy %g idy %g\n",iy,iymax,iymin,y,dy,idy);
 			if(iy <= iymin || iy >= iymax)continue;
 			//if(iy < iyymin)iyymin=iy;
 			//if(iy > iyymax)iyymax=iy;
@@ -2877,6 +3585,7 @@ void Spectrum2::render1(wxPaintEvent& evt )
 			ixold=ix;
 			iyold=iy;
 		}
+		
 	
 		
 		//fprintf(stderr,"ixxmin %d ixxmax %d getWidth() %d iyymin %d iyymax %d getHeight() %d\n",ixxmin,ixxmax,getWidth(),iyymin,iyymax,getHeight());
@@ -2886,17 +3595,9 @@ void Spectrum2::render1(wxPaintEvent& evt )
 		
  		{
 			double xmnc,xmxc,Large,Small;
-			double xmnc2,xmxc2;
 			double xmns,xmxs;
-			double cmin,cmax;
-			double fc=sdr->fw;
-			double bw=sdr->samplewidth/(2.0);
-			xmnc2=fc-bw;
-			xmxc2=fc+bw;
-			cmin= -((sdr->fc-xmnc2)/sdr->samplerate)+0.5;
-			xmnc=cmin*1.0/(double)sdr->ncut;
-			cmax= -((sdr->fc-xmxc2)/sdr->samplerate)+0.5;
-			xmxc=cmax*1.0/(double)sdr->ncut;
+			xmnc=gxmin/1e6;
+			xmxc=gxmax/1e6;
 			xmns=xmnc;
 			xmxs=xmxc;
 			//fprintf(stderr,"xmnc %g xmxc %g samplewidth %g samplescale %g\n",xmnc,xmxc,sdr->samplewidth,sdr->samplescale);
@@ -2911,7 +3612,7 @@ void Spectrum2::render1(wxPaintEvent& evt )
 			    //fprintf(stderr,"xx %g ",xx);
 			    if(xx < 0.0 || xx > 1.0)continue;
 			    int ixx=(int)(idx*xx+ixmin);
-			    //fprintf(stderr,"ixx %d\n ",ixx);
+			   // fprintf(stderr,"ixx %d ixmin %g ixmax %g xp %g\n ",ixx,ixmin,ixmax,xp);
 			    if(ixx < ixmin || ixx > ixmax)continue;
  				DrawLine3(ixx, 0, ixx, getHeight()-15);
  				sprintf(cbuff,"%g",xp);
@@ -2919,6 +3620,7 @@ void Spectrum2::render1(wxPaintEvent& evt )
 			}
 			//winout(" idx %g\n",idx);
 			
+		//exit(1);
 
 			xmnc=ymin;
 			xmxc=ymax;
@@ -3191,15 +3893,25 @@ void Spectrum2::render2(wxPaintEvent& evt )
 	//winout("Spectrum2 done\n");
 		
 }
-
 void Spectrum2::render1a(wxPaintEvent& evt )
 {
 	evt.Skip();
 	
 	//winout("Spectrum2 render nc %lld\n",nc++);
 
-    if(!IsShown()) return;
+    if(!IsShown())return;
     
+    if(rtime() < lineTime)return;
+
+    lineTime=rtime()+lineDumpInterval;
+
+    struct SDS2Dout *sds=&gSweep->sdsout;
+    
+    if(!sds->data){
+    	return;
+    }
+    
+        
     //auto t1 = chrono::high_resolution_clock::now();
     
         
@@ -3222,48 +3934,155 @@ void Spectrum2::render1a(wxPaintEvent& evt )
     glVertex3f(0,getHeight(),0);
     glEnd();
     
-    //winout("render1a\n");
+    //winout("render1\n");
     
     int buffSendLength=0;
     
-    float *buffSend2;
+    double *buffSend2;
+    
+    double amax=-1e33;
+    double amin=1e33;
     
 	if(!iWait){
-	/*
-  		uRect box;
-	
- 		box.x=ftox(sdr->f-sdr->bw/(2.0));
- 		box.y=0;
- 		box.xsize=ftox(sdr->f+sdr->bw/(2.0))-ftox(sdr->f-sdr->bw/(2.0));
- 		box.ysize=getHeight();
- 		 		
- 		DrawBox(&box,0);
- 	*/
  	
 		glColor4f(0, 0, 1, 1);
 		
 		//winout("filterType %d\n",filterType);
 		
-		int ip = -1;
- 	  	if(sdr->bS2)ip=sdr->bS2->popBuff();
-      	if(ip < 0)return;
+      	if(decodemode1 != sdr->decodemode){
+      		decodemode1=sdr->decodemode;
+      		double Ratio = (float)(sds->ixmax/sdr->samplerate);
+      		iqSampler1  = msresamp_crcf_create(Ratio, 60.0f);
+      	}
+    	
+		if(buffSize != sds->ixmax){
+			buffSize=sds->ixmax;
+			if(buff1)cFree((char *)buff1);
+			buff1=(float *)cMalloc(sizeof(float)*8*sds->ixmax,95288);
+			if(buff2)cFree((char *)buff2);
+			buff2=(float *)cMalloc(sizeof(float)*8*sds->ixmax,95288);
+			if(buff3)cFree((char *)buff3);
+			buff3=(float *)cMalloc(sizeof(float)*8*sds->ixmax,95288);
+			iHaveData=0;
+		}      	
       	
-      	int witch=ip % NUM_DATA_BUFF;
-		buffSend2=sdr->bS2->buff[witch];
-      	
-      	buffSendLength=sdr->size;
-		
-		double amax=0;
-		for(int n=0;n<buffSendLength;++n){
-			double v=(buffSend2[2*n]*buffSend2[2*n]+buffSend2[2*n+1]*buffSend2[2*n+1]);
-        	if(v > 0.0)v=sqrt(v);
-         	if(v > amax)amax=v;
+      	if(!iFreeze || !iHaveData){
+      		nrow++;
+			if(nrow >= sds->iymax)nrow=0;
 		}
 		
-			
+		buffSend2=&sds->data[nrow*sds->ixmax]; 
+				
+		//fprintf(stderr,"witch %d ip %d\n",witch,ip);
+				
+		unsigned int num;
+		
+		//fprintf(stderr,"iFreeze %d iHaveData %d\n ",iFreeze,iHaveData);
+		
+		if(iFreeze && iHaveData){
+			for (int k = 0 ; k < sds->ixmax; k++){
+				float r = buff1[k];
+				float rr=r;
+				buff2[k] = r;
+				if(gBasicPane2->sampleDataRotate > 0.0){
+					//gBasicPane->sampleDataRotate=0.5;
+					int nn=gBasicPane2->sampleDataRotate*(sds->ixmax-1)+k;
+					if(nn > sds->ixmax-1){
+						nn -= sds->ixmax;
+					}
+					//fprintf(stderr,"nn %d k %d\n",nn,k);
+					buff2[nn] = rr;
+				}else{
+					buff2[k] = rr;
+				}
+			}
+		
+			//fprintf(stderr,"1 num %d iFreeze %d\n",num,iFreeze);
+		}else{
+			for (int k = 0 ; k < sds->ixmax; k++){
+				float r = buffSend2[k];
+				float rr=r;
+				buff1[k] = rr;
+				buff2[k] = r;
+				if(gBasicPane2->sampleDataRotate > 0.0){
+					//fprintf(stderr,"gBasicPane->sampleDataRotate \n");
+					//gBasicPane->sampleDataRotate=0.5;
+					int nn=gBasicPane2->sampleDataRotate*(sds->ixmax-1)+k;
+					if(nn > sds->ixmax-1){
+						nn -= sds->ixmax;
+					}
+					//fprintf(stderr,"nn %d k %d\n",nn,k);
+					buff2[nn] = rr;
+				}else{
+					buff2[k] = rr;
+				}
+			}
+	
+			//if(gBasicPane->sampleDataRotate > 0.0)exit(1);
+		
+			iHaveData=1;
+			//fprintf(stderr,"2 num %d iFreeze %d\n",num,iFreeze);
+		}
+		
+/*		
+		int nmax2=-1;
+		double amax2=0;
+		
+		for(int n=0;n<sds->ixmax;++n){
+			double v=(buff2[2*n]*buff2[2*n]+buff2[2*n+1]*buff2[2*n+1]);
+        	if(v > 0.0)v=sqrt(v);
+         	if(v > amax2){
+         		amax2=v;
+         		nmax2=n;
+         	}
+		}
+*/
+		buff2[0]=buff2[0];
+		buff2[1]=buff2[1];
+
+		num=0;
+ /*
+ 		msresamp_crcf_reset(iqSampler1);
+		msresamp_crcf_execute(iqSampler1, (liquid_float_complex *)&buff2[0], sds->ixmax, (liquid_float_complex *)&buff3[0], &num);  // decimate
+*/
+		for(int n=0;n<sds->ixmax;++n){
+			buff3[n]=buff2[n];
+		}
+		
+		num=sds->ixmax;
+
+      	buffSendLength=num;
+		
+		//int nmax=-1;
+		for(int n=0;n<buffSendLength;++n){
+			double v=buff3[n];
+         	if(v > amax){
+         		amax=v;
+         	  // nmax=n;
+         	}
+         	if(v < amin){
+         		amin=v;
+         	}
+		}
+		
+		//static long int count=0;
+		
+		//winout("amax %g num %d %d amax2 %g nmax2 %d sds->ixmax %ld\n",amax,num,nmax,amax2,nmax2,sds->ixmax);
+		//winout("count %ld xmin %g xmax %g ymin %g ymax %g ixmax %ld iymax %ld\n",count++,sds->xmin,sds->xmax,sds->ymin,sds->ymax,sds->ixmax,sds->iymax);
+		
+		if(amaxGlobal == 0.0)amaxGlobal=amax;
+        amaxGlobal = 0.9*amaxGlobal+0.1*amax;
+		amax=amaxGlobal;
+		
+		
+		//static long int count1;
+
+		//winout("Spectrum2 render 1 count %ld amax %g ip %d num %d amax2 %g cosdt %g sindt %g  coso %g sino %g\n",count1++,
+		//       amax,ip,num,amax2,sdr->cosdt,sdr->sindt,sdr->coso,sdr->sino);
+		       			
 		buffFlag=0;
 		
-		double ymin = -amax;
+		double ymin =  amin;
 		double ymax =  amax;	
 		if(ymin >= ymax)ymin=ymax-40;
 		
@@ -3273,11 +4092,11 @@ void Spectrum2::render1a(wxPaintEvent& evt )
 		double iymax=getHeight()-20;
 		double idy=iymin-iymax;		
 		
-		double xmin=sdr->fw-0.5*sdr->samplewidth;
-		double xmax=sdr->fw+0.5*sdr->samplewidth;
+		double xmin=sds->xmin;
+		double xmax=sds->xmax;
 		double dx=xmax-xmin;
 
-		double ixmin=50;
+		double ixmin=0;
 		double ixmax=getWidth();
 		double idx=ixmax-ixmin;
 
@@ -3292,24 +4111,23 @@ void Spectrum2::render1a(wxPaintEvent& evt )
 		int iyold=0;
 		int iflag=0;
 	
-		double xmin2=sdr->fc-0.5*sdr->samplerate;
-		double xmax2=sdr->fc+0.5*sdr->samplerate;
-		double dx2=xmax2-xmin2;
 		
-		//fprintf(stderr,"buffSendLength %ld lineAlpha %g\n",(long)buffSendLength,lineAlpha);
+		double ddx=(xmax-xmin)/sds->ixmax;
 			
-		for(int n=0;n<buffSendLength;++n){
+		for(int n=0;n<sds->ixmax;++n){
 			double v;
-			v=buffSend2[2*n];
-			double x=dx2*n/((double)buffSendLength)+xmin2;
+			v=buff3[n];
 			double y=v;
+			double x=n*ddx+xmin;
 			int ix;
 			int iy;
-			ix=(int)((x-xmin)*idx/dx+ixmin);
+			ix=(int)(x-xmin)*idx/dx+ixmin;
+			//fprintf(stderr,"n %d x %g y %g ix %d xmin %g xmax %g\n",n,x,y,ix,xmin,xmax);
 			if(ix <= ixmin || ix >= ixmax)continue;
 			//if(ix < ixxmin)ixxmin=ix;
 			//if(ix > ixxmax)ixxmax=ix;
 			iy=(int)((y-ymin)*idy/dy+iymax);
+			//fprintf(stderr,"iy %d iymax %g iymin %g y %g dy %g idy %g\n",iy,iymax,iymin,y,dy,idy);
 			if(iy <= iymin || iy >= iymax)continue;
 			//if(iy < iyymin)iyymin=iy;
 			//if(iy > iyymax)iyymax=iy;
@@ -3323,6 +4141,7 @@ void Spectrum2::render1a(wxPaintEvent& evt )
 			ixold=ix;
 			iyold=iy;
 		}
+		
 	
 		
 		//fprintf(stderr,"ixxmin %d ixxmax %d getWidth() %d iyymin %d iyymax %d getHeight() %d\n",ixxmin,ixxmax,getWidth(),iyymin,iyymax,getHeight());
@@ -3332,17 +4151,9 @@ void Spectrum2::render1a(wxPaintEvent& evt )
 		
  		{
 			double xmnc,xmxc,Large,Small;
-			double xmnc2,xmxc2;
 			double xmns,xmxs;
-			double cmin,cmax;
-			double fc=sdr->fw;
-			double bw=sdr->samplewidth/(2.0);
-			xmnc2=fc-bw;
-			xmxc2=fc+bw;
-			cmin= -((sdr->fc-xmnc2)/sdr->samplerate)+0.5;
-			xmnc=cmin*1.0/(double)sdr->ncut;
-			cmax= -((sdr->fc-xmxc2)/sdr->samplerate)+0.5;
-			xmxc=cmax*1.0/(double)sdr->ncut;
+			xmnc=sds->xmin/1e6;
+			xmxc=sds->xmax/1e6;
 			xmns=xmnc;
 			xmxs=xmxc;
 			//fprintf(stderr,"xmnc %g xmxc %g samplewidth %g samplescale %g\n",xmnc,xmxc,sdr->samplewidth,sdr->samplescale);
@@ -3357,7 +4168,7 @@ void Spectrum2::render1a(wxPaintEvent& evt )
 			    //fprintf(stderr,"xx %g ",xx);
 			    if(xx < 0.0 || xx > 1.0)continue;
 			    int ixx=(int)(idx*xx+ixmin);
-			    //fprintf(stderr,"ixx %d\n ",ixx);
+			   // fprintf(stderr,"ixx %d ixmin %g ixmax %g xp %g\n ",ixx,ixmin,ixmax,xp);
 			    if(ixx < ixmin || ixx > ixmax)continue;
  				DrawLine3(ixx, 0, ixx, getHeight()-15);
  				sprintf(cbuff,"%g",xp);
@@ -3365,6 +4176,7 @@ void Spectrum2::render1a(wxPaintEvent& evt )
 			}
 			//winout(" idx %g\n",idx);
 			
+		//exit(1);
 
 			xmnc=ymin;
 			xmxc=ymax;
@@ -3387,23 +4199,869 @@ void Spectrum2::render1a(wxPaintEvent& evt )
 		
  		}
 		
-		
-
+    	glFlush();
+    	SwapBuffers();
+    	    
 		//auto t2 = chrono::high_resolution_clock::now();
 		//std::chrono::duration<double> difference = t2 - t1;
 		//std::cout << "Time "<< difference.count() << endl;
 		//winout("count %g\n",difference.count());
 
 	}
+	
+	//static long int count1;
 
-	//winout("Spectrum2 done\n");
+	//winout("Spectrum2 render 1 count %ld amax %g iWait %d\n",count1++,amax,iWait);
 
 	//fprintf(stderr,"Next 77\n");
 		
-    glFlush();
-    SwapBuffers();    
     
  
+}
+ 
+
+int doFFT2(double *x,double *y,long length,int direction)
+{
+	double *datar;
+	long n,n2;
+	int ifound;
+	
+	if(!x || !y)return 1;
+	
+	n2=2;
+	ifound=FALSE;
+	for(n=0;n<29;++n){
+		if(length == n2){
+			ifound=TRUE;
+			break;
+		}
+		n2 *= 2;
+	}
+	
+	if(!ifound){
+	    fprintf(stderr,"doFFT Did not find power of 2 length %ld\n",length);
+	    return 1;
+	}
+	
+	datar=(double *)cMalloc(2*length*sizeof(double),9092);
+	if(!datar){
+	    fprintf(stderr,"doFFT out of Memory\n");
+	    return 1;
+	}
+	
+	for(n=0;n<length;++n){
+		datar[2*n]=x[n];
+		datar[2*n+1]=y[n];
+	}
+	
+	fft(datar,(int)length,direction);
+	
+	for(n=0;n<length;++n){
+		x[n]=datar[2*n];
+		y[n]=datar[2*n+1];
+	}
+	
+	if(datar)cFree((char *)datar);
+	
+	return 0;
+	
+}
+int fft(double *data,int nn,int isign)
+{
+	double twopi,tempr,tempi,wstpr,wstpi;
+	double wr,wi,theta,sinth,fni;
+	int i,j,n,m,mmax,istep;
+	
+      data -= 1;
+      j=1;
+      n=2*nn;
+      twopi=8.*atan(1.);
+       for(i=1;i<=n;i += 2){
+       if(i-j >= 0)goto L200;
+       tempr=data[j];
+       tempi=data[j+1];
+       data[j]=data[i];
+       data[j+1]=data[i+1];
+       data[i]=tempr;
+       data[i+1]=tempi;
+L200:    m=n/2;
+L300:    if(j-m > 0)goto L400;
+		goto L500;
+L400:    j=j-m;
+       m=m/2;
+       if(m-2 >= 0)goto L300;
+L500:  j=j+m;
+       }
+      mmax=2;
+L600:   if(mmax-n >= 0)goto L1000;
+	  istep=2*mmax;
+      theta=twopi/(double)(isign*mmax);
+      sinth=sin(theta/2.);
+      wstpr=-2.*sinth*sinth;
+      wstpi=sin(theta);
+      wr=1.;
+      wi=0.;
+		for(m=1;m<=mmax;m+=2){
+			for( i=m;i<=n;i+=istep){
+				j=i+mmax;
+				tempr=wr*data[j]-wi*data[j+1];
+				tempi=wr*data[j+1]+wi*data[j];
+				data[j]=data[i]-tempr;
+				data[j+1]=data[i+1]-tempi;
+				data[i]=data[i]+tempr;
+				data[i+1]=data[i+1]+tempi;
+			}
+			tempr=wr;
+			wr=wr*wstpr-wi*wstpi+wr;
+			wi=wi*wstpr+tempr*wstpi+wi;
+		}
+      mmax=istep;
+      goto L600;
+L1000: 
+
+	if(isign > 0){
+		fni=2.0/(double)nn;
+	}else{
+		fni=0.5;
+	}
+	for( i=1;i<=2*nn;++i){
+	    data[i]=data[i]*fni;
+	}
+	return 0;
+}
+double atofs(char *s)
+/* standard suffixes */
+{
+	char last;
+	int len;
+	double suff = 1.0;
+	len = strlen(s);
+	last = s[len-1];
+	s[len-1] = '\0';
+	switch (last) {
+		case 'g':
+		case 'G':
+			suff *= 1e3;
+		case 'm':
+		case 'M':
+			suff *= 1e3;
+		case 'k':
+		case 'K':
+			suff *= 1e3;
+			suff *= atof(s);
+			s[len-1] = last;
+			return suff;
+	}
+	s[len-1] = last;
+	return atof(s);
+}
+int doWindow(double *x,double *y,long length,int type)
+{
+    static float *w=NULL;
+    static long lengthSave;
+    if(!w){
+    	w=new float[length];
+    	lengthSave=length;
+    }else if(length > lengthSave){
+    	delete[] w;
+    	w=new float[length];
+    	lengthSave=length;    
+    }
+    int i;
+    
+    if(!x || !y)return 1;
+    
+    switch(type){
+            
+        case FILTER_RECTANGULAR:
+
+            for(i=0; i<length; i++)
+                w[i] = 1.0;
+            
+            break;
+            
+
+            
+        case FILTER_HANN:
+//#define WINDOWS_LONG_NAMES
+            for(i=0; i<length; i++)  {
+#ifdef WINDOWS_LONG_NAMES
+                w[i]=liquid_hann(i, (int)length);
+#else
+                w[i]=hann(i, (int)length);
+#endif
+            }
+            break;
+
+            
+            
+        case FILTER_HAMMING:
+            
+            for(i=0; i<length; i++)  {
+#ifdef WINDOWS_LONG_NAMES
+                w[i]=liquid_hamming(i, (int)length);
+#else
+                w[i]=hamming(i, (int)length);
+#endif
+            }
+            break;
+            
+        case FILTER_FLATTOP:
+            
+            for(i=0; i<length; i++)  {
+#ifdef WINDOWS_LONG_NAMES
+                w[i]=liquid_flattop(i, (int)length);
+#else
+                w[i]=flattop(i, (int)length);
+#endif
+            }
+            break;
+            
+            
+        case FILTER_BLACKMANHARRIS:
+            
+            for(i=0; i<length; i++)  {
+#ifdef WINDOWS_LONG_NAMES
+                w[i]=liquid_blackmanharris(i, (int)length);
+#else
+                w[i]=blackmanharris(i, (int)length);
+#endif
+            }
+            break;
+            
+        case FILTER_BLACKMANHARRIS7:
+            
+            for(i=0; i<length; i++)  {
+#ifdef WINDOWS_LONG_NAMES
+                w[i]=liquid_blackmanharris7(i, (int)length);
+#else
+                w[i]=blackmanharris7(i, (int)length);
+#endif
+            }
+            break;
+    }
+    
+    for(i=0; i<length; i++){
+        double amp;
+        amp=w[i];
+        x[i]=amp*x[i];
+        y[i]=amp*y[i];
+    }
+    
+    return 0;
+    
+}
+
+int writesds(struct SDS2Dout *sdsout)
+{
+
+	if(!sdsout){
+	    Warning((char *)"writesds2d Found NULL struct pointer\n");
+	    return 1;
+	}
+	
+	if(sdsout->xmin >= sdsout->xmax){
+	    sprintf(WarningBuff,(char *)"Warning            : Time %g\n",sdsout->time);
+	    Warning(WarningBuff);
+	    sprintf(WarningBuff,(char *)"Warning Bad Bounds : xmin %g xmax %g\n",sdsout->xmin,sdsout->xmax);
+	    Warning(WarningBuff);
+	    sdsout->xmax = sdsout->xmin+fabs(sdsout->xmin)+1.0;
+	    sprintf(WarningBuff,(char *)"Reset To           : xmin %g xmax %g\n\n",sdsout->xmin,sdsout->xmax);
+	    Warning(WarningBuff);
+	}
+	
+	if(sdsout->ymin >= sdsout->ymax){
+	    sprintf(WarningBuff,(char *)"Warning            : Time %g\n",sdsout->time);
+	    Warning(WarningBuff);
+	    sprintf(WarningBuff,(char *)"Warning Bad Bounds : ymin %g ymax %g\n",sdsout->ymin,sdsout->ymax);
+	    Warning(WarningBuff);
+	    sdsout->ymax = sdsout->ymin+fabs(sdsout->ymin)+1.0;
+	    sprintf(WarningBuff,(char *)"Reset To           : ymin %g ymax %g\n\n",sdsout->ymin,sdsout->ymax);
+	    Warning(WarningBuff);
+	}
+	
+	if(sdsout->type == DATA_TYPE_DOUBLE){
+		return writesds2dDouble(sdsout);
+	}else if(sdsout->type == DATA_TYPE_FLOAT){
+		return writesds2dFloat(sdsout);
+	}else if(sdsout->type == DATA_TYPE_BYTE){
+		return writesds2dBytes(sdsout);
+	}else if(sdsout->type == DATA_TYPE_FLOAT_3D){
+		return writesds3dFloat(sdsout);
+	}else if(sdsout->type == DATA_TYPE_DOUBLE_3D){
+		return writesds3dDouble(sdsout);
+	}
+	
+	sprintf(WarningBuff,(char *)"writesds2d Found Unknown data type %d\n",sdsout->type);
+	Warning(WarningBuff);
+
+	return 1;
+}
+static int writesds3dDouble(struct SDS2Dout *sdsout)
+{
+	extern int DFerror;
+	int32 rank,size[3];
+	double vmin,vmax;
+	char buff[256];
+	long n,length;
+	int lastref;
+	double v;
+	int ret;
+	
+	ret=1;
+	
+	if(!sdsout){
+	    Warning((char *)"writesds3dDouble Found NULL struct pointer\n");
+		goto OutOfHere;
+	}
+	
+	if(sdsout->type != DATA_TYPE_DOUBLE_3D){
+	    sprintf(WarningBuff,(char *)"writesds3dDouble Found Wrong data type %d\n",sdsout->type);
+	    Warning(WarningBuff);
+		goto OutOfHere;
+	}
+	
+	if(!sdsout->data){
+	    Warning((char *)"writesds3dDouble Found NULL data Pointer\n");
+		goto OutOfHere;
+	}
+	
+	length=sdsout->ixmax*sdsout->iymax*sdsout->izmax;
+	
+	if(length <= 0){
+	    Warning((char *)"writesds3dDouble Found data length less than one\n");
+		goto OutOfHere;
+	}
+	
+
+	vmin =  1e33;
+	vmax = -1e33;
+	for(n=0;n<length;++n){
+	    v=sdsout->data[n];
+	    if(v < vmin)vmin = v;
+	    if(v > vmax)vmax = v;
+	}
+	/*
+	fprintf(stderr,"writesds3dDouble dmin %g dmax %g\n",vmin,vmax);
+	*/
+	rank=3;
+	size[0]=(int)sdsout->izmax;
+	size[1]=(int)sdsout->iymax;
+	size[2]=(int)sdsout->ixmax;
+
+	if(sdsout->n == 0){
+	    unlink((char *)sdsout->path);
+	    DFSDclear();
+	    DFSDrestart();
+        DFSDsetNT(DFNT_FLOAT64);
+	    if(DFSDputdata((char *)sdsout->path,rank,size,(float *)sdsout->data)){
+	        sprintf(WarningBuff,(char *)"writesds3dDouble DFSDputdata error %d",DFerror);
+	        Warning(WarningBuff);
+	        goto OutOfHere;
+	    }
+	}else{
+	    if(DFSDadddata((char *)sdsout->path,rank,size,(float *)sdsout->data)){
+	        sprintf(WarningBuff,(char *)"writesds3dDouble DFSDadddata error %d",DFerror);
+	        Warning(WarningBuff);
+	        goto OutOfHere;
+	    }
+	}
+	
+
+	lastref=DFSDlastref();
+	if(lastref == -1){
+	    sprintf(WarningBuff,(char *)"writesds3dDouble DFSDlastref error %d",DFerror);
+	    Warning(WarningBuff);
+	    goto OutOfHere;
+	}
+
+	if(DFANputlabel(sdsout->path,DFTAG_SDG,lastref,sdsout->name) == -1){
+	    sprintf(WarningBuff,(char *)"writesds3dDouble DFANputlabel %s Name %s lastref %d error %d",
+		               sdsout->path,sdsout->name,lastref,DFerror);
+	    Warning(WarningBuff);
+	    goto OutOfHere;
+	}
+	if(sdsout->pioName){
+	    sprintf(buff,(char *)"xmin %g ymin %g zmin %g xmax %g ymax %g zmax %g vmin %g vmax %g time %g pioName \"%s\" ",
+	            sdsout->xmin,sdsout->ymin,sdsout->zmin,
+                sdsout->xmax,sdsout->ymax,sdsout->zmax,
+                vmin,vmax,sdsout->time,sdsout->pioName);
+	}else{
+	    sprintf(buff,(char *)"xmin %g ymin %g zmin %g xmax %g ymax %g zmax %g vmin %g vmax %g time %g",
+	            sdsout->xmin,sdsout->ymin,sdsout->zmin,
+                sdsout->xmax,sdsout->ymax,sdsout->zmax,
+                vmin,vmax,sdsout->time);
+	}
+	if(DFANputdesc(sdsout->path,DFTAG_SDG,lastref,(char *)buff,strlen((char *)buff)) == -1){
+	    sprintf(WarningBuff,(char *)"writesds3dDouble DFANputdesc %s Name %s lastref %d DFerror %d",
+		sdsout->path,sdsout->name,lastref,DFerror);
+	    Warning(WarningBuff);
+	    goto OutOfHere;
+	}
+	ret = 0;
+OutOfHere:
+	return ret;
+}
+static int writesds3dFloat(struct SDS2Dout *sdsout)
+{
+	extern int DFerror;
+	int32 rank,size[3];
+	double vmin,vmax;
+	char buff[256];
+	long n,length;
+	int lastref;
+	float *data;
+	double v;
+	int ret;
+	
+	ret=1;
+	
+	data=NULL;
+
+	if(!sdsout){
+	    Warning((char *)"writesds3dFloat Found NULL struct pointer\n");
+		goto OutOfHere;
+	}
+	
+	if(sdsout->type != DATA_TYPE_FLOAT_3D){
+	    sprintf(WarningBuff,(char *)"writesds3dFloat Found Wrong data type %d\n",sdsout->type);
+	    Warning(WarningBuff);
+		goto OutOfHere;
+	}
+	
+	if(!sdsout->data){
+	    Warning((char *)"writesds3dFloat Found NULL data Pointer\n");
+		goto OutOfHere;
+	}
+	
+	length=sdsout->ixmax*sdsout->iymax*sdsout->izmax;
+	
+	if(length <= 0){
+	    Warning((char *)"writesds3dFloat Found data length less than one\n");
+		goto OutOfHere;
+	}
+	
+	data=(float *)cMalloc(length*sizeof(float),1002);
+	if(!data){
+	    sprintf(WarningBuff,(char *)"writesds3dFloat error Trying To allocate %ld Bytes\n",length*sizeof(float));
+	    Warning(WarningBuff);
+		goto OutOfHere;
+	}
+
+
+	vmin =  1e33;
+	vmax = -1e33;
+	for(n=0;n<length;++n){
+	    v=sdsout->data[n];
+	    data[n]=(float)v;
+	    if(v < vmin)vmin = v;
+	    if(v > vmax)vmax = v;
+	}
+/*
+	fprintf(stderr,"writesds3dFloat dmin %g dmax %g\n",vmin,vmax);
+*/
+
+	rank=3;
+	size[0]=(int)sdsout->izmax;
+	size[1]=(int)sdsout->iymax;
+	size[2]=(int)sdsout->ixmax;
+
+	if(sdsout->n == 0){
+	    unlink((char *)sdsout->path);
+	    DFSDclear();
+	    DFSDrestart();
+        DFSDsetNT(DFNT_FLOAT32);
+	    if(DFSDputdata((char *)sdsout->path,rank,size,(float *)data)){
+	        sprintf(WarningBuff,(char *)"writesds3dFloat DFSDputdata error %d",DFerror);
+	        Warning(WarningBuff);
+	        goto OutOfHere;
+	    }
+	}else{
+	    if(DFSDadddata((char *)sdsout->path,rank,size,(float *)data)){
+	        sprintf(WarningBuff,(char *)"writesds3dFloat DFSDadddata error %d",DFerror);
+	        Warning(WarningBuff);
+	        goto OutOfHere;
+	    }
+	}
+	
+
+	lastref=DFSDlastref();
+	if(lastref == -1){
+	    sprintf(WarningBuff,(char *)"writesds3dFloat DFSDlastref error %d",DFerror);
+	    Warning(WarningBuff);
+	    goto OutOfHere;
+	}
+
+	if(DFANputlabel(sdsout->path,DFTAG_SDG,lastref,sdsout->name) == -1){
+	    sprintf(WarningBuff,(char *)"writesds3dFloat DFANputlabel %s Name %s lastref %d error %d",
+		               sdsout->path,sdsout->name,lastref,DFerror);
+	    Warning(WarningBuff);
+	    goto OutOfHere;
+	}
+	if(sdsout->pioName){
+	    sprintf(buff,(char *)"xmin %g ymin %g zmin %g xmax %g ymax %g zmax %g vmin %g vmax %g time %g pioName \"%s\" ",
+	            sdsout->xmin,sdsout->ymin,sdsout->zmin,
+                sdsout->xmax,sdsout->ymax,sdsout->zmax,
+                vmin,vmax,sdsout->time,sdsout->pioName);
+	}else{
+	    sprintf(buff,(char *)"xmin %g ymin %g zmin %g xmax %g ymax %g zmax %g vmin %g vmax %g time %g",
+	            sdsout->xmin,sdsout->ymin,sdsout->zmin,
+                sdsout->xmax,sdsout->ymax,sdsout->zmax,
+                vmin,vmax,sdsout->time);
+	}
+	if(DFANputdesc(sdsout->path,DFTAG_SDG,lastref,(char *)buff,strlen((char *)buff)) == -1){
+	    sprintf(WarningBuff,(char *)"writesds3dFloat DFANputdesc %s Name %s lastref %d DFerror %d",
+		sdsout->path,sdsout->name,lastref,DFerror);
+	    Warning(WarningBuff);
+	    goto OutOfHere;
+	}
+	ret = 0;
+OutOfHere:
+	if(data)cFree((char *)data);
+	data=NULL;
+	return ret;
+}
+static int writesds2dDouble(struct SDS2Dout *sdsout)
+{
+	extern int DFerror;
+	int32 rank,size[2];
+	double vmin,vmax;
+	char buff[256];
+	long n,length;
+	int lastref;
+	double v;
+	int ret;
+	
+	ret=1;
+	
+	if(!sdsout){
+	    Warning((char *)"writesds2dDouble Found NULL struct pointer\n");
+		goto OutOfHere;
+	}
+	
+	if(sdsout->type != DATA_TYPE_DOUBLE){
+	    sprintf(WarningBuff,(char *)"writesds2dDouble Found Wrong data type %d\n",sdsout->type);
+	    Warning(WarningBuff);
+		goto OutOfHere;
+	}
+	
+	if(!sdsout->data){
+	    Warning((char *)"writesds2dDouble Found NULL data Pointer\n");
+		goto OutOfHere;
+	}
+	
+	length=sdsout->ixmax*sdsout->iymax;
+	
+	if(length <= 0){
+	    Warning((char *)"writesds2dDouble Found data length less than one\n");
+		goto OutOfHere;
+	}
+	
+
+	vmin =  1e33;
+	vmax = -1e33;
+	for(n=0;n<length;++n){
+	    v=sdsout->data[n];
+	    if(v < vmin)vmin = v;
+	    if(v > vmax)vmax = v;
+	}
+	
+	rank=2;
+	size[0]=(int)sdsout->iymax;
+	size[1]=(int)sdsout->ixmax;
+
+	if(sdsout->n == 0){
+	    unlink((char *)sdsout->path);
+	    DFSDclear();
+	    DFSDrestart();
+        DFSDsetNT(DFNT_FLOAT64);
+	    if(DFSDputdata((char *)sdsout->path,rank,size,(float *)sdsout->data)){
+	        sprintf(WarningBuff,(char *)"writesds2dDouble DFSDputdata error %d",DFerror);
+	        Warning(WarningBuff);
+	        goto OutOfHere;
+	    }
+	}else{
+	    if(DFSDadddata((char *)sdsout->path,rank,size,(float *)sdsout->data)){
+	        sprintf(WarningBuff,(char *)"writesds2dDouble DFSDadddata error %d",DFerror);
+	        Warning(WarningBuff);
+	        goto OutOfHere;
+	    }
+	}
+	
+
+	lastref=DFSDlastref();
+	if(lastref == -1){
+	    sprintf(WarningBuff,(char *)"writesds2dDouble DFSDlastref error %d",DFerror);
+	    Warning(WarningBuff);
+	    goto OutOfHere;
+	}
+
+	if(DFANputlabel(sdsout->path,DFTAG_SDG,lastref,sdsout->name) == -1){
+	    sprintf(WarningBuff,(char *)"writesds2dDouble DFANputlabel %s Name %s lastref %d error %d",
+		               sdsout->path,sdsout->name,lastref,DFerror);
+	    Warning(WarningBuff);
+	    goto OutOfHere;
+	}
+	if(sdsout->pioName){
+	    sprintf(buff,(char *)"xmin %g ymin %g zmin %g xmax %g ymax %g zmax %g vmin %g vmax %g time %g pioName \"%s\" ",
+	            sdsout->xmin,sdsout->ymin,sdsout->zmin,
+                sdsout->xmax,sdsout->ymax,sdsout->zmax,
+                vmin,vmax,sdsout->time,sdsout->pioName);
+	}else{
+	    sprintf(buff,(char *)"xmin %g ymin %g zmin %g xmax %g ymax %g zmax %g vmin %g vmax %g time %g",
+	            sdsout->xmin,sdsout->ymin,sdsout->zmin,
+                sdsout->xmax,sdsout->ymax,sdsout->zmax,
+                vmin,vmax,sdsout->time);
+	}
+	if(DFANputdesc(sdsout->path,DFTAG_SDG,lastref,(char *)buff,strlen((char *)buff)) == -1){
+	    sprintf(WarningBuff,(char *)"writesds2dDouble DFANputdesc %s Name %s lastref %d DFerror %d",
+		sdsout->path,sdsout->name,lastref,DFerror);
+	    Warning(WarningBuff);
+	    goto OutOfHere;
+	}
+	ret = 0;
+OutOfHere:
+	return ret;
+}
+
+static int writesds2dBytes(struct SDS2Dout *sdsout)
+{
+	extern int DFerror;
+	double vmin,vmax;
+	char buff[256];
+	long n,length;
+	int lastref;
+	unsigned char *data;
+	double v;
+	int ret;
+	
+	ret=1;
+	
+	data=NULL;
+
+	if(!sdsout){
+	    Warning((char *)"writesds2dBytes Found NULL struct pointer\n");
+		goto OutOfHere;
+	}
+	
+	if(sdsout->type != DATA_TYPE_BYTE){
+	    sprintf(WarningBuff,(char *)"writesds2dBytes Found Wrong data type %d\n",sdsout->type);
+	    Warning(WarningBuff);
+		goto OutOfHere;
+	}
+	
+	if(!sdsout->data){
+	    Warning((char *)"writesds2dBytes Found NULL data Pointer\n");
+		goto OutOfHere;
+	}
+	
+	length=sdsout->ixmax*sdsout->iymax;
+	
+	if(length <= 0){
+	    Warning((char *)"writesds2dBytes Found data length less than one\n");
+		goto OutOfHere;
+	}
+	
+	data=(unsigned char *)cMalloc(length*sizeof(unsigned char),1001);
+	if(!data){
+	    sprintf(WarningBuff,(char *)"writesds2dBytes error Trying To allocate %ld Bytes\n",length*sizeof(unsigned char));
+	    Warning(WarningBuff);
+		goto OutOfHere;
+	}
+
+
+	vmin =  1e33;
+	vmax = -1e33;
+	for(n=0;n<length;++n){
+	    v=sdsout->data[n];
+	    if(v < vmin)vmin = v;
+	    if(v > vmax)vmax = v;
+	}
+	
+	if(vmax <= vmin){
+		vmax=vmin+1+2*fabs(vmin);
+		for(n=0;n<length;++n){
+		    data[n]=(unsigned char)(2);
+		}
+	}else{
+		for(n=0;n<length;++n){
+			v=sdsout->data[n];
+			data[n]=(unsigned char)(2+252.*(v-vmin)/(vmax-vmin));
+		}
+	}
+		
+	if(sdsout->n == 0){
+	    unlink((char *)sdsout->path);
+		DFR8restart();
+	    if(DFR8putimage((char *)sdsout->path,data,(int)sdsout->ixmax,(int)sdsout->iymax,11)){
+		    goto OutOfHere;
+	    }
+
+	}else{
+	    if(DFR8addimage((char *)sdsout->path,data,(int)sdsout->ixmax,(int)sdsout->iymax,11)){
+		    goto OutOfHere;
+	    }
+	}
+	
+
+	lastref=DFR8lastref();
+	if(lastref == -1){
+	    sprintf(WarningBuff,(char *)"writesds2dBytes DFR8lastref error %d",DFerror);
+	    Warning(WarningBuff);
+	    goto OutOfHere;
+	}
+
+	if(DFANputlabel(sdsout->path,DFTAG_SDG,lastref,sdsout->name) == -1){
+	    sprintf(WarningBuff,(char *)"writesds2dBytes DFANputlabel %s Name %s lastref %d error %d",
+		               sdsout->path,sdsout->name,lastref,DFerror);
+	    Warning(WarningBuff);
+	    goto OutOfHere;
+	}
+	if(sdsout->pioName){
+	    sprintf(buff,(char *)"xmin %g ymin %g zmin %g xmax %g ymax %g zmax %g vmin %g vmax %g time %g pioName \"%s\" ",
+	            sdsout->xmin,sdsout->ymin,sdsout->zmin,
+                sdsout->xmax,sdsout->ymax,sdsout->zmax,
+                vmin,vmax,sdsout->time,sdsout->pioName);
+	}else{
+	    sprintf(buff,(char *)"xmin %g ymin %g zmin %g xmax %g ymax %g zmax %g vmin %g vmax %g time %g",
+	            sdsout->xmin,sdsout->ymin,sdsout->zmin,
+                sdsout->xmax,sdsout->ymax,sdsout->zmax,
+                vmin,vmax,sdsout->time);
+	}
+	if(DFANputdesc(sdsout->path,DFTAG_SDG,lastref,(char *)buff,strlen((char *)buff)) == -1){
+	    sprintf(WarningBuff,(char *)"writesds2dBytes DFANputdesc %s Name %s lastref %d DFerror %d",
+		sdsout->path,sdsout->name,lastref,DFerror);
+	    Warning(WarningBuff);
+	    goto OutOfHere;
+	}
+	ret = 0;
+OutOfHere:
+	if(data)cFree((char *)data);
+	data=NULL;
+	return ret;
+}
+
+
+static int writesds2dFloat(struct SDS2Dout *sdsout)
+{
+	extern int DFerror;
+	int32 rank,size[2];
+	double vmin,vmax;
+	char buff[256];
+	long n,length;
+	int lastref;
+	float *data;
+	double v;
+	int ret;
+	
+	ret=1;
+	
+	data=NULL;
+
+	if(!sdsout){
+	    Warning((char *)"writesds2dFloat Found NULL struct pointer\n");
+		goto OutOfHere;
+	}
+	
+	if(sdsout->type != DATA_TYPE_FLOAT){
+	    sprintf(WarningBuff,(char *)"writesds2dFloat Found Wrong data type %d\n",sdsout->type);
+	    Warning(WarningBuff);
+		goto OutOfHere;
+	}
+	
+	if(!sdsout->data){
+	    Warning((char *)"writesds2dFloat Found NULL data Pointer\n");
+		goto OutOfHere;
+	}
+	
+	length=sdsout->ixmax*sdsout->iymax;
+	
+	if(length <= 0){
+	    Warning((char *)"writesds2dFloat Found data length less than one\n");
+		goto OutOfHere;
+	}
+	
+	data=(float *)cMalloc(length*sizeof(float),1002);
+	if(!data){
+	    sprintf(WarningBuff,(char *)"writesds2dFloat error Trying To allocate %ld Bytes\n",length*sizeof(float));
+	    Warning(WarningBuff);
+		goto OutOfHere;
+	}
+
+	vmin =  1e33;
+	vmax = -1e33;
+	for(n=0;n<length;++n){
+	    v=sdsout->data[n];
+	    data[n]=(float)v;
+	    if(v < vmin)vmin = v;
+	    if(v > vmax)vmax = v;
+	}
+	
+	rank=2;
+	size[0]=(int)sdsout->iymax;
+	size[1]=(int)sdsout->ixmax;
+
+	if(sdsout->n == 0){
+	    unlink((char *)sdsout->path);
+	    DFSDclear();
+	    DFSDrestart();
+        DFSDsetNT(DFNT_FLOAT32);
+	    if(DFSDputdata((char *)sdsout->path,rank,size,(float *)data)){
+	        sprintf(WarningBuff,(char *)"writesds2d DFSDputdata error %d",DFerror);
+	        Warning(WarningBuff);
+	        goto OutOfHere;
+	    }
+	}else{
+	    if(DFSDadddata((char *)sdsout->path,rank,size,(float *)data)){
+	        sprintf(WarningBuff,(char *)"writesds2d DFSDadddata error %d",DFerror);
+	        Warning(WarningBuff);
+	        goto OutOfHere;
+	    }
+	}
+	
+
+	lastref=DFSDlastref();
+	if(lastref == -1){
+	    sprintf(WarningBuff,(char *)"writesds2d DFSDlastref error %d",DFerror);
+	    Warning(WarningBuff);
+	    goto OutOfHere;
+	}
+
+	if(DFANputlabel(sdsout->path,DFTAG_SDG,lastref,sdsout->name) == -1){
+	    sprintf(WarningBuff,(char *)"writesds2d DFANputlabel %s Name %s lastref %d error %d",
+		               sdsout->path,sdsout->name,lastref,DFerror);
+	    Warning(WarningBuff);
+	    goto OutOfHere;
+	}
+	if(sdsout->pioName){
+	    sprintf(buff,(char *)"xmin %g ymin %g zmin %g xmax %g ymax %g zmax %g vmin %g vmax %g time %g pioName \"%s\" ",
+	            sdsout->xmin,sdsout->ymin,sdsout->zmin,
+                sdsout->xmax,sdsout->ymax,sdsout->zmax,
+                vmin,vmax,sdsout->time,sdsout->pioName);
+	}else{
+	    sprintf(buff,(char *)"xmin %g ymin %g zmin %g xmax %g ymax %g zmax %g vmin %g vmax %g time %g",
+	            sdsout->xmin,sdsout->ymin,sdsout->zmin,
+                sdsout->xmax,sdsout->ymax,sdsout->zmax,
+                vmin,vmax,sdsout->time);
+	}
+	if(DFANputdesc(sdsout->path,DFTAG_SDG,lastref,(char *)buff,strlen((char *)buff)) == -1){
+	    sprintf(WarningBuff,(char *)"DFANputdesc %s Name %s lastref %d DFerror %d",
+		sdsout->path,sdsout->name,lastref,DFerror);
+	    Warning(WarningBuff);
+	    goto OutOfHere;
+	}
+	ret = 0;
+OutOfHere:
+	if(data)cFree((char *)data);
+	data=NULL;
+	return ret;
+}
+
+int Warning(char *mess)
+{
+    if(!mess)return 1;
+    fprintf(stderr,"%s",mess);
+    return 0;
 }
 
 

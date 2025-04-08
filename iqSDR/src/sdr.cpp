@@ -639,7 +639,7 @@ sdrClass::sdrClass()
     
     deviceString=(char *)"";
     
-    audioThreads=1;
+    audioThreads=0;
     
 	gBasicPane2=NULL;
 
@@ -771,6 +771,8 @@ int sdrClass::setup(int argc, char *argv[])
 int sdrClass::run()
 {
 	
+	//fprintf(stderr," sdrClass::run\n");
+	
 	bS=new cStack;
 	
 	bS2=new cStack;
@@ -866,6 +868,7 @@ int sdrClass::playRadio()
 	    
     amaxGlobal=0;
     
+    //fprintf(stderr,"sdrClass::playRadio audioThreads %d\n",audioThreads);
     std::thread(&sdrClass::Process,this).detach();
 	for(int n=0;n<audioThreads;++n){
 		std::thread(&sdrClass::Process,this).detach();
@@ -1163,7 +1166,7 @@ int sdrClass::findRadio()
 			}
         } catch(const std::exception &e) {
             std::string streamExceptionStr = e.what();
-            printf("findRadio Error: %s\n",streamExceptionStr.c_str());
+            fprintf(stderr,"findRadio Error: %s\n",streamExceptionStr.c_str());
         }
 			
     }
@@ -1618,7 +1621,7 @@ int sdrClass::rxBuffer()
                     }
              	}
 				saveFlag=1;
-			//	winout("rxBuff saveCall %d witch %d\n",saveCall,rx->witch);
+			//if(!(rx->witch % 20))winout("rxBuff saveCall %d witch %d iWait %d\n",saveCall,rx->witch,iWait);
 				
 	        }
 	        //auto t2 = std::chrono::high_resolution_clock::now();
@@ -1654,6 +1657,8 @@ int sdrClass::initPlay()
 
 int sdrClass::Process()
 {
+	//fprintf(stderr,"sdrClass::Process start\n");
+
 	
 	sdrClass *rx=this;
 	
@@ -1726,7 +1731,8 @@ OutOfHere:
     
     iqToAudio=-2;
     
-
+	//fprintf(stderr,"sdrClass::Process exit\n");
+	
 	return 0;
 }
 int sdrClass::setFilters(struct Filters *f)
@@ -1806,7 +1812,7 @@ int sdrClass::doFilter(float *wBuff,float *aBuff,struct Filters *f)
 
  	int ip=bS->popBuff();
  	if(ip < 0){
- 		//!winout("doFilter thread %d\n",(int)f->thread);
+ 		//winout("doFilter thread %d\n",(int)f->thread);
  	   return 1;
  	}
  	
@@ -2060,7 +2066,7 @@ int sdrClass::doAudio(float *aBuff,float *wBuff,struct Filters *f)
 	
 	bS->pushBuffa(audioOut);
 	
-	//winout("audioOut %d f->thread %d\n",(int)audioOut,(int)f->thread);
+	//if(!(audioOut % 20))winout("audioOut %d f->thread %d\n",(int)audioOut,(int)f->thread);
 
 	return 0;
 }
