@@ -1,7 +1,7 @@
 #ifndef __GRAPHICSH__
 #define __GRAPHICSH__
 #include <vector>
-
+#include <string>
 //#define GLEW_IN
 #ifdef GLEW_IN
 #include <GL/glew.h>

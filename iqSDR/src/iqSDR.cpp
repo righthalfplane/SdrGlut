@@ -8,7 +8,7 @@ void winout(const char *fmt, ...);
 
 int copyl(char *p1,char *p2,long n);
 
-std::string ProgramVersion="iqSDR-1355";
+std::string ProgramVersion="iqSDR-1360";
 
 void *cMalloc(unsigned long r, int tag);
 
@@ -965,7 +965,7 @@ void StartWindow::doQuit()
 
 	wxWindow *parent=GetParent();
 	
-	parent->Destroy();
+	if(parent)parent->Destroy();
 }
 void StartWindow::openWavFile(const char *file)
 {
@@ -977,6 +977,57 @@ void StartWindow::openWavFile(const char *file)
 	
 	
 }
+void StartWindow::openSweepFile(const char *file)
+{
+	char name[512];
+	
+	mstrncpy(name,(char *)file,sizeof(name));
+	
+	winout("openSweepFile %s name %s\n",file,name);
+	
+        double samplerate=200000;
+    	double fc=90000000;
+return;
+
+    class sdrClass *sdrIn= new sdrClass;
+	
+	sdrIn->f=fc;
+	sdrIn->fc=fc;
+	sdrIn->fw=fc;
+	sdrIn->samplerate=samplerate;
+	sdrIn->samplewidth=samplerate;
+	sdrIn->deviceNumber=0;
+	sdrIn->decodemode=MODE_FM;
+	sdrIn->inData=IN_FILE;
+	sdrIn->inFile=fopen(file,"rb");
+	if(sdrIn->inFile == NULL){
+	    winout("Could Not Open %s to Read\n",file);
+	    return;
+	}
+	sdrIn->startPlay();
+	
+	ApplFrame *grab=new ApplFrame(NULL,file,sdrIn);
+	grab->Show();
+	
+	grabList.push_back(grab);
+	
+	gBasicPane=pBasicPane;
+	
+	grab->SetLabel(file);
+
+     gBasicPane->gSpectrum->iWait=1;
+	
+     gBasicPane->gSpectrum->Spectrum::startRadio2();   	
+     
+     Sleep2(50);
+     
+     gBasicPane->gSpectrum->iWait=0;
+     
+     sdrIn->gBasicPane=gBasicPane;
+
+
+}
+
 void StartWindow::openIQFile(const char *file)
 {
 	char name[512];
@@ -1052,6 +1103,7 @@ void StartWindow::openIQFile(const char *file)
 
 }
 
+
 void StartWindow::OpenFile()
 {
 
@@ -1060,6 +1112,7 @@ void StartWindow::OpenFile()
     wxFileDialog filedlg(this, _("Open File"), "", "",
                        "I/Q files (*.raw)|*.raw|"
                        "Wav files (*.wav)|*.wav|"
+                       "Sweep files (*.s2d)|*.s2d|"
                        "TexT files (*.txt)|*.txt" 
                        , wxFD_OPEN|wxFD_FILE_MUST_EXIST);
                          
@@ -1087,7 +1140,7 @@ void StartWindow::OpenFile()
     	}
     	else if(Index == 2)
     	{
-    		//getSlices((const char *)psz);
+    		openSweepFile(file);
     	}
     	else if(Index == 3)
     	{

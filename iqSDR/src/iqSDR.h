@@ -126,6 +126,7 @@ double rtime(void);
     ID_SWEEPSTOP,
     ID_XMIN,
     ID_XMAX,
+    ID_OPEN,
     ID_FC=ID_RXFREQUENCY+100,
     ID_VIEWSELECTED,
     ID_EXIT,
@@ -483,6 +484,8 @@ public:
 	void openIQFile(const char *file);
 	
 	void openWavFile(const char *file);
+	
+	void openSweepFile(const char *file);
 	
 	void openArgcArgv(int argc,char **argv);
 	
@@ -1289,7 +1292,10 @@ public:
     void OnChar(wxKeyEvent& event);
     
 
-
+	void OpenFile(wxCommandEvent &event);
+	
+	void openSweepFile(char *file);
+	
 	WaterFall2 *gWaterFall2;
 	
 	BasicPane2 *gBasicPane2;

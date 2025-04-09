@@ -57,7 +57,221 @@ EVT_MENU_RANGE(ID_SAMPLERATE,ID_SAMPLERATE+99,Sweep::OnSampleRateSelected)
 EVT_SIZE(Sweep::resized)
 EVT_MENU(wxID_ABOUT, Sweep::About)
 EVT_MENU(ID_EXIT, Sweep::About)
+EVT_MENU(ID_OPEN, Sweep::OpenFile)
 wxEND_EVENT_TABLE()
+
+int checkOrder(unsigned char *cp,long length)
+{
+	if(!cp || length <= 0)return 1;
+#ifdef PC
+	{
+		unsigned char c;
+	    long np;
+	    for(np=0;np<length;np += 4){
+		    c=cp[np];
+		    cp[np]=cp[np+3];
+		    cp[np+3]=c;
+		    c=cp[np+1];
+		    cp[np+1]=cp[np+2];
+		    cp[np+2]=c;
+	    }
+	}
+#endif
+	return 0;
+}
+int namesize(char *name)
+{
+	char *np;
+	int n;
+
+	if(!(np=strrchr(name,'/'))){
+	    np=name;
+	}else{
+	    np += 1;
+	}
+
+	n=(int)strlen(np);
+
+	return n;
+}
+
+void Sweep::openSweepFile(char *name)
+{
+
+	int ixmax,iymax,izmax;
+	long size;
+	char nameout[256];
+	extern int DFerror;
+	int lastref,rank,dimsizes[3],maxrank=3;
+
+
+	//winout("file %s\n",name);
+	
+	
+	DFSDclear();
+	DFSDrestart();
+   // DFSDsetNT(DFNT_FLOAT32);
+
+	if(DFSDgetdims(name,&rank,dimsizes,maxrank) != -1) {
+		ixmax = dimsizes[0];
+		size = ixmax;
+		if (rank>1) {
+			iymax = dimsizes[1];
+			size *= iymax;
+		}
+		if (rank>2) {
+			izmax = dimsizes[2];
+			size *= izmax;
+		}
+		size *= sizeof(double);
+		
+		float *buffin=(float *)cMalloc(size,2399);
+		if(!buffin){
+			fprintf(stderr,"openSweepFile out of Memory\n");
+			return;
+		}
+		
+		double *data=(double *)cMalloc(size,2399);
+		if(!data){
+			fprintf(stderr,"openSweepFile out of Memory\n");
+			return;
+		}
+		
+		
+		if(DFSDgetdata(name,rank,dimsizes,buffin)==-1){
+			fprintf(stderr,"Error (%d)  DFSDgetdata\n",DFerror);
+			return;
+		}
+		
+		double amin=1e33;
+		double amax=-1e33;
+		
+		for(int n=0;n<ixmax*iymax;++n){
+			float v=buffin[n];
+			data[n]=buffin[n];
+			if(v > amax)amax=v;
+			if(v < amin)amin=v;
+		}
+		
+		//fprintf(stderr,"amin %g amax %g\n",amin,amax);
+		
+		strcpy(nameout,name);
+				
+		lastref=DFSDlastref();
+		if(lastref != -1) {
+			DFANgetlabel(name,700,lastref,nameout,256);			
+		}
+		
+		if(checkOrder((unsigned char *)buffin,size))return;
+		
+		int gotName=0;
+		if(lastref != -1){
+			zerol((char *)nameout,256L);
+			if(DFANgetdesc(name,700,lastref,nameout,256) != -1){
+				gotName=1;
+			}
+		}		
+		double xmin,xmax;
+		double ymin,ymax;
+		double vmin,vmax;
+		double zmin,zmax;
+		
+		if(gotName){
+			sscanf(nameout,"xmin %lf ymin %lf zmin %lf xmax %lf ymax %lf zmax %lf vmin %lf vmax %lf",
+			      &xmin,&ymin,&zmin,&xmax,&ymax,&zmax,&vmin,&vmax);
+			fprintf(stderr,"xmin %g xmax %g\n",xmin,xmax);
+			fprintf(stderr,"ymin %g ymax %g\n",ymin,ymax);
+			fprintf(stderr,"vmin %g vmax %g\n",vmin,vmax);
+
+		}else{
+			return;	
+		}
+		
+		rx->sweepLower=xmin;
+		rx->sweepUpper=xmax;
+
+		sdsout.path=(char *)name;
+		//sdsout.path=rx->s2dName;
+		sdsout.name=(char *)"Power Sweep";
+		sdsout.ixmax=iymax;
+		sdsout.iymax=ixmax;
+		sdsout.xmin=xmin;
+		sdsout.xmax=xmax;
+		sdsout.ymin=ymin;
+		sdsout.ymax=ymax;
+		sdsout.zmin=zmin;
+		sdsout.zmax=zmax;
+		sdsout.time=0.0;
+		sdsout.n=0;
+		sdsout.pioName=(char *)"Power(db)";	
+		sdsout.type=DATA_TYPE_FLOAT;	
+		if(sdsout.data)cFree((char *)sdsout.data);
+		sdsout.data=(double *)data;
+		
+		//fprintf(stderr,"sds->data %p sds->ixmax %ld\n",sdsout.data,sdsout.ixmax);
+		
+		gSpectrum2->nrow=0;
+		
+		if(buffin)cFree((char *)buffin);
+		buffin=NULL;
+		
+		//winout("gotName %d name %s nameout %s\n",gotName,name,nameout);
+	}
+	
+}
+
+void Sweep::OpenFile(wxCommandEvent &event)
+{
+	static int index=0;
+    
+    wxFileDialog filedlg(this, _("Open File"), "", "",
+                       "I/Q files (*.raw)|*.raw|"
+                       "Wav files (*.wav)|*.wav|"
+                       "Sweep files (*.s2d)|*.s2d|"
+                       "TexT files (*.txt)|*.txt" 
+                       , wxFD_OPEN|wxFD_FILE_MUST_EXIST);
+                         
+    filedlg.SetFilterIndex(index);
+
+    if (filedlg.ShowModal() == wxID_OK)
+    {
+    
+        
+        wxString name = filedlg.GetPath();
+        
+        const char *file=name.ToUTF8().data();
+        
+        int Index=filedlg.GetFilterIndex();
+        
+       // winout("OpenFile file %s Index %d\n",file,Index);
+        
+        if(Index == 0)
+        {     
+    		//openIQFile(file);
+    	} 
+    	else if(Index == 1)
+    	{
+    		//openWavFile(file);
+    	}
+    	else if(Index == 2)
+    	{
+    		openSweepFile((char *)file);
+    	}
+    	else if(Index == 3)
+    	{
+    		//getText((const char *)psz);
+    	}
+    	else if(Index == 4)
+    	{
+    		//VtkFrame::GetNCSASlices((const char *)psz);
+    	}
+    	else if(Index == 5)
+    	{
+    		//VtkFrame::GetVtkSlices((const char *)psz);
+    	}
+    	
+    }
+}
 void Sweep::About(wxCommandEvent &event)
 {
 
@@ -84,7 +298,8 @@ Sweep::Sweep(wxFrame* parent,wxString title,class sdrClass *sdrIn)
 	sdr=sdrIn;
 	
     wxMenu *menuFile = new wxMenu;
-    //menuFile->Append(wxID_OPEN, _T("&Information Audio...\tCtrl-O"), _T("Infomation"));
+    
+    menuFile->Append(ID_OPEN, _T("&Open...\tCtrl-O"), _T("Open..."));
     
     menuFile->Append(ID_EXIT, _T("Exit"), _T("Quit2 this program"));
     
@@ -510,8 +725,24 @@ int Sweep::sweepRadio()
 			    ny++;
 			}
 		}
+		
+   		char fname[256];
+   		
+		struct tm today;
 
-		sdsout.path=(char *)"sweepFile.s2d";
+   		time_t now;
+
+    	time(&now);  /* get current time; same as: now = time(NULL)  */
+    
+    	today = *localtime(&now);
+    	
+    	sprintf(fname,"sweepFile_%4d%02d%02d_%02d%02d%02d.s2d%c\n",
+    					today.tm_year+1900,today.tm_mon+1,today.tm_mday,
+    					today.tm_hour,today.tm_min,today.tm_sec,'\0');
+ 		
+		
+		
+		sdsout.path=(char *)fname;
 		//sdsout.path=rx->s2dName;
 		sdsout.name=(char *)"Power Sweep";
 		sdsout.ixmax=xsizel;
@@ -530,6 +761,8 @@ int Sweep::sweepRadio()
 		sdsout.data=rx->buffout;
 			
 		if(writesds(&sdsout))goto OutOfHere;
+		
+		
 
 	}
  	
@@ -1082,11 +1315,8 @@ EVT_COMBOBOX(ID_COMBOFILTER,BasicPane2::OnComboFilter)
 EVT_COMBOBOX(ID_COMBOANTENNA,BasicPane2::OnComboAntenna)
 EVT_COMBOBOX(ID_COMBOSAMPLERATE,BasicPane2::OnComboSampleRate)
 EVT_COMBOBOX(ID_COMBOBANDWIDTH,BasicPane2::setBandwidth)
-//EVT_TEXT(ID_COMBOSAMPLERATE, BasicPane2::OnText)
 EVT_TEXT_ENTER(ID_COMBOSAMPLERATE, BasicPane2::OnText)
-//EVT_TEXT(ID_XMIN, BasicPane2::OnText)
 EVT_TEXT_ENTER(ID_XMIN, BasicPane2::OnText)
-//EVT_TEXT(ID_XMAX, BasicPane2::OnText)
 EVT_TEXT_ENTER(ID_XMAX, BasicPane2::OnText)
 EVT_TEXT_ENTER(ID_COMBOBANDWIDTH, BasicPane2::OnTextBandWidth)
 EVT_BUTTON(ID_COMBOBUTTON, BasicPane2::setSampleRate)
@@ -1249,6 +1479,26 @@ int BasicPane2::SetScrolledWindow()
 
 	wxStaticBox *box=NULL;
 	
+	wxCheckBox *cbox;
+	if(sdr->hasGainMode){
+		cbox=new wxCheckBox(ScrolledWindow,ID_CHECKAUTO, "&Hardware AGC",wxPoint(20,yloc), wxSize(230, 25));
+		cbox->SetValue(1);	
+		yloc += 25;   
+	}
+	
+	cbox=new wxCheckBox(ScrolledWindow,ID_SWAPIQ, "&I/Q Swap",wxPoint(20,yloc), wxSize(90, 25));
+	cbox->SetValue(0);	
+	
+	
+	cbox=new wxCheckBox(ScrolledWindow,ID_OSCILLOSCOPE, "&Frequency Sweep",wxPoint(110,yloc), wxSize(130, 25));
+	cbox->SetValue(scrolledWindowFlag);	
+	yloc += 25;   
+
+	cbox=new wxCheckBox(ScrolledWindow,ID_SOFTAUTOGAIN, "&Software AGC",wxPoint(20,yloc), wxSize(230, 25));
+	cbox->SetValue(1);	
+	yloc += 25;   
+	
+	
 	if(!scrolledWindowFlag){
 		box = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Set Volume ",wxPoint(20,yloc), wxSize(230, 80),wxBORDER_SUNKEN );
 		box->SetToolTip(wxT("Set Volume") );
@@ -1294,24 +1544,6 @@ int BasicPane2::SetScrolledWindow()
 		    yloc += 25;   
 
 	}
-	wxCheckBox *cbox;
-	if(sdr->hasGainMode){
-		cbox=new wxCheckBox(ScrolledWindow,ID_CHECKAUTO, "&Hardware AGC",wxPoint(20,yloc), wxSize(230, 25));
-		cbox->SetValue(1);	
-		yloc += 25;   
-	}
-	
-	cbox=new wxCheckBox(ScrolledWindow,ID_SWAPIQ, "&I/Q Swap",wxPoint(20,yloc), wxSize(90, 25));
-	cbox->SetValue(0);	
-	
-	
-	cbox=new wxCheckBox(ScrolledWindow,ID_OSCILLOSCOPE, "&Frequency Sweep",wxPoint(110,yloc), wxSize(130, 25));
-	cbox->SetValue(scrolledWindowFlag);	
-	yloc += 25;   
-
-	cbox=new wxCheckBox(ScrolledWindow,ID_SOFTAUTOGAIN, "&Software AGC",wxPoint(20,yloc), wxSize(230, 25));
-	cbox->SetValue(1);	
-	yloc += 25;   
 	
 	if(sdr->rxGainRangeList.size()){
 		for(size_t n=0;n<sdr->rxGainRangeList.size();++n){
@@ -1879,20 +2111,20 @@ void BasicPane2::OnText(wxCommandEvent &event)
 	
 	int id=event.GetId();
 	
-	wxString value=sweepXmin->GetValue();
-
-	const char *alpha=value;
-
-	double xmin=atof(alpha)*1e6;
-
-	value=sweepXmax->GetValue();
-
-	alpha=value;
-
-	double xmax=atof(alpha)*1e6;	
 	
 	if(id == ID_XMIN){
-		winout("ID_XMIN %d xmin %g xmax %g\n",id,xmin,xmax);
+		wxString value=sweepXmin->GetValue();
+
+		const char *alpha=value;
+
+		double xmin=atof(alpha)*1e6;
+
+		value=sweepXmax->GetValue();
+
+		alpha=value;
+
+		double xmax=atof(alpha)*1e6;
+			
 		if(xmax <= xmin){
 			xmax=xmin+2.0e6;
 		}
@@ -1900,7 +2132,18 @@ void BasicPane2::OnText(wxCommandEvent &event)
 		gSweep->rx->sweepUpper=xmax;
 		return;
 	}else if(id == ID_XMAX){
-		winout("ID_XMAX %d xmin %g xmax %g\n",id,xmin,xmax);
+		wxString value=sweepXmin->GetValue();
+
+		const char *alpha=value;
+
+		double xmin=atof(alpha)*1e6;
+
+		value=sweepXmax->GetValue();
+
+		alpha=value;
+
+		double xmax=atof(alpha)*1e6;	
+		
 		if(xmin >= xmax){
 			xmin=xmax-2.0e6;
 		}
@@ -1908,6 +2151,8 @@ void BasicPane2::OnText(wxCommandEvent &event)
 		gSweep->rx->sweepUpper=xmax;
 		return;
 	}
+	
+	winout("BasicPane2::OnText id %d\n",id);
 		
 	wxString rates=event.GetString();
 	
@@ -3328,6 +3573,7 @@ void Spectrum2::render1(wxPaintEvent& evt )
 {
 	evt.Skip();
 	
+	//static long long nc=0;
 	//winout("Spectrum2 render nc %lld\n",nc++);
 
     if(!IsShown())return;
@@ -3379,13 +3625,13 @@ void Spectrum2::render1(wxPaintEvent& evt )
 		glColor4f(0, 0, 1, 1);
 		
 		//winout("filterType %d\n",filterType);
-		
+/*
       	if(decodemode1 != sdr->decodemode){
       		decodemode1=sdr->decodemode;
       		double Ratio = (float)(sds->ixmax/sdr->samplerate);
       		iqSampler1  = msresamp_crcf_create(Ratio, 60.0f);
       	}
-    	
+*/
 		if(buffSize != sds->ixmax){
 			buffSize=sds->ixmax;
 			if(buff1)cFree((char *)buff1);
@@ -3403,8 +3649,30 @@ void Spectrum2::render1(wxPaintEvent& evt )
 		}
 		
 		buffSend2=&sds->data[nrow*sds->ixmax]; 
+		
+/*
+		float *ddata=(float *)sds->data;
+		
+		buffSend2=&ddata[nrow*sds->ixmax]; 
+		
+		for(int n=0;n<sds->ixmax*sds->iymax;++n){
+			double v=ddata[n];
+         	if(v > amax){
+         		amax=v;
+         	}
+         	if(v < amin){
+         		amin=v;
+         	}
+		}
+*/
+		
+		//fprintf(stderr,"sds->data %p sds->ixmax %ld amax %g amin %g\n",sds->data,sds->ixmax,amax,amin);
+		
 				
-		//fprintf(stderr,"witch %d ip %d\n",witch,ip);
+		//fprintf(stderr,"sds->data %p sds->ixmax %ld\n",sds->data,sds->ixmax);
+		
+    	//double amax=-1e33;
+    	//double amin=1e33;
 				
 		unsigned int num;
 		
@@ -3455,21 +3723,22 @@ void Spectrum2::render1(wxPaintEvent& evt )
 			//fprintf(stderr,"2 num %d iFreeze %d\n",num,iFreeze);
 		}
 		
-/*		
+/*
 		int nmax2=-1;
 		double amax2=0;
 		
 		for(int n=0;n<sds->ixmax;++n){
-			double v=(buff2[2*n]*buff2[2*n]+buff2[2*n+1]*buff2[2*n+1]);
+			double v=buff2[n];
         	if(v > 0.0)v=sqrt(v);
          	if(v > amax2){
          		amax2=v;
          		nmax2=n;
          	}
 		}
-*/
+
 		buff2[0]=buff2[0];
 		buff2[1]=buff2[1];
+*/
 
 		num=0;
  /*
@@ -3484,12 +3753,12 @@ void Spectrum2::render1(wxPaintEvent& evt )
 
       	buffSendLength=num;
 		
-		//int nmax=-1;
+		//int nmax3=-1;
 		for(int n=0;n<buffSendLength;++n){
 			double v=buff3[n];
          	if(v > amax){
          		amax=v;
-         	  // nmax=n;
+         	    //nmax3=n;
          	}
          	if(v < amin){
          		amin=v;
@@ -3498,7 +3767,7 @@ void Spectrum2::render1(wxPaintEvent& evt )
 		
 		//static long int count=0;
 		
-		//winout("amax %g num %d %d amax2 %g nmax2 %d sds->ixmax %ld\n",amax,num,nmax,amax2,nmax2,sds->ixmax);
+		//winout("amax %g num %d %d amax2 %g nmax3 %d sds->ixmax %ld\n",amax,num,nmax3,amax2,nmax2,sds->ixmax);
 		//winout("count %ld xmin %g xmax %g ymin %g ymax %g ixmax %ld iymax %ld\n",count++,sds->xmin,sds->xmax,sds->ymin,sds->ymax,sds->ixmax,sds->iymax);
 		
 		if(amaxGlobal == 0.0)amaxGlobal=amax;
@@ -4555,13 +4824,13 @@ static int writesds3dDouble(struct SDS2Dout *sdsout)
 	    DFSDrestart();
         DFSDsetNT(DFNT_FLOAT64);
 	    if(DFSDputdata((char *)sdsout->path,rank,size,(float *)sdsout->data)){
-	        sprintf(WarningBuff,(char *)"writesds3dDouble DFSDputdata error %d",DFerror);
+	        sprintf(WarningBuff,(char *)"writesds3dDouble DFSDputdata error %d\n",DFerror);
 	        Warning(WarningBuff);
 	        goto OutOfHere;
 	    }
 	}else{
 	    if(DFSDadddata((char *)sdsout->path,rank,size,(float *)sdsout->data)){
-	        sprintf(WarningBuff,(char *)"writesds3dDouble DFSDadddata error %d",DFerror);
+	        sprintf(WarningBuff,(char *)"writesds3dDouble DFSDadddata error %d\n",DFerror);
 	        Warning(WarningBuff);
 	        goto OutOfHere;
 	    }
@@ -4570,13 +4839,13 @@ static int writesds3dDouble(struct SDS2Dout *sdsout)
 
 	lastref=DFSDlastref();
 	if(lastref == -1){
-	    sprintf(WarningBuff,(char *)"writesds3dDouble DFSDlastref error %d",DFerror);
+	    sprintf(WarningBuff,(char *)"writesds3dDouble DFSDlastref error %d\n",DFerror);
 	    Warning(WarningBuff);
 	    goto OutOfHere;
 	}
 
 	if(DFANputlabel(sdsout->path,DFTAG_SDG,lastref,sdsout->name) == -1){
-	    sprintf(WarningBuff,(char *)"writesds3dDouble DFANputlabel %s Name %s lastref %d error %d",
+	    sprintf(WarningBuff,(char *)"writesds3dDouble DFANputlabel %s Name %s lastref %d error %d\n",
 		               sdsout->path,sdsout->name,lastref,DFerror);
 	    Warning(WarningBuff);
 	    goto OutOfHere;
@@ -4593,7 +4862,7 @@ static int writesds3dDouble(struct SDS2Dout *sdsout)
                 vmin,vmax,sdsout->time);
 	}
 	if(DFANputdesc(sdsout->path,DFTAG_SDG,lastref,(char *)buff,strlen((char *)buff)) == -1){
-	    sprintf(WarningBuff,(char *)"writesds3dDouble DFANputdesc %s Name %s lastref %d DFerror %d",
+	    sprintf(WarningBuff,(char *)"writesds3dDouble DFANputdesc %s Name %s lastref %d DFerror %d\n",
 		sdsout->path,sdsout->name,lastref,DFerror);
 	    Warning(WarningBuff);
 	    goto OutOfHere;
