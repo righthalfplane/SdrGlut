@@ -8,7 +8,7 @@ void winout(const char *fmt, ...);
 
 int copyl(char *p1,char *p2,long n);
 
-std::string ProgramVersion="iqSDR-1360";
+std::string ProgramVersion="iqSDR-1367";
 
 void *cMalloc(unsigned long r, int tag);
 
@@ -1611,7 +1611,9 @@ EVT_BUTTON(ID_COMBOBUTTON, BasicPane::setSampleRate)
 EVT_SIZE(BasicPane::resized)
 EVT_SLIDER(SCROLL_GAIN,BasicPane::OnScroll)
 EVT_SLIDER(ID_SAMPLEWIDTH,BasicPane::setSampleWidth)
+EVT_SLIDER(ID_OSCILLOSCOPEZOOM,BasicPane::setSampleWidth)
 EVT_SLIDER(ID_ROTATEDATA,BasicPane::setDataRotate)
+EVT_SLIDER(ID_OSCILLOSCOPESLIDE,BasicPane::setDataRotate)
 EVT_SLIDER(ID_MININUM,BasicPane::OnMinimun)
 EVT_SLIDER(ID_MAXINUM,BasicPane::OnMaximun)
 EVT_COMMAND_RANGE(ID_RXGAIN,ID_RXGAIN+99,wxEVT_SLIDER,BasicPane::setRxGain)
@@ -1744,7 +1746,7 @@ int BasicPane::SetScrolledWindow()
 	cbox=new wxCheckBox(ScrolledWindow,ID_SWAPIQ, "&I/Q Swap",wxPoint(20,yloc), wxSize(100, 25));
 	cbox->SetValue(0);	
 	cbox=new wxCheckBox(ScrolledWindow,ID_OSCILLOSCOPE, "&Oscilloscope",wxPoint(120,yloc), wxSize(120, 25));
-	cbox->SetValue(scrolledWindowFlag);	
+	cbox->SetValue(oscilloscopeFlag);	
 	yloc += 25;   
 
 	cbox=new wxCheckBox(ScrolledWindow,ID_SOFTAUTOGAIN, "&Software AGC",wxPoint(20,yloc), wxSize(230, 25));
@@ -1767,20 +1769,35 @@ int BasicPane::SetScrolledWindow()
 	
 	}
 	
+	if(oscilloscopeFlag){
+		box = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Zoom Oscilloscope",wxPoint(20,yloc), wxSize(230, 80),wxBORDER_SUNKEN );
+		box->SetToolTip(wxT("Zoom Oscilloscope Data") );
+		new wxSlider(box,ID_OSCILLOSCOPEZOOM,200,0,200,wxPoint(10,15),wxSize(210,-1),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
 
-	box = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Zoom",wxPoint(20,yloc), wxSize(230, 80),wxBORDER_SUNKEN );
-	box->SetToolTip(wxT("Zoom Data") );
-	new wxSlider(box,ID_SAMPLEWIDTH,200,0,200,wxPoint(10,15),wxSize(210,-1),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
+		yloc += 85;   
+		
+		box = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Slide Oscilloscope Data",wxPoint(20,yloc), wxSize(230, 80),wxBORDER_SUNKEN );
+		box->SetToolTip(wxT("Slide Oscilloscope Data") );
+		new wxSlider(box,ID_OSCILLOSCOPESLIDE,200,0,200,wxPoint(10,15),wxSize(210,-1),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
 
-	yloc += 85;   
+		yloc += 85;   
 	
 	
-	box = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Rotate Oscilloscope Data",wxPoint(20,yloc), wxSize(230, 80),wxBORDER_SUNKEN );
-	box->SetToolTip(wxT("Rotate Oscilloscope Data") );
-	new wxSlider(box,ID_ROTATEDATA,200,0,200,wxPoint(10,15),wxSize(210,-1),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
+	}else{
+		box = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Zoom",wxPoint(20,yloc), wxSize(230, 80),wxBORDER_SUNKEN );
+		box->SetToolTip(wxT("Zoom Spectrum Data") );
+		new wxSlider(box,ID_SAMPLEWIDTH,200,0,200,wxPoint(10,15),wxSize(210,-1),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
 
-	yloc += 85;   
+		yloc += 85;   
+/*
+		box = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Slide Data",wxPoint(20,yloc), wxSize(230, 80),wxBORDER_SUNKEN );
+		box->SetToolTip(wxT("Rotate Oscilloscope Data") );
+		new wxSlider(box,ID_ROTATEDATA,200,0,200,wxPoint(10,15),wxSize(210,-1),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
+
+		yloc += 85;   
+*/
 	
+	}
 	
 	
 	box = new wxStaticBox(ScrolledWindow, wxID_ANY, "Minimum Value ",wxPoint(20,yloc), wxSize(230, 80),wxBORDER_SUNKEN );
@@ -2059,7 +2076,7 @@ BasicPane::BasicPane(wxWindow *frame, const wxString &title,class sdrClass *sdrI
 	
 	gWaterFall->gBasicPane=pBasicPane;
 	
-	scrolledWindowFlag=0;
+	oscilloscopeFlag=0;
 	
 	ScrolledWindow=NULL;
 	
@@ -2118,7 +2135,7 @@ void BasicPane::OnCheckAuto(wxCommandEvent &event)
 		int flag=event.GetSelection();
 		//winout("ID_OSCILLOSCOPE flag %d\n",flag);
 		gSpectrum->oscilloscope=flag;
-		scrolledWindowFlag=flag;
+		oscilloscopeFlag=flag;
 		SetScrolledWindow();
 		wxSize size = gApplFrame->GetClientSize();
 		size.x += 4;
@@ -2187,20 +2204,35 @@ void BasicPane::setSampleWidth(wxCommandEvent &event)
 {
 	event.Skip();
 	
+	int id=event.GetId();
+	
 	double samplewidth=event.GetSelection();
 	
-	sdr->setSampleWidth(samplewidth);	
+	if(id == ID_SAMPLEWIDTH){
+		sdr->setSampleWidth(samplewidth);	
+	}else if(id == ID_OSCILLOSCOPEZOOM){
+		//winout("ID_OSCILLOSCOPEZOOM %g\n",samplewidth);
+		gSpectrum->oscilloscopeZoom=samplewidth;
+	}
+	
+	
 }
 void BasicPane::setDataRotate(wxCommandEvent &event)
 {
 	event.Skip();
 	
-	sampleDataRotate=event.GetSelection();
+	int id=event.GetId();
 	
-	sampleDataRotate=(200-sampleDataRotate)/200;
+	double data=event.GetSelection();
 	
-	Sleep2(100);
-	
+	if(id == ID_ROTATEDATA){
+		//sampleDataRotate=event.GetSelection();
+		sampleDataRotate=(200-sampleDataRotate)/200;
+	}else if(id == ID_OSCILLOSCOPESLIDE){
+		//winout("ID_OSCILLOSCOPESLIDE %g\n",data);
+		gSpectrum->oscilloscopeSlide=data;
+	}
+		
 	//fprintf(stderr,"sampleDataRotate %g\n",sampleDataRotate);
 	
 }
@@ -2743,8 +2775,221 @@ int WaterFall::ftox(double frequency){
 
 	return x;
 }
-
 void WaterFall::render( wxPaintEvent& evt )
+{
+
+	if(gSpectrum->oscilloscope == 1){
+		render1(evt);	
+	}else{
+		render2(evt);
+	}
+
+}
+void WaterFall::render1( wxPaintEvent& evt )
+{
+	evt.Skip();
+//   winout("WaterFall::render\n");
+
+    if(!IsShown()) return;
+    
+    if(iWait)return;
+    
+    float *magnitude=gSpectrum->buff3;
+    
+    int length=gSpectrum->buffLength;
+    
+    if(!magnitude || !length)return;
+    
+    //auto t1 = chrono::high_resolution_clock::now();
+    
+
+   // winout("WaterFall render 2\n");
+        
+    wxGLCanvas::SetCurrent(*m_context);
+    wxPaintDC(this); // only to be used in paint events. use wxClientDC to paint outside the paint event
+    //wxClientDC(this); // only to be used in paint events. use wxClientDC to paint outside the paint event
+    
+ //   const wxSize ClientSize = GetClientSize();
+    
+   
+    glPixelStorei(GL_UNPACK_ALIGNMENT,1);
+
+ 
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+ 
+    // ------------- draw some 2D ----------------
+    prepare2DViewport(0,0,getWidth(), getHeight());
+    glLoadIdentity();
+ 
+    // white background
+    glColor4f(1, 1, 1, 1);
+    glBegin(GL_QUADS);
+    glVertex3f(0,0,0);
+    glVertex3f(getWidth(),0,0);
+    glVertex3f(getWidth(),getHeight(),0);
+    glVertex3f(0,getHeight(),0);
+    glEnd();
+    
+
+	double *range = new double[length];
+
+    pmin =  1e33;
+    pmax = -1e33;
+
+    double rmin=0.0;
+    double rmax=1.0/sdr->ncut;
+    
+    double dx=(rmax-rmin)/(double)(length-1);
+    
+    for(int n=0;n<length;++n){
+        double r;
+        r=n*dx+rmin;
+        range[n]=r;
+        double v=magnitude[n];
+        if(v < pmin)pmin=v;
+        if(v > pmax)pmax=v;
+    }    
+
+    if(!pd.UsePlotScales){
+    	pd.dmin=pmin;
+    	pd.dmax=pmax;
+    	pd.sPmin=pmin;
+    	pd.sPmax=pmax;
+    }
+    
+ //  winout("rmin %g rmax %g amin %g amax %g length %d dx %g\n",rmin,rmax,pmin,pmax,length,dx);
+    
+    
+    if(water.nline >= water.ysize)water.nline=0;
+    
+    unsigned char *wateric= new unsigned char[length*3];
+    
+    FloatToImage(magnitude,length,&pd,wateric);
+/*
+    int ns1=3*water.xsize*(water.ysize-water.nline-1);
+    int ns2=3*water.xsize*water.ysize+3*water.xsize*(water.ysize-1-water.nline++);
+*/
+    int ns1=3*water.xsize*(water.nline+water.ysize);
+    int ns2=3*water.xsize*(water.nline++);
+    
+	double Slide=(gSpectrum->oscilloscopeSlide)/200.0;
+	if(Slide <= 0.0)Slide=1.0/200.0;
+	
+	double Zoom=(gSpectrum->oscilloscopeZoom)/200.0;
+	if(Zoom <= 0.0)Zoom=1.0/200.0;
+	
+	double gLength=Zoom*(rmax-rmin);
+		
+	double gxmin=(rmax-rmin-gLength)*Slide+rmin;
+	double gxmax=gxmin+gLength;
+	
+	//fprintf(stderr,"gxmin %g gxmax %g Zoom %g Slide %g gLength %g\n",gxmin,gxmax,Zoom,Slide,gLength);
+
+    int nmin,nmax;
+    nmin=length-1;
+    nmax=0;
+    for(int n=0;n<length;++n){
+        if(range[n] <= gxmin)nmin=n;
+        if(range[n] <= gxmax)nmax=n;
+    }
+    
+    double dxn = -1;
+    if(nmax-nmin){
+        dxn=(double)(nmax-nmin)/(double)(length-1);
+    }else{
+        nmin=0;
+        dxn = 1;
+    }
+    
+    
+   // winout("nmin %d nmax %d dxn %g\n",nmin,nmax,dxn);
+   
+    
+    double dxw=(double)(water.xsize-1)/(double)(length-1);
+   
+    
+    int ics=wateric[(int)(2*dxn+nmin)];
+    
+    for(int nnn=0;nnn<length;++nnn){
+        int ic;
+        
+        int n=nnn*dxn+nmin+0.5;
+        
+        int next=(nnn+1)*dxn+nmin+0.5;
+        
+        ic=wateric[n];
+ 
+        int nn=nnn*dxw+0.5;
+        
+        int nn2=next*dxw+0.5;
+        
+        
+
+//            winout("nn %d nn2 %d nnn %d n %d next %d ic %d ics %d\n",nn,nn2,nnn,n,next,ic,ics);
+
+        if(ic > ics)ics=ic;
+        
+        if(nn == nn2){
+        	//winout("2 nn %d nn2 %d nnn %d\n",nn,nn2,nnn);
+           continue;
+        }
+        ic=ics;
+        
+        ics=wateric[next];
+        
+        if(nn < 0 || nn >= water.SRect.xsize){
+            winout("nn %d nn2 %d nnn %d n %d next %d ic %d ics %d\n",nn,nn2,nnn,n,next,ic,ics);
+			exit(1);
+        }
+                
+        water.data[ns1+3*nn]=pd.palette[3*ic];
+        water.data[ns1+3*nn+1]=pd.palette[3*ic+1];
+        water.data[ns1+3*nn+2]=pd.palette[3*ic+2];
+        
+        water.data[ns2+3*nn]=pd.palette[3*ic];
+        water.data[ns2+3*nn+1]=pd.palette[3*ic+1];
+        water.data[ns2+3*nn+2]=pd.palette[3*ic+2];
+        
+    }    
+    
+    water.SRect.y=water.ysize+1-water.nline;
+    
+   // winout("x %d y %d xsize %d ysize %d \n",water.SRect.x,water.SRect.y,water.SRect.xsize,water.SRect.ysize);
+
+    int xsize=water.SRect.xsize;
+    
+    int ysize=water.SRect.ysize;
+    
+    int nline=water.nline;
+         
+    glDrawPixels(xsize,ysize,GL_RGB, GL_UNSIGNED_BYTE, &water.data[nline*xsize*3]);
+
+    glColor4f(0, 0, 0, 1);
+	int xs=ftox(sdr->f-sdr->bw/2.0);
+	DrawLine(xs, 0, xs, getHeight());
+	xs=ftox(sdr->f+sdr->bw/2.0);
+	DrawLine(xs, 0, xs, getHeight());
+	
+//	winout("xs %d iWait %d\n",xs,iWait);
+
+/*
+ 		
+ 		//winout(" left %d right %d center %d xsize %d bw %g\n",ftox(sdr->f-sdr->bw/2.0),ftox(sdr->f+sdr->bw/2.0),ftox(sdr->f),box.xsize,sdr->bw);
+ 		
+ 		DrawBox(&box,0);
+*/
+
+//	winout("Waterfall f %p\n",&sdr->f);
+
+    	if(range)delete [] range;
+    	range=NULL;
+    	if(wateric)delete [] wateric;
+    	wateric=NULL;
+
+    	glFlush();
+    	SwapBuffers();
+}
+void WaterFall::render2( wxPaintEvent& evt )
 {
 	evt.Skip();
 //   winout("WaterFall::render\n");
@@ -2932,7 +3177,8 @@ void WaterFall::render( wxPaintEvent& evt )
 
     	glFlush();
     	SwapBuffers();
-    }
+}
+
 int WaterFall::SetWindow()
 {
     
@@ -3302,8 +3548,11 @@ Spectrum::Spectrum(wxFrame* parent, int* args) :
     
     lineDumpInterval=0.1;
     lineTime=ftime()+lineDumpInterval;
-
     
+	oscilloscopeSlide=200;
+	
+	oscilloscopeZoom=200;
+
   //  winout("Groups of triangles %ld vender %s\n",triangle,glGetString(GL_VENDOR));
   
 	//Bind(wxEVT_CHAR, &Spectrum::OnChar, this);    
@@ -3544,7 +3793,7 @@ void Spectrum::render1(wxPaintEvent& evt )
     
     //winout("render1\n");
     
-    int buffSendLength=0;
+    buffLength=0;
     
     float *buffSend2;
     
@@ -3592,40 +3841,17 @@ void Spectrum::render1(wxPaintEvent& evt )
 		
 		if(iFreeze && iHaveData){
 			for (int k = 0 ; k < sdr->size ; k++){
-				float r = buff1[k * 2];
-				float i = buff1[k * 2 + 1];
-				float rr=r;
-				float ii=i;
-				if(sdr->dt > 0){
-					rr = (float)(r*sdr->coso - i*sdr->sino);
-					ii = (float)(i*sdr->coso + r*sdr->sino);
-					sint=sdr->sino*sdr->cosdt+sdr->coso*sdr->sindt;
-					cost=sdr->coso*sdr->cosdt-sdr->sino*sdr->sindt;
-					sdr->coso=cost;
-					sdr->sino=sint;
-				 }else{
-					buff2[k * 2] = r;
-					buff2[k * 2 + 1] = i;
-					continue;
-				}       
-				if(gBasicPane->sampleDataRotate > 0.0){
-					//fprintf(stderr,"gBasicPane->sampleDataRotate \n");
-					//gBasicPane->sampleDataRotate=0.5;
-					int nn=gBasicPane->sampleDataRotate*(sdr->size-1)+k;
-					if(nn > sdr->size-1){
-						nn -= sdr->size;
-					}
-					//fprintf(stderr,"nn %d k %d\n",nn,k);
-					buff2[nn * 2] = rr;
-					buff2[nn * 2+ 1] = ii;
-				}else{
-					buff2[k * 2] = rr;
-					buff2[k * 2+ 1] = ii;
-				}
-			}
-	
-			//if(gBasicPane->sampleDataRotate > 0.0)exit(1);
-  
+				double r = buff1[k * 2];
+				double i = buff1[k * 2 + 1];
+				double rr = (r*sdr->coso - i*sdr->sino);
+				double ii = (i*sdr->coso + r*sdr->sino);
+				sint=sdr->sino*sdr->cosdt+sdr->coso*sdr->sindt;
+				cost=sdr->coso*sdr->cosdt-sdr->sino*sdr->sindt;
+				sdr->coso=cost;
+				sdr->sino=sint;
+				buff2[k * 2] = (float)rr;
+				buff2[k * 2 + 1] = (float)ii;   
+			}  
 	 
 			double r=sqrt(sdr->coso*sdr->coso+sdr->sino*sdr->sino);
 		
@@ -3645,38 +3871,18 @@ void Spectrum::render1(wxPaintEvent& evt )
 			//fprintf(stderr,"1 num %d iFreeze %d\n",num,iFreeze);
 		}else{
 			for (int k = 0 ; k < sdr->size ; k++){
-				float r = buffSend2[k * 2];
-				float i = buffSend2[k * 2 + 1];
-				float rr=r;
-				float ii=i;
-				buff1[k * 2] = rr;
-				buff1[k * 2+ 1] = ii;
-				if(sdr->dt > 0){
-					rr = (float)(r*sdr->coso - i*sdr->sino);
-					ii = (float)(i*sdr->coso + r*sdr->sino);
-					sint=sdr->sino*sdr->cosdt+sdr->coso*sdr->sindt;
-					cost=sdr->coso*sdr->cosdt-sdr->sino*sdr->sindt;
-					sdr->coso=cost;
-					sdr->sino=sint;
-				 }else{
-					buff2[k * 2] = r;
-					buff2[k * 2 + 1] = i;
-					continue;
-				}       
-				if(gBasicPane->sampleDataRotate > 0.0){
-					//fprintf(stderr,"gBasicPane->sampleDataRotate \n");
-					//gBasicPane->sampleDataRotate=0.5;
-					int nn=gBasicPane->sampleDataRotate*(sdr->size-1)+k;
-					if(nn > sdr->size-1){
-						nn -= sdr->size;
-					}
-					//fprintf(stderr,"nn %d k %d\n",nn,k);
-					buff2[nn * 2] = rr;
-					buff2[nn * 2+ 1] = ii;
-				}else{
-					buff2[k * 2] = rr;
-					buff2[k * 2+ 1] = ii;
-				}
+				double r = buffSend2[k * 2];
+				double i = buffSend2[k * 2 + 1];
+				buff1[k * 2] = r;
+				buff1[k * 2+ 1] = i;
+				double rr = (r*sdr->coso - i*sdr->sino);
+				double ii = (i*sdr->coso + r*sdr->sino);
+				sint=sdr->sino*sdr->cosdt+sdr->coso*sdr->sindt;
+				cost=sdr->coso*sdr->cosdt-sdr->sino*sdr->sindt;
+				sdr->coso=cost;
+				sdr->sino=sint;
+				buff2[k * 2] = (float)rr;
+				buff2[k * 2 + 1] = (float)ii;
 			}
 	
 			//if(gBasicPane->sampleDataRotate > 0.0)exit(1);
@@ -3721,11 +3927,11 @@ void Spectrum::render1(wxPaintEvent& evt )
  		msresamp_crcf_reset(iqSampler1);
 		msresamp_crcf_execute(iqSampler1, (liquid_float_complex *)&buff2[0], sdr->size, (liquid_float_complex *)&buff3[0], &num);  // decimate
 		
-      	buffSendLength=num;
+      	buffLength=num;
 		
 		//int nmax=-1;
 		amax=0;
-		for(int n=0;n<buffSendLength;++n){
+		for(int n=0;n<buffLength;++n){
 			double v=(buff3[2*n]*buff3[2*n]+buff3[2*n+1]*buff3[2*n+1]);
         	if(v > 0.0)v=sqrt(v);
          	if(v > amax){
@@ -3759,13 +3965,33 @@ void Spectrum::render1(wxPaintEvent& evt )
 		double iymax=getHeight()-20;
 		double idy=iymin-iymax;		
 		
-		double xmin=sdr->fw-0.5*sdr->samplewidth;
-		double xmax=sdr->fw+0.5*sdr->samplewidth;
+		double xmin=0.0;
+		double xmax=sdr->samplerate/sdr->ncut;
 		double dx=xmax-xmin;
-
-		double ixmin=50;
+		
+		double Slide=(oscilloscopeSlide)/200.0;
+		if(Slide <= 0.0)Slide=1.0/200.0;
+		
+		double Zoom=(oscilloscopeZoom)/200.0;
+		if(Zoom <= 0.0)Zoom=1.0/200.0;
+		
+		double gLength=Zoom*dx;
+	  		
+		double gxmin=(dx-gLength)*Slide+xmin;
+		double gxmax=gxmin+gLength;
+		//double gdx=gxmax-gxmin;
+		
+		double ixmin=0;
 		double ixmax=getWidth();
 		double idx=ixmax-ixmin;
+		
+
+		int nmin=(num-1)*(gxmin-xmin)/dx;
+		int nmax=(num-1)*(gxmax-xmin)/dx;
+		int dn=nmax-nmin;
+
+		//fprintf(stderr,"gxmain %g gxmax %g nmin %d nmax %d dn %d\n",gxmin,gxmax,nmin,nmax,dn);
+
 
 		//int ixxmin,ixxmax,iyymin,iyymax;
 	
@@ -3778,27 +4004,24 @@ void Spectrum::render1(wxPaintEvent& evt )
 		int iyold=0;
 		int iflag=0;
 	
-		//double xmin2=0;
-		//double xmax2=num;
-		//double dx2=xmax2-xmin2;
 		
-		//fprintf(stderr,"buffSendLength %ld lineAlpha %g\n",(long)buffSendLength,lineAlpha);
-		
-		double beta=sdr->samplewidth/sdr->samplerate;
+		double ddx=(xmax-xmin)/num;
 			
-		for(int n=0;n<buffSendLength;++n){
+		for(int n=0;n<num;++n){
 			double v;
-			v=buff3[2*n];
-			double x=n/((double)buffSendLength);
+			v=buff3[n];
 			double y=v;
+			double x=n*ddx+xmin;
+			if(x < gxmin || x > gxmax)continue;
 			int ix;
 			int iy;
-			ix=(int)((0.5+x/beta-0.5/beta)*idx+ixmin);
-			//fprintf(stderr,"n %d x %g y %g ix %d zoom %g\n",n,x,y,ix,sdr->samplewidth/sdr->samplerate);
+			ix=(int)(n-nmin)*idx/dn+ixmin;
+			//fprintf(stderr,"n %d x %g y %g ix %d xmin %g xmax %g\n",n,x,y,ix,xmin,xmax);
 			if(ix <= ixmin || ix >= ixmax)continue;
 			//if(ix < ixxmin)ixxmin=ix;
 			//if(ix > ixxmax)ixxmax=ix;
 			iy=(int)((y-ymin)*idy/dy+iymax);
+			//fprintf(stderr,"iy %d iymax %g iymin %g y %g dy %g idy %g\n",iy,iymax,iymin,y,dy,idy);
 			if(iy <= iymin || iy >= iymax)continue;
 			//if(iy < iyymin)iyymin=iy;
 			//if(iy > iyymax)iyymax=iy;
@@ -3812,6 +4035,7 @@ void Spectrum::render1(wxPaintEvent& evt )
 			ixold=ix;
 			iyold=iy;
 		}
+		
 	
 		
 		//fprintf(stderr,"ixxmin %d ixxmax %d getWidth() %d iyymin %d iyymax %d getHeight() %d\n",ixxmin,ixxmax,getWidth(),iyymin,iyymax,getHeight());
@@ -3821,17 +4045,9 @@ void Spectrum::render1(wxPaintEvent& evt )
 		
  		{
 			double xmnc,xmxc,Large,Small;
-			double xmnc2,xmxc2;
 			double xmns,xmxs;
-			double cmin,cmax;
-			double fc=sdr->fw;
-			double bw=sdr->samplewidth/(2.0);
-			xmnc2=fc-bw;
-			xmxc2=fc+bw;
-			cmin= -((sdr->fc-xmnc2)/sdr->samplerate)+0.5;
-			xmnc=cmin*1.0/(double)sdr->ncut;
-			cmax= -((sdr->fc-xmxc2)/sdr->samplerate)+0.5;
-			xmxc=cmax*1.0/(double)sdr->ncut;
+			xmnc=gxmin/1e6;
+			xmxc=gxmax/1e6;
 			xmns=xmnc;
 			xmxs=xmxc;
 			//fprintf(stderr,"xmnc %g xmxc %g samplewidth %g samplescale %g\n",xmnc,xmxc,sdr->samplewidth,sdr->samplescale);
@@ -3846,7 +4062,7 @@ void Spectrum::render1(wxPaintEvent& evt )
 			    //fprintf(stderr,"xx %g ",xx);
 			    if(xx < 0.0 || xx > 1.0)continue;
 			    int ixx=(int)(idx*xx+ixmin);
-			    //fprintf(stderr,"ixx %d\n ",ixx);
+			   // fprintf(stderr,"ixx %d ixmin %g ixmax %g xp %g\n ",ixx,ixmin,ixmax,xp);
 			    if(ixx < ixmin || ixx > ixmax)continue;
  				DrawLine3(ixx, 0, ixx, getHeight()-15);
  				sprintf(cbuff,"%g",xp);
@@ -3854,6 +4070,7 @@ void Spectrum::render1(wxPaintEvent& evt )
 			}
 			//winout(" idx %g\n",idx);
 			
+		//exit(1);
 
 			xmnc=ymin;
 			xmxc=ymax;
@@ -3871,8 +4088,6 @@ void Spectrum::render1(wxPaintEvent& evt )
 				DrawString(5,ixx-8,cbuff);
 			}
 			//winout(" idy %g\n",idy);
-		
-
 		
  		}
 		

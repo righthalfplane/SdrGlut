@@ -1541,7 +1541,7 @@ int BasicPane2::SetScrolledWindow()
 		    
 		    stopButton=new wxButton(ScrolledWindow,ID_SWEEPSTOP,wxT("Stop"),wxPoint(120,yloc));
 		    		    
-		    yloc += 25;   
+		    yloc += 30;   
 
 	}
 	
@@ -1685,7 +1685,7 @@ int BasicPane2::SetScrolledWindow()
 	strings.Add("524288");
 	strings.Add("1048576");
 */
-	new wxStaticText(panel2,wxID_STATIC,wxT("FFT size:"),wxPoint(10,12), wxDefaultSize,wxALIGN_LEFT);
+	new wxStaticText(panel2,wxID_STATIC,wxT("FFT size:"),wxPoint(1,12), wxDefaultSize,wxALIGN_LEFT);
 
 	fftCombo=new wxComboBox(panel2,ID_COMBOBOX,wxT("FFT SIZE"),wxPoint(65,10),wxDefaultSize,
 	                   strings,wxCB_DROPDOWN);
@@ -1701,9 +1701,9 @@ int BasicPane2::SetScrolledWindow()
 	strings.Add("BLACKMANHARRIS");
 	strings.Add("BLACKMANHARRIS7");
 	
-	new wxStaticText(panel2,wxID_STATIC,wxT("Window:"),wxPoint(10,42), wxDefaultSize,wxALIGN_LEFT);
+	new wxStaticText(panel2,wxID_STATIC,wxT("Window:"),wxPoint(1,42), wxDefaultSize,wxALIGN_LEFT);
 
-	filterCombo=new wxComboBox(panel2,ID_COMBOFILTER,wxT("FILTER"),wxPoint(60,40),wxDefaultSize,
+	filterCombo=new wxComboBox(panel2,ID_COMBOFILTER,wxT("FILTER"),wxPoint(65,40),wxDefaultSize,
 	                   strings,wxCB_DROPDOWN);
 	filterCombo->SetSelection(5);
 	
@@ -1714,9 +1714,9 @@ int BasicPane2::SetScrolledWindow()
        for (size_t i=0;i<sdr->antennaNames.size();++i){
        		strings.Add(sdr->antennaNames[i]);
         }
-		new wxStaticText(panel2,wxID_STATIC,wxT("Antenna:"),wxPoint(10,72), wxDefaultSize,wxALIGN_LEFT);
+		new wxStaticText(panel2,wxID_STATIC,wxT("Antenna:"),wxPoint(1,72), wxDefaultSize,wxALIGN_LEFT);
 
-		antennaCombo=new wxComboBox(panel2,ID_COMBOANTENNA,wxT("FILTER"),wxPoint(60,70),wxDefaultSize,
+		antennaCombo=new wxComboBox(panel2,ID_COMBOANTENNA,wxT("FILTER"),wxPoint(65,70),wxDefaultSize,
 	                   strings,wxCB_DROPDOWN);
 		antennaCombo->SetSelection(0);
         
@@ -3306,6 +3306,8 @@ Spectrum2::Spectrum2(wxFrame* parent, int* args) :
 	verticalMaximum=-30;
 	
 	amaxGlobal=0;
+	
+	aminGlobal=0;
 
 	m_context = new wxGLContext(this);    
 	
@@ -3624,14 +3626,6 @@ void Spectrum2::render1(wxPaintEvent& evt )
  	
 		glColor4f(0, 0, 1, 1);
 		
-		//winout("filterType %d\n",filterType);
-/*
-      	if(decodemode1 != sdr->decodemode){
-      		decodemode1=sdr->decodemode;
-      		double Ratio = (float)(sds->ixmax/sdr->samplerate);
-      		iqSampler1  = msresamp_crcf_create(Ratio, 60.0f);
-      	}
-*/
 		if(buffSize != sds->ixmax){
 			buffSize=sds->ixmax;
 			if(buff1)cFree((char *)buff1);
@@ -3649,78 +3643,24 @@ void Spectrum2::render1(wxPaintEvent& evt )
 		}
 		
 		buffSend2=&sds->data[nrow*sds->ixmax]; 
-		
-/*
-		float *ddata=(float *)sds->data;
-		
-		buffSend2=&ddata[nrow*sds->ixmax]; 
-		
-		for(int n=0;n<sds->ixmax*sds->iymax;++n){
-			double v=ddata[n];
-         	if(v > amax){
-         		amax=v;
-         	}
-         	if(v < amin){
-         		amin=v;
-         	}
-		}
-*/
-		
-		//fprintf(stderr,"sds->data %p sds->ixmax %ld amax %g amin %g\n",sds->data,sds->ixmax,amax,amin);
-		
-				
-		//fprintf(stderr,"sds->data %p sds->ixmax %ld\n",sds->data,sds->ixmax);
-		
-    	//double amax=-1e33;
-    	//double amin=1e33;
-				
+	
 		unsigned int num;
 		
-		//fprintf(stderr,"iFreeze %d iHaveData %d\n ",iFreeze,iHaveData);
 		
 		if(iFreeze && iHaveData){
 			for (int k = 0 ; k < sds->ixmax; k++){
-				float r = buff1[k];
-				float rr=r;
-				buff2[k] = r;
-				if(gBasicPane2->sampleDataRotate > 0.0){
-					//gBasicPane->sampleDataRotate=0.5;
-					int nn=gBasicPane2->sampleDataRotate*(sds->ixmax-1)+k;
-					if(nn > sds->ixmax-1){
-						nn -= sds->ixmax;
-					}
-					//fprintf(stderr,"nn %d k %d\n",nn,k);
-					buff2[nn] = rr;
-				}else{
-					buff2[k] = rr;
-				}
+				buff2[k] = buff1[k];
 			}
 		
-			//fprintf(stderr,"1 num %d iFreeze %d\n",num,iFreeze);
 		}else{
 			for (int k = 0 ; k < sds->ixmax; k++){
 				float r = buffSend2[k];
-				float rr=r;
-				buff1[k] = rr;
+				buff1[k] = r;
 				buff2[k] = r;
-				if(gBasicPane2->sampleDataRotate > 0.0){
-					//fprintf(stderr,"gBasicPane->sampleDataRotate \n");
-					//gBasicPane->sampleDataRotate=0.5;
-					int nn=gBasicPane2->sampleDataRotate*(sds->ixmax-1)+k;
-					if(nn > sds->ixmax-1){
-						nn -= sds->ixmax;
-					}
-					//fprintf(stderr,"nn %d k %d\n",nn,k);
-					buff2[nn] = rr;
-				}else{
-					buff2[k] = rr;
-				}
 			}
 	
-			//if(gBasicPane->sampleDataRotate > 0.0)exit(1);
 		
 			iHaveData=1;
-			//fprintf(stderr,"2 num %d iFreeze %d\n",num,iFreeze);
 		}
 		
 /*
@@ -3773,6 +3713,10 @@ void Spectrum2::render1(wxPaintEvent& evt )
 		if(amaxGlobal == 0.0)amaxGlobal=amax;
         amaxGlobal = 0.9*amaxGlobal+0.1*amax;
 		amax=amaxGlobal;
+		
+		if(aminGlobal == 0.0)aminGlobal=amin;
+        aminGlobal = 0.9*aminGlobal+0.1*amin;
+		amin=aminGlobal;
 		
 		
 		//static long int count1;

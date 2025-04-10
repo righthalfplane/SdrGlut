@@ -116,6 +116,8 @@ double rtime(void);
     ID_STOPSEND,
     ID_SWAPIQ,
     ID_OSCILLOSCOPE,
+    ID_OSCILLOSCOPEZOOM,
+    ID_OSCILLOSCOPESLIDE,
     ID_SCROLLED,
     ID_ROTATEDATA,
     ID_ALPHA,
@@ -541,6 +543,7 @@ public:
 	float *buffSend2;
 	float *buffSend;
 	int buffSendLength;
+	volatile int buffLength;
 	fftwf_plan p1;
 	double lineDumpInterval;
 	double lineTime;
@@ -594,6 +597,10 @@ public:
 	volatile double verticalMaximum;
 	
 	volatile double amaxGlobal;
+	
+	double oscilloscopeSlide;
+	
+	double oscilloscopeZoom;
    
 	void render(wxPaintEvent& evt);
 	void render1(wxPaintEvent& evt);
@@ -670,6 +677,8 @@ public:
 	int SetWindow();
     int FloatToImage(float *d,long length,struct paletteDraw *pd,unsigned char *bp);
 	void render(wxPaintEvent& evt);
+	void render1(wxPaintEvent& evt);
+	void render2(wxPaintEvent& evt);
 	void prepare3DViewport(int topleft_x, int topleft_y, int bottomrigth_x, int bottomrigth_y);
 	//void prepare2DViewport(int topleft_x, int topleft_y, int bottomrigth_x, int bottomrigth_y);
 	void InitOpenGl();
@@ -723,7 +732,7 @@ public:
 	
 	int SetScrolledWindow();
 	
-	int scrolledWindowFlag;
+	int oscilloscopeFlag;
 	
 	int SendStart(char *name,int type,int mode);
 	
@@ -1004,6 +1013,8 @@ public:
 	volatile double verticalMaximum;
 	
 	volatile double amaxGlobal;
+	
+	volatile double aminGlobal;
    
 	void render(wxPaintEvent& evt);
 	void render1(wxPaintEvent& evt);
