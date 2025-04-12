@@ -11,7 +11,7 @@ long long TotalUsedMaximun;
 
 static long total;
 
-//#define DEBUG77
+#define DEBUG77
 #ifdef DEBUG77
 
 static std::mutex mutex;

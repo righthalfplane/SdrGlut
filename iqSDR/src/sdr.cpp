@@ -1608,7 +1608,7 @@ int sdrClass::rxBuffer()
 	        	
              	++rx->witch;
 
-             	if(saveCall){ 	
+             	if(saveCall && !saveFlag){ 	
              	//	winout("rx->witch %ld saveLength %ld\n",(long)rx->witch,(long)saveLength);
 					for(int k=0;k<saveLength;++k){
 						if(k < rx->size){
@@ -1619,8 +1619,8 @@ int sdrClass::rxBuffer()
 							saveBuff[2*k+1]=0;
 						}
                     }
-             	}
-				saveFlag=1;
+ 					saveFlag=1;
+            	}
 			//if(!(rx->witch % 20))winout("rxBuff saveCall %d witch %d iWait %d\n",saveCall,rx->witch,iWait);
 				
 	        }

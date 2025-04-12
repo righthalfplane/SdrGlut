@@ -5,6 +5,9 @@
 #include <string>
 #include <time.h>
 
+int DFerror;
+
+
 void winout(const char *fmt, ...);
 
 int copyl(char *p1,char *p2,long n);
@@ -101,8 +104,9 @@ void Sweep::openSweepFile(char *name)
 	int ixmax,iymax,izmax;
 	long size;
 	char nameout[256];
-	extern int DFerror;
-	int lastref,rank,dimsizes[3],maxrank=3;
+	//extern int DFerror;
+	int lastref,rank,maxrank=3;
+	int32 dimsizes[3];
 
 
 	//winout("file %s\n",name);
@@ -2286,10 +2290,7 @@ void BasicPane2::OnTimer(wxTimerEvent &event){
 		for(int n=0;n<gSpectrum2->buffSendLength;++n){
 			gSpectrum2->buffSend2[2*n]=gSpectrum2->sdr->saveBuff[2*n];
 			gSpectrum2->buffSend2[2*n+1]=gSpectrum2->sdr->saveBuff[2*n+1];
-			//if(fabs(buff[2*n]) > amax)amax=fabs(buff[2*n]);
 		}
-		
-		//winout("sdr->saveFlag %d buffSendLength %d buffFlag %d\n",sdr->saveFlag,buffSendLength,buffFlag);
 		
 		gSpectrum2->buffFlag=1;
 		
@@ -4634,8 +4635,9 @@ int doWindow(double *x,double *y,long length,int type)
         case FILTER_BLACKMANHARRIS:
             
             for(i=0; i<length; i++)  {
+//#define WINDOWS_LONG_NAMES
 #ifdef WINDOWS_LONG_NAMES
-                w[i]=liquid_blackmanharris(i, (int)length);
+				w[i]=liquid_blackmanharris(i, (int)length);
 #else
                 w[i]=blackmanharris(i, (int)length);
 #endif
@@ -4712,7 +4714,7 @@ int writesds(struct SDS2Dout *sdsout)
 }
 static int writesds3dDouble(struct SDS2Dout *sdsout)
 {
-	extern int DFerror;
+//	extern int DFerror;
 	int32 rank,size[3];
 	double vmin,vmax;
 	char buff[256];
@@ -4817,7 +4819,7 @@ OutOfHere:
 }
 static int writesds3dFloat(struct SDS2Dout *sdsout)
 {
-	extern int DFerror;
+//	extern int DFerror;
 	int32 rank,size[3];
 	double vmin,vmax;
 	char buff[256];
@@ -4936,7 +4938,7 @@ OutOfHere:
 }
 static int writesds2dDouble(struct SDS2Dout *sdsout)
 {
-	extern int DFerror;
+//	extern int DFerror;
 	int32 rank,size[2];
 	double vmin,vmax;
 	char buff[256];
@@ -5039,7 +5041,7 @@ OutOfHere:
 
 static int writesds2dBytes(struct SDS2Dout *sdsout)
 {
-	extern int DFerror;
+//	extern int DFerror;
 	double vmin,vmax;
 	char buff[256];
 	long n,length;
@@ -5157,7 +5159,7 @@ OutOfHere:
 
 static int writesds2dFloat(struct SDS2Dout *sdsout)
 {
-	extern int DFerror;
+//	extern int DFerror;
 	int32 rank,size[2];
 	double vmin,vmax;
 	char buff[256];

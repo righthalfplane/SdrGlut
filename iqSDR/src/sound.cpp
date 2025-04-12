@@ -204,7 +204,6 @@ int soundClass::printAudio()
 
 	RtAudio::DeviceInfo info;
 
-	
 #ifndef RTAUDIO_OLD
 	std::vector<unsigned int> id=dac.getDeviceIds();
 #else

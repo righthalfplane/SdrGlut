@@ -27,6 +27,138 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\hdf-4.2.5\atom.c" />
+    <ClCompile Include="..\hdf-4.2.5\bitvect.c" />
+    <ClCompile Include="..\hdf-4.2.5\cdeflate.c" />
+    <ClCompile Include="..\hdf-4.2.5\cnbit.c" />
+    <ClCompile Include="..\hdf-4.2.5\cnone.c" />
+    <ClCompile Include="..\hdf-4.2.5\crle.c" />
+    <ClCompile Include="..\hdf-4.2.5\cskphuff.c" />
+    <ClCompile Include="..\hdf-4.2.5\cszip.c" />
+    <ClCompile Include="..\hdf-4.2.5\df24.c" />
+    <ClCompile Include="..\hdf-4.2.5\df24f.c" />
+    <ClCompile Include="..\hdf-4.2.5\dfan.c" />
+    <ClCompile Include="..\hdf-4.2.5\dfanf.c" />
+    <ClCompile Include="..\hdf-4.2.5\dfcomp.c" />
+    <ClCompile Include="..\hdf-4.2.5\dfconv.c" />
+    <ClCompile Include="..\hdf-4.2.5\dff.c" />
+    <ClCompile Include="..\hdf-4.2.5\dfgr.c" />
+    <ClCompile Include="..\hdf-4.2.5\dfgroup.c" />
+    <ClCompile Include="..\hdf-4.2.5\dfimcomp.c" />
+    <ClCompile Include="..\hdf-4.2.5\dfjpeg.c" />
+    <ClCompile Include="..\hdf-4.2.5\dfkconv.c" />
+    <ClCompile Include="..\hdf-4.2.5\dfkcray.c" />
+    <ClCompile Include="..\hdf-4.2.5\dfkfuji.c" />
+    <ClCompile Include="..\hdf-4.2.5\dfknat.c" />
+    <ClCompile Include="..\hdf-4.2.5\dfkswap.c" />
+    <ClCompile Include="..\hdf-4.2.5\dfkvms.c" />
+    <ClCompile Include="..\hdf-4.2.5\dfp.c" />
+    <ClCompile Include="..\hdf-4.2.5\dfpf.c" />
+    <ClCompile Include="..\hdf-4.2.5\dfr8.c" />
+    <ClCompile Include="..\hdf-4.2.5\dfr8f.c" />
+    <ClCompile Include="..\hdf-4.2.5\dfrle.c" />
+    <ClCompile Include="..\hdf-4.2.5\dfsd.c" />
+    <ClCompile Include="..\hdf-4.2.5\dfsdf.c" />
+    <ClCompile Include="..\hdf-4.2.5\dfstubs.c" />
+    <ClCompile Include="..\hdf-4.2.5\dfufp2i.c" />
+    <ClCompile Include="..\hdf-4.2.5\dfufp2if.c" />
+    <ClCompile Include="..\hdf-4.2.5\dfunjpeg.c" />
+    <ClCompile Include="..\hdf-4.2.5\dfutil.c" />
+    <ClCompile Include="..\hdf-4.2.5\dfutilf.c" />
+    <ClCompile Include="..\hdf-4.2.5\dir_mac.c" />
+    <ClCompile Include="..\hdf-4.2.5\dynarray.c" />
+    <ClCompile Include="..\hdf-4.2.5\glist.c" />
+    <ClCompile Include="..\hdf-4.2.5\hbitio.c" />
+    <ClCompile Include="..\hdf-4.2.5\hblocks.c" />
+    <ClCompile Include="..\hdf-4.2.5\hbuffer.c" />
+    <ClCompile Include="..\hdf-4.2.5\hchunks.c" />
+    <ClCompile Include="..\hdf-4.2.5\hcomp.c" />
+    <ClCompile Include="..\hdf-4.2.5\hcompri.c" />
+    <ClCompile Include="..\hdf-4.2.5\hdfalloc.c" />
+    <ClCompile Include="..\hdf-4.2.5\herr.c" />
+    <ClCompile Include="..\hdf-4.2.5\herrf.c" />
+    <ClCompile Include="..\hdf-4.2.5\hextelt.c" />
+    <ClCompile Include="..\hdf-4.2.5\hfile.c" />
+    <ClCompile Include="..\hdf-4.2.5\hfiledd.c" />
+    <ClCompile Include="..\hdf-4.2.5\hfilef.c" />
+    <ClCompile Include="..\hdf-4.2.5\hkit.c" />
+    <ClCompile Include="..\hdf-4.2.5\linklist.c" />
+    <ClCompile Include="..\hdf-4.2.5\mcache.c" />
+    <ClCompile Include="..\hdf-4.2.5\mfan.c" />
+    <ClCompile Include="..\hdf-4.2.5\mfanf.c" />
+    <ClCompile Include="..\hdf-4.2.5\mfgr.c" />
+    <ClCompile Include="..\hdf-4.2.5\mfgrf.c" />
+    <ClCompile Include="..\hdf-4.2.5\mstdio.c" />
+    <ClCompile Include="..\hdf-4.2.5\tbbt.c" />
+    <ClCompile Include="..\hdf-4.2.5\vattr.c" />
+    <ClCompile Include="..\hdf-4.2.5\vattrf.c" />
+    <ClCompile Include="..\hdf-4.2.5\vconv.c" />
+    <ClCompile Include="..\hdf-4.2.5\vg.c" />
+    <ClCompile Include="..\hdf-4.2.5\vgf.c" />
+    <ClCompile Include="..\hdf-4.2.5\vgp.c" />
+    <ClCompile Include="..\hdf-4.2.5\vhi.c" />
+    <ClCompile Include="..\hdf-4.2.5\vio.c" />
+    <ClCompile Include="..\hdf-4.2.5\vparse.c" />
+    <ClCompile Include="..\hdf-4.2.5\vrw.c" />
+    <ClCompile Include="..\hdf-4.2.5\vsfld.c" />
+    <ClCompile Include="..\jpeg-6b\cdjpeg.c" />
+    <ClCompile Include="..\jpeg-6b\jcapimin.c" />
+    <ClCompile Include="..\jpeg-6b\jcapistd.c" />
+    <ClCompile Include="..\jpeg-6b\jccoefct.c" />
+    <ClCompile Include="..\jpeg-6b\jccolor.c" />
+    <ClCompile Include="..\jpeg-6b\jcdctmgr.c" />
+    <ClCompile Include="..\jpeg-6b\jchuff.c" />
+    <ClCompile Include="..\jpeg-6b\jcinit.c" />
+    <ClCompile Include="..\jpeg-6b\jcmarker.c" />
+    <ClCompile Include="..\jpeg-6b\jcmaster.c" />
+    <ClCompile Include="..\jpeg-6b\jcomapi.c" />
+    <ClCompile Include="..\jpeg-6b\jcparam.c" />
+    <ClCompile Include="..\jpeg-6b\jcphuff.c" />
+    <ClCompile Include="..\jpeg-6b\jcprepct.c" />
+    <ClCompile Include="..\jpeg-6b\jcsample.c" />
+    <ClCompile Include="..\jpeg-6b\jctrans.c" />
+    <ClCompile Include="..\jpeg-6b\jdapimin.c" />
+    <ClCompile Include="..\jpeg-6b\jdapistd.c" />
+    <ClCompile Include="..\jpeg-6b\jdatadst.c" />
+    <ClCompile Include="..\jpeg-6b\jdatasrc.c" />
+    <ClCompile Include="..\jpeg-6b\jdcoefct.c" />
+    <ClCompile Include="..\jpeg-6b\jdcolor.c" />
+    <ClCompile Include="..\jpeg-6b\jddctmgr.c" />
+    <ClCompile Include="..\jpeg-6b\jdhuff.c" />
+    <ClCompile Include="..\jpeg-6b\jdinput.c" />
+    <ClCompile Include="..\jpeg-6b\jdmarker.c" />
+    <ClCompile Include="..\jpeg-6b\jdmaster.c" />
+    <ClCompile Include="..\jpeg-6b\jdmerge.c" />
+    <ClCompile Include="..\jpeg-6b\jdphuff.c" />
+    <ClCompile Include="..\jpeg-6b\jdpostct.c" />
+    <ClCompile Include="..\jpeg-6b\jdsample.c" />
+    <ClCompile Include="..\jpeg-6b\jdtrans.c" />
+    <ClCompile Include="..\jpeg-6b\jerror.c" />
+    <ClCompile Include="..\jpeg-6b\jfdctflt.c" />
+    <ClCompile Include="..\jpeg-6b\jfdctfst.c" />
+    <ClCompile Include="..\jpeg-6b\jfdctint.c" />
+    <ClCompile Include="..\jpeg-6b\jidctflt.c" />
+    <ClCompile Include="..\jpeg-6b\jidctfst.c" />
+    <ClCompile Include="..\jpeg-6b\jidctint.c" />
+    <ClCompile Include="..\jpeg-6b\jidctred.c" />
+    <ClCompile Include="..\jpeg-6b\jmemansi.c" />
+    <ClCompile Include="..\jpeg-6b\jquant1.c" />
+    <ClCompile Include="..\jpeg-6b\jquant2.c" />
+    <ClCompile Include="..\jpeg-6b\jutils.c" />
+    <ClCompile Include="..\jpeg-6b\rdbmp.c" />
+    <ClCompile Include="..\jpeg-6b\rdcolmap.c" />
+    <ClCompile Include="..\jpeg-6b\rdgif.c" />
+    <ClCompile Include="..\jpeg-6b\rdppm.c" />
+    <ClCompile Include="..\jpeg-6b\rdrle.c" />
+    <ClCompile Include="..\jpeg-6b\rdswitch.c" />
+    <ClCompile Include="..\jpeg-6b\rdtarga.c" />
+    <ClCompile Include="..\jpeg-6b\transupp.c" />
+    <ClCompile Include="..\jpeg-6b\wrbmp.c" />
+    <ClCompile Include="..\jpeg-6b\wrgif.c" />
+    <ClCompile Include="..\jpeg-6b\wrjpgcom.c" />
+    <ClCompile Include="..\jpeg-6b\wrppm.c" />
+    <ClCompile Include="..\jpeg-6b\wrrle.c" />
+    <ClCompile Include="..\jpeg-6b\wrtarga.c" />
     <ClCompile Include="..\src\bStack.cpp" />
     <ClCompile Include="..\src\Clisten.cpp" />
     <ClCompile Include="..\src\cMalloc.cpp" />
@@ -36,9 +168,106 @@
     <ClCompile Include="..\src\sdr.cpp" />
     <ClCompile Include="..\src\send.cpp" />
     <ClCompile Include="..\src\sound.cpp" />
+    <ClCompile Include="..\src\sweep.cpp" />
     <ClCompile Include="..\src\WarningBatch.cpp" />
+    <ClCompile Include="..\zlib-1.2.1\adler32.c" />
+    <ClCompile Include="..\zlib-1.2.1\compress.c" />
+    <ClCompile Include="..\zlib-1.2.1\crc32.c" />
+    <ClCompile Include="..\zlib-1.2.1\deflate.c" />
+    <ClCompile Include="..\zlib-1.2.1\infback.c" />
+    <ClCompile Include="..\zlib-1.2.1\inffast.c" />
+    <ClCompile Include="..\zlib-1.2.1\inflate.c" />
+    <ClCompile Include="..\zlib-1.2.1\inftrees.c" />
+    <ClCompile Include="..\zlib-1.2.1\trees.c" />
+    <ClCompile Include="..\zlib-1.2.1\uncompr.c" />
+    <ClCompile Include="..\zlib-1.2.1\zutil.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\hdf-4.2.5\atom.h" />
+    <ClInclude Include="..\hdf-4.2.5\bitvect.h" />
+    <ClInclude Include="..\hdf-4.2.5\cdeflate.h" />
+    <ClInclude Include="..\hdf-4.2.5\cnbit.h" />
+    <ClInclude Include="..\hdf-4.2.5\cnone.h" />
+    <ClInclude Include="..\hdf-4.2.5\crle.h" />
+    <ClInclude Include="..\hdf-4.2.5\cskphuff.h" />
+    <ClInclude Include="..\hdf-4.2.5\cszip.h" />
+    <ClInclude Include="..\hdf-4.2.5\df.h" />
+    <ClInclude Include="..\hdf-4.2.5\dfan.h" />
+    <ClInclude Include="..\hdf-4.2.5\dfconvrt.h" />
+    <ClInclude Include="..\hdf-4.2.5\dfgr.h" />
+    <ClInclude Include="..\hdf-4.2.5\dfi.h" />
+    <ClInclude Include="..\hdf-4.2.5\dfivms.h" />
+    <ClInclude Include="..\hdf-4.2.5\dfrig.h" />
+    <ClInclude Include="..\hdf-4.2.5\dfsd.h" />
+    <ClInclude Include="..\hdf-4.2.5\dfstubs.h" />
+    <ClInclude Include="..\hdf-4.2.5\dfufp2i.h" />
+    <ClInclude Include="..\hdf-4.2.5\dir_mac.h" />
+    <ClInclude Include="..\hdf-4.2.5\dynarray.h" />
+    <ClInclude Include="..\hdf-4.2.5\glist.h" />
+    <ClInclude Include="..\hdf-4.2.5\h4config.h" />
+    <ClInclude Include="..\hdf-4.2.5\hbitio.h" />
+    <ClInclude Include="..\hdf-4.2.5\hchunks.h" />
+    <ClInclude Include="..\hdf-4.2.5\hcomp.h" />
+    <ClInclude Include="..\hdf-4.2.5\hcompi.h" />
+    <ClInclude Include="..\hdf-4.2.5\hconv.h" />
+    <ClInclude Include="..\hdf-4.2.5\hdf.h" />
+    <ClInclude Include="..\hdf-4.2.5\hdfi.h" />
+    <ClInclude Include="..\hdf-4.2.5\herr.h" />
+    <ClInclude Include="..\hdf-4.2.5\hfile.h" />
+    <ClInclude Include="..\hdf-4.2.5\hkit.h" />
+    <ClInclude Include="..\hdf-4.2.5\hlimits.h" />
+    <ClInclude Include="..\hdf-4.2.5\hntdefs.h" />
+    <ClInclude Include="..\hdf-4.2.5\hproto.h" />
+    <ClInclude Include="..\hdf-4.2.5\hproto_fortran.h" />
+    <ClInclude Include="..\hdf-4.2.5\hqueue.h" />
+    <ClInclude Include="..\hdf-4.2.5\htags.h" />
+    <ClInclude Include="..\hdf-4.2.5\linklist.h" />
+    <ClInclude Include="..\hdf-4.2.5\maldebug.h" />
+    <ClInclude Include="..\hdf-4.2.5\mcache.h" />
+    <ClInclude Include="..\hdf-4.2.5\mfan.h" />
+    <ClInclude Include="..\hdf-4.2.5\mfgr.h" />
+    <ClInclude Include="..\hdf-4.2.5\mstdio.h" />
+    <ClInclude Include="..\hdf-4.2.5\patchlevel.h" />
+    <ClInclude Include="..\hdf-4.2.5\sys_dir_mac.h" />
+    <ClInclude Include="..\hdf-4.2.5\tbbt.h" />
+    <ClInclude Include="..\hdf-4.2.5\trace.h" />
+    <ClInclude Include="..\hdf-4.2.5\vattr.h" />
+    <ClInclude Include="..\hdf-4.2.5\vg.h" />
+    <ClInclude Include="..\hdf-4.2.5\vgint.h" />
+    <ClInclude Include="..\include\df.h" />
+    <ClInclude Include="..\include\dfi.h" />
+    <ClInclude Include="..\include\h4config.h" />
+    <ClInclude Include="..\include\hbitio.h" />
+    <ClInclude Include="..\include\hcomp.h" />
+    <ClInclude Include="..\include\hdf.h" />
+    <ClInclude Include="..\include\hdfi.h" />
+    <ClInclude Include="..\include\herr.h" />
+    <ClInclude Include="..\include\hlimits.h" />
+    <ClInclude Include="..\include\hntdefs.h" />
+    <ClInclude Include="..\include\hproto.h" />
+    <ClInclude Include="..\include\htags.h" />
+    <ClInclude Include="..\include\jconfig.h" />
+    <ClInclude Include="..\include\jerror.h" />
+    <ClInclude Include="..\include\jmorecfg.h" />
+    <ClInclude Include="..\include\jpeglib.h" />
+    <ClInclude Include="..\include\mfgr.h" />
+    <ClInclude Include="..\include\vg.h" />
+    <ClInclude Include="..\include\zconf.h" />
+    <ClInclude Include="..\include\zlib.h" />
+    <ClInclude Include="..\jpeg-6b\cderror.h" />
+    <ClInclude Include="..\jpeg-6b\cdjpeg.h" />
+    <ClInclude Include="..\jpeg-6b\jchuff.h" />
+    <ClInclude Include="..\jpeg-6b\jconfig.h" />
+    <ClInclude Include="..\jpeg-6b\jdct.h" />
+    <ClInclude Include="..\jpeg-6b\jdhuff.h" />
+    <ClInclude Include="..\jpeg-6b\jerror.h" />
+    <ClInclude Include="..\jpeg-6b\jinclude.h" />
+    <ClInclude Include="..\jpeg-6b\jmemsys.h" />
+    <ClInclude Include="..\jpeg-6b\jmorecfg.h" />
+    <ClInclude Include="..\jpeg-6b\jpegint.h" />
+    <ClInclude Include="..\jpeg-6b\jpeglib.h" />
+    <ClInclude Include="..\jpeg-6b\jversion.h" />
+    <ClInclude Include="..\jpeg-6b\transupp.h" />
     <ClInclude Include="..\src\bStack.h" />
     <ClInclude Include="..\src\Clisten.h" />
     <ClInclude Include="..\src\firstFile.h" />
@@ -48,6 +277,54 @@
     <ClInclude Include="..\src\SocketDefs.h" />
     <ClInclude Include="..\src\sound.h" />
     <ClInclude Include="..\src\WarningBatch.h" />
+    <ClInclude Include="..\zlib-1.2.1\crc32.h" />
+    <ClInclude Include="..\zlib-1.2.1\deflate.h" />
+    <ClInclude Include="..\zlib-1.2.1\inffast.h" />
+    <ClInclude Include="..\zlib-1.2.1\inffixed.h" />
+    <ClInclude Include="..\zlib-1.2.1\inflate.h" />
+    <ClInclude Include="..\zlib-1.2.1\inftrees.h" />
+    <ClInclude Include="..\zlib-1.2.1\trees.h" />
+    <ClInclude Include="..\zlib-1.2.1\zconf.h" />
+    <ClInclude Include="..\zlib-1.2.1\zconf.in.h" />
+    <ClInclude Include="..\zlib-1.2.1\zlib.h" />
+    <ClInclude Include="..\zlib-1.2.1\zutil.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\hdf-4.2.5\df24ff.f" />
+    <None Include="..\hdf-4.2.5\dfanff.f" />
+    <None Include="..\hdf-4.2.5\dfff.f" />
+    <None Include="..\hdf-4.2.5\dffunc.inc" />
+    <None Include="..\hdf-4.2.5\dfpff.f" />
+    <None Include="..\hdf-4.2.5\dfr8ff.f" />
+    <None Include="..\hdf-4.2.5\dfsdff.f" />
+    <None Include="..\hdf-4.2.5\dfufp2iff.f" />
+    <None Include="..\hdf-4.2.5\h4config.h.in" />
+    <None Include="..\hdf-4.2.5\hdf.inc" />
+    <None Include="..\hdf-4.2.5\hfileff.f" />
+    <None Include="..\hdf-4.2.5\mfgrff.f" />
+    <None Include="..\hdf-4.2.5\src.inc" />
+    <None Include="..\hdf-4.2.5\vattrff.f" />
+    <None Include="..\hdf-4.2.5\vgff.f" />
+    <None Include="..\jpeg-6b\jconfig.bcc" />
+    <None Include="..\jpeg-6b\jconfig.cfg" />
+    <None Include="..\jpeg-6b\jconfig.dj" />
+    <None Include="..\jpeg-6b\jconfig.doc" />
+    <None Include="..\jpeg-6b\jconfig.mac" />
+    <None Include="..\jpeg-6b\jconfig.manx" />
+    <None Include="..\jpeg-6b\jconfig.mc6" />
+    <None Include="..\jpeg-6b\jconfig.sas" />
+    <None Include="..\jpeg-6b\jconfig.st" />
+    <None Include="..\jpeg-6b\jconfig.vc" />
+    <None Include="..\jpeg-6b\jconfig.vms" />
+    <None Include="..\jpeg-6b\jconfig.wat" />
+    <None Include="..\jpeg-6b\jpegtran.1" />
+    <None Include="..\jpeg-6b\ltmain.sh" />
+    <None Include="..\jpeg-6b\rdjpgcom.1" />
+    <None Include="..\jpeg-6b\wrjpgcom.1" />
+    <None Include="..\zlib-1.2.1\zlib.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\include\jpeg32.lib" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{F408F215-DE56-42E5-8004-C3640467BBA9}</ProjectGuid>
@@ -129,6 +406,9 @@
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release64|x64'">$(Platform)\$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>../include;C:\Users\Owner\Documents\Archive\SdrGlut-1369\iqSDR\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
@@ -200,7 +480,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;C:\dev\vcpkg\packages\fftw3_x64-windows\include;C:\Program Files\PothosSDR\include;C:\Program Files (x86)\RtAudio\include;"C:\Program Files (x86)\OpenAL 1.1 SDK\include"</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;C:\dev\vcpkg\packages\fftw3_x64-windows\include;C:\Program Files\PothosSDR\include;C:\Program Files (x86)\RtAudio\include;C:\Program Files (x86)\OpenAL 1.1 SDK\include;../include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>RTAUDIO_OLD;WINDOWS_LONG_NAMES;WIN32;NDEBUG;_LIB;GLEW_STATIC;GLUT_NO_LIB_PRAGMA;GLUT_BUILDING_LIB;FREEGLUT_STATIC;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -244,7 +524,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;C:\dev\vcpkg\packages\fftw3_x64-windows\include;C:\Program Files\PothosSDR\include;C:\Program Files (x86)\RtAudio\include;"C:\Program Files (x86)\OpenAL 1.1 SDK\include"</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;C:\dev\vcpkg\packages\fftw3_x64-windows\include;C:\Program Files\PothosSDR\include;C:\Program Files (x86)\RtAudio\include;C:\Program Files (x86)\OpenAL 1.1 SDK\include;C:\dev\vcpkg\packages\opengl_x64-windows\include;../include3</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;GLEW_STATIC;GLUT_NO_LIB_PRAGMA;GLUT_BUILDING_LIB;FREEGLUT_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -255,7 +535,7 @@
     </ClCompile>
     <Link>
       <AdditionalOptions>/verbose:lib %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>..\..\..\Library\lib\jpeg64.lib;..\..\..\Library\lib\glew64.lib;..\..\..\Library\lib\hdf64.lib;..\..\..\Library\lib\zlib64.lib;winmm.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>winmm.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <TargetMachine>MachineX64</TargetMachine>
       <SubSystem>Windows</SubSystem>

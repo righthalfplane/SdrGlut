@@ -29,6 +29,7 @@
 #if __has_include(<hdf/df.h>)
 #include <hdf/df.h>
 #else
+//#include "../include3/df.h"
 #include <df.h>
 #endif
 
@@ -43,8 +44,8 @@
 #include "OpenGL/glu.h"
 #include "OpenGL/gl.h"
 #else
-#include <GL/glu.h>
-#include <GL/gl.h>
+#include <GL/GL.h>
+#include <GL/GLU.h>
 #endif
  
 #include <sys/timeb.h>

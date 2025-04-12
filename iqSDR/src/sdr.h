@@ -89,7 +89,6 @@ class sdrClass;
 
 extern int sendAudio(sdrClass *sdr,int short *data,int length);
 
-
 typedef int (sdrClass::*A_pmf_t)();
 
 int mstrncpy(char *out,char *in,long n);
@@ -170,10 +169,10 @@ public:
 	double fw;
 	double f;
 	double dt;
-	double sino;
-	double coso;
-	double sindt;
-	double cosdt;
+	volatile double sino;
+	volatile double coso;
+	volatile double sindt;
+	volatile double cosdt;
 	double w;
 	double bw;
 	int decodemode;

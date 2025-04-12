@@ -1553,7 +1553,7 @@ int cReceive::printAudioInfo(struct playData *rx)
 	mprint("\nAudio device Count %d default output device %d audiodevice %d\n",deviceCount,dac.getDefaultOutputDevice(),rx->audiodevice);
 
 	RtAudio::DeviceInfo info;
-	
+#define RTAUDIO_OLD
 #ifndef RTAUDIO_OLD
 	std::vector<unsigned int> id=dac.getDeviceIds();
 #else
@@ -1711,8 +1711,8 @@ int cDemod::process(struct playData *rxi)
 int cDemod::dumpCharacters(float *buf,int num)
 {
     int length=512;
-    double real[length*2];
-    double imag[length*2];
+    double real[1024];
+    double imag[1024];
     
         
     if(rx->ichar == 0)return 0;

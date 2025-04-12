@@ -38,6 +38,8 @@ int cStack::setBuff(int sizei,int faudioi)
 	size=sizei;
 	faudio=faudioi;
 
+	//fprintf(stderr,"setBuff size %d faudio %d\n",sizei,faudio);
+
 	for(int k=0;k<NUM_DATA_BUFF2;++k){
 	//    winout("k %d buff %p\n",k,buff[k]);
 		if(buff[k])cFree((char *)buff[k]);
@@ -225,6 +227,63 @@ int cStack::popBuff()
 	
 	
 Out:
+	mutex1.unlock();
+
+	return ret;
+}
+int cStack::popBuff(float *buffOut,int SizeOut)
+{
+	int ret;
+	
+	
+	mutex1.lock();
+
+	
+	ret=-1;
+	
+	
+ 	if(bufftop < 1)goto Out;
+ 	
+  	//winout("popBuff bufftop %d \n",bufftop );
+	
+ 	if(bufftop == 1){
+ 		ret=buffStack[0];
+ 		bufftop=0;
+ 		goto Out;
+ 	}
+ 	
+       int small2,ks;
+        small2=1000000000;
+        ks=-1;
+        for(int k=0;k<bufftop;++k){
+             if(buffStack[k] < small2){
+             	small2=buffStack[k];
+             	ks=k;
+             }
+        }
+  	//winout("ks %d \n",ks);
+       
+        if(ks >= 0){
+        	ret=buffStack[ks];
+        	int kk;
+        	kk=0;
+        	for(int k=0;k<bufftop;++k)
+        	{
+        		if(k == ks)continue;
+        		buffStack[kk++]=buffStack[k];
+        	}
+        	bufftop--;
+        }
+	
+Out:
+	if(ret >= 0){
+	
+	    int witch=ret % NUM_DATA_BUFF2;
+		float *buffIn=buff[witch];
+		for(int n=0;n<SizeOut*2;++n){
+			buffOut[n]=buffIn[n];
+		}
+	}
 	mutex1.unlock();
 
 	return ret;

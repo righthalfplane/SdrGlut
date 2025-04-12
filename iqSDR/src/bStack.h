@@ -16,6 +16,7 @@ class cStack{
 public:
     cStack();
 	~cStack();
+	int popBuff(float *buffOut,int SizeOut);
 	int pushBuff(int nbuffer);
 	int popBuff(void);
 	int pushBuffa(int nbuffer);

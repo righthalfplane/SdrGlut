@@ -11,8 +11,9 @@
 #include "OpenGL/glu.h"
 #include "OpenGL/gl.h"
 #else
-#include <GL/glu.h>
-#include <GL/gl.h>
+#include <GL/GLU.h>
+#include <GL/GL.h>
+
 #endif
 
 typedef struct uRectStruct {
