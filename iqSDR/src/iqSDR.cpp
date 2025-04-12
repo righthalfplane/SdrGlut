@@ -8,7 +8,7 @@ void winout(const char *fmt, ...);
 
 int copyl(char *p1,char *p2,long n);
 
-std::string ProgramVersion="iqSDR-1371";
+std::string ProgramVersion="iqSDR-1372";
 
 void *cMalloc(unsigned long r, int tag);
 
@@ -3723,26 +3723,22 @@ void Spectrum::mouseDown(wxMouseEvent& event)
 
 	event.Skip();
 	
-	if(gBasicPane->oscilloscopeFlag)return ;
+	if(gBasicPane->oscilloscopeFlag)return;
 
 	wxPoint pp3 = event.GetLogicalPosition(wxClientDC(this))*scaleFactor;
 
-	if(buffSendLength){
-		if(sdr){
-		    double fx=sdr->fw-0.5*sdr->samplewidth + sdr->samplewidth*(pp3.x)/((double)getWidth());
-			//winout("mouseDown x %d y %d sdr->fc %g sdr->f %g sdr->samplerate %g fx %g width %d\n",p1.x,p1.y,sdr->fc,sdr->f,sdr->samplerate,fx,getWidth());
-			//winout(" fx %g\n",fx);
-			if(sdr->samplescale < 0.98){
-				sdr->setCenterFrequency(fx);
-			}else{
-				sdr->setFrequency(fx);
-			}
-			s->bS=sdr->bS;
-			//winout("Spectrum::mouseDown %p %p\n",s->bS,sdr->bS);
-			gTopPane->Refresh();
+	if(sdr){
+		double fx=sdr->fw-0.5*sdr->samplewidth + sdr->samplewidth*(pp3.x)/((double)getWidth());
+		//winout("mouseDown x %d y %d sdr->fc %g sdr->f %g sdr->samplerate %g fx %g width %d\n",p1.x,p1.y,sdr->fc,sdr->f,sdr->samplerate,fx,getWidth());
+		//winout(" fx %g\n",fx);
+		if(sdr->samplescale < 0.98){
+			sdr->setCenterFrequency(fx);
+		}else{
+			sdr->setFrequency(fx);
 		}
-	}else{
-		winout("Spectrum::mouseDown x %d y %d\n",pp3.x,pp3.y);
+		s->bS=sdr->bS;
+		//winout("Spectrum::mouseDown %p %p\n",s->bS,sdr->bS);
+		gTopPane->Refresh();
 	}
 
 }
@@ -3830,7 +3826,7 @@ void Spectrum::render1(wxPaintEvent& evt )
       	    return;
       	}
       	
-      	int witch=ip % NUM_DATA_BUFF;
+      	//int witch=ip % NUM_DATA_BUFF;
 		
 		double sint,cost;
 		

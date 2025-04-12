@@ -695,7 +695,7 @@ int Sweep::sweepRadio()
 		int shift=ysize/pass;
 		
 		fprintf(stderr,"xsize %ld ysize %ld pass %d shift %d\n",xsize,ysize,pass,shift);
-		
+				
 		rx->buffout=(double *)cMalloc(xsize*ysize*sizeof(double),7777);
 		if(!rx->buffout){
 			fprintf(stderr,"Out of Memory\n");
@@ -743,9 +743,7 @@ int Sweep::sweepRadio()
     	sprintf(fname,"sweepFile_%4d%02d%02d_%02d%02d%02d.s2d%c\n",
     					today.tm_year+1900,today.tm_mon+1,today.tm_mday,
     					today.tm_hour,today.tm_min,today.tm_sec,'\0');
- 		
-		
-		
+ 				
 		sdsout.path=(char *)fname;
 		//sdsout.path=rx->s2dName;
 		sdsout.name=(char *)"Power Sweep";
@@ -765,9 +763,7 @@ int Sweep::sweepRadio()
 		sdsout.data=rx->buffout;
 			
 		if(writesds(&sdsout))goto OutOfHere;
-		
-		
-
+	
 	}
  	
 	
@@ -805,6 +801,8 @@ int Sweep::updateSweep1(double fmins,double fmaxs)
         rx->reals[k]=sdr->saveBuff[2*k];
         rx->imags[k]=sdr->saveBuff[2*k+1];
     }
+    
+    sdr->saveFlag=0;
 
     real=rx->reals;
     imag=rx->imags;
@@ -1071,6 +1069,10 @@ Sweep::~Sweep()
 {
 //	winout("Sweep::~Sweep\n");
 	
+	if(magnitude2)cFree((char *)magnitude2);
+	magnitude2=NULL;
+	if(sdsout.data)cFree((char *)sdsout.data);
+	sdsout.data=NULL;
 	if(sgrabList.size() > 0){
 		for(std::vector<Sweep *>::size_type k=0;k<sgrabList.size();++k){
 			Sweep *grab=sgrabList[k];
@@ -2526,6 +2528,9 @@ void WaterFall2::mouseDown(wxMouseEvent& event)
 {
 	extern soundClass *s;
 	event.Skip();
+	
+	if(gSpectrum2->oscilloscope == 1)return;
+	
 	wxPoint pp3 = event.GetLogicalPosition(wxClientDC(this))*scaleFactor;
 	if(sdr){
 		double fx=sdr->fw-0.5*sdr->samplewidth + sdr->samplewidth*(pp3.x)/((double)getWidth());
@@ -3532,25 +3537,24 @@ void Spectrum2::mouseDown(wxMouseEvent& event)
 
 	event.Skip();
 	
+	
+	if(oscilloscope == 1)return;
+	
 	wxPoint pp3 = event.GetLogicalPosition(wxClientDC(this))*scaleFactor;
 
-	if(buffSendLength){
-		if(sdr){
-		    double fx=sdr->fw-0.5*sdr->samplewidth + sdr->samplewidth*(pp3.x)/((double)getWidth());
-			//winout("mouseDown x %d y %d sdr->fc %g sdr->f %g sdr->samplerate %g fx %g width %d\n",pp3.x,pp3.y,sdr->fc,sdr->f,sdr->samplerate,fx,getWidth());
-			//winout(" fx %g sdr->fw %g\n",fx,sdr->fw);
-			if(sdr->samplescale < 0.98){
-				sdr->setCenterFrequency(fx);
-			}else{
-				sdr->setFrequency(fx);
-			}
-			sdr->iWait=0;
-			s->bS=sdr->bS;
-			//winout("Spectrum2::mouseDown %p %p\n",s->bS,sdr->bS);
-			gTopPane2->Refresh();
+	if(sdr){
+		double fx=sdr->fw-0.5*sdr->samplewidth + sdr->samplewidth*(pp3.x)/((double)getWidth());
+		//winout("mouseDown x %d y %d sdr->fc %g sdr->f %g sdr->samplerate %g fx %g width %d\n",pp3.x,pp3.y,sdr->fc,sdr->f,sdr->samplerate,fx,getWidth());
+		//winout(" fx %g sdr->fw %g\n",fx,sdr->fw);
+		if(sdr->samplescale < 0.98){
+			sdr->setCenterFrequency(fx);
+		}else{
+			sdr->setFrequency(fx);
 		}
-	}else{
-		winout("Spectrum2::mouseDown x %d y %d\n",pp3.x,pp3.y);
+		sdr->iWait=0;
+		s->bS=sdr->bS;
+		//winout("Spectrum2::mouseDown %p %p\n",s->bS,sdr->bS);
+		gTopPane2->Refresh();
 	}
 
 }
@@ -3679,8 +3683,8 @@ void Spectrum2::render1(wxPaintEvent& evt )
 
 		buff2[0]=buff2[0];
 		buff2[1]=buff2[1];
-*/
 
+*/
 		num=0;
  /*
  		msresamp_crcf_reset(iqSampler1);
@@ -3705,12 +3709,12 @@ void Spectrum2::render1(wxPaintEvent& evt )
          		amin=v;
          	}
 		}
+/*
+		static long int count=0;
 		
-		//static long int count=0;
-		
-		//winout("amax %g num %d %d amax2 %g nmax3 %d sds->ixmax %ld\n",amax,num,nmax3,amax2,nmax2,sds->ixmax);
-		//winout("count %ld xmin %g xmax %g ymin %g ymax %g ixmax %ld iymax %ld\n",count++,sds->xmin,sds->xmax,sds->ymin,sds->ymax,sds->ixmax,sds->iymax);
-		
+		winout("amax %g amin %g num %d %d amax2 %g nmax3 %d sds->ixmax %ld\n",amax,amin,num,nmax3,amax2,nmax2,sds->ixmax);
+		winout("count %ld xmin %g xmax %g ymin %g ymax %g ixmax %ld iymax %ld\n",count++,sds->xmin,sds->xmax,sds->ymin,sds->ymax,sds->ixmax,sds->iymax);
+*/
 		if(amaxGlobal == 0.0)amaxGlobal=amax;
         amaxGlobal = 0.9*amaxGlobal+0.1*amax;
 		amax=amaxGlobal;
