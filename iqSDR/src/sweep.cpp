@@ -1940,6 +1940,8 @@ void BasicPane2::OnCheckAuto(wxCommandEvent &event)
 			gSpectrum2->sdr->witch=0;
 		    gSpectrum2->sdr->bS2->mutex1.unlock();
 		    //fprintf(stderr,"Clear Buffer\n");
+		}else{
+			sdr->iWait=0;
 		}
 		return;
 	}
@@ -2541,6 +2543,7 @@ void WaterFall2::mouseDown(wxMouseEvent& event)
 		}else{
 			sdr->setFrequency(fx);
 		}
+		sdr->iWait=0;
 		s->bS=sdr->bS;
 		gTopPane2->Refresh();
 
