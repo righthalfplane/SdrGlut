@@ -1,5 +1,6 @@
 #ifndef __GRAPHICSH__
 #define __GRAPHICSH__
+#include "SocketDefs.h"
 #include <vector>
 #include <string>
 //#define GLEW_IN
@@ -13,8 +14,9 @@
 #else
 #include <GL/GLU.h>
 #include <GL/GL.h>
-
 #endif
+
+
 
 typedef struct uRectStruct {
     int x;

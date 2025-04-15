@@ -163,6 +163,7 @@
     <ClCompile Include="..\src\Clisten.cpp" />
     <ClCompile Include="..\src\cMalloc.cpp" />
     <ClCompile Include="..\src\getPalette.cpp" />
+    <ClCompile Include="..\src\graphics.cpp" />
     <ClCompile Include="..\src\iqSDR.cpp" />
     <ClCompile Include="..\src\mThread.cpp" />
     <ClCompile Include="..\src\sdr.cpp" />
@@ -271,6 +272,7 @@
     <ClInclude Include="..\src\bStack.h" />
     <ClInclude Include="..\src\Clisten.h" />
     <ClInclude Include="..\src\firstFile.h" />
+    <ClInclude Include="..\src\graphics.h" />
     <ClInclude Include="..\src\iqSDR.h" />
     <ClInclude Include="..\src\mThread.h" />
     <ClInclude Include="..\src\sdr.h" />

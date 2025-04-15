@@ -3,11 +3,6 @@
 #define __SOUNDH__
 
 #include "firstFile.h"
-#include <SoapySDR/Version.hpp>
-#include <SoapySDR/Modules.hpp>
-#include <SoapySDR/Registry.hpp>
-#include <SoapySDR/Device.hpp>
-#include <SoapySDR/Formats.h>
 
 #if __has_include(<liquid/liquid.h>)
 #include <liquid/liquid.h>
@@ -148,10 +143,7 @@ public:
 	double bw;
 	int decodemode;
 	int audiodevice;
-
-	SoapySDR::Stream *rxStream;
-	SoapySDR::Device *device;
-
+	
 	std::vector<names> inputNames;
 	std::vector<names> outputNames;
 

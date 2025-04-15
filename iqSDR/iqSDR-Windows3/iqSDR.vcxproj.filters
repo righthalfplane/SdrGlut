@@ -441,6 +441,7 @@
     <ClCompile Include="..\zlib-1.2.1\inflate.c">
       <Filter>z</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\graphics.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\bStack.h" />
@@ -740,6 +741,7 @@
     <ClInclude Include="..\hdf-4.2.5\cdeflate.h">
       <Filter>hdf</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\graphics.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="hdf">
