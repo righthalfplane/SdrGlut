@@ -3805,13 +3805,7 @@ void Spectrum::render1(wxPaintEvent& evt )
 		glColor4f(0, 0, 1, 1);
 		
 		//winout("filterType %d\n",filterType);
-		
-      	if(decodemode1 != sdr->decodemode){
-      		decodemode1=sdr->decodemode;
-      		double Ratio = (float)(sdr->bw/sdr->samplerate);
-      		iqSampler1  = msresamp_crcf_create(Ratio, 60.0f);
-      	}
-    	
+
 		if(buffSize != sdr->size){
 			buffSize=sdr->size;
 			if(buff1)cFree((char *)buff1);
@@ -3892,9 +3886,12 @@ void Spectrum::render1(wxPaintEvent& evt )
 			
 		num=0;
  
+      	double Ratio = (float)(sdr->bw/sdr->samplerate);
+      	iqSampler1  = msresamp_crcf_create(Ratio, 60.0f);
  		msresamp_crcf_reset(iqSampler1);
 		msresamp_crcf_execute(iqSampler1, (liquid_float_complex *)&buff2[0], sdr->size, (liquid_float_complex *)&buff3[0], &num);  // decimate
-		
+		if (iqSampler1)msresamp_crcf_destroy(iqSampler1);
+				
       	buffLength=num;
 		
 		//int nmax3=-1;

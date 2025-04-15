@@ -113,7 +113,7 @@ int soundClass::sound( void *outputBuffer, void *inputBuffer, unsigned int nBuff
 			  *buffer++ = 0;
 		}
 		
-		if(bS && !(record % 20))winout("Audio Record %lld No Data\n",record);
+		if(bS && !(record % 200))winout("Audio Record %lld No Data\n",record);
 	}
 	
 	audioSync=0;
