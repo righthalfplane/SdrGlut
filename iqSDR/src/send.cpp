@@ -478,6 +478,8 @@ int BasicPane::sendAudio(int short *data,int length)
 
     //winout("sendAudio length %d sendMode %d controlSend %d\n",length,sx->sendMode,sx->controlSend);
     
+    if(!sx)return 1;
+    
     if(sx->sendMode < 3)return 0;
     
     if(sendFlag <= 0){

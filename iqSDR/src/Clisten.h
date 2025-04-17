@@ -161,6 +161,7 @@ int ListenSocket(void *rxv);
 #define MODE_LSB  5
 #define MODE_CW   6
 #define MODE_NAM2 7
+#define MODE_IQ   8
 
 #define LISTEN_TCP 0
 #define LISTEN_UDP 1

@@ -64,6 +64,8 @@
 #define MODE_USB  4
 #define MODE_LSB  5
 #define MODE_CW   6
+#define MODE_NAM2 7
+#define MODE_IQ   8
 */
 
 #define TYPE_FLOAT      		0
@@ -277,6 +279,7 @@ public:
 
     BasicPane *gBasicPane;
  	 	
+ 	struct Filters ff;
  	
  	class Listen *l;
  	
@@ -291,6 +294,13 @@ public:
  	std::chrono::time_point<std::chrono::high_resolution_clock> timePipeFile;
  	
  	double timePipeWait;
+ 	
+ 	double bandwidthOveride;
+ 	
+ 	liquid_ampmodem_type imode;
+ 	
+ 	int imodeFlag=0;
+
  	
 };
 

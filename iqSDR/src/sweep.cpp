@@ -3925,10 +3925,14 @@ void Spectrum2::render2(wxPaintEvent& evt )
  	if(buffSendLength && !iWait){
   		uRect box;
 	
- 		box.x=ftox(sdr->f-sdr->bw/(2.0));
+  		int dxii=ftox(sdr->f+sdr->bw/(2.0))-ftox(sdr->f-sdr->bw/(2.0));
+  		if(dxii < 4)dxii=4;
+	
+ 		box.x=ftox(sdr->f)-dxii/2.0;
  		box.y=0;
- 		box.xsize=ftox(sdr->f+sdr->bw/(2.0))-ftox(sdr->f-sdr->bw/(2.0));
+ 		box.xsize=dxii;
  		box.ysize=getHeight();
+ 		
  		
  		//winout(" left %d right %d center %d xsize %d bw %g\n",ftox(sdr->f-sdr->bw/2.0),ftox(sdr->f+sdr->bw/2.0),ftox(sdr->f),box.xsize,sdr->bw);
  		

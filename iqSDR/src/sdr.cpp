@@ -553,6 +553,8 @@ void sdrClass::setMode(std::string mode)
 		decodemode = MODE_LSB;
 	}else if(mode == "CW"){
 		decodemode = MODE_CW;
+	}else if(mode == "IQ"){
+		decodemode = MODE_IQ;
 	}else{
 		decodemode = MODE_AM;
 	}
@@ -645,7 +647,10 @@ sdrClass::sdrClass()
 
     gBasicPane=NULL;
 
-      	
+	bandwidthOveride=0;
+		
+	zerol((char *)&ff,sizeof(ff));
+   	
 }
 sdrClass::~sdrClass()
 {	
@@ -672,6 +677,24 @@ sdrClass::~sdrClass()
 	bS=NULL;
 	if(bS2)delete bS2;
 	bS2=NULL;
+	
+	if (ff.iqSamplerd)msresamp_crcf_destroy(ff.iqSamplerd);
+	ff.iqSamplerd=NULL;
+	
+	if (ff.iqSampler2)msresamp_rrrf_destroy(ff.iqSampler2);
+	ff.iqSampler2=NULL;
+	
+    if(ff.fShift)nco_crcf_destroy(ff.fShift);
+    ff.fShift=NULL;
+    
+    if(ff.demod)freqdem_destroy(ff.demod);
+    ff.demod=NULL;
+    
+    if(ff.demodAM)ampmodem_destroy(ff.demodAM);
+	ff.demodAM=NULL;
+	
+	zerol((char *)&ff,sizeof(ff));
+
 	
 	//winout("exit sdrClass %p thread %llx\n",this,(long long)std::this_thread::get_id);
 }
@@ -1662,9 +1685,6 @@ int sdrClass::Process()
 	
 	sdrClass *rx=this;
 	
-	struct Filters ff;			
-	
-	zerol((char *)&ff,sizeof(f));
 
 	ff.thread=rx->thread++;
 	
@@ -1672,7 +1692,7 @@ int sdrClass::Process()
 	
 	ff.amaxGlobal=0;
 	
-	//winout("Process %d\n",ff.thread);
+	//fprintf(stderr,"Process %d %p\n",ff.thread);
 	
 	setFilters(&ff);
 	
@@ -1718,17 +1738,7 @@ OutOfHere:
 	if(buff1)cFree((char *)buff1);
 	
 	if(buff2)cFree((char *)buff2);
-	
-	if (ff.iqSamplerd)msresamp_crcf_destroy(ff.iqSamplerd);
-	
-	if (ff.iqSampler2)msresamp_rrrf_destroy(ff.iqSampler2);
-	
-    if(ff.fShift)nco_crcf_destroy(ff.fShift);
-    
-    if(ff.demod)freqdem_destroy(ff.demod);
-    
-    if(ff.demodAM)ampmodem_destroy(ff.demodAM);
-    
+	    
     iqToAudio=-2;
     
 	//fprintf(stderr,"sdrClass::Process exit\n");
@@ -1747,59 +1757,70 @@ int sdrClass::setFilters(struct Filters *f)
     
     float ratio=(float)(rx->faudio / rx->samplerate);
     
-    liquid_ampmodem_type mode=LIQUID_AMPMODEM_DSB;
+    imode=LIQUID_AMPMODEM_DSB;
     
-    int iflag=0;
+    imodeFlag=0;
     
     
     if(rx->decodemode == MODE_AM){
         rx->bw=10000.0;
-        mode=LIQUID_AMPMODEM_DSB;
-        iflag=0;
+        imode=LIQUID_AMPMODEM_DSB;
+        imodeFlag=0;
     } else if(rx->decodemode == MODE_NAM){
         rx->bw=5000.0;
-        mode=LIQUID_AMPMODEM_DSB;
-        iflag=0;
+        imode=LIQUID_AMPMODEM_DSB;
+        imodeFlag=0;
     } else if(rx->decodemode == MODE_NBFM){
         rx->bw=12500.0;
     }else if(rx->decodemode == MODE_FM){
         rx->bw=200000.0;
     }else if(rx->decodemode == MODE_USB){   // Above 10 MHZ
         rx->bw=6000.0;
-        mode=LIQUID_AMPMODEM_USB;
-        iflag=1;
+        imode=LIQUID_AMPMODEM_USB;
+        imodeFlag=1;
     }else if(rx->decodemode == MODE_LSB){  // Below 10 MHZ
         rx->bw=6000.0;
-        mode=LIQUID_AMPMODEM_LSB;
-        iflag=1;
+        imode=LIQUID_AMPMODEM_LSB;
+        imodeFlag=1;
     }else if(rx->decodemode == MODE_CW){  // Below 10 MHZ
         rx->bw=1000.0;
-        mode=LIQUID_AMPMODEM_LSB;
-        iflag=1;
+        imode=LIQUID_AMPMODEM_LSB;
+        imodeFlag=1;
+    }else if(rx->decodemode == MODE_IQ){
+        rx->bw=200000.0;
     }
     
-    rx->Ratio = (float)(rx->bw/ rx->samplerate);
+    if(bandwidthOveride > 0.0)rx->bw=bandwidthOveride;
     
     ratio= (float)(rx->faudio/rx->bw);
     
+    //fprintf(stderr,"bandwidthOveride %g\n",bandwidthOveride);
+    
+    rx->Ratio = (float)(rx->bw/ rx->samplerate);
+    
+    if(f->demod)freqdem_destroy(f->demod);    
     f->demod=freqdem_create(0.5);
     
+    if(f->demodAM)ampmodem_destroy(f->demodAM);
 #ifdef LIQUID_VERSION_4
-    f->demodAM = ampmodem_create(0.5, 0.0, mode, iflag);
+    f->demodAM = ampmodem_create(0.5, 0.0, imode, imodeFlag);
  #else
-    f->demodAM = ampmodem_create(0.5, mode, iflag);
+    f->demodAM = ampmodem_create(0.5, imode, imodeFlag);
 #endif
 
-    f->iqSamplerd  = msresamp_crcf_create(rx->Ratio, As);
-    
-    f->iqSampler2 = msresamp_rrrf_create(ratio, As);
-    
-    //msresamp_crcf_print(f->iqSampler);
-    
-    
-    f->fShift = nco_crcf_create(LIQUID_NCO);
-    
-    f->amHistory=0;
+	if (f->iqSamplerd)msresamp_crcf_destroy(f->iqSamplerd);
+	f->iqSamplerd  = msresamp_crcf_create(rx->Ratio, As);
+
+	if (f->iqSampler2)msresamp_rrrf_destroy(f->iqSampler2);
+	f->iqSampler2 = msresamp_rrrf_create(ratio, As);
+
+	//msresamp_crcf_print(f->iqSampler);
+
+
+	if(f->fShift)nco_crcf_destroy(f->fShift);
+	f->fShift = nco_crcf_create(LIQUID_NCO);
+
+	f->amHistory=0;
     
     return 0;
     	

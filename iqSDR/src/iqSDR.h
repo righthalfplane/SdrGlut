@@ -130,6 +130,7 @@ double rtime(void);
     ID_XMIN,
     ID_XMAX,
     ID_OPEN,
+    ID_BANDWIDTHOVERIDE,
     ID_FC=ID_RXFREQUENCY+100,
     ID_VIEWSELECTED,
     ID_EXIT,
@@ -531,7 +532,9 @@ class Spectrum : public wxGLCanvas
 public:
 	Spectrum(wxFrame* parent, int* args);
 	virtual ~Spectrum();
-    
+	void startOscilloscope();
+    ApplFrame *gApplFrame;
+
 	void resized(wxSizeEvent& evt);
 	
 	float scaleFactor;
@@ -546,6 +549,7 @@ public:
 	int buffSendLength;
 	volatile int buffLength;
 	fftwf_plan p1;
+	fftwf_plan p2;
 	double lineDumpInterval;
 	double lineTime;
 	
@@ -599,10 +603,16 @@ public:
 	
 	volatile double amaxGlobal;
 	
+	volatile double aminGlobal;
+	
 	double oscilloscopeSlide;
 	
 	double oscilloscopeZoom;
-   
+	
+	ampmodem demodAM;
+
+	freqdem demod;
+
 	void render(wxPaintEvent& evt);
 	void render1(wxPaintEvent& evt);
 	void render1a(wxPaintEvent& evt);
@@ -679,6 +689,7 @@ public:
     int FloatToImage(float *d,long length,struct paletteDraw *pd,unsigned char *bp);
 	void render(wxPaintEvent& evt);
 	void render1(wxPaintEvent& evt);
+	void render1a(wxPaintEvent& evt);
 	void render2(wxPaintEvent& evt);
 	void prepare3DViewport(int topleft_x, int topleft_y, int bottomrigth_x, int bottomrigth_y);
 	//void prepare2DViewport(int topleft_x, int topleft_y, int bottomrigth_x, int bottomrigth_y);
@@ -780,6 +791,8 @@ public:
 	double lineAlpha;
 	
 	double sampleDataRotate;
+	
+	wxTextCtrl *bandwidthOverride;	
 	
 	wxComboBox *fftCombo;
 	
@@ -1213,7 +1226,7 @@ public:
 	wxTextCtrl *rangeMin;
 	
 	wxTextCtrl *rangeMax;
-	
+
 	wxTextCtrl *sweepLower;
 	wxTextCtrl *sweepUpper;
 	wxTextCtrl *sweepSize;
