@@ -90,7 +90,8 @@ double rtime(void);
     ID_RADIOBOX,
     INPUT_MENU,
 	OUTPUT_MENU=INPUT_MENU+100,
-    ID_COMBOFILTER=OUTPUT_MENU+100,
+    ID_COMBO_OSCILLOSCOPE=OUTPUT_MENU+100,
+    ID_COMBOFILTER=ID_COMBO_OSCILLOSCOPE+100,
     ID_COMBOANTENNA=ID_COMBOFILTER+100,
     ID_COMBOSAMPLERATE=ID_COMBOANTENNA+100,
     ID_COMBOBANDWIDTH=ID_COMBOSAMPLERATE+100,
@@ -582,6 +583,7 @@ public:
 	
 	volatile int oscilloscope;
 	
+	
 	TopPane *gTopPane;
 	
 	BasicPane *gBasicPane;
@@ -758,6 +760,8 @@ public:
 	int getHeight();
 	float angle;
 	
+	int idoScrollWindow;
+	
 	int softAutoGain;
 
 	Spectrum *gSpectrum;
@@ -775,6 +779,8 @@ public:
 	wxTextCtrl *text;
 	
 	wxRadioBox *modeBox;
+	
+	wxComboBox *comboSpectrum;
 	
 	wxTimer m_timer;
 	

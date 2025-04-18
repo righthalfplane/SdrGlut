@@ -8,7 +8,7 @@ void winout(const char *fmt, ...);
 
 int copyl(char *p1,char *p2,long n);
 
-std::string ProgramVersion="iqSDR-1378";
+std::string ProgramVersion="iqSDR-1395";
 
 void *cMalloc(unsigned long r, int tag);
 
@@ -1602,6 +1602,7 @@ EVT_RADIOBOX(ID_RADIOBOX, BasicPane::radioBox)
 EVT_COMBOBOX(ID_COMBOBOX,BasicPane::OnCombo)
 EVT_COMBOBOX(ID_COMBOMODE,BasicPane::OnCombo)
 EVT_COMBOBOX(ID_COMBOFILTER,BasicPane::OnComboFilter)
+EVT_COMBOBOX(ID_COMBO_OSCILLOSCOPE,BasicPane::OnComboFilter)
 EVT_COMBOBOX(ID_COMBOANTENNA,BasicPane::OnComboAntenna)
 EVT_COMBOBOX(ID_COMBOSAMPLERATE,BasicPane::OnComboSampleRate)
 EVT_COMBOBOX(ID_COMBOBANDWIDTH,BasicPane::setBandwidth)
@@ -1721,6 +1722,10 @@ int BasicPane::SetScrolledWindow()
 
 	if(ScrolledWindow)ScrolledWindow->Destroy();
 	
+	wxArrayString strings;
+	
+	wxArrayString strings7;
+	
 	ScrolledWindow = new wxScrolledWindow(gBasicPane,ID_SCROLLED,wxPoint(0,0),
 	 	                                   wxSize(340,200),wxVSCROLL ); // wxHSCROLL
  	int pixX=10;
@@ -1745,12 +1750,32 @@ int BasicPane::SetScrolledWindow()
 		cbox->SetValue(1);	
 		yloc += 25;   
 	}
+
+	 wxPanel *panel81 = new wxPanel(ScrolledWindow,wxID_ANY, wxPoint(20,yloc), wxSize(230, 35),wxBORDER_SUNKEN | wxFULL_REPAINT_ON_RESIZE,wxT("Control2"));
 	
-	cbox=new wxCheckBox(ScrolledWindow,ID_SWAPIQ, "&I/Q Swap",wxPoint(20,yloc), wxSize(100, 25));
+	cbox=new wxCheckBox(panel81,ID_SWAPIQ, "&I/Q Swap",wxPoint(5,10), wxSize(80, 25));
 	cbox->SetValue(0);	
+/*
 	cbox=new wxCheckBox(ScrolledWindow,ID_OSCILLOSCOPE, "&Oscilloscope",wxPoint(120,yloc), wxSize(120, 25));
 	cbox->SetValue(oscilloscopeFlag);	
 	yloc += 25;   
+*/
+
+	strings7.Clear();
+	strings7.Add("Spectrum");
+	strings7.Add("Oscilloscope FFT");
+	strings7.Add("Oscilloscope");
+	
+//	new wxStaticText(panel2,wxID_STATIC,wxT("Window:"),wxPoint(10,yloc), wxDefaultSize,wxALIGN_LEFT);
+
+	comboSpectrum=new wxComboBox(panel81,ID_COMBO_OSCILLOSCOPE,wxT("FILTER"),wxPoint(90,10),wxDefaultSize,
+	                   strings7,wxCB_DROPDOWN);
+	comboSpectrum->SetSelection(oscilloscopeFlag);
+
+	yloc += 35;   
+
+
+
 
 	cbox=new wxCheckBox(ScrolledWindow,ID_SOFTAUTOGAIN, "&Software AGC",wxPoint(20,yloc), wxSize(230, 25));
 	cbox->SetValue(1);	
@@ -1772,7 +1797,7 @@ int BasicPane::SetScrolledWindow()
 	
 	}
 	
-	if(oscilloscopeFlag){
+	if(oscilloscopeFlag != 0){
 		box = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Oscilloscope Zoom ",wxPoint(20,yloc), wxSize(230, 80),wxBORDER_SUNKEN );
 		box->SetToolTip(wxT("Zoom Oscilloscope Data") );
 		new wxSlider(box,ID_OSCILLOSCOPEZOOM,200,0,200,wxPoint(10,15),wxSize(210,-1),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
@@ -1816,7 +1841,6 @@ int BasicPane::SetScrolledWindow()
   	
 	yloc += 85;
 
-	wxArrayString strings;
 	
 	wxPanel *panel22=NULL;
 		
@@ -2087,6 +2111,8 @@ BasicPane::BasicPane(wxWindow *frame, const wxString &title,class sdrClass *sdrI
 	
 	ScrolledWindow=NULL;
 	
+	idoScrollWindow=0;
+	
     SetScrolledWindow();
 }
 
@@ -2144,7 +2170,7 @@ void BasicPane::OnCheckAuto(wxCommandEvent &event)
 		gSpectrum->oscilloscope=flag;
 		oscilloscopeFlag=flag;
 		SetScrolledWindow();
-		gSpectrum->startOscilloscope();
+		//gSpectrum->startOscilloscope();
 /*
 		wxSize size = gApplFrame->GetClientSize();
 		size.x += 4;
@@ -2382,7 +2408,7 @@ void BasicPane::OnText(wxCommandEvent &event)
 	
 	std::thread(&sdrClass::run,sdr).detach();
 	
-	gSpectrum->startOscilloscope();
+	//gSpectrum->startOscilloscope();
 	
 }
 
@@ -2404,6 +2430,21 @@ void BasicPane::OnScroll(wxCommandEvent &event)
  void BasicPane::OnComboFilter(wxCommandEvent& event){
 
 	event.Skip();
+	
+	int id=event.GetId();
+	
+	if(id == ID_COMBO_OSCILLOSCOPE){
+		int flag=event.GetSelection();
+		oscilloscopeFlag=flag;
+		gSpectrum->oscilloscope=flag;
+		gSpectrum->iHaveData=0;
+		gSpectrum->aminGlobal=0;
+		gSpectrum->amaxGlobal=0;
+		idoScrollWindow=1;
+	//	SetScrolledWindow();
+//		fprintf(stderr,"OnComboFilter ID_COMBO_OSCILLOSCOPE flag %d\n",flag);
+		return;
+	}
 	
 	wxString name=event.GetString();
 
@@ -2521,6 +2562,14 @@ void BasicPane::OnTimer(wxTimerEvent &event){
 		gWaterFall->Refresh();
 	}else{
 	 // winout("OnTimer Skip call\n");
+	}
+	
+	if(idoScrollWindow)
+	{
+		//fprintf(stderr,"idoScrollWindow %d\n",idoScrollWindow);
+		SetScrolledWindow();
+		gSpectrum->startOscilloscope();
+		idoScrollWindow=0;
 	}
 	
 	//auto t2 = std::chrono::high_resolution_clock::now();
@@ -2663,7 +2712,7 @@ void BasicPane::radioBox(wxCommandEvent& event)
 	double xmin=atof(alpha);
 	sdr->bandwidthOveride=xmin;
 	sdr->setMode(mode);	
-	gSpectrum->startOscilloscope();
+//	gSpectrum->startOscilloscope();
 
 }
 
@@ -2809,8 +2858,10 @@ void WaterFall::render( wxPaintEvent& evt )
 
 	if(gSpectrum->oscilloscope == 1){
 		render1(evt);	
-	}else{
+	}else if(gSpectrum->oscilloscope == 0){
 		render2(evt);
+	}else if(gSpectrum->oscilloscope == 2){
+		render1a(evt);	
 	}
 
 }
@@ -4046,51 +4097,27 @@ void Spectrum::startOscilloscope()
 	size.y -= 4;
 	gApplFrame->SetClientSize(size);
 	sdr->initPlay();
-	if(oscilloscope == 1){		
+	if(oscilloscope == 1 || oscilloscope == 2){		
 		sdr->bS2->mutex1.lock();
 		sdr->bS2->bufftop=0;
 		sdr->witch=0;
 		sdr->bS2->mutex1.unlock();
 		//fprintf(stderr,"Clear Buffer\n");
-		double Ratio = (float)(sdr->bw/sdr->size);
-		fprintf(stderr,"sdr->bw  %g sdr->samplerate %g\n",sdr->bw,sdr->samplerate);
-		if (iqSampler1)msresamp_crcf_destroy(iqSampler1);
-      	iqSampler1  = msresamp_crcf_create(Ratio, 60.0f);
-      	if(demod)freqdem_destroy(demod);    
-    	demod=freqdem_create(0.5);
-     	if(demodAM)ampmodem_destroy(demodAM);
-#ifdef LIQUID_VERSION_4
-    	demodAM = ampmodem_create(0.5, 0.0, sdr->imode, sdr->imodeFlag);
- #else
-    	demodAM = ampmodem_create(0.5, sdr->imode, sdr->imodeFlag);
-#endif
-   	
-      	
- 		if(buffSize < sdr->size || buffSize < sdr->bw){
- 			int size=sdr->size;
- 			if(sdr->bw > size)size=sdr->bw;
-			buffSize=size;
-			if(buff1)cFree((char *)buff1);
-			buff1=(float *)cMalloc(sizeof(float)*8*size,95288);
-			if(buff2)cFree((char *)buff2);
-			buff2=(float *)cMalloc(sizeof(float)*8*size,95288);
-			if(buff3)cFree((char *)buff3);
-			buff3=(float *)cMalloc(sizeof(float)*8*size,95288);
-			iHaveData=0;
-		}
-
-   		p2 = fftwf_plan_dft_1d(sdr->bw,(fftwf_complex *)buff2, (fftwf_complex *)buff3, FFTW_FORWARD, FFTW_ESTIMATE);
-
 	}
 
 }
 void Spectrum::render(wxPaintEvent& evt )
 {
+	
 	if(oscilloscope == 1){
 		render1(evt);	
-	}else{
+	}else if(oscilloscope == 0){
 		render2(evt);
+	}else if(oscilloscope == 2){
+		render1a(evt);	
 	}
+	
+	
 }
 
 void Spectrum::render1(wxPaintEvent& evt )
@@ -4136,12 +4163,6 @@ void Spectrum::render1(wxPaintEvent& evt )
 		//winout("filterType %d\n",filterType);
 
 		
-		int ip = -1;
- 	  	if(sdr->bS2)ip=sdr->bS2->popBuff(buff2,sdr->size);
-      	if(ip < 0){ 	    	
- 			//winout("render1 ip %d\n",ip);
-      	    return;
-      	}
 /*      	
    	static FILE *out11;
  	if(!out11)out11=fopen("iqSDR1_IQ_100000000_2000000_fc.raw","wb");
@@ -4149,8 +4170,46 @@ void Spectrum::render1(wxPaintEvent& evt )
  */     	
       	
       	
-      	//int witch=ip % NUM_DATA_BUFF;
+       	
+      	
+ 		if(buffSize < sdr->size || buffSize < sdr->bw || iHaveData == 0 ){
+ 			int size=sdr->size;
+ 			if(sdr->bw > size)size=sdr->bw;
+			buffSize=size;
+			if(buff1)cFree((char *)buff1);
+			buff1=(float *)cMalloc(sizeof(float)*8*size,95288);
+			if(buff2)cFree((char *)buff2);
+			buff2=(float *)cMalloc(sizeof(float)*8*size,95288);
+			if(buff3)cFree((char *)buff3);
+			buff3=(float *)cMalloc(sizeof(float)*8*size,95288);
+			
+			//if(p2)fftw_destroy_plan(p2);
+   			p2 = fftwf_plan_dft_1d(sdr->bw,(fftwf_complex *)buff2, (fftwf_complex *)buff3, FFTW_FORWARD, FFTW_ESTIMATE);
+			double Ratio = (float)(sdr->bw/sdr->size);
+			fprintf(stderr,"sdr->bw  %g sdr->samplerate %g sdr->size %d\n",sdr->bw,sdr->samplerate, sdr->size );
+			if (iqSampler1)msresamp_crcf_destroy(iqSampler1);
+			iqSampler1  = msresamp_crcf_create(Ratio, 60.0f);
+			if(demod)freqdem_destroy(demod);    
+			demod=freqdem_create(0.5);
+			if(demodAM)ampmodem_destroy(demodAM);
+#ifdef LIQUID_VERSION_4
+			demodAM = ampmodem_create(0.5, 0.0, sdr->imode, sdr->imodeFlag);
+ #else
+			demodAM = ampmodem_create(0.5, sdr->imode, sdr->imodeFlag);
+#endif
+  			
+		}
 		
+		int ip = -1;
+ 	  	if(sdr->bS2)ip=sdr->bS2->popBuff(buff2,sdr->size);
+      	if(ip < 0){ 	    	
+ 			//winout("render1 ip %d\n",ip);
+      	    return;
+      	}
+		
+		//int witch=ip % NUM_DATA_BUFF;
+
+
 		double sint,cost;
 		
 		unsigned int num;
@@ -4811,10 +4870,12 @@ void Spectrum::render1a(wxPaintEvent& evt )
 		num=0;
  
       	double Ratio = (float)(sdr->bw/sdr->samplerate);
-      	iqSampler1  = msresamp_crcf_create(Ratio, 60.0f);
+ 		if (iqSampler1)msresamp_crcf_destroy(iqSampler1);
+     	iqSampler1  = msresamp_crcf_create(Ratio, 60.0f);
  		msresamp_crcf_reset(iqSampler1);
 		msresamp_crcf_execute(iqSampler1, (liquid_float_complex *)&buff2[0], sdr->size, (liquid_float_complex *)&buff3[0], &num);  // decimate
 		if (iqSampler1)msresamp_crcf_destroy(iqSampler1);
+		iqSampler1=NULL;
 				
       	buffLength=num;
 		
