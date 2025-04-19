@@ -8,7 +8,7 @@ void winout(const char *fmt, ...);
 
 int copyl(char *p1,char *p2,long n);
 
-std::string ProgramVersion="iqSDR-1395";
+std::string ProgramVersion="iqSDR-1397";
 
 void *cMalloc(unsigned long r, int tag);
 
@@ -1751,9 +1751,9 @@ int BasicPane::SetScrolledWindow()
 		yloc += 25;   
 	}
 
-	 wxPanel *panel81 = new wxPanel(ScrolledWindow,wxID_ANY, wxPoint(20,yloc), wxSize(230, 35),wxBORDER_SUNKEN | wxFULL_REPAINT_ON_RESIZE,wxT("Control2"));
+	 wxPanel *panel81 = new wxPanel(ScrolledWindow,wxID_ANY, wxPoint(20,yloc), wxSize(250, 40),wxBORDER_SUNKEN | wxFULL_REPAINT_ON_RESIZE,wxT("Control2"));
 	
-	cbox=new wxCheckBox(panel81,ID_SWAPIQ, "&I/Q Swap",wxPoint(5,10), wxSize(80, 25));
+	cbox=new wxCheckBox(panel81,ID_SWAPIQ, "&I/Q Swap",wxPoint(0,5), wxSize(80, 25));
 	cbox->SetValue(0);	
 /*
 	cbox=new wxCheckBox(ScrolledWindow,ID_OSCILLOSCOPE, "&Oscilloscope",wxPoint(120,yloc), wxSize(120, 25));
@@ -1768,11 +1768,11 @@ int BasicPane::SetScrolledWindow()
 	
 //	new wxStaticText(panel2,wxID_STATIC,wxT("Window:"),wxPoint(10,yloc), wxDefaultSize,wxALIGN_LEFT);
 
-	comboSpectrum=new wxComboBox(panel81,ID_COMBO_OSCILLOSCOPE,wxT("FILTER"),wxPoint(90,10),wxDefaultSize,
+	comboSpectrum=new wxComboBox(panel81,ID_COMBO_OSCILLOSCOPE,wxT("FILTER"),wxPoint(85,5),wxDefaultSize,
 	                   strings7,wxCB_DROPDOWN);
 	comboSpectrum->SetSelection(oscilloscopeFlag);
 
-	yloc += 35;   
+	yloc += 40;   
 
 
 
@@ -4156,6 +4156,9 @@ void Spectrum::render1(wxPaintEvent& evt )
     double amax=-1e33;
     double amin=1e33;
     
+    double amax2=-1e33;
+    double amin2=1e33;
+    
 	if(!iWait){
  	
 		glColor4f(0, 0, 1, 1);
@@ -4322,29 +4325,40 @@ void Spectrum::render1(wxPaintEvent& evt )
  		if(out55)fwrite(buff3,8,buffLength,out55);
 */
 		//int nmax3=-1;
-		amin=1e33;
-		amax=-1e33;
+		amin2=1e33;
+		amax2=-1e33;
 		for(int n=0;n<buffLength;++n){
 			double v=(buff3[2*n]*buff3[2*n]+buff3[2*n+1]*buff3[2*n+1]);
         	if(v > 0.0)v=10*log10(v)+5;
-         	if(v > amax){
-         		amax=v;
+         	if(v > amax2){
+         		amax2=v;
          	   // nmax3=n;
          	}
-         	if(v < amin)amin=v;
+         	if(v < amin2)amin2=v;
 		}
 		
 		//winout("amax %g num %d %d amax2 %g nmax2 %d\n",amax,num,nmax3,amax2,nmax2);
 		//winout("amax %g num %d nmax3 %d\n",amax,num,nmax3);
+		
+		//fprintf(stderr,"amaxGlobal %g aminGlobal %g\n",amaxGlobal,aminGlobal);
 
-		if(amaxGlobal == 0.0)amaxGlobal=amax;
-        amaxGlobal = 0.9*amaxGlobal+0.1*amax;
+		if(amaxGlobal == 0.0){
+			amaxGlobal=amax2;
+		}
+		
+		if(aminGlobal == 0.0){
+			aminGlobal=amin2;
+		}
+        
+        static long int nset=0;
+        
+        if(!(nset++ % 200)){
+        	amaxGlobal = 0.9*amaxGlobal+0.1*amax2;
+	        aminGlobal = 0.9*aminGlobal+0.1*amin2;
+		}
+		
 		amax=amaxGlobal;
-		
-		if(aminGlobal == 0.0)aminGlobal=amin;
-        aminGlobal = 0.9*aminGlobal+0.1*amin;
 		amin=aminGlobal;
-		
 		
 		//static long int count1;
 
@@ -4407,7 +4421,7 @@ void Spectrum::render1(wxPaintEvent& evt )
 		
 		double ddx=(xmax-xmin)/num;
 			
-		for(int n=0;n<num;++n){
+		for(unsigned int n=0;n<num;++n){
 			double v;
 			//v=buff3[n];
 			v=(buff3[2*n]*buff3[2*n]+buff3[2*n+1]*buff3[2*n+1]);
@@ -4487,6 +4501,7 @@ void Spectrum::render1(wxPaintEvent& evt )
 			    double xx=((xp-ymin)/(dy));
 			    if(xx < 0.0 || xx > 1.0)continue;
 			    int ixx=(int)(iymax+idy*xx);
+			    //fprintf(stderr,"ixx %d xx %g dy %g idy %g\n",ixx,xx,dy,idy);
  				DrawLine3(30, ixx, getWidth(), ixx);
  				sprintf(cbuff,"%g",xp);
 				DrawString(5,ixx-8,cbuff);
@@ -4958,7 +4973,7 @@ void Spectrum::render1a(wxPaintEvent& evt )
 		
 		double ddx=(xmax-xmin)/num;
 			
-		for(int n=0;n<num;++n){
+		for(unsigned int n=0;n<num;++n){
 			double v;
 			v=buff3[n];
 			double y=v;

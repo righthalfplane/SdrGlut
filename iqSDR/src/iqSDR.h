@@ -44,8 +44,15 @@
 #include "OpenGL/glu.h"
 #include "OpenGL/gl.h"
 #else
+
+#if __has_include(<GL/GL.h>)
 #include <GL/GL.h>
 #include <GL/GLU.h>
+#else
+#include <GL/gl.h>
+#include <GL/glu.h>
+#endif
+
 #endif
  
 #include <sys/timeb.h>

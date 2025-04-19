@@ -8,12 +8,19 @@
 #include <GL/glew.h>
 #endif
 
-#ifdef __APPLE__
+#ifdef __WXMAC__
 #include "OpenGL/glu.h"
 #include "OpenGL/gl.h"
 #else
-#include <GL/GLU.h>
+
+#if __has_include(<GL/GL.h>)
 #include <GL/GL.h>
+#include <GL/GLU.h>
+#else
+#include <GL/gl.h>
+#include <GL/glu.h>
+#endif
+
 #endif
 
 
