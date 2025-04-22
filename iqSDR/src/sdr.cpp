@@ -1393,7 +1393,7 @@ int sdrClass::readSDR(){
 		 timeNs++;
 				   
 		if(ret <= 0){
-		   winout("readSDR readStream ret %d iread %d MTU %ld\n",ret,iread,(long)MTU);
+		   winout("readSDR readStream ret %d iread %d MTU %ld witch %d\n",ret,iread,(long)MTU,witch);
 		 //  if(Debug > 0)winout("readStream ret %d \n",ret);
 		   break;
 		}else if(ret < toRead){

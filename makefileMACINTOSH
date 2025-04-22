@@ -5,7 +5,7 @@
 
 #CXXFLAGS = -std=c++11 -O2 -g -DNO_FORTRAN -Wno-deprecated-declarations -I./Digital -I./glui-routines/include  -I/usr/X11R6/include  -I./DrawFindPointHistory  -I./MainSource -I./KdTree-routines -I./SdrFile -I./Radio -I./CExpress -I./Classes -I./SdrGlut -Wall 
 
-CFLAGS = -DNO_FORTRAN  -O2  -Wno-deprecated-declarations -I/usr/X11R6/include  -I./DrawFindPointHistory -I./MainSource -I./KdTree-routines -I./glui-routines/include -I./CExpress -I./Classes -I./Digital
+CFLAGS = -DNO_FORTRAN  -O2 -Wno-deprecated-declarations -I/usr/X11R6/include  -I./DrawFindPointHistory -I./MainSource -I./KdTree-routines -I./glui-routines/include -I./CExpress -I./Classes -I./Digital
 
 CXXFLAGS = -std=c++11 -O2 -DNO_FORTRAN -Wno-deprecated-declarations  -Wno-return-type-c-linkage -I./glui-routines/include  -I/usr/X11R6/include  -I./DrawFindPointHistory  -I./MainSource -I./KdTree-routines -I./SdrFile -I./Radio -I./CExpress -I./Classes -I./SdrGlut -I./Digital
 
@@ -108,7 +108,7 @@ fireball:  ${COBJS} ${CCOBJS}
 #	${CXX} ${CFLAGS} -o fireball.x ${COBJS} ${CCOBJS} -lm -L/usr/local/hdf-64/lib -L/usr/X11R6/lib -L../Rx3/recipe/lib -L/usr/local/gfortran/lib/ -lgfortran -lrx3_64 -lX11 -lpthread -ldf -ljpeg -lz -lglut -lgl -lglu -lglew -lgdal
 #	${CXX} ${CFLAGS} -o fireball.x ${COBJS} ${CCOBJS} -lm -L/usr/local -L/usr/X11R6/lib -L/usr/local/gfortran/lib/ -lX11 -lpthread -ldf -ljpeg -lz -lglut -lgl -lglu -lglew -lgdal
 #	${CXX} ${CFLAGS} -o sdrglut.x ${COBJS} ${CCOBJS} -lm -L/usr/local -L/usr/X11/lib -lX11 -lpthread -ldf -ljpeg -lz -lglut -lgl -lglu -lglew -framework OpenGL -framework GLUT -framework OpenAL -lliquid -lSoapyOsmoSDR -lSoapySDR -lsndfile
-	${CXX} ${CFLAGS} -o sdrglut.x -g ${COBJS} ${CCOBJS} -lm -L/usr/local -L/opt/X11/lib -lX11 -lglut -lgl -lglu -framework OpenGL -framework GLUT -framework OpenAL -lliquid -lSoapySDR -lrtaudio -lsndfile
+	${CXX} ${CFLAGS} -o sdrglut.x  ${COBJS} ${CCOBJS} -lm -L/usr/local -L/opt/X11/lib -lX11 -lglut -lgl -lglu -framework OpenGL -framework GLUT -framework OpenAL -lliquid -lSoapySDR -lrtaudio -lsndfile
 
 # ./MainSource/mThreadPC.cpp
 # ./MainSource/mThreadPC.o
