@@ -8,7 +8,7 @@ void winout(const char *fmt, ...);
 
 int copyl(char *p1,char *p2,long n);
 
-std::string ProgramVersion="iqSDR-1398";
+std::string ProgramVersion="iqSDR-1399";
 
 void *cMalloc(unsigned long r, int tag);
 
@@ -430,6 +430,8 @@ void StartWindow::openArgcArgv(int argc,char **argv)
 	sdrIn->gBasicPane=gBasicPane;
 
 	grab->SetLabel(name);
+	
+	sdrIn->windowName= grab->GetLabel();
 
 	gBasicPane->gSpectrum->iWait=1;
 
@@ -1013,6 +1015,8 @@ return;
 	sdrIn->gBasicPane=gBasicPane;
 
 	grab->SetLabel(file);
+	
+	sdrIn->windowName= grab->GetLabel();
 
 	gBasicPane->gSpectrum->iWait=1;
 
@@ -1089,6 +1093,8 @@ void StartWindow::openIQFile(const char *file)
 	sdrIn->gBasicPane=gBasicPane;
 
 	grab->SetLabel(file);
+	
+	sdrIn->windowName= grab->GetLabel();
 
 	gBasicPane->gSpectrum->iWait=1;
 
@@ -1335,6 +1341,8 @@ void SelectionWindow::OnDevice(wxCommandEvent& event)
 	
 		sgrab->SetLabel(deviceNames[id-ID_DEVICE]);
 		
+		sdrIn->windowName=sgrab->GetLabel();		
+
 		sdrIn->gBasicPane2=pBasicPane2;
 				
 		pBasicPane2->gSpectrum2->Spectrum2::startRadio2();
@@ -1358,7 +1366,9 @@ void SelectionWindow::OnDevice(wxCommandEvent& event)
 		sdrIn->gBasicPane=pBasicPane;
 	
 		grab->SetLabel(deviceNames[id-ID_DEVICE]);
-			
+		
+		sdrIn->windowName= grab->GetLabel();
+					
 		gBasicPane->gSpectrum->Spectrum::startRadio2();
 	
 		Sleep2(50);

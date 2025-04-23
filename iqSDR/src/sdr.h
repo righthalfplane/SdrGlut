@@ -285,6 +285,8 @@ public:
  	
  	char *deviceString;
  	
+ 	std::string windowName;
+ 	
  	int audioThreads;
  	
  	std::chrono::time_point<std::chrono::high_resolution_clock> timeFileRead;
