@@ -209,7 +209,7 @@ int ListenSocket(void *rxv)
 	//if(!in)in=fopen("junk.raw","wb");
 
 	fprintf(stderr,"******************************************************\n");
-	fprintf(stderr,"**  listen 825 - COPYRIGHT 2020-2021. Start **\n");
+	fprintf(stderr,"**  listen 1400 - COPYRIGHT 2020-2025. Start **\n");
 	fprintf(stderr,"******************************************************\n");
 
 	start=time(&ship);
@@ -367,7 +367,7 @@ int ListenSocket(void *rxv)
     fprintf(stderr,"%ld Seconds To Receive %ld Bytes (%ld Bytes/s)\n",
                  (long)total,l->Bytes,(long)(l->Bytes/total));
 	fprintf(stderr,"******************************************************\n");
-	fprintf(stderr,"**  listen 825 - COPYRIGHT 2020-2021. Done  **\n");
+	fprintf(stderr,"**  listen 1400 - COPYRIGHT 2020-2025. Done  **\n");
 	fprintf(stderr,"******************************************************\n");
 
     return 1;

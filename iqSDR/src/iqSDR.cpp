@@ -8,7 +8,7 @@ void winout(const char *fmt, ...);
 
 int copyl(char *p1,char *p2,long n);
 
-std::string ProgramVersion="iqSDR-1399";
+std::string ProgramVersion="iqSDR-1400";
 
 void *cMalloc(unsigned long r, int tag);
 
@@ -64,6 +64,30 @@ bool MyApp::OnInit()
 */
       
     SoapySDR_setLogLevel(SOAPY_SDR_NOTICE);
+    
+ 	fprintf(stderr,"%s\n","SoapySDR Library");
+	fprintf(stderr,"Lib Version: v%s\n",SoapySDR::getLibVersion().c_str());
+	fprintf(stderr,"API Version: v%s\n",SoapySDR::getAPIVersion().c_str());
+	fprintf(stderr,"ABI Version: v%s\n",SoapySDR::getABIVersion().c_str());
+	fprintf(stderr,"Install root:  %s\n",SoapySDR::getRootPath().c_str());
+    std::vector<std::string> path=SoapySDR::listSearchPaths();
+    for(size_t i=0;i<path.size();++i){
+ 	    fprintf(stderr,"Search path:  %s\n",path[i].c_str());
+   }
+
+    std::vector<std::string> mod=SoapySDR::listModules();
+    
+    for (size_t k=0;k<mod.size();++k)
+    {
+   	    fprintf(stderr,"Module found: %s ",mod[k].c_str());
+      /*
+        const auto &errMsg = SoapySDR::loadModule(mod[k]);
+        if (not errMsg.empty())mprint("Module found: %s ",errMsg.c_str());
+        */
+    	fprintf(stderr,"\n");
+    
+    }
+    if (mod.empty())fprintf(stderr,"No modules found!\n");
         
     s=new soundClass;
   	s->soundRun=0;   
