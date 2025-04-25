@@ -1553,7 +1553,7 @@ int cReceive::printAudioInfo(struct playData *rx)
 	mprint("\nAudio device Count %d default output device %d audiodevice %d\n",deviceCount,dac.getDefaultOutputDevice(),rx->audiodevice);
 
 	RtAudio::DeviceInfo info;
-#define RTAUDIO_OLD
+//#define RTAUDIO_OLD
 #ifndef RTAUDIO_OLD
 	std::vector<unsigned int> id=dac.getDeviceIds();
 #else

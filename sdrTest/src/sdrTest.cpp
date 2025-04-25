@@ -294,8 +294,8 @@ int main (int argc, char * argv [])
 	audiodevice=-1;
 	threadexit=0;
 	rx.gain=0.5;
-	rx.fc=1.0e6;
-	rx.f=0.6e6;
+	rx.fc=101.4e6;
+	rx.f=101.5e6;
     rx.antennaUse=NULL;
     rx.channel=0;
     rx.setcount=0;
@@ -308,7 +308,7 @@ int main (int argc, char * argv [])
     rx.PPM=0;
     rx.aminGlobal=0;
     rx.amaxGlobal=0;
-    rx.decodemode = MODE_AM;
+    rx.decodemode = MODE_FM;
     rx.Debug = 0;
     rx.ncut = 20;
     
@@ -487,12 +487,13 @@ int main (int argc, char * argv [])
 		}
 	}	
 	
-	
+/*	
 	SOCKET ret = l->waitForService(argv[1]);
 	if(ret < 0){
 		return 1;
 	}
-	
+*/
+
 	printInfo();
 	
 	playRadio(&rx);
@@ -518,7 +519,7 @@ int main (int argc, char * argv [])
     	
 	if(rx.out)fclose(rx.out);
 	
-	if(l)delete l;
+	// if(l)delete l;
 	
 	checkall();
 	
