@@ -39,6 +39,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_1708709DCF634E8F9676927FE87AB184"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_1F624116E096400594D3AAE3CB3AD6FE"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -243,6 +249,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_C137A18390E74DE58A870F3590EA13EB"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_C301321D0FB14B76A282AF431AEFB4F0"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -378,7 +390,7 @@
         {
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_079E1B2FCB944569A3D9790F2D41EF4D"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\bin\\SdrGlut3.ico"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\bin\\SdrGlut3.ico"
             "TargetName" = "8:SdrGlut3.ico"
             "Tag" = "8:"
             "Folder" = "8:_09CA993ACC3D40E7BE590A567D053294"
@@ -398,7 +410,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0C88DD6F1D1746C3808BA5449873A06E"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\lib\\SoapySDR\\modules0.8\\bladeRFSupport.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\lib\\SoapySDR\\modules0.8\\bladeRFSupport.dll"
             "TargetName" = "8:bladeRFSupport.dll"
             "Tag" = "8:"
             "Folder" = "8:_B3923192229D4DAC9DFA8679E8453FDC"
@@ -418,7 +430,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_12BC35C2D56840D180E2FC381FACEDE8"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\bin\\rtaudio.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\bin\\rtaudio.dll"
             "TargetName" = "8:rtaudio.dll"
             "Tag" = "8:"
             "Folder" = "8:_09CA993ACC3D40E7BE590A567D053294"
@@ -438,8 +450,28 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1447C8EBB9144517BF974D7BF12C08B1"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\bin\\vcruntime140_1.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\bin\\vcruntime140_1.dll"
             "TargetName" = "8:vcruntime140_1.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_09CA993ACC3D40E7BE590A567D053294"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1708709DCF634E8F9676927FE87AB184"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\bin\\fftw3f.dll"
+            "TargetName" = "8:fftw3f.dll"
             "Tag" = "8:"
             "Folder" = "8:_09CA993ACC3D40E7BE590A567D053294"
             "Condition" = "8:"
@@ -458,7 +490,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1F624116E096400594D3AAE3CB3AD6FE"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\bin\\mirisdr.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\bin\\mirisdr.dll"
             "TargetName" = "8:mirisdr.dll"
             "Tag" = "8:"
             "Folder" = "8:_09CA993ACC3D40E7BE590A567D053294"
@@ -478,7 +510,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_26C813BE37554ADDB1B75A43816D9E8A"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\bin\\osmosdr.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\bin\\osmosdr.dll"
             "TargetName" = "8:osmosdr.dll"
             "Tag" = "8:"
             "Folder" = "8:_09CA993ACC3D40E7BE590A567D053294"
@@ -518,7 +550,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2BABDCE0DC2444BC8B70A2EB7E301462"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\bin\\bladeRF.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\bin\\bladeRF.dll"
             "TargetName" = "8:bladeRF.dll"
             "Tag" = "8:"
             "Folder" = "8:_09CA993ACC3D40E7BE590A567D053294"
@@ -538,7 +570,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2C3A2297D56C4C04B8A682119382E1BB"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\lib\\SoapySDR\\modules0.8\\uhdSupport.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\lib\\SoapySDR\\modules0.8\\uhdSupport.dll"
             "TargetName" = "8:uhdSupport.dll"
             "Tag" = "8:"
             "Folder" = "8:_B3923192229D4DAC9DFA8679E8453FDC"
@@ -558,7 +590,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2C5246826C6949A1BEB9A75AE8A55EA2"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\bin\\mir_sdr_api.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\bin\\mir_sdr_api.dll"
             "TargetName" = "8:mir_sdr_api.dll"
             "Tag" = "8:"
             "Folder" = "8:_09CA993ACC3D40E7BE590A567D053294"
@@ -578,7 +610,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_349759849A0F43B1B30C469B7FD3035E"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\bin\\boost_filesystem-vc142-mt-x64-1_75.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\bin\\boost_filesystem-vc142-mt-x64-1_75.dll"
             "TargetName" = "8:boost_filesystem-vc142-mt-x64-1_75.dll"
             "Tag" = "8:"
             "Folder" = "8:_09CA993ACC3D40E7BE590A567D053294"
@@ -598,7 +630,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3B680CE4FB8044A3B69D756951DC7635"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\lib\\SoapySDR\\modules0.8\\LMS7Support.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\lib\\SoapySDR\\modules0.8\\LMS7Support.dll"
             "TargetName" = "8:LMS7Support.dll"
             "Tag" = "8:"
             "Folder" = "8:_B3923192229D4DAC9DFA8679E8453FDC"
@@ -618,7 +650,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4D44D5913E824AAB9FA94D291BFB7B1B"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\bin\\SoapySDRUtil.exe"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\bin\\SoapySDRUtil.exe"
             "TargetName" = "8:SoapySDRUtil.exe"
             "Tag" = "8:"
             "Folder" = "8:_09CA993ACC3D40E7BE590A567D053294"
@@ -638,7 +670,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_512865CB733943FD81BDF6F5310E2277"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\bin\\ExtIO_ICR8600.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\bin\\ExtIO_ICR8600.dll"
             "TargetName" = "8:ExtIO_ICR8600.dll"
             "Tag" = "8:"
             "Folder" = "8:_09CA993ACC3D40E7BE590A567D053294"
@@ -658,7 +690,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_515518D6E1AF462AB56B31C5BCF64D5E"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\bin\\airspyhf.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\bin\\airspyhf.dll"
             "TargetName" = "8:airspyhf.dll"
             "Tag" = "8:"
             "Folder" = "8:_09CA993ACC3D40E7BE590A567D053294"
@@ -678,7 +710,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5382E5A6A96D40CDAAB97AAC4DB5C350"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\lib\\SoapySDR\\modules0.8\\icr8600Support.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\lib\\SoapySDR\\modules0.8\\icr8600Support.dll"
             "TargetName" = "8:icr8600Support.dll"
             "Tag" = "8:"
             "Folder" = "8:_B3923192229D4DAC9DFA8679E8453FDC"
@@ -698,7 +730,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5A7344F22DC2480FB9400888A76F53A4"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\bin\\LimeSuite.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\bin\\LimeSuite.dll"
             "TargetName" = "8:LimeSuite.dll"
             "Tag" = "8:"
             "Folder" = "8:_09CA993ACC3D40E7BE590A567D053294"
@@ -718,7 +750,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_61D1908946AD448CA8E3973BFAEEA0A1"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\lib\\SoapySDR\\modules0.8\\remoteSupport.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\lib\\SoapySDR\\modules0.8\\remoteSupport.dll"
             "TargetName" = "8:remoteSupport.dll"
             "Tag" = "8:"
             "Folder" = "8:_B3923192229D4DAC9DFA8679E8453FDC"
@@ -738,7 +770,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_666633D6BC184076AA603CB3A6B30BAA"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\bin\\SoapySDR.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\bin\\SoapySDR.dll"
             "TargetName" = "8:SoapySDR.dll"
             "Tag" = "8:"
             "Folder" = "8:_09CA993ACC3D40E7BE590A567D053294"
@@ -758,7 +790,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_687E3F1DB78D48679137803398088AE2"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\lib\\SoapySDR\\modules0.8\\volkConverters.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\lib\\SoapySDR\\modules0.8\\volkConverters.dll"
             "TargetName" = "8:volkConverters.dll"
             "Tag" = "8:"
             "Folder" = "8:_B3923192229D4DAC9DFA8679E8453FDC"
@@ -778,7 +810,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6944067BC236407695094F453343CF30"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\lib\\SoapySDR\\modules0.8\\rtlsdrSupport.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\lib\\SoapySDR\\modules0.8\\rtlsdrSupport.dll"
             "TargetName" = "8:rtlsdrSupport.dll"
             "Tag" = "8:"
             "Folder" = "8:_B3923192229D4DAC9DFA8679E8453FDC"
@@ -798,7 +830,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6E9395E77436405282FEBF291152AFA3"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\bin\\hackrf.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\bin\\hackrf.dll"
             "TargetName" = "8:hackrf.dll"
             "Tag" = "8:"
             "Folder" = "8:_09CA993ACC3D40E7BE590A567D053294"
@@ -818,7 +850,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7B875AA732C14082B9E0F4FFBE621353"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\bin\\GLU32.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\bin\\GLU32.dll"
             "TargetName" = "8:GLU32.dll"
             "Tag" = "8:"
             "Folder" = "8:_09CA993ACC3D40E7BE590A567D053294"
@@ -838,7 +870,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_801958FED0B345DB98E69C369BF1B2F8"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\bin\\boost_serialization-vc142-mt-x64-1_75.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\bin\\boost_serialization-vc142-mt-x64-1_75.dll"
             "TargetName" = "8:boost_serialization-vc142-mt-x64-1_75.dll"
             "Tag" = "8:"
             "Folder" = "8:_09CA993ACC3D40E7BE590A567D053294"
@@ -858,7 +890,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_82D49107135B405D8D318F7479069C8D"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\lib\\SoapySDR\\modules0.8\\netSDRSupport.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\lib\\SoapySDR\\modules0.8\\netSDRSupport.dll"
             "TargetName" = "8:netSDRSupport.dll"
             "Tag" = "8:"
             "Folder" = "8:_B3923192229D4DAC9DFA8679E8453FDC"
@@ -878,7 +910,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_838DB634F0744DA8AE32EED833C9FBA2"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\lib\\SoapySDR\\modules0.8\\airspyhfSupport.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\lib\\SoapySDR\\modules0.8\\airspyhfSupport.dll"
             "TargetName" = "8:airspyhfSupport.dll"
             "Tag" = "8:"
             "Folder" = "8:_B3923192229D4DAC9DFA8679E8453FDC"
@@ -898,7 +930,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_84527326127A41E4BFFC26B0D6D7747A"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\bin\\sdrplay_api.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\bin\\sdrplay_api.dll"
             "TargetName" = "8:sdrplay_api.dll"
             "Tag" = "8:"
             "Folder" = "8:_09CA993ACC3D40E7BE590A567D053294"
@@ -918,7 +950,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_87513DACA918413A919DA07AF7DD386D"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\lib\\SoapySDR\\modules0.8\\HackRFSupport.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\lib\\SoapySDR\\modules0.8\\HackRFSupport.dll"
             "TargetName" = "8:HackRFSupport.dll"
             "Tag" = "8:"
             "Folder" = "8:_B3923192229D4DAC9DFA8679E8453FDC"
@@ -938,7 +970,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_97EF8080074B48418D20E222DF79B125"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\bin\\libliquid.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\bin\\libliquid.dll"
             "TargetName" = "8:libliquid.dll"
             "Tag" = "8:"
             "Folder" = "8:_09CA993ACC3D40E7BE590A567D053294"
@@ -958,7 +990,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9A1FEF57D0554ACEB15CC743AA43D37A"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\bin\\mpir.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\bin\\mpir.dll"
             "TargetName" = "8:mpir.dll"
             "Tag" = "8:"
             "Folder" = "8:_09CA993ACC3D40E7BE590A567D053294"
@@ -978,7 +1010,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9BA7D0D5FAD94BB28DD51AE490F2D86C"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\bin\\OPENGL32.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\bin\\OPENGL32.dll"
             "TargetName" = "8:OPENGL32.dll"
             "Tag" = "8:"
             "Folder" = "8:_09CA993ACC3D40E7BE590A567D053294"
@@ -998,7 +1030,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A93B07B59BCB48D6A1648432A25DC2C6"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\bin\\OpenAL32.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\bin\\OpenAL32.dll"
             "TargetName" = "8:OpenAL32.dll"
             "Tag" = "8:"
             "Folder" = "8:_09CA993ACC3D40E7BE590A567D053294"
@@ -1018,7 +1050,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_ABF9DBC7BB10404C83EE9B0ACE31D943"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\lib\\SoapySDR\\modules0.8\\sdrPlaySupport.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\lib\\SoapySDR\\modules0.8\\sdrPlaySupport.dll"
             "TargetName" = "8:sdrPlaySupport.dll"
             "Tag" = "8:"
             "Folder" = "8:_B3923192229D4DAC9DFA8679E8453FDC"
@@ -1038,7 +1070,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_AFD8E5B81FC84461BB4154CDBB7FA37B"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\bin\\rtlsdr.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\bin\\rtlsdr.dll"
             "TargetName" = "8:rtlsdr.dll"
             "Tag" = "8:"
             "Folder" = "8:_09CA993ACC3D40E7BE590A567D053294"
@@ -1058,7 +1090,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B2A264E2FD4546A7ADDCBCAB5CBB015D"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\lib\\SoapySDR\\modules0.8\\RedPitaya.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\lib\\SoapySDR\\modules0.8\\RedPitaya.dll"
             "TargetName" = "8:RedPitaya.dll"
             "Tag" = "8:"
             "Folder" = "8:_B3923192229D4DAC9DFA8679E8453FDC"
@@ -1078,7 +1110,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B8BB2475985146B39E12CAB1A5C4B56F"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\bin\\libusb-1.0.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\bin\\libusb-1.0.dll"
             "TargetName" = "8:libusb-1.0.dll"
             "Tag" = "8:"
             "Folder" = "8:_09CA993ACC3D40E7BE590A567D053294"
@@ -1098,7 +1130,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B9FB2651AF3A4D4AB211A0F4C6802B26"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\bin\\libfftw3f-3.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\bin\\libfftw3f-3.dll"
             "TargetName" = "8:libfftw3f-3.dll"
             "Tag" = "8:"
             "Folder" = "8:_09CA993ACC3D40E7BE590A567D053294"
@@ -1118,8 +1150,28 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BB4272E8DF144EF2B0972F5645BEC25B"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\bin\\airspy.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\bin\\airspy.dll"
             "TargetName" = "8:airspy.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_09CA993ACC3D40E7BE590A567D053294"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C137A18390E74DE58A870F3590EA13EB"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\bin\\iqSDR.exe"
+            "TargetName" = "8:iqSDR.exe"
             "Tag" = "8:"
             "Folder" = "8:_09CA993ACC3D40E7BE590A567D053294"
             "Condition" = "8:"
@@ -1138,7 +1190,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C301321D0FB14B76A282AF431AEFB4F0"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\bin\\volk.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\bin\\volk.dll"
             "TargetName" = "8:volk.dll"
             "Tag" = "8:"
             "Folder" = "8:_09CA993ACC3D40E7BE590A567D053294"
@@ -1158,7 +1210,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E176476E6DAD468B841AC7EDF6849077"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\bin\\boost_thread-vc142-mt-x64-1_75.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\bin\\boost_thread-vc142-mt-x64-1_75.dll"
             "TargetName" = "8:boost_thread-vc142-mt-x64-1_75.dll"
             "Tag" = "8:"
             "Folder" = "8:_09CA993ACC3D40E7BE590A567D053294"
@@ -1178,7 +1230,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E83F3E0881234C259405DD00FA5BBF42"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\bin\\uhd.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\bin\\uhd.dll"
             "TargetName" = "8:uhd.dll"
             "Tag" = "8:"
             "Folder" = "8:_09CA993ACC3D40E7BE590A567D053294"
@@ -1198,7 +1250,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_EA70CB775932433B937AD706C91D3BA4"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\bin\\miri_sdr.exe"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\bin\\miri_sdr.exe"
             "TargetName" = "8:miri_sdr.exe"
             "Tag" = "8:"
             "Folder" = "8:_09CA993ACC3D40E7BE590A567D053294"
@@ -1218,7 +1270,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_EB71F14B467048D59810937D52EB9589"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\lib\\SoapySDR\\modules0.8\\airspySupport.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\lib\\SoapySDR\\modules0.8\\airspySupport.dll"
             "TargetName" = "8:airspySupport.dll"
             "Tag" = "8:"
             "Folder" = "8:_B3923192229D4DAC9DFA8679E8453FDC"
@@ -1238,7 +1290,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F3C5DE44C7C141248AB6C94A792CE697"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\bin\\pthreadVC2.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\bin\\pthreadVC2.dll"
             "TargetName" = "8:pthreadVC2.dll"
             "Tag" = "8:"
             "Folder" = "8:_09CA993ACC3D40E7BE590A567D053294"
@@ -1258,7 +1310,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FA0B282FB53E4B1682B19241AC383595"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\bin\\vcruntime140.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\bin\\vcruntime140.dll"
             "TargetName" = "8:vcruntime140.dll"
             "Tag" = "8:"
             "Folder" = "8:_09CA993ACC3D40E7BE590A567D053294"
@@ -1278,7 +1330,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FF56864A5AC44CC6A814110FF8B9A0AA"
             {
-            "SourcePath" = "8:C:\\Users\\dir\\Desktop\\SdrGlut-Windows\\lib\\SoapySDR\\modules0.8\\IrisSupport.dll"
+            "SourcePath" = "8:..\\..\\..\\..\\..\\dir\\Desktop\\SdrGlut-Windows\\lib\\SoapySDR\\modules0.8\\IrisSupport.dll"
             "TargetName" = "8:IrisSupport.dll"
             "Tag" = "8:"
             "Folder" = "8:_B3923192229D4DAC9DFA8679E8453FDC"
