@@ -1,17 +1,17 @@
 # SdrGlut
 
-Forced to move to gitlab - go there for lastest updates
-
-SdrGlut V1.32 - Mostly Improvements and Clean up.
+SdrGlut V1.33 - SdrGlut - Mostly Small Improvements and Clean Up.iqSDR has many improvements
 
 What is new ?
 
 ```
-SdrGlut now has a device sync option where all open device windows track to the same frequency.
-SdeGlut can now use more points in the FFT display
+SdeGlut can now handle smaller I/Q files.
+iqSDR is now in its own dmg file.
+iqSDR has a Frequency Sweep Option
+iqSDR has an Oscilloscope FFT option.
+iqSDR has an Oscilloscope option.
 ```
-
-https://github.com/righthalfplane/SdrGlut/releases/tag/v1.32
+https://github.com/righthalfplane/SdrGlut/releases/tag/v1.33
 
 If you are new to SdrGlut, please view the introduction video -
 - [An Introduction to SdrGlut (A software defined radio)](https://youtu.be/JEXK-r6PvmA)
@@ -20,10 +20,7 @@ A users group is just starting - you can ask questions there -
 
 https://groups.google.com/g/sdrglut-users
 
-SdrGlut is a simple software defined radio player. Using glut for drawing and glui for its dialogs makes it tiny compared to programs that use QT5 or wxWidgets. SdrGlut uses liquid-sdr and SoapySDR to preform the SDR calculations. The audio is handled by OpenAL and RtAudio.
-
-
-SdrGlut has a new Voice Command Module. It can be programed to record any frequency in any mode at any time. Listen is an example of a program that receives the data. Listen can decode AM, FM, NBFM, USB, LSB and output the audio to the speakers or another program. SdrGlut now has digital filter design mode. It can do highpass, lowpass, bandpass and bandstop filters. Best of all - it generates a c++ program that implements and tests the filter - so there is no question about how to make it work. It adds Voltage bias for powered antennas and Direct Sample Mode for RTL devices. It adds a window that can use the transmit capable SDRs as a signal generator for testing AM, NBFM, USB, and LSB devices. It has a prebuild exe for macOS, a zipped folder for Windows.
+SdrGlut is a simple software defined radio player. Using glut for drawing and glui for its dialogs makes it tiny compared to programs that use QT5 or wxWidgets. SdrGlut uses liquid-sdr and SoapySDR to preform the SDR calculations. The audio is handled by OpenAL and RtAudio. iqSDR has much overlap with SdrGlut, but now it is getting its own new capibilities.
 
 ## Demo videos
 - [An Introduction to SdrGlut (A software defined radio)](https://youtu.be/JEXK-r6PvmA)
