@@ -189,8 +189,11 @@ void BatchWindow::OnFileSave(wxCommandEvent&(event))
 
     wxMessageBox(msg, _T("About iqSDR"), wxOK | wxICON_INFORMATION, this);
 }
-
+#ifdef _MSC_VER
+int BatchWindow::print=1;
+#else
 int BatchWindow::print=0;
+#endif
 
 void BatchWindow::winout(char *buff)
 {

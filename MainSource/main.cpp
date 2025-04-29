@@ -422,7 +422,7 @@ static void control_cb2(int control)
 }
 int main (int argc, char *argv[]) {
     
-    gf.broadCastFrequency=1;
+    gf.broadCastFrequency=0;
 
 	SoapyNetSDR_SocketInit socket_init;
 

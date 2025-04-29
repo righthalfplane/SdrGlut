@@ -25,7 +25,6 @@ soundClass *s;
 
 extern std::vector<Sweep *> sgrabList;
 
-
 std::vector<ApplFrame *> grabList;
 
 static BasicPane *pBasicPane;
@@ -929,18 +928,16 @@ void ApplFrame::OnOuputSelect(wxCommandEvent& event){
 
 ApplFrame::~ApplFrame()
 {
-//	winout("ApplFrame::~ApplFrame\n");
-	
+	//fprintf(stderr,"ApplFrame::~ApplFrame\n");
+
 	if(grabList.size() > 0){
 		for(std::vector<ApplFrame *>::size_type k=0;k<grabList.size();++k){
 			ApplFrame *grab=grabList[k];
 			if(grab == this){
 			    grabList[k]=NULL;
-//			    winout("ApplFrame remove from list\n");
 			}
 		}
 	}
-
 	
 	//winout("exit ApplFrame %p\n",this);
 
@@ -976,13 +973,23 @@ void StartWindow::OnQuit(wxCommandEvent& event)
 }
 void StartWindow::doQuit()
 {
-
+	//fprintf(stderr,"StartWindow::doQuit %ld\n",(long)grabList.size());
 	if(grabList.size() > 0){
 		for(std::vector<ApplFrame *>::size_type k=0;k<grabList.size();++k){
 			grab=grabList[k];
 			if(grab)delete grab;
+			grab=NULL;
 		}
 	}
+	
+	if(sgrabList.size() > 0){
+		for(std::vector<Sweep *>::size_type k=0;k<sgrabList.size();++k){
+			Sweep *sgrab=sgrabList[k];
+			if(sgrab)delete sgrab;
+			sgrab=NULL;
+		}
+	}
+	
 	
 	checkall();
 

@@ -24,8 +24,6 @@ extern soundClass *s;
 
 extern std::string ProgramVersion;
 
-static std::vector<Sweep *> grabList;
-
 int fft(double *data,int nn,int isign);
 int doFFT2(double *x,double *y,long length,int direction);
 int doWindow(double *x,double *y,long length,int type);
@@ -1794,20 +1792,20 @@ int BasicPane2::SetScrolledWindow()
 		yloc += 210;
 	}
 	
-	if(!scrolledWindowFlag){
-		listctrlFreq = new wxDataViewListCtrl( ScrolledWindow, ID_VIEWSELECTED,wxPoint(20,yloc),wxSize(225, 190));
-		listctrlFreq->AppendTextColumn( "Channel" );
-		listctrlFreq->AppendTextColumn( "Freq" );
-	
-		wxVector<wxVariant> data;
-		for(unsigned int n=0;n<sizeof(computers31)/sizeof(wxString);++n){
-			data.clear();
-			data.push_back(computers31[n]);
-			data.push_back(computers32[n]);
-			listctrlFreq->AppendItem( data );
-			yloc += 30;
-		}
+
+	listctrlFreq = new wxDataViewListCtrl( ScrolledWindow, ID_VIEWSELECTED,wxPoint(20,yloc),wxSize(225, 190));
+	listctrlFreq->AppendTextColumn( "Channel" );
+	listctrlFreq->AppendTextColumn( "Freq" );
+
+	wxVector<wxVariant> data;
+	for(unsigned int n=0;n<sizeof(computers31)/sizeof(wxString);++n){
+		data.clear();
+		data.push_back(computers31[n]);
+		data.push_back(computers32[n]);
+		listctrlFreq->AppendItem( data );
+		yloc += 30;
 	}
+	
     wxWindow::SetSize(wxDefaultCoord,wxDefaultCoord,280,100);
     
     Refresh();
