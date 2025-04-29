@@ -1,6 +1,6 @@
 # SdrGlut
 
-SdrGlut V1.33 - SdrGlut - Mostly Small Improvements and Clean Up.iqSDR has many improvements
+SdrGlut V1.33 - SdrGlut - Mostly Small Improvements and Clean Up. iqSDR has many improvements
 
 What is new ?
 
