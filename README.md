@@ -24,6 +24,7 @@ SdrGlut is a simple software defined radio player. Using glut for drawing and gl
 
 ## Demo videos
 - [An Introduction to SdrGlut (A software defined radio)](https://youtu.be/JEXK-r6PvmA)
+- [Panoramic Spectrum To Find TV Stations - SigDigger vs iqSDR.](https://youtu.be/zCjS3ezRaok)
 - [Installing SdrGlut and iqSDR on Ubuntu24.10.](https://youtu.be/7ydgAz1LFfw)
 - [PySpecSDR using FM on Ubuntu 22.04.5](https://youtu.be/iLm4Lc9qmF0)
 - [Using the ANTSDR E200 on Windows with WSL Ubuntu 24.04.](https://youtu.be/rckekxm25bg)
