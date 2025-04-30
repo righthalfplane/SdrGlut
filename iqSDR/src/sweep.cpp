@@ -597,7 +597,8 @@ int Sweep::sweepRadio()
 	list.clear();
 	
 	
-	sdr->device->setFrequency(SOAPY_SDR_RX,rx->channel,"RF",lower);
+	//sdr->device->setFrequency(SOAPY_SDR_RX,rx->channel,"RF",lower);
+	sdr->device->setFrequency(SOAPY_SDR_RX,rx->channel,lower);
 	
 	int itWas=-1;
 	int pass2=0;
@@ -630,7 +631,8 @@ int Sweep::sweepRadio()
 		    if(fmins < lower)lower=fmins;
 		    if(fmaxs > upper)upper=fmaxs;
 			rx->fc=fc;
-			sdr->device->setFrequency(SOAPY_SDR_RX,rx->channel,"RF",rx->fc);
+			//sdr->device->setFrequency(SOAPY_SDR_RX,rx->channel,"RF",rx->fc);
+			sdr->device->setFrequency(SOAPY_SDR_RX,rx->channel,rx->fc);
 			Sleep2(100);
 			rx->aminGlobal3=0;
 			int pass2=0;
@@ -1091,9 +1093,63 @@ EVT_PAINT(TopPane2::render)
 EVT_LEFT_DOWN(TopPane2::mouseDown)
 EVT_CHECKBOX(ID_RECORD, TopPane2::Record)
 EVT_CHECKBOX(ID_FC, TopPane2::Record)
-EVT_CHAR(TopPane2::OnChar)    
+EVT_CHAR(TopPane2::OnChar)   
+EVT_MOUSEWHEEL(TopPane2::mouseWheelMoved) 
 END_EVENT_TABLE()
+void TopPane2::mouseWheelMoved(wxMouseEvent& event)
+{
+	event.Skip();
+	
+	int rot=event.GetWheelRotation();
+	if(rot > 0){
+		rot=0;
+	}else if(rot < 0){
+		rot = 1;
+	}	
+		
+	wxPoint p = event.GetLogicalPosition(wxClientDC(this));
 
+//	fprintf(stderr,"rot %d p.x %d p.y %d\n",rot,p.x,p.y);
+//	int yh=fontSize.GetHeight()/2-10;
+	int diff=p.x-pt.x;
+	nchar=(diff)/fontSize.x;
+	if(diff >= 0 && nchar >=0 && nchar <= 14){
+		if(nchar == 3 || nchar == 7 || nchar == 11)return;
+		int up=rot;
+		//if(p.y > yh)up=0;
+		//winout("p.y %d up %d yh %d\n",p.y,up,yh);
+		
+		long long fl=(long long)sdr->f;
+		if(idoFC) fl=(long long)sdr->fc;
+		
+		int k=nchar;
+		if(nchar >= 3)k -= 1;
+		if(nchar >= 7)k -= 1;
+		if(nchar >= 11)k -= 1;
+		double value=pow(10.0,11-k);
+		fl=(long long)fl/value;
+		fl=(long long)fl*value;
+		if(up == 1){
+			fl += value;
+		}else{
+			fl -= value;
+		}
+				
+		if(idoFC){
+			if(fl <= 0.5*sdr->samplerate)fl=0.5*sdr->samplerate;
+			sdr->setFrequencyFC((double)fl);
+		}else{
+			if(fl <= 0.0)fl=0.5*sdr->samplerate;
+			sdr->setFrequency((double)fl);
+		}
+		
+//		winout("TopPane::mouseDown f %lld k %d nchar %d up %d %f\n",fl,k,nchar,up,value);
+		Refresh();
+
+	}
+	
+
+}
 void TopPane2::OnChar(wxKeyEvent& event) 
 {
 	event.Skip();
