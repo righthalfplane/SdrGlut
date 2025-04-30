@@ -1179,6 +1179,8 @@ public:
 	float angle;
 	
 	int softAutoGain;
+	
+	wxTextCtrl *bandwidthOverride;	
 
 	Spectrum2 *gSpectrum2;
 	

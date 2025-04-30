@@ -1378,6 +1378,7 @@ EVT_COMBOBOX(ID_COMBOBANDWIDTH,BasicPane2::setBandwidth)
 EVT_TEXT_ENTER(ID_COMBOSAMPLERATE, BasicPane2::OnText)
 EVT_TEXT_ENTER(ID_XMIN, BasicPane2::OnText)
 EVT_TEXT_ENTER(ID_XMAX, BasicPane2::OnText)
+EVT_TEXT_ENTER(ID_BANDWIDTHOVERIDE, BasicPane2::radioBox)
 EVT_TEXT_ENTER(ID_COMBOBANDWIDTH, BasicPane2::OnTextBandWidth)
 EVT_BUTTON(ID_COMBOBUTTON, BasicPane2::setSampleRate)
 EVT_SIZE(BasicPane2::resized)
@@ -1714,19 +1715,23 @@ int BasicPane2::SetScrolledWindow()
 	
 	if(!scrolledWindowFlag){
 	
-		wxPanel *panel1 = new wxPanel(ScrolledWindow,wxID_ANY, wxPoint(20,yloc), wxSize(230, 200),wxBORDER_SUNKEN | wxFULL_REPAINT_ON_RESIZE,wxT("Control2"));
+		wxPanel *panel1 = new wxPanel(ScrolledWindow,wxID_ANY, wxPoint(20,yloc), wxSize(230, 250),wxBORDER_SUNKEN | wxFULL_REPAINT_ON_RESIZE,wxT("Control2"));
 	
 			 wxString computers1[] =
-		  { "AM", "NAM","FM","NBFM","USB","LSB","CW" };
+		  { "AM", "NAM","FM","NBFM","USB","LSB","CW","IQ" };
 	
-	
+
 		modeBox=new wxRadioBox(panel1, ID_RADIOBOX,
 			"Choose Mode", wxPoint(20,10), wxDefaultSize,
-			 7, computers1, 0, wxRA_SPECIFY_ROWS);
-		 
+			 8, computers1, 0, wxRA_SPECIFY_ROWS);	 
 		modeBox->SetSelection(sdr->decodemode);
+	
+		wxStaticBox *box2 = new wxStaticBox(panel1, wxID_ANY, "&Bandwidth Override",wxPoint(20,195), wxSize(120, 45),wxBORDER_SUNKEN );
+		bandwidthOverride=new wxTextCtrl(box2,ID_BANDWIDTHOVERIDE,wxT("0"),wxPoint(0,0), wxSize(110, 30));
+		bandwidthOverride->SetWindowStyle(wxTE_PROCESS_ENTER);
 
-		yloc += 205;
+
+		yloc += 255;
 	}
   	
  	wxPanel *panel2 = new wxPanel(ScrolledWindow,wxID_ANY, wxPoint(20,yloc), wxSize(230, 100),wxBORDER_SUNKEN | wxFULL_REPAINT_ON_RESIZE,wxT("Control2"));
@@ -2508,6 +2513,10 @@ void BasicPane2::radioBox(wxCommandEvent& event)
 	wxString name=event.GetString();
 	
 	const char *mode=name.ToUTF8().data();
+	wxString value=bandwidthOverride->GetValue();
+	const char *alpha=value;
+	double xmin=atof(alpha);
+	sdr->bandwidthOveride=xmin;
 	
 	sdr->setMode(mode);
 	
@@ -3594,10 +3603,40 @@ void Spectrum2::mouseDown(wxMouseEvent& event)
 
 	event.Skip();
 	
-	
-	if(oscilloscope == 1)return;
-	
 	wxPoint pp3 = event.GetLogicalPosition(wxClientDC(this))*scaleFactor;
+	
+	if(oscilloscope == 1){
+		double gxmin=gSweep->rx->sweepLower;
+		double gxmax=gSweep->rx->sweepUpper;
+		double gdx=gxmax-gxmin;
+		
+		double ixmin=0;
+		double ixmax=getWidth();
+		double idx=ixmax-ixmin;
+		
+		double ff=gdx*(pp3.x-ixmin)/idx+gxmin;
+
+		fprintf(stderr,"Spectrum2::mouseDown ff %g MHZ\n",ff/1e6);	
+		
+		int flag=0;
+		oscilloscope=flag;
+		gBasicPane2->scrolledWindowFlag=flag;
+		gBasicPane2->SetScrolledWindow();
+		wxSize size = gSweep->GetClientSize();
+		size.x += 4;
+		size.y += 4;
+		gSweep->SetClientSize(size);
+		size.x -= 4;
+		size.y -= 4;
+		gSweep->SetClientSize(size);
+		sdr->initPlay();
+		sdr->setFrequencyFC(ff);
+		sdr->iWait=0;
+		s->bS=sdr->bS;
+		//winout("Spectrum2::mouseDown %p %p\n",s->bS,sdr->bS);
+		gTopPane2->Refresh();
+		return;
+	}
 
 	if(sdr){
 		double fx=sdr->fw-0.5*sdr->samplewidth + sdr->samplewidth*(pp3.x)/((double)getWidth());
