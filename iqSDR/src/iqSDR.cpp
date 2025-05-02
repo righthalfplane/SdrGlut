@@ -8,7 +8,7 @@ void winout(const char *fmt, ...);
 
 int copyl(char *p1,char *p2,long n);
 
-std::string ProgramVersion="iqSDR-1404";
+std::string ProgramVersion="iqSDR-1405";
 
 void *cMalloc(unsigned long r, int tag);
 
