@@ -7,7 +7,7 @@ CCOBJS = ./src/sdr.o ./src/mThread.o ./src/cMalloc.o ./src/iqSDR.o ./src/bStack.
          ./src/send.o ./src/Clisten.o ./src/WarningBatch.o ./src/graphics.o ./src/sweep.o
  
 fireball:  ${COBJS} ${CCOBJS}
-	${CXX} ${CFLAGS} -o iqSDR.x ${COBJS} ${CCOBJS} -lfftw3f -lGL -lGLU -lGLEW -lsndfile -L/usr/local/lib `wx-config  --libs --gl-libs` -lrtaudio -lSoapySDR -lliquid
+	${CXX} ${CFLAGS} -o iqSDR.x ${COBJS} ${CCOBJS} -ldf -lfftw3f -lGL -lGLU -lGLEW -lsndfile -L/usr/local/lib `wx-config  --libs --gl-libs` -lrtaudio -lSoapySDR -lliquid
 #	rm ./src/sdr.o ./src/mThread.o ./src/cMalloc.o ./src/sdrwx.o
 
 
