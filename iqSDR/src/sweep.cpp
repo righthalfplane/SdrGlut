@@ -915,7 +915,7 @@ void Sweep::OnSampleRateSelected(wxCommandEvent& event)
 	
 	sdr->samplewidth=sdr->samplerate;
 	
-	sdr->startPlay();
+	if(sdr->startPlay())return;
 	
 	std::thread(&sdrClass::run,sdr).detach();
 
@@ -949,7 +949,7 @@ void Sweep::OnBandSelected(wxCommandEvent& event)
 	
 	sdr->bandwidth=atof(what);
 	
-	sdr->startPlay();
+	if(sdr->startPlay())return;
 	
 	std::thread(&sdrClass::run,sdr).detach();
 
@@ -1059,8 +1059,8 @@ void Sweep::OnOuputSelect(wxCommandEvent& event){
 		
 	sdr->faudio=s->faudio;
 	
-	sdr->startPlay();
-			
+	if(sdr->startPlay())return;
+		
 	std::thread(&sdrClass::run,sdr).detach();
 
 }
@@ -2091,8 +2091,8 @@ void BasicPane2::OnTextBandWidth(wxCommandEvent &event)
 	
 	sdr->bandwidth=atof(bandwidth);
 	
-	sdr->startPlay();
-	
+	if(sdr->startPlay())return;
+
 	std::thread(&sdrClass::run,sdr).detach();
 	
 }
@@ -2121,7 +2121,7 @@ void BasicPane2::setBandwidth(wxCommandEvent &event)
 	
 	sdr->bandwidth=atof(bandWidths);
 	
-	sdr->startPlay();
+	if(sdr->startPlay())return;
 	
 	std::thread(&sdrClass::run,sdr).detach();
 
@@ -2238,7 +2238,8 @@ void BasicPane2::OnText(wxCommandEvent &event)
 	
 	//fprintf(stderr,"samplerate %g\n",sdr->samplerate);
 	
-	sdr->startPlay();
+
+	if(sdr->startPlay())return;
 	
 	std::thread(&sdrClass::run,sdr).detach();
 	
@@ -2419,8 +2420,8 @@ void BasicPane2::OnComboSampleRate(wxCommandEvent& event)
 	//winout("Stop Stop sdr->samplerate %g\n",sdr->samplerate);
 
 	
-	sdr->startPlay();
-	
+	if(sdr->startPlay())return;
+
 	std::thread(&sdrClass::run,sdr).detach();
 }
 

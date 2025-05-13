@@ -441,7 +441,8 @@ void StartWindow::openArgcArgv(int argc,char **argv)
 */
 
 
-	sdrIn->startPlay();
+	
+	if(sdrIn->startPlay())return;
 
 	ApplFrame *grab=new ApplFrame(NULL,name,sdrIn);
 	grab->Show();
@@ -776,7 +777,7 @@ void ApplFrame::OnSampleRateSelected(wxCommandEvent& event)
 	
 	sdr->samplewidth=sdr->samplerate;
 	
-	sdr->startPlay();
+	if(sdr->startPlay())return;
 	
 	std::thread(&sdrClass::run,sdr).detach();
 
@@ -810,7 +811,7 @@ void ApplFrame::OnBandSelected(wxCommandEvent& event)
 	
 	sdr->bandwidth=atof(what);
 	
-	sdr->startPlay();
+	if(sdr->startPlay())return;
 	
 	std::thread(&sdrClass::run,sdr).detach();
 
@@ -920,7 +921,7 @@ void ApplFrame::OnOuputSelect(wxCommandEvent& event){
 		
 	sdr->faudio=s->faudio;
 	
-	sdr->startPlay();
+	if(sdr->startPlay())return;
 			
 	std::thread(&sdrClass::run,sdr).detach();
 
@@ -1034,7 +1035,8 @@ return;
 	    winout("Could Not Open %s to Read\n",file);
 	    return;
 	}
-	sdrIn->startPlay();
+	
+	if(sdrIn->startPlay())return;
 	
 	ApplFrame *grab=new ApplFrame(NULL,file,sdrIn);
 	grab->Show();
@@ -1112,7 +1114,8 @@ void StartWindow::openIQFile(const char *file)
 	    winout("Could Not Open %s to Read\n",file);
 	    return;
 	}
-	sdrIn->startPlay();
+	
+	if(sdrIn->startPlay())return;
 
 	ApplFrame *grab=new ApplFrame(NULL,file,sdrIn);
 	grab->Show();
@@ -1357,7 +1360,7 @@ void SelectionWindow::OnDevice(wxCommandEvent& event)
 	sdrIn->samplewidth=sdrIn->samplerate;
 	sdrIn->deviceNumber=id-ID_DEVICE;
 	sdrIn->decodemode=boxMode->GetSelection();
-	sdrIn->startPlay();
+	if(sdrIn->startPlay())return;
 	
 	winout("OnDevice sdrIn->samplerate %g Sweep %d\n",sdrIn->samplerate,pSweep->GetValue());
 	
@@ -2387,7 +2390,7 @@ void BasicPane::OnTextBandWidth(wxCommandEvent &event)
 	
 	sdr->bandwidth=atof(bandwidth);
 	
-	sdr->startPlay();
+	if(sdr->startPlay())return;
 	
 	std::thread(&sdrClass::run,sdr).detach();
 	
@@ -2417,7 +2420,7 @@ void BasicPane::setBandwidth(wxCommandEvent &event)
 	
 	sdr->bandwidth=atof(bandWidths);
 	
-	sdr->startPlay();
+	if(sdr->startPlay())return;
 	
 	std::thread(&sdrClass::run,sdr).detach();
 
@@ -2499,7 +2502,7 @@ void BasicPane::OnText(wxCommandEvent &event)
 	
 	//fprintf(stderr,"samplerate %g\n",sdr->samplerate);
 	
-	sdr->startPlay();
+	if(sdr->startPlay())return;
 	
 	std::thread(&sdrClass::run,sdr).detach();
 	
@@ -2707,7 +2710,7 @@ void BasicPane::OnComboSampleRate(wxCommandEvent& event)
 	//winout("Stop Stop sdr->samplerate %g\n",sdr->samplerate);
 
 	
-	sdr->startPlay();
+	if(sdr->startPlay())return;
 	
 	std::thread(&sdrClass::run,sdr).detach();
 }
@@ -2807,7 +2810,7 @@ void BasicPane::radioBox(wxCommandEvent& event)
 	double xmin=atof(alpha);
 	sdr->bandwidthOveride=xmin;
 	sdr->setMode(mode);	
-//	gSpectrum->startOscilloscope();
+    gSpectrum->iHaveData=0;
 
 }
 
