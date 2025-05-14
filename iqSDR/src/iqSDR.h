@@ -542,6 +542,7 @@ public:
 	virtual ~Spectrum();
 	void startOscilloscope();
     ApplFrame *gApplFrame;
+ 	struct Filters ff;
 
 	void resized(wxSizeEvent& evt);
 	
@@ -577,6 +578,8 @@ public:
 	float *buff2;
 	
 	float *buff3;
+	
+	float *buff4;
 	
 	int buffSize;
 		

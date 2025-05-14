@@ -8,7 +8,7 @@ void winout(const char *fmt, ...);
 
 int copyl(char *p1,char *p2,long n);
 
-std::string ProgramVersion="iqSDR-1407";
+std::string ProgramVersion="iqSDR-1410";
 
 void *cMalloc(unsigned long r, int tag);
 
@@ -2972,7 +2972,7 @@ void WaterFall::render1( wxPaintEvent& evt )
     
     if(iWait)return;
     
-    float *buff3=gSpectrum->buff3;
+    float *buff4=gSpectrum->buff4;
     
     int length=gSpectrum->buffLength;
 
@@ -2981,16 +2981,14 @@ void WaterFall::render1( wxPaintEvent& evt )
     
     float *magnitude=(float *)cMalloc(length*8*sizeof(float),2111);
     
-    if(!magnitude || !length || !buff3){
+    if(!magnitude || !length || !buff4){
     	if(magnitude)cFree((char *)magnitude);
     	return;
 	}
 	
 	
 	for(int n=0;n<length;++n){
-		double v=(buff3[2*n]*buff3[2*n]+buff3[2*n+1]*buff3[2*n+1]);
-        if(v > 0.0)v=10*log10(v)+5;
-		magnitude[n]=v;
+		magnitude[n]=buff4[n];
 	}
     
     //auto t1 = chrono::high_resolution_clock::now();
@@ -3030,7 +3028,7 @@ void WaterFall::render1( wxPaintEvent& evt )
     pmax = -1e33;
 
     double rmin=0.0;
-    double rmax=length;
+    double rmax=sdr->bw;
     
     
     double dx=(rmax-rmin)/(double)(length-1);
@@ -3051,7 +3049,7 @@ void WaterFall::render1( wxPaintEvent& evt )
     	pd.sPmax=pmax;
     }
     
- //  winout("rmin %g rmax %g amin %g amax %g length %d dx %g\n",rmin,rmax,pmin,pmax,length,dx);
+    //fprintf(stderr,"UsePlotScales %d rmin %g rmax %g amin %g amax %g length %d dx %g\n",pd.UsePlotScales,rmin,rmax,pmin,pmax,length,dx);
     
     
     if(water.nline >= water.ysize)water.nline=0;
@@ -3106,7 +3104,7 @@ void WaterFall::render1( wxPaintEvent& evt )
    
     
     int ics=wateric[(int)(2*dxn+nmin)];
-    
+        
     for(int nnn=0;nnn<length;++nnn){
         int ic;
         
@@ -3120,32 +3118,33 @@ void WaterFall::render1( wxPaintEvent& evt )
         
         int nn2=next*dxw+0.5;
         
-        
+        //            winout("nn %d nn2 %d nnn %d n %d next %d ic %d ics %d\n",nn,nn2,nnn,n,next,ic,ics);
 
-//            winout("nn %d nn2 %d nnn %d n %d next %d ic %d ics %d\n",nn,nn2,nnn,n,next,ic,ics);
-
-        if(ic > ics)ics=ic;
+       if(ic > ics)ics=ic;
         
-        if(nn == nn2){
+       if(nn == nn2){
         	//winout("2 nn %d nn2 %d nnn %d\n",nn,nn2,nnn);
            continue;
         }
+        
         ic=ics;
         
         ics=wateric[next];
         
-        if(nn < 0 || nn >= water.SRect.xsize){
-            winout("nn %d nn2 %d nnn %d n %d next %d ic %d ics %d\n",nn,nn2,nnn,n,next,ic,ics);
-			exit(1);
+        for(;nn<nn2 && nn < water.SRect.xsize;++nn){ 
+			if(nn < 0 || nn >= water.SRect.xsize){
+				winout("nn %d nn2 %d nnn %d n %d next %d ic %d ics %d\n",nn,nn2,nnn,n,next,ic,ics);
+				exit(1);
+			}
+				
+			water.data[ns1+3*nn]=pd.palette[3*ic];
+			water.data[ns1+3*nn+1]=pd.palette[3*ic+1];
+			water.data[ns1+3*nn+2]=pd.palette[3*ic+2];
+		
+			water.data[ns2+3*nn]=pd.palette[3*ic];
+			water.data[ns2+3*nn+1]=pd.palette[3*ic+1];
+			water.data[ns2+3*nn+2]=pd.palette[3*ic+2];
         }
-                
-        water.data[ns1+3*nn]=pd.palette[3*ic];
-        water.data[ns1+3*nn+1]=pd.palette[3*ic+1];
-        water.data[ns1+3*nn+2]=pd.palette[3*ic+2];
-        
-        water.data[ns2+3*nn]=pd.palette[3*ic];
-        water.data[ns2+3*nn+1]=pd.palette[3*ic+1];
-        water.data[ns2+3*nn+2]=pd.palette[3*ic+2];
         
     }    
     
@@ -3299,6 +3298,8 @@ void WaterFall::render2( wxPaintEvent& evt )
     
     int ics=wateric[(int)(2*dxn+nmin)];
     
+    //fprintf(stderr,"length %d water.SRect.xsize %d\n",length,water.SRect.xsize);
+    
     for(int nnn=0;nnn<length;++nnn){
         int ic;
         
@@ -3326,18 +3327,21 @@ void WaterFall::render2( wxPaintEvent& evt )
         
         ics=wateric[next];
         
-        if(nn < 0 || nn >= water.SRect.xsize){
-            winout("nn %d nn2 %d nnn %d n %d next %d ic %d ics %d\n",nn,nn2,nnn,n,next,ic,ics);
-			exit(1);
+        for(;nn<nn2 && nn < water.SRect.xsize;++nn){ 
+			if(nn < 0 || nn >= water.SRect.xsize){
+				winout("nn %d nn2 %d nnn %d n %d next %d ic %d ics %d\n",nn,nn2,nnn,n,next,ic,ics);
+				exit(1);
+			}
+				
+			water.data[ns1+3*nn]=pd.palette[3*ic];
+			water.data[ns1+3*nn+1]=pd.palette[3*ic+1];
+			water.data[ns1+3*nn+2]=pd.palette[3*ic+2];
+		
+			water.data[ns2+3*nn]=pd.palette[3*ic];
+			water.data[ns2+3*nn+1]=pd.palette[3*ic+1];
+			water.data[ns2+3*nn+2]=pd.palette[3*ic+2];
         }
-                
-        water.data[ns1+3*nn]=pd.palette[3*ic];
-        water.data[ns1+3*nn+1]=pd.palette[3*ic+1];
-        water.data[ns1+3*nn+2]=pd.palette[3*ic+2];
         
-        water.data[ns2+3*nn]=pd.palette[3*ic];
-        water.data[ns2+3*nn+1]=pd.palette[3*ic+1];
-        water.data[ns2+3*nn+2]=pd.palette[3*ic+2];
         
     }    
     
@@ -3532,18 +3536,20 @@ void WaterFall::render1a( wxPaintEvent& evt )
         
         ics=wateric[next];
         
-        if(nn < 0 || nn >= water.SRect.xsize){
-            winout("nn %d nn2 %d nnn %d n %d next %d ic %d ics %d\n",nn,nn2,nnn,n,next,ic,ics);
-			exit(1);
+        for(;nn<nn2 && nn < water.SRect.xsize;++nn){ 
+			if(nn < 0 || nn >= water.SRect.xsize){
+				winout("nn %d nn2 %d nnn %d n %d next %d ic %d ics %d\n",nn,nn2,nnn,n,next,ic,ics);
+				exit(1);
+			}
+				
+			water.data[ns1+3*nn]=pd.palette[3*ic];
+			water.data[ns1+3*nn+1]=pd.palette[3*ic+1];
+			water.data[ns1+3*nn+2]=pd.palette[3*ic+2];
+		
+			water.data[ns2+3*nn]=pd.palette[3*ic];
+			water.data[ns2+3*nn+1]=pd.palette[3*ic+1];
+			water.data[ns2+3*nn+2]=pd.palette[3*ic+2];
         }
-                
-        water.data[ns1+3*nn]=pd.palette[3*ic];
-        water.data[ns1+3*nn+1]=pd.palette[3*ic+1];
-        water.data[ns1+3*nn+2]=pd.palette[3*ic+2];
-        
-        water.data[ns2+3*nn]=pd.palette[3*ic];
-        water.data[ns2+3*nn+1]=pd.palette[3*ic+1];
-        water.data[ns2+3*nn+2]=pd.palette[3*ic+2];
         
     }    
     
@@ -3948,6 +3954,8 @@ Spectrum::Spectrum(wxFrame* parent, int* args) :
     
     buff3=NULL;
 	
+    buff4=NULL;
+	
 	buffSize = -10;
 
     
@@ -3973,6 +3981,9 @@ Spectrum::Spectrum(wxFrame* parent, int* args) :
 	p1=NULL;
 	
 	p2=NULL;
+	
+	zerol((char *)&ff,sizeof(ff));
+
 
 
   //  winout("Groups of triangles %ld vender %s\n",triangle,glGetString(GL_VENDOR));
@@ -4113,9 +4124,11 @@ Spectrum::~Spectrum()
     if(buff1)cFree((char *)buff1);
     if(buff2)cFree((char *)buff2);
     if(buff3)cFree((char *)buff3);
+    if(buff4)cFree((char *)buff4);
     buff1=NULL;
     buff2=NULL;
     buff3=NULL;
+    buff4=NULL;
     
     if (iqSampler1)msresamp_crcf_destroy(iqSampler1);
     iqSampler1=NULL;
@@ -4251,12 +4264,6 @@ void Spectrum::render1(wxPaintEvent& evt )
     //winout("render1\n");
     
      
-    double amax=-1e33;
-    double amin=1e33;
-    
-    double amax2=-1e33;
-    double amin2=1e33;
-    
 	if(!iWait){
  	
 		glColor4f(0, 0, 1, 1);
@@ -4283,11 +4290,17 @@ void Spectrum::render1(wxPaintEvent& evt )
 			buff2=(float *)cMalloc(sizeof(float)*8*size,95288);
 			if(buff3)cFree((char *)buff3);
 			buff3=(float *)cMalloc(sizeof(float)*8*size,95288);
+			if(buff4)cFree((char *)buff4);
+			buff4=(float *)cMalloc(sizeof(float)*8*size,95288);
 			
 			//if(p2)fftw_destroy_plan(p2);
-   			p2 = fftwf_plan_dft_1d(sdr->bw,(fftwf_complex *)buff2, (fftwf_complex *)buff3, FFTW_FORWARD, FFTW_ESTIMATE);
-			double Ratio = (float)(sdr->bw/sdr->size);
-			fprintf(stderr,"sdr->bw  %g sdr->samplerate %g sdr->size %d\n",sdr->bw,sdr->samplerate, sdr->size );
+			
+			//sdr->setFilters(&ff);
+			
+   			p2 = fftwf_plan_dft_1d(sdr->bw/sdr->ncut,(fftwf_complex *)buff2, (fftwf_complex *)buff3, FFTW_FORWARD, FFTW_ESTIMATE);
+			double Ratio = (float)(sdr->bw/sdr->samplerate);
+			fprintf(stderr,"sdr->bw  %g sdr->samplerate %g sdr->size %d sdr->imode %d sdr->imodeFlag %d\n",sdr->bw,
+			               sdr->samplerate, sdr->size,sdr->imode, sdr->imodeFlag);
 			if (iqSampler1)msresamp_crcf_destroy(iqSampler1);
 			iqSampler1  = msresamp_crcf_create(Ratio, 60.0f);
 			if(demod)freqdem_destroy(demod);    
@@ -4342,12 +4355,8 @@ void Spectrum::render1(wxPaintEvent& evt )
 				buff2[k * 2] = (float)rr;
 				buff2[k * 2 + 1] = (float)ii;
 
-				double sum=rr*rr+ii*ii;
-				amax += sum;
 			}
-			
-			amax /= sdr->size;
-	
+				
 			//if(gBasicPane->sampleDataRotate > 0.0)exit(1);
   
 	 		iHaveData=1;
@@ -4385,7 +4394,7 @@ void Spectrum::render1(wxPaintEvent& evt )
 				
       	buffLength=num;
       	
-      	//fprintf(stderr,"num %d sdr->size %d ratio %g\n",num,sdr->size,(float)num/(float)(sdr->size));
+      //	fprintf(stderr,"num %d sdr->size %d ratio %g sdr->bw %g\n",num,sdr->size,(float)num/(float)(sdr->size),sdr->bw);
 /*      	
     	static FILE *out33;
  		if(!out33)out33=fopen("iqSDR3_IQ_100000000_100000_fc.raw","wb");
@@ -4423,16 +4432,13 @@ void Spectrum::render1(wxPaintEvent& evt )
  		if(out55)fwrite(buff3,8,buffLength,out55);
 */
 		//int nmax3=-1;
-		amin2=1e33;
-		amax2=-1e33;
+		double avg=0;
 		for(int n=0;n<buffLength;++n){
 			double v=(buff3[2*n]*buff3[2*n]+buff3[2*n+1]*buff3[2*n+1]);
-        	if(v > 0.0)v=10*log10(v)+5;
-         	if(v > amax2){
-         		amax2=v;
-         	   // nmax3=n;
-         	}
-         	if(v < amin2)amin2=v;
+        	if(v > 0.0)v=10*log10(v)+5;        	
+         	double mag= (1.0-lineAlpha)*buff4[n]+lineAlpha*v;
+			avg += mag;
+        	
 		}
 		
 		//winout("amax %g num %d %d amax2 %g nmax2 %d\n",amax,num,nmax3,amax2,nmax2);
@@ -4440,23 +4446,14 @@ void Spectrum::render1(wxPaintEvent& evt )
 		
 		//fprintf(stderr,"amaxGlobal %g aminGlobal %g\n",amaxGlobal,aminGlobal);
 
-		if(amaxGlobal == 0.0){
-			amaxGlobal=amax2;
-		}
+
+		avg /= buffLength;
+	
+		double shift=-100-avg;
 		
-		if(aminGlobal == 0.0){
-			aminGlobal=amin2;
-		}
-        
-        static long int nset=0;
-        
-        if(!(nset++ % 200)){
-        	amaxGlobal = 0.9*amaxGlobal+0.1*amax2;
-	        aminGlobal = 0.9*aminGlobal+0.1*amin2;
-		}
-		
-		amax=amaxGlobal;
-		amin=aminGlobal;
+		//fprintf(stderr,"avg %g shift %g\n",avg,shift);
+	
+		double dnom=100000000;
 		
 		//static long int count1;
 
@@ -4465,8 +4462,12 @@ void Spectrum::render1(wxPaintEvent& evt )
 		       			
 		//buffFlag=0;
 		
-		double ymin =  amin;
-		double ymax =  amax;	
+		double ymin = verticalMinimum;
+		double ymax = verticalMaximum;	
+		
+		
+		//double ymin =  amin;
+		//double ymax =  amax;	
 		if(ymin >= ymax)ymin=ymax-40;
 		
 		double dy=ymax-ymin;
@@ -4477,8 +4478,8 @@ void Spectrum::render1(wxPaintEvent& evt )
 		
 		double xmin=0.0;
 		//double xmax=sdr->samplerate/sdr->ncut;
-		//double xmax=1.0/sdr->ncut;
-		double xmax=num;
+		double xmax=sdr->bw;
+		//double xmax=num;
 		double dx=xmax-xmin;
 		
 		double Slide=(oscilloscopeSlide)/200.0;
@@ -4502,7 +4503,7 @@ void Spectrum::render1(wxPaintEvent& evt )
 		int nmax=(num-1)*(gxmax-xmin)/dx;
 		int dn=nmax-nmin;
 
-		//fprintf(stderr,"gxman %g gxmax %g nmin %d nmax %d dn %d\n",gxmin,gxmax,nmin,nmax,dn);
+		//fprintf(stderr,"gxman %g gxmax %g nmin %d nmax %d dn %d lineAlpha %g\n",gxmin,gxmax,nmin,nmax,dn,lineAlpha);
 
 
 		//int ixxmin,ixxmax,iyymin,iyymax;
@@ -4518,13 +4519,25 @@ void Spectrum::render1(wxPaintEvent& evt )
 	
 		
 		double ddx=(xmax-xmin)/num;
+		
+		//fprintf(stderr,"num %d xmax-xmin %g xmax %g\n",num,xmax-xmin,(num-1)*ddx+xmin);
 			
 		for(unsigned int n=0;n<num;++n){
-			double v;
-			//v=buff3[n];
-			v=(buff3[2*n]*buff3[2*n]+buff3[2*n+1]*buff3[2*n+1]);
-        	if(v > 0.0)v=10*log10(v)+5;
-			double y=v;
+			double sum=0;
+			double v=0;
+			if(softAutoGain == 1){
+				v=(buff3[2*n]*buff3[2*n]+buff3[2*n+1]*buff3[2*n+1]);
+        		if(v > 0.0)v=10*log10(v)+5;
+				sum=(1.0-lineAlpha)*buff4[n]+lineAlpha*v+shift;
+			}else{
+				v=(buff3[2*n]*buff3[2*n]+buff3[2*n+1]*buff3[2*n+1])/dnom;
+        		if(v > 0.0)v=10*log10(v);
+				sum=(1.0-lineAlpha)*buff4[n]+lineAlpha*v;
+			}
+        	
+			buff4[n]=sum;
+        	
+			double y=sum;
 			double x=n*ddx+xmin;
 			if(x < gxmin || x > gxmax)continue;
 			int ix;
@@ -4910,6 +4923,8 @@ void Spectrum::render1a(wxPaintEvent& evt )
 			buff2=(float *)cMalloc(sizeof(float)*8*sdr->size,95288);
 			if(buff3)cFree((char *)buff3);
 			buff3=(float *)cMalloc(sizeof(float)*8*sdr->size,95288);
+			if(buff4)cFree((char *)buff4);
+			buff4=(float *)cMalloc(sizeof(float)*8*sdr->size,95288);
 			iHaveData=0;
 		}
 		

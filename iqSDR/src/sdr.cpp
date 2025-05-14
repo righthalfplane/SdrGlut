@@ -1761,7 +1761,6 @@ int sdrClass::setFilters(struct Filters *f)
     
     imodeFlag=0;
     
-    
     if(rx->decodemode == MODE_AM){
         rx->bw=10000.0;
         imode=LIQUID_AMPMODEM_DSB;
@@ -1807,6 +1806,8 @@ int sdrClass::setFilters(struct Filters *f)
  #else
     f->demodAM = ampmodem_create(0.5, imode, imodeFlag);
 #endif
+
+	//fprintf(stderr,"sdr %p imode %d imodeFlag %d\n",rx,imode, imodeFlag);
 
 	if (f->iqSamplerd)msresamp_crcf_destroy(f->iqSamplerd);
 	f->iqSamplerd  = msresamp_crcf_create(rx->Ratio, As);
