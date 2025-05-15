@@ -1011,6 +1011,11 @@ public:
 		
 	int decodemode1;
 	
+	double oscilloscopeSlide;
+	
+	double oscilloscopeZoom;
+
+	
 	msresamp_crcf iqSampler1;
 	
 	volatile int iWait; 
@@ -1049,6 +1054,7 @@ public:
 	void render(wxPaintEvent& evt);
 	void render1(wxPaintEvent& evt);
 	void render1a(wxPaintEvent& evt);
+	void render1b(wxPaintEvent& evt);
 	void render2(wxPaintEvent& evt);
 	void prepare3DViewport(int topleft_x, int topleft_y, int bottomrigth_x, int bottomrigth_y);
 	//void prepare2DViewport(int topleft_x, int topleft_y, int bottomrigth_x, int bottomrigth_y);

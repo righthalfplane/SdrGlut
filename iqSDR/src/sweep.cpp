@@ -1400,6 +1400,9 @@ EVT_BUTTON(ID_SWEEP, BasicPane2::stopSend)
 EVT_BUTTON(ID_SWEEPSTOP, BasicPane2::stopSend)
 EVT_DATAVIEW_ITEM_ACTIVATED(ID_VIEWSELECTED, BasicPane2::OnViewSelected)
 EVT_DATAVIEW_SELECTION_CHANGED(ID_VIEWSELECTED, BasicPane2::OnViewSelected)
+EVT_SLIDER(ID_OSCILLOSCOPEZOOM,BasicPane2::setSampleWidth)
+EVT_SLIDER(ID_OSCILLOSCOPESLIDE,BasicPane2::setDataRotate)
+
 END_EVENT_TABLE()
 void dummpy12(){;}
 void BasicPane2::OnViewSelected(wxDataViewEvent& event) 
@@ -1585,19 +1588,7 @@ int BasicPane2::SetScrolledWindow()
     	    sweepCrop=new wxTextCtrl(box2,ID_TEXTCTRL,wxT("0"),
           	wxPoint(5,15), wxSize(100, 30));
 		    yloc += 85;   
-		    
-	    box2 = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Sweep xmin",wxPoint(10,yloc), wxSize(110, 75),wxBORDER_SUNKEN );
-    	    sweepXmin=new wxTextCtrl(box2,ID_XMIN,wxT("80"),
-          	wxPoint(5,15), wxSize(100, 30));
-          	sweepXmin->SetWindowStyle(wxTE_PROCESS_ENTER);
-
-		    
-	    box2 = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Sweep xmax",wxPoint(135,yloc), wxSize(110, 75),wxBORDER_SUNKEN );
-    	    sweepXmax=new wxTextCtrl(box2,ID_XMAX,wxT("120"),
-          	wxPoint(5,15), wxSize(100, 30));
-          	sweepXmax->SetWindowStyle(wxTE_PROCESS_ENTER);
-		    yloc += 85;   
-		    
+		    		    
 		    sweepButton=new wxButton(ScrolledWindow,ID_SWEEP,wxT("Start"),wxPoint(20,yloc));
 		    
 		    stopButton=new wxButton(ScrolledWindow,ID_SWEEPSTOP,wxT("Stop"),wxPoint(120,yloc));
@@ -1605,6 +1596,29 @@ int BasicPane2::SetScrolledWindow()
 		    yloc += 30;   
 
 	}
+	
+	if(!scrolledWindowFlag){
+		box = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Zoom",wxPoint(20,yloc), wxSize(230, 80),wxBORDER_SUNKEN );
+		box->SetToolTip(wxT("Zoom Data") );
+		new wxSlider(box,ID_SAMPLEWIDTH,200,0,200,wxPoint(10,15),wxSize(210,-1),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
+
+		yloc += 85;   
+	
+	}else{
+		box = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Oscilloscope Zoom ",wxPoint(20,yloc), wxSize(230, 80),wxBORDER_SUNKEN );
+		box->SetToolTip(wxT("Zoom Oscilloscope Data") );
+		new wxSlider(box,ID_OSCILLOSCOPEZOOM,200,0,200,wxPoint(10,15),wxSize(210,-1),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
+
+		yloc += 85;   
+		
+		box = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Oscilloscope Slide ",wxPoint(20,yloc), wxSize(230, 80),wxBORDER_SUNKEN );
+		box->SetToolTip(wxT("Slide Oscilloscope Data") );
+		new wxSlider(box,ID_OSCILLOSCOPESLIDE,200,0,200,wxPoint(10,15),wxSize(210,-1),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
+
+		yloc += 85;   
+	
+	}
+	
 	
 	if(sdr->rxGainRangeList.size()){
 		for(size_t n=0;n<sdr->rxGainRangeList.size();++n){
@@ -1622,19 +1636,6 @@ int BasicPane2::SetScrolledWindow()
 	
 	}
 	
-
-	box = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Zoom",wxPoint(20,yloc), wxSize(230, 80),wxBORDER_SUNKEN );
-	box->SetToolTip(wxT("Zoom Data") );
-	new wxSlider(box,ID_SAMPLEWIDTH,200,0,200,wxPoint(10,15),wxSize(210,-1),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
-
-	yloc += 85;   
-	
-	
-	box = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Rotate Oscilloscope Data",wxPoint(20,yloc), wxSize(230, 80),wxBORDER_SUNKEN );
-	box->SetToolTip(wxT("Rotate Oscilloscope Data") );
-	new wxSlider(box,ID_ROTATEDATA,200,0,200,wxPoint(10,15),wxSize(210,-1),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
-
-	yloc += 85;   
 	
 	box = new wxStaticBox(ScrolledWindow, wxID_ANY, "Minimum Value ",wxPoint(20,yloc), wxSize(230, 80),wxBORDER_SUNKEN );
 	box->SetToolTip(wxT("This is tool tip") );
@@ -2054,17 +2055,32 @@ void BasicPane2::setSampleWidth(wxCommandEvent &event)
 {
 	event.Skip();
 	
+	int id=event.GetId();
+	
 	double samplewidth=event.GetSelection();
 	
-	sdr->setSampleWidth(samplewidth);	
+	if(id == ID_SAMPLEWIDTH){
+		sdr->setSampleWidth(samplewidth);	
+	}else if(id == ID_OSCILLOSCOPEZOOM){
+		//winout("ID_OSCILLOSCOPEZOOM %g\n",samplewidth);
+		gSpectrum2->oscilloscopeZoom=samplewidth;
+	}
 }
 void BasicPane2::setDataRotate(wxCommandEvent &event)
 {
 	event.Skip();
 	
-	sampleDataRotate=event.GetSelection();
+	int id=event.GetId();
 	
-	sampleDataRotate=(200-sampleDataRotate)/200;
+	double data=event.GetSelection();
+	
+	if(id == ID_ROTATEDATA){
+		//sampleDataRotate=event.GetSelection();
+		sampleDataRotate=(200-sampleDataRotate)/200;
+	}else if(id == ID_OSCILLOSCOPESLIDE){
+		//winout("ID_OSCILLOSCOPESLIDE %g\n",data);
+		gSpectrum2->oscilloscopeSlide=data;
+	}
 	
 	Sleep2(100);
 	
@@ -2761,8 +2777,16 @@ void WaterFall2::render1( wxPaintEvent& evt )
     int ns1=3*water.xsize*(water.nline+water.ysize);
     int ns2=3*water.xsize*(water.nline++);
 
-	double gxmin=gSweep->rx->sweepLower;
-	double gxmax=gSweep->rx->sweepUpper;
+	double Slide=(gSpectrum2->oscilloscopeSlide)/200.0;
+	if(Slide <= 0.0)Slide=1.0/200.0;
+	
+	double Zoom=(gSpectrum2->oscilloscopeZoom)/200.0;
+	if(Zoom <= 0.0)Zoom=1.0/200.0;
+	
+	double gLength=Zoom*(rmax-rmin);
+		
+	double gxmin=(rmax-rmin-gLength)*Slide+rmin;
+	double gxmax=gxmin+gLength;
 
     int nmin,nmax;
     nmin=length-1;
@@ -3378,6 +3402,10 @@ Spectrum2::Spectrum2(wxFrame* parent, int* args) :
 		
 	verticalMaximum=-30;
 	
+	oscilloscopeSlide=200;
+	
+	oscilloscopeZoom=200;
+
 	amaxGlobal=0;
 	
 	aminGlobal=0;
@@ -3720,10 +3748,7 @@ void Spectrum2::render1(wxPaintEvent& evt )
     int buffSendLength=0;
     
     double *buffSend2;
-    
-    double amax=-1e33;
-    double amin=1e33;
-    
+        
 	if(!iWait){
  	
 		glColor4f(0, 0, 1, 1);
@@ -3796,40 +3821,26 @@ void Spectrum2::render1(wxPaintEvent& evt )
       	buffSendLength=num;
 		
 		//int nmax3=-1;
+		double avg=0;
 		for(int n=0;n<buffSendLength;++n){
 			double v=buff3[n];
-         	if(v > amax){
-         		amax=v;
-         	    //nmax3=n;
-         	}
-         	if(v < amin){
-         		amin=v;
-         	}
+         	avg += v;
 		}
-/*
-		static long int count=0;
 		
-		winout("amax %g amin %g num %d %d amax2 %g nmax3 %d sds->ixmax %ld\n",amax,amin,num,nmax3,amax2,nmax2,sds->ixmax);
-		winout("count %ld xmin %g xmax %g ymin %g ymax %g ixmax %ld iymax %ld\n",count++,sds->xmin,sds->xmax,sds->ymin,sds->ymax,sds->ixmax,sds->iymax);
-*/
-		if(amaxGlobal == 0.0)amaxGlobal=amax;
-        amaxGlobal = 0.9*amaxGlobal+0.1*amax;
-		amax=amaxGlobal;
-		
-		if(aminGlobal == 0.0)aminGlobal=amin;
-        aminGlobal = 0.9*aminGlobal+0.1*amin;
-		amin=aminGlobal;
+		avg /= buffSendLength;
 		
 		
-		//static long int count1;
-
-		//winout("Spectrum2 render 1 count %ld amax %g ip %d num %d amax2 %g cosdt %g sindt %g  coso %g sino %g\n",count1++,
-		//       amax,ip,num,amax2,sdr->cosdt,sdr->sindt,sdr->coso,sdr->sino);
+		//fprintf(stderr,"amax %g amin %g avg %g sds->ixmax %ld\n",amax,amin,avg,sds->ixmax);
+	
+		double shift=-100-avg;
+			
 		       			
 		buffFlag=0;
 		
-		double ymin =  amin;
-		double ymax =  amax;	
+		double ymin = verticalMinimum;
+		double ymax = verticalMaximum;	
+		//double ymin =  amin;
+		//double ymax =  amax;	
 		if(ymin >= ymax)ymin=ymax-40;
 		
 		double dy=ymax-ymin;
@@ -3841,9 +3852,17 @@ void Spectrum2::render1(wxPaintEvent& evt )
 		double xmin=sds->xmin;
 		double xmax=sds->xmax;
 		double dx=xmax-xmin;
-
-		double gxmin=gSweep->rx->sweepLower;
-		double gxmax=gSweep->rx->sweepUpper;
+		
+		double Slide=(oscilloscopeSlide)/200.0;
+		if(Slide <= 0.0)Slide=1.0/200.0;
+		
+		double Zoom=(oscilloscopeZoom)/200.0;
+		if(Zoom <= 0.0)Zoom=1.0/200.0;
+		
+		double gLength=Zoom*dx;
+	  		
+		double gxmin=(dx-gLength)*Slide+xmin;
+		double gxmax=gxmin+gLength;
 		//double gdx=gxmax-gxmin;
 		
 		double ixmin=0;
@@ -3873,9 +3892,21 @@ void Spectrum2::render1(wxPaintEvent& evt )
 		double ddx=(xmax-xmin)/sds->ixmax;
 			
 		for(int n=0;n<sds->ixmax;++n){
-			double v;
-			v=buff3[n];
-			double y=v;
+			double sum=0;
+			double v=0;
+			if(softAutoGain == 1){
+				v=buff3[n];
+				sum=v+shift;
+				//sum=(1.0-lineAlpha)*buff4[n]+lineAlpha*v+shift;
+			}else{
+				v=buff3[n];
+				sum=v;
+				//sum=(1.0-lineAlpha)*buff4[n]+lineAlpha*v;
+			}
+        	
+			//buff4[n]=sum;
+        	
+			double y=sum;
 			double x=n*ddx+xmin;
 			if(x < gxmin || x > gxmax)continue;
 			int ix;
@@ -3924,7 +3955,7 @@ void Spectrum2::render1(wxPaintEvent& evt )
 			for(double xp=xmnc;xp <= xmxc;xp += Large){
 				char cbuff[256];
 			    double xx=(xp-xmns)/dx;
-			    //fprintf(stderr,"xx %g ",xx);
+			    //fprintf(stderr,"xp %g xx %g ",xp,xx);
 			    if(xx < 0.0 || xx > 1.0)continue;
 			    int ixx=(int)(idx*xx+ixmin);
 			   // fprintf(stderr,"ixx %d ixmin %g ixmax %g xp %g\n ",ixx,ixmin,ixmax,xp);
@@ -4538,6 +4569,310 @@ void Spectrum2::render1a(wxPaintEvent& evt )
  
 }
  
+void Spectrum2::render1b(wxPaintEvent& evt )
+{
+	evt.Skip();
+	
+	//static long long nc=0;
+	//winout("Spectrum2 render nc %lld\n",nc++);
+
+    if(!IsShown())return;
+    
+    if(rtime() < lineTime)return;
+
+    lineTime=rtime()+lineDumpInterval;
+
+    struct SDS2Dout *sds=&gSweep->sdsout;
+    
+    if(!sds->data){
+    	return;
+    }
+    
+        
+    //auto t1 = chrono::high_resolution_clock::now();
+    
+        
+    wxGLCanvas::SetCurrent(*m_context);
+    //wxPaintDC(this); // only to be used in paint events. use wxClientDC to paint outside the paint event
+    wxClientDC(this); // only to be used in paint events. use wxClientDC to paint outside the paint event
+ 
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+ 
+    // ------------- draw some 2D ----------------
+    prepare2DViewport(0,0,getWidth(), getHeight());
+    glLoadIdentity();
+ 
+    // white background
+    glColor4f(1, 1, 1, 1);
+    glBegin(GL_QUADS);
+    glVertex3f(0,0,0);
+    glVertex3f(getWidth(),0,0);
+    glVertex3f(getWidth(),getHeight(),0);
+    glVertex3f(0,getHeight(),0);
+    glEnd();
+    
+    //winout("render1\n");
+    
+    int buffSendLength=0;
+    
+    double *buffSend2;
+    
+    double amax=-1e33;
+    double amin=1e33;
+    
+	if(!iWait){
+ 	
+		glColor4f(0, 0, 1, 1);
+		
+		if(buffSize != sds->ixmax){
+			buffSize=sds->ixmax;
+			if(buff1)cFree((char *)buff1);
+			buff1=(float *)cMalloc(sizeof(float)*8*sds->ixmax,95288);
+			if(buff2)cFree((char *)buff2);
+			buff2=(float *)cMalloc(sizeof(float)*8*sds->ixmax,95288);
+			if(buff3)cFree((char *)buff3);
+			buff3=(float *)cMalloc(sizeof(float)*8*sds->ixmax,95288);
+			iHaveData=0;
+		}      	
+      	
+      	if(!iFreeze || !iHaveData){
+      		nrow++;
+			if(nrow >= sds->iymax)nrow=0;
+		}
+		
+		buffSend2=&sds->data[nrow*sds->ixmax]; 
+	
+		unsigned int num;
+		
+		
+		if(iFreeze && iHaveData){
+			for (int k = 0 ; k < sds->ixmax; k++){
+				buff2[k] = buff1[k];
+			}
+		
+		}else{
+			for (int k = 0 ; k < sds->ixmax; k++){
+				float r = buffSend2[k];
+				buff1[k] = r;
+				buff2[k] = r;
+			}
+	
+		
+			iHaveData=1;
+		}
+		
+/*
+		int nmax2=-1;
+		double amax2=0;
+		
+		for(int n=0;n<sds->ixmax;++n){
+			double v=buff2[n];
+        	if(v > 0.0)v=sqrt(v);
+         	if(v > amax2){
+         		amax2=v;
+         		nmax2=n;
+         	}
+		}
+
+		buff2[0]=buff2[0];
+		buff2[1]=buff2[1];
+
+*/
+		num=0;
+ /*
+ 		msresamp_crcf_reset(iqSampler1);
+		msresamp_crcf_execute(iqSampler1, (liquid_float_complex *)&buff2[0], sds->ixmax, (liquid_float_complex *)&buff3[0], &num);  // decimate
+*/
+		for(int n=0;n<sds->ixmax;++n){
+			buff3[n]=buff2[n];
+		}
+		
+		num=sds->ixmax;
+
+      	buffSendLength=num;
+		
+		//int nmax3=-1;
+		for(int n=0;n<buffSendLength;++n){
+			double v=buff3[n];
+         	if(v > amax){
+         		amax=v;
+         	    //nmax3=n;
+         	}
+         	if(v < amin){
+         		amin=v;
+         	}
+		}
+/*
+		static long int count=0;
+		
+		winout("amax %g amin %g num %d %d amax2 %g nmax3 %d sds->ixmax %ld\n",amax,amin,num,nmax3,amax2,nmax2,sds->ixmax);
+		winout("count %ld xmin %g xmax %g ymin %g ymax %g ixmax %ld iymax %ld\n",count++,sds->xmin,sds->xmax,sds->ymin,sds->ymax,sds->ixmax,sds->iymax);
+*/
+		if(amaxGlobal == 0.0)amaxGlobal=amax;
+        amaxGlobal = 0.9*amaxGlobal+0.1*amax;
+		amax=amaxGlobal;
+		
+		if(aminGlobal == 0.0)aminGlobal=amin;
+        aminGlobal = 0.9*aminGlobal+0.1*amin;
+		amin=aminGlobal;
+		
+		
+		//static long int count1;
+
+		//winout("Spectrum2 render 1 count %ld amax %g ip %d num %d amax2 %g cosdt %g sindt %g  coso %g sino %g\n",count1++,
+		//       amax,ip,num,amax2,sdr->cosdt,sdr->sindt,sdr->coso,sdr->sino);
+		       			
+		buffFlag=0;
+		
+		double ymin =  amin;
+		double ymax =  amax;	
+		if(ymin >= ymax)ymin=ymax-40;
+		
+		double dy=ymax-ymin;
+		
+		double iymin=0;
+		double iymax=getHeight()-20;
+		double idy=iymin-iymax;		
+		
+		double xmin=sds->xmin;
+		double xmax=sds->xmax;
+		double dx=xmax-xmin;
+
+		double gxmin=gSweep->rx->sweepLower;
+		double gxmax=gSweep->rx->sweepUpper;
+		//double gdx=gxmax-gxmin;
+		
+		double ixmin=0;
+		double ixmax=getWidth();
+		double idx=ixmax-ixmin;
+		
+
+		int nmin=(sds->ixmax-1)*(gxmin-xmin)/dx;
+		int nmax=(sds->ixmax-1)*(gxmax-xmin)/dx;
+		int dn=nmax-nmin;
+
+		//fprintf(stderr,"gxmain %g gxmax %g nmin %d nmax %d dn %d\n",gxmin,gxmax,nmin,nmax,dn);
+
+
+		//int ixxmin,ixxmax,iyymin,iyymax;
+	
+		//ixxmin=100000000;
+		//ixxmax= -100000000;
+		//iyymin=100000000;
+		//iyymax= -100000000;
+	
+		int ixold=0;
+		int iyold=0;
+		int iflag=0;
+	
+		
+		double ddx=(xmax-xmin)/sds->ixmax;
+			
+		for(int n=0;n<sds->ixmax;++n){
+			double v;
+			v=buff3[n];
+			double y=v;
+			double x=n*ddx+xmin;
+			if(x < gxmin || x > gxmax)continue;
+			int ix;
+			int iy;
+			ix=(int)(n-nmin)*idx/dn+ixmin;
+			//fprintf(stderr,"n %d x %g y %g ix %d xmin %g xmax %g\n",n,x,y,ix,xmin,xmax);
+			if(ix <= ixmin || ix >= ixmax)continue;
+			//if(ix < ixxmin)ixxmin=ix;
+			//if(ix > ixxmax)ixxmax=ix;
+			iy=(int)((y-ymin)*idy/dy+iymax);
+			//fprintf(stderr,"iy %d iymax %g iymin %g y %g dy %g idy %g\n",iy,iymax,iymin,y,dy,idy);
+			if(iy <= iymin || iy >= iymax)continue;
+			//if(iy < iyymin)iyymin=iy;
+			//if(iy > iyymax)iyymax=iy;
+			if(iflag == 0){
+			  ixold=ix;
+			  iyold=iy;
+			  DrawLine(ixold, iyold, ix, iy);
+			  iflag=1;
+			}
+			DrawLine(ixold, iyold, ix, iy);
+			ixold=ix;
+			iyold=iy;
+		}
+		
+	
+		
+		//fprintf(stderr,"ixxmin %d ixxmax %d getWidth() %d iyymin %d iyymax %d getHeight() %d\n",ixxmin,ixxmax,getWidth(),iyymin,iyymax,getHeight());
+
+		glColor4f(0, 0, 0, 1);
+
+		
+ 		{
+			double xmnc,xmxc,Large,Small;
+			double xmns,xmxs;
+			xmnc=gxmin/1e6;
+			xmxc=gxmax/1e6;
+			xmns=xmnc;
+			xmxs=xmxc;
+			//fprintf(stderr,"xmnc %g xmxc %g samplewidth %g samplescale %g\n",xmnc,xmxc,sdr->samplewidth,sdr->samplescale);
+			GridPlotNeat2(&xmnc,&xmxc,&Large,&Small);
+			//fprintf(stderr,"xmnc %g xmxc %g Large %g Small %g %g %g\n",xmnc,xmxc,Large,Small,xmnc/Large,xmxc/Large);
+			
+			dx=xmxs-xmns;
+			
+			for(double xp=xmnc;xp <= xmxc;xp += Large){
+				char cbuff[256];
+			    double xx=(xp-xmns)/dx;
+			    //fprintf(stderr,"xx %g ",xx);
+			    if(xx < 0.0 || xx > 1.0)continue;
+			    int ixx=(int)(idx*xx+ixmin);
+			   // fprintf(stderr,"ixx %d ixmin %g ixmax %g xp %g\n ",ixx,ixmin,ixmax,xp);
+			    if(ixx < ixmin || ixx > ixmax)continue;
+ 				DrawLine3(ixx, 0, ixx, getHeight()-15);
+ 				sprintf(cbuff,"%g",xp);
+				DrawString(ixx-10,getHeight()-13, cbuff);
+			}
+			//winout(" idx %g\n",idx);
+			
+		//exit(1);
+
+			xmnc=ymin;
+			xmxc=ymax;
+			//fprintf(stderr,"xmnc %g xmxc %g\n",xmnc,xmxc);
+			GridPlotNeat2(&xmnc,&xmxc,&Large,&Small);
+			//fprintf(stderr,"xmnc %g xmxc %g Large %g Small %g %g %g\n",xmnc,xmxc,Large,Small,xmnc/Large,xmxc/Large);
+			
+			for(double xp=xmnc;xp <= xmxc;xp += Large){
+				char cbuff[256];
+			    double xx=((xp-ymin)/(dy));
+			    if(xx < 0.0 || xx > 1.0)continue;
+			    int ixx=(int)(iymax+idy*xx);
+ 				DrawLine3(30, ixx, getWidth(), ixx);
+ 				sprintf(cbuff,"%g",xp);
+				DrawString(5,ixx-8,cbuff);
+			}
+			//winout(" idy %g\n",idy);
+		
+
+		
+ 		}
+		
+    	glFlush();
+    	SwapBuffers();
+    	    
+		//auto t2 = chrono::high_resolution_clock::now();
+		//std::chrono::duration<double> difference = t2 - t1;
+		//std::cout << "Time "<< difference.count() << endl;
+		//winout("count %g\n",difference.count());
+
+	}
+	
+	//static long int count1;
+
+	//winout("Spectrum2 render 1 count %ld amax %g iWait %d\n",count1++,amax,iWait);
+
+	//fprintf(stderr,"Next 77\n");
+		
+    
+ 
+}
 
 int doFFT2(double *x,double *y,long length,int direction)
 {
