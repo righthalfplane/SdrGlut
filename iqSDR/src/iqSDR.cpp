@@ -8,7 +8,7 @@ void winout(const char *fmt, ...);
 
 int copyl(char *p1,char *p2,long n);
 
-std::string ProgramVersion="iqSDR-1412";
+std::string ProgramVersion="iqSDR-1414";
 
 void *cMalloc(unsigned long r, int tag);
 
@@ -3327,21 +3327,18 @@ void WaterFall::render2( wxPaintEvent& evt )
         
         ics=wateric[next];
         
-        for(;nn<nn2 && nn < water.SRect.xsize;++nn){ 
-			if(nn < 0 || nn >= water.SRect.xsize){
-				winout("nn %d nn2 %d nnn %d n %d next %d ic %d ics %d\n",nn,nn2,nnn,n,next,ic,ics);
-				exit(1);
-			}
-				
-			water.data[ns1+3*nn]=pd.palette[3*ic];
-			water.data[ns1+3*nn+1]=pd.palette[3*ic+1];
-			water.data[ns1+3*nn+2]=pd.palette[3*ic+2];
-		
-			water.data[ns2+3*nn]=pd.palette[3*ic];
-			water.data[ns2+3*nn+1]=pd.palette[3*ic+1];
-			water.data[ns2+3*nn+2]=pd.palette[3*ic+2];
+        if(nn < 0 || nn >= water.SRect.xsize){
+            winout("nn %d nn2 %d nnn %d n %d next %d ic %d ics %d\n",nn,nn2,nnn,n,next,ic,ics);
+			exit(1);
         }
+                
+        water.data[ns1+3*nn]=pd.palette[3*ic];
+        water.data[ns1+3*nn+1]=pd.palette[3*ic+1];
+        water.data[ns1+3*nn+2]=pd.palette[3*ic+2];
         
+        water.data[ns2+3*nn]=pd.palette[3*ic];
+        water.data[ns2+3*nn+1]=pd.palette[3*ic+1];
+        water.data[ns2+3*nn+2]=pd.palette[3*ic+2]; 
         
     }    
     
