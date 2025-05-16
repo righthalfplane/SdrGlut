@@ -628,6 +628,8 @@ public:
 	ampmodem demodAM;
 
 	freqdem demod;
+	
+	std::mutex mutexg;
 
 	void render(wxPaintEvent& evt);
 	void render1(wxPaintEvent& evt);

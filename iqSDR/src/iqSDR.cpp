@@ -8,7 +8,7 @@ void winout(const char *fmt, ...);
 
 int copyl(char *p1,char *p2,long n);
 
-std::string ProgramVersion="iqSDR-1415";
+std::string ProgramVersion="iqSDR-1416";
 
 void *cMalloc(unsigned long r, int tag);
 
@@ -2987,10 +2987,11 @@ void WaterFall::render1( wxPaintEvent& evt )
     	return;
 	}
 	
-	
+	gSpectrum->mutexg.lock();
 	for(int n=0;n<length;++n){
 		magnitude[n]=buff4[n];
 	}
+	gSpectrum->mutexg.unlock();
     
     //auto t1 = chrono::high_resolution_clock::now();
     
@@ -3101,12 +3102,14 @@ void WaterFall::render1( wxPaintEvent& evt )
  
         int nn=nnn*dxw+0.5;
         
-        int nn2=next*dxw+0.5;
+        int nn2=(nnn+1)*dxw+0.5;
         
         //            winout("nn %d nn2 %d nnn %d n %d next %d ic %d ics %d\n",nn,nn2,nnn,n,next,ic,ics);
 
        if(ic > ics)ics=ic;
-        
+
+	   //fprintf(stderr,"nnn %d nn %d nn2 %d\n",nnn,nn,nn2);
+
        if(nn == nn2){
         	//winout("2 nn %d nn2 %d nnn %d\n",nn,nn2,nnn);
            continue;
@@ -3116,8 +3119,7 @@ void WaterFall::render1( wxPaintEvent& evt )
         
         ics=wateric[next];
         
-                
-        //for(;nn<nn2 && nn < water.SRect.xsize;++nn){ 
+        for(;nn<nn2 && nn < water.SRect.xsize;++nn){ 
 			if(nn < 0 || nn >= water.SRect.xsize){
 				winout("nn %d nn2 %d nnn %d n %d next %d ic %d ics %d\n",nn,nn2,nnn,n,next,ic,ics);
 				exit(1);
@@ -3130,7 +3132,7 @@ void WaterFall::render1( wxPaintEvent& evt )
 			water.data[ns2+3*nn]=pd.palette[3*ic];
 			water.data[ns2+3*nn+1]=pd.palette[3*ic+1];
 			water.data[ns2+3*nn+2]=pd.palette[3*ic+2];
-        //}
+        }
         
     }    
     
@@ -4505,6 +4507,7 @@ void Spectrum::render1(wxPaintEvent& evt )
 		
 		//fprintf(stderr,"num %d xmax-xmin %g xmax %g\n",num,xmax-xmin,(num-1)*ddx+xmin);
 			
+		mutexg.lock();
 		for(unsigned int n=0;n<num;++n){
 			double sum=0;
 			double v=0;
@@ -4545,9 +4548,8 @@ void Spectrum::render1(wxPaintEvent& evt )
 			ixold=ix;
 			iyold=iy;
 		}
-		
+		mutexg.unlock();
 	
-		
 		//fprintf(stderr,"ixxmin %d ixxmax %d getWidth() %d iyymin %d iyymax %d getHeight() %d\n",ixxmin,ixxmax,getWidth(),iyymin,iyymax,getHeight());
 
 		glColor4f(0, 0, 0, 1);
