@@ -621,6 +621,10 @@ public:
 	
 	double oscilloscopeZoom;
 	
+	double xminView;
+	
+	double xmaxView;
+	
 	ampmodem demodAM;
 
 	freqdem demod;

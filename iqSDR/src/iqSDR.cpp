@@ -8,7 +8,7 @@ void winout(const char *fmt, ...);
 
 int copyl(char *p1,char *p2,long n);
 
-std::string ProgramVersion="iqSDR-1414";
+std::string ProgramVersion="iqSDR-1415";
 
 void *cMalloc(unsigned long r, int tag);
 
@@ -1849,7 +1849,7 @@ int BasicPane::SetScrolledWindow()
 		yloc += 25;   
 	}
 
-	 wxPanel *panel81 = new wxPanel(ScrolledWindow,wxID_ANY, wxPoint(20,yloc), wxSize(250, 40),wxBORDER_SUNKEN | wxFULL_REPAINT_ON_RESIZE,wxT("Control2"));
+	wxPanel *panel81 = new wxPanel(ScrolledWindow,wxID_ANY, wxPoint(20,yloc), wxSize(250, 40),wxBORDER_SUNKEN | wxFULL_REPAINT_ON_RESIZE,wxT("Control2"));
 	
 	cbox=new wxCheckBox(panel81,ID_SWAPIQ, "&I/Q Swap",wxPoint(0,5), wxSize(80, 25));
 	cbox->SetValue(0);	
@@ -1873,27 +1873,10 @@ int BasicPane::SetScrolledWindow()
 	yloc += 40;   
 
 
-
-
 	cbox=new wxCheckBox(ScrolledWindow,ID_SOFTAUTOGAIN, "&Software AGC",wxPoint(20,yloc), wxSize(230, 25));
 	cbox->SetValue(1);	
 	yloc += 25;   
 	
-	if(sdr->rxGainRangeList.size()){
-		for(size_t n=0;n<sdr->rxGainRangeList.size();++n){
-			box = new wxStaticBox(ScrolledWindow, wxID_ANY,sdr->rxGainNames[n],wxPoint(20,yloc), wxSize(230, 80),wxBORDER_SUNKEN );
-			//box->SetToolTip(wxT("This is tool tip") );
-			
-			SoapySDR::Range rxGainRange=sdr->rxGainRangeList[n];
-			
-			double rmid=0.5*(rxGainRange.maximum()+rxGainRange.minimum());
-
-			new wxSlider(box,ID_RXGAIN+n,rmid,rxGainRange.minimum(),rxGainRange.maximum(),wxPoint(10,15),wxSize(210,-1),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
-
-			yloc += 85;   
-		}
-	
-	}
 	
 	if(oscilloscopeFlag != 0){
 		box = new wxStaticBox(ScrolledWindow, wxID_ANY, "&Oscilloscope Zoom ",wxPoint(20,yloc), wxSize(230, 80),wxBORDER_SUNKEN );
@@ -1922,6 +1905,24 @@ int BasicPane::SetScrolledWindow()
 
 		yloc += 85;   
 */
+	
+	}
+	
+	
+	
+	if(sdr->rxGainRangeList.size()){
+		for(size_t n=0;n<sdr->rxGainRangeList.size();++n){
+			box = new wxStaticBox(ScrolledWindow, wxID_ANY,sdr->rxGainNames[n],wxPoint(20,yloc), wxSize(230, 80),wxBORDER_SUNKEN );
+			//box->SetToolTip(wxT("This is tool tip") );
+			
+			SoapySDR::Range rxGainRange=sdr->rxGainRangeList[n];
+			
+			double rmid=0.5*(rxGainRange.maximum()+rxGainRange.minimum());
+
+			new wxSlider(box,ID_RXGAIN+n,rmid,rxGainRange.minimum(),rxGainRange.maximum(),wxPoint(10,15),wxSize(210,-1),wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS);
+
+			yloc += 85;   
+		}
 	
 	}
 	
@@ -3064,30 +3065,14 @@ void WaterFall::render1( wxPaintEvent& evt )
     int ns1=3*water.xsize*(water.nline+water.ysize);
     int ns2=3*water.xsize*(water.nline++);
     
-	double Slide=(gSpectrum->oscilloscopeSlide)/200.0;
-	if(Slide <= 0.0)Slide=1.0/200.0;
-	
-	double Zoom=(gSpectrum->oscilloscopeZoom)/200.0;
-	if(Zoom <= 0.0)Zoom=1.0/200.0;
-	
-	double gLength=Zoom*(rmax-rmin);
-		
-	double gxmin=(rmax-rmin-gLength)*Slide+rmin;
-	double gxmax=gxmin+gLength;
-	
-	//fprintf(stderr,"length %d\n",length);
-
-	
-	//fprintf(stderr,"gxmin %g gxmax %g Zoom %g Slide %g gLength %g\n",gxmin,gxmax,Zoom,Slide,gLength);
-
     int nmin,nmax;
     nmin=length-1;
     nmax=0;
     for(int n=0;n<length;++n){
-        if(range[n] <= gxmin)nmin=n;
-        if(range[n] <= gxmax)nmax=n;
+        if(range[n] <= gSpectrum->xminView)nmin=n;
+        if(range[n] <= gSpectrum->xmaxView)nmax=n;
     }
-    
+        
     double dxn = -1;
     if(nmax-nmin){
         dxn=(double)(nmax-nmin)/(double)(length-1);
@@ -3096,13 +3081,13 @@ void WaterFall::render1( wxPaintEvent& evt )
         dxn = 1;
     }
     
-    
-   //fprintf(stderr,"nmin %d nmax %d dxn %g\n",nmin,nmax,dxn);
-   
-    
+    double anmax=-1e33;
+    for(int n=nmin;n<nmax;++n){
+    	if(magnitude[n] > anmax)anmax=magnitude[n];
+    }
+        
     double dxw=(double)(water.xsize-1)/(double)(length-1);
-   
-    
+     
     int ics=wateric[(int)(2*dxn+nmin)];
         
     for(int nnn=0;nnn<length;++nnn){
@@ -3131,7 +3116,8 @@ void WaterFall::render1( wxPaintEvent& evt )
         
         ics=wateric[next];
         
-        for(;nn<nn2 && nn < water.SRect.xsize;++nn){ 
+                
+        //for(;nn<nn2 && nn < water.SRect.xsize;++nn){ 
 			if(nn < 0 || nn >= water.SRect.xsize){
 				winout("nn %d nn2 %d nnn %d n %d next %d ic %d ics %d\n",nn,nn2,nnn,n,next,ic,ics);
 				exit(1);
@@ -3144,7 +3130,7 @@ void WaterFall::render1( wxPaintEvent& evt )
 			water.data[ns2+3*nn]=pd.palette[3*ic];
 			water.data[ns2+3*nn+1]=pd.palette[3*ic+1];
 			water.data[ns2+3*nn+2]=pd.palette[3*ic+2];
-        }
+        //}
         
     }    
     
@@ -4487,8 +4473,8 @@ void Spectrum::render1(wxPaintEvent& evt )
 		
 		double gLength=Zoom*dx;
 	  		
-		double gxmin=(dx-gLength)*Slide+xmin;
-		double gxmax=gxmin+gLength;
+		xminView=(dx-gLength)*Slide+xmin;
+		xmaxView=xminView+gLength;
 		//double gdx=gxmax-gxmin;
 		
 		double ixmin=0;
@@ -4496,8 +4482,8 @@ void Spectrum::render1(wxPaintEvent& evt )
 		double idx=ixmax-ixmin;
 		
 
-		int nmin=(num-1)*(gxmin-xmin)/dx;
-		int nmax=(num-1)*(gxmax-xmin)/dx;
+		int nmin=(num-1)*(xminView-xmin)/dx;
+		int nmax=(num-1)*(xmaxView-xmin)/dx;
 		int dn=nmax-nmin;
 
 		//fprintf(stderr,"gxman %g gxmax %g nmin %d nmax %d dn %d lineAlpha %g\n",gxmin,gxmax,nmin,nmax,dn,lineAlpha);
@@ -4536,7 +4522,7 @@ void Spectrum::render1(wxPaintEvent& evt )
         	
 			double y=sum;
 			double x=n*ddx+xmin;
-			if(x < gxmin || x > gxmax)continue;
+			if(x < xminView || x > xmaxView)continue;
 			int ix;
 			int iy;
 			ix=(int)(n-nmin)*idx/dn+ixmin;
@@ -4572,8 +4558,8 @@ void Spectrum::render1(wxPaintEvent& evt )
 			double xmns,xmxs;
 			//xmnc=gxmin/1e6;
 			//xmxc=gxmax/1e6;
-			xmnc=gxmin;
-			xmxc=gxmax;
+			xmnc=xminView;
+			xmxc=xmaxView;
 			xmns=xmnc;
 			xmxs=xmxc;
 			//fprintf(stderr,"xmnc %g xmxc %g samplewidth %g samplescale %g\n",xmnc,xmxc,sdr->samplewidth,sdr->samplescale);
