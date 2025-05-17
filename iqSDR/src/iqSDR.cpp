@@ -8,7 +8,7 @@ void winout(const char *fmt, ...);
 
 int copyl(char *p1,char *p2,long n);
 
-std::string ProgramVersion="iqSDR-1416";
+std::string ProgramVersion="iqSDR-1417";
 
 void *cMalloc(unsigned long r, int tag);
 
@@ -1533,9 +1533,9 @@ void TopPane::OnChar(wxKeyEvent& event)
 	
 	//winout("TopPane::OnChar %d\n",keycode);
 	
-    if(keycode == 'f'){
+    if(keycode == 'f' || keycode == ' '){
         gSpectrum->iFreeze = !gSpectrum->iFreeze;
-     //   winout("iWait %d\n",iWait);
+        //fprintf(stderr,"gSpectrum->iFreeze %d\n",gSpectrum->iFreeze);
     }
 	
 
@@ -2537,8 +2537,11 @@ void BasicPane::OnScroll(wxCommandEvent &event)
 		oscilloscopeFlag=flag;
 		gSpectrum->oscilloscope=flag;
 		gSpectrum->iHaveData=0;
+		gSpectrum->iFreeze=0;
 		gSpectrum->aminGlobal=0;
 		gSpectrum->amaxGlobal=0;
+		gSpectrum->oscilloscopeSlide=200;
+		gSpectrum->oscilloscopeZoom=200;
 		idoScrollWindow=1;
 	//	SetScrolledWindow();
 //		fprintf(stderr,"OnComboFilter ID_COMBO_OSCILLOSCOPE flag %d\n",flag);
@@ -2845,6 +2848,11 @@ void WaterFall::OnChar(wxKeyEvent& event)
     int keycode=event.GetKeyCode();
     
    // winout("WaterFall::OnChar %d\n",keycode);
+   
+    if(keycode == 'f' || keycode == ' '){
+        gSpectrum->iFreeze = !gSpectrum->iFreeze;
+     //   winout("iWait %d\n",iWait);
+    }   
     
     if(keycode == 'w'){
         iWait = !iWait;
@@ -3379,11 +3387,20 @@ void WaterFall::render1a( wxPaintEvent& evt )
     float *magnitude=gSpectrum->buff3;
     
     int length=gSpectrum->buffLength;
+    
+    float *magnitude2 = new float[length];
 
 	//winout("WaterFall render magnitude %p length %d\n",magnitude, length);
 
-    if(!magnitude || !length)return;
+    if(!magnitude || !length || !magnitude2)return;
     
+    
+	gSpectrum->mutexg.lock();
+    for(int n=0;n<length;++n){
+    	magnitude2[n]=magnitude[n];
+	}
+ 	gSpectrum->mutexg.unlock();
+   
     //auto t1 = chrono::high_resolution_clock::now();
     
 
@@ -3429,7 +3446,7 @@ void WaterFall::render1a( wxPaintEvent& evt )
         double r;
         r=n*dx+rmin;
         range[n]=r;
-        double v=magnitude[n];
+        double v=magnitude2[n];
         if(v < pmin)pmin=v;
         if(v > pmax)pmax=v;
     }    
@@ -3448,7 +3465,7 @@ void WaterFall::render1a( wxPaintEvent& evt )
     
     unsigned char *wateric= new unsigned char[length*3];
     
-    FloatToImage(magnitude,length,&pd,wateric);
+    FloatToImage(magnitude2,length,&pd,wateric);
 /*
     int ns1=3*water.xsize*(water.ysize-water.nline-1);
     int ns2=3*water.xsize*water.ysize+3*water.xsize*(water.ysize-1-water.nline++);
@@ -3569,6 +3586,8 @@ void WaterFall::render1a( wxPaintEvent& evt )
 
     	if(range)delete [] range;
     	range=NULL;
+    	if(magnitude2)delete [] magnitude2;
+    	magnitude2=NULL;
     	if(wateric)delete [] wateric;
     	wateric=NULL;
 
@@ -3849,7 +3868,7 @@ void Spectrum::OnChar(wxKeyEvent& event)
 	
 	//winout("Spectrum::OnChar %d\n",keycode);
 	
-    if(keycode == 'f'){
+    if(keycode == 'f' || keycode == ' '){
         iFreeze = !iFreeze;
      //   winout("iWait %d\n",iWait);
     }
@@ -4521,7 +4540,7 @@ void Spectrum::render1(wxPaintEvent& evt )
 				sum=(1.0-lineAlpha)*buff4[n]+lineAlpha*v;
 			}
         	
-			buff4[n]=sum;
+			if(!iFreeze)buff4[n]=sum;
         	
 			double y=sum;
 			double x=n*ddx+xmin;
@@ -4982,6 +5001,7 @@ void Spectrum::render1a(wxPaintEvent& evt )
 			
 		num=0;
  
+		mutexg.lock();
       	double Ratio = (float)(sdr->bw/sdr->samplerate);
  		if (iqSampler1)msresamp_crcf_destroy(iqSampler1);
      	iqSampler1  = msresamp_crcf_create(Ratio, 60.0f);
@@ -4989,6 +5009,7 @@ void Spectrum::render1a(wxPaintEvent& evt )
 		msresamp_crcf_execute(iqSampler1, (liquid_float_complex *)&buff2[0], sdr->size, (liquid_float_complex *)&buff3[0], &num);  // decimate
 		if (iqSampler1)msresamp_crcf_destroy(iqSampler1);
 		iqSampler1=NULL;
+		mutexg.unlock();
 				
       	buffLength=num;
 		

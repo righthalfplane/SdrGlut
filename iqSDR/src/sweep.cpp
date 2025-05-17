@@ -1158,7 +1158,7 @@ void TopPane2::OnChar(wxKeyEvent& event)
 	
 	//winout("TopPane2::OnChar %d\n",keycode);
 	
-    if(keycode == 'f'){
+    if(keycode == 'f' || keycode == ' '){
         gSpectrum2->iFreeze = !gSpectrum2->iFreeze;
      //   winout("iWait %d\n",iWait);
     }
@@ -2564,6 +2564,12 @@ void WaterFall2::OnChar(wxKeyEvent& event)
     int keycode=event.GetKeyCode();
     
    // winout("WaterFall2::OnChar %d\n",keycode);
+   
+    if(keycode == 'f' || keycode == ' '){
+        gSpectrum2->iFreeze = !gSpectrum2->iFreeze;
+     //   winout("iWait %d\n",iWait);
+    }
+
     
     if(keycode == 'w'){
         iWait = !iWait;
@@ -2610,10 +2616,42 @@ void WaterFall2::mouseDown(wxMouseEvent& event)
 {
 	extern soundClass *s;
 	event.Skip();
-	
-	if(gSpectrum2->oscilloscope == 1)return;
-	
+
 	wxPoint pp3 = event.GetLogicalPosition(wxClientDC(this))*scaleFactor;
+	
+	if(gSpectrum2->oscilloscope == 1){
+		double gxmin=gSpectrum2->xminView;
+		double gxmax=gSpectrum2->xmaxView;
+		double gdx=gxmax-gxmin;
+		
+		double ixmin=0;
+		double ixmax=getWidth();
+		double idx=ixmax-ixmin;
+		
+		double ff=gdx*(pp3.x-ixmin)/idx+gxmin;
+
+		//fprintf(stderr,"Spectrum2::mouseDown ff %g MHZ\n",ff/1e6);	
+		
+		int flag=0;
+		gSpectrum2->oscilloscope=flag;
+		gBasicPane2->scrolledWindowFlag=flag;
+		gBasicPane2->SetScrolledWindow();
+		wxSize size = gSweep->GetClientSize();
+		size.x += 4;
+		size.y += 4;
+		gSweep->SetClientSize(size);
+		size.x -= 4;
+		size.y -= 4;
+		gSweep->SetClientSize(size);
+		sdr->initPlay();
+		sdr->setFrequencyFC(ff);
+		sdr->iWait=0;
+		s->bS=sdr->bS;
+		//winout("Spectrum2::mouseDown %p %p\n",s->bS,sdr->bS);
+		gTopPane2->Refresh();
+		return;
+	}
+	
 	if(sdr){
 		double fx=sdr->fw-0.5*sdr->samplewidth + sdr->samplewidth*(pp3.x)/((double)getWidth());
 		//winout("mouseDown x %d y %d sdr->fc %g sdr->f %g sdr->samplerate %g fx %g width %d\n",p1.x,p1.y,sdr->fc,sdr->f,sdr->samplerate,fx,getWidth());
@@ -3359,7 +3397,7 @@ void Spectrum2::OnChar(wxKeyEvent& event)
 	
 	//winout("Spectrum2::OnChar %d\n",keycode);
 	
-    if(keycode == 'f'){
+    if(keycode == 'f' || keycode == ' '){
         iFreeze = !iFreeze;
      //   winout("iWait %d\n",iWait);
     }
@@ -3635,8 +3673,8 @@ void Spectrum2::mouseDown(wxMouseEvent& event)
 	wxPoint pp3 = event.GetLogicalPosition(wxClientDC(this))*scaleFactor;
 	
 	if(oscilloscope == 1){
-		double gxmin=gSweep->rx->sweepLower;
-		double gxmax=gSweep->rx->sweepUpper;
+		double gxmin=xminView;
+		double gxmax=xmaxView;
 		double gdx=gxmax-gxmin;
 		
 		double ixmin=0;
@@ -3645,7 +3683,7 @@ void Spectrum2::mouseDown(wxMouseEvent& event)
 		
 		double ff=gdx*(pp3.x-ixmin)/idx+gxmin;
 
-		fprintf(stderr,"Spectrum2::mouseDown ff %g MHZ\n",ff/1e6);	
+		//fprintf(stderr,"Spectrum2::mouseDown ff %g MHZ\n",ff/1e6);	
 		
 		int flag=0;
 		oscilloscope=flag;
@@ -3864,6 +3902,9 @@ void Spectrum2::render1(wxPaintEvent& evt )
 		double gxmin=(dx-gLength)*Slide+xmin;
 		double gxmax=gxmin+gLength;
 		//double gdx=gxmax-gxmin;
+		
+		xminView=gxmin;
+		xmaxView=gxmax;
 		
 		double ixmin=0;
 		double ixmax=getWidth();

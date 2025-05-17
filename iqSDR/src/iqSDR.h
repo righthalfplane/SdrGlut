@@ -1021,6 +1021,10 @@ public:
 	
 	double oscilloscopeZoom;
 
+	double xminView;
+	
+	double xmaxView;
+
 	
 	msresamp_crcf iqSampler1;
 	
