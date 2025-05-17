@@ -496,7 +496,7 @@
       <AdditionalDependencies>ws2_32.lib;wxmsw32u_gl.lib;wxmsw32u_stc.lib;fftw3f.lib;fftw3.lib;wxbase32u.lib;wxmsw32u_core.lib;sndfile.lib;rtaudio.lib;freeglut_staticd.lib;libliquid.lib;pthreadVC2.lib;OpenAL32.lib;SoapySDR.lib;winmm.lib;opengl32.lib;glu32.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <TargetMachine>MachineX64</TargetMachine>
-      <AdditionalLibraryDirectories>$(WXWIN)\lib\vc_x64_lib;C:\dev\vcpkg\packages\fftw3_x64-windows\lib;C:\Program Files\PothosSDR\lib;C:\Program Files\RtAudio\lib;../../freeglut-3.2.1/lib;C:/Program Files (x86)/OpenAL 1.1 SDK/libs/Win64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(WXWIN)\lib\vc_x64_lib;C:\dev\vcpkg\packages\fftw3_x64-windows\lib;C:\Program Files\PothosSDR\lib;C:\Program Files\RtAudio\bin;C:\Program Files\RtAudio\lib;../../freeglut-3.2.1/lib;C:/Program Files (x86)/OpenAL 1.1 SDK/libs/Win64</AdditionalLibraryDirectories>
       <SubSystem>Windows</SubSystem>
     </Link>
   </ItemDefinitionGroup>
