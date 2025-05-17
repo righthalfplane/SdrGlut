@@ -291,9 +291,9 @@ int Poly::forceCascadeRun(float *input,float *output,int npoint,int sum)
         y *= gain;
         
         if(sum){
-            output[n] += y;
+            output[n] += (float)y;
         }else{
-            output[n] = y;
+            output[n] = (float)y;
         }
         
     }

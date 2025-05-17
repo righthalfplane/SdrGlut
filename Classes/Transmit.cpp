@@ -321,7 +321,7 @@ int Radio::Transmit(struct Scene *scene)
     std::vector<unsigned int> id=tt.audio->getDeviceIds();
 #else
     std::vector<unsigned int> id;
-    for(unsigned int n=0;n<devices;++n){
+    for(int n=0;n<devices;++n){
         id.push_back(n);
     }
 #endif

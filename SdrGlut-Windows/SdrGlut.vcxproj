@@ -180,6 +180,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4251;4005;4099</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>sndfile.lib;ws2_32.lib;rtaudio.lib;freeglut_staticd.lib;libliquid.lib; pthreadVC2.lib;OpenAL32.lib;SoapySDR.lib;winmm.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>

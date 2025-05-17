@@ -1742,7 +1742,7 @@ static int findRadio(struct playData *rx)
     
     rx->MTU=rx->device->getStreamMTU(rx->rxStream);
     
-    fprintf(stderr,"MTU %ld\n",rx->MTU);
+    fprintf(stderr,"MTU %ld\n",(long)rx->MTU);
     
     rx->device->activateStream(rx->rxStream, 0, 0, 0);
    
@@ -2193,7 +2193,7 @@ int testRadio(struct playData *rx)
         rx->streamFormat=(char **)cMalloc((unsigned long)(rx->streamFormatCount*sizeof(double)),8898);
         for (size_t j = 0; j < rx->streamFormatCount; j++)
         {
-            printf("StreamFormats %lu %s\n",j, list[j].c_str());
+            printf("StreamFormats %lu %s\n",(unsigned long)j, list[j].c_str());
             rx->streamFormat[j]=strsave((char *)list[j].c_str(),95695);
         }
 

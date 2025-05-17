@@ -2,6 +2,7 @@
 
 #define __SDRWXH__
 
+#include "sdr.h"
 
 //#define GLEW_IN
 #ifdef GLEW_IN
@@ -61,7 +62,6 @@
 
 #include <chrono>
 
-#include "sdr.h"
 
 #include "graphics.h"
 

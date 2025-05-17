@@ -4,6 +4,8 @@
 
 #include "firstFile.h"
 
+#include "SocketDefs.h"
+
 #if __has_include(<liquid/liquid.h>)
 #include <liquid/liquid.h>
 #else

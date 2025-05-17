@@ -5339,7 +5339,7 @@ static int writesds3dFloat(struct SDS2Dout *sdsout)
 	
 	data=(float *)cMalloc(length*sizeof(float),1002);
 	if(!data){
-	    sprintf(WarningBuff,(char *)"writesds3dFloat error Trying To allocate %ld Bytes\n",length*sizeof(float));
+	    sprintf(WarningBuff,(char *)"writesds3dFloat error Trying To allocate %ld Bytes\n",(long)(length*sizeof(float)));
 	    Warning(WarningBuff);
 		goto OutOfHere;
 	}
@@ -5560,7 +5560,7 @@ static int writesds2dBytes(struct SDS2Dout *sdsout)
 	
 	data=(unsigned char *)cMalloc(length*sizeof(unsigned char),1001);
 	if(!data){
-	    sprintf(WarningBuff,(char *)"writesds2dBytes error Trying To allocate %ld Bytes\n",length*sizeof(unsigned char));
+	    sprintf(WarningBuff,(char *)"writesds2dBytes error Trying To allocate %ld Bytes\n",(long)(length*sizeof(unsigned char)));
 	    Warning(WarningBuff);
 		goto OutOfHere;
 	}
@@ -5679,7 +5679,7 @@ static int writesds2dFloat(struct SDS2Dout *sdsout)
 	
 	data=(float *)cMalloc(length*sizeof(float),1002);
 	if(!data){
-	    sprintf(WarningBuff,(char *)"writesds2dFloat error Trying To allocate %ld Bytes\n",length*sizeof(float));
+	    sprintf(WarningBuff,(char *)"writesds2dFloat error Trying To allocate %ld Bytes\n",(long)(length*sizeof(float)));
 	    Warning(WarningBuff);
 		goto OutOfHere;
 	}
