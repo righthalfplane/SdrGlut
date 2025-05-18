@@ -1,17 +1,15 @@
 # SdrGlut
 
-SdrGlut V1.33 - SdrGlut - Mostly Small Improvements and Clean Up. iqSDR has many improvements
+SdrGlut V1.34 - SdrGlut - a little Clean Up. iqSDR has many bug fixes
 
 What is new ?
 
 ```
-SdeGlut can now handle smaller I/Q files.
-iqSDR is now in its own dmg file.
-iqSDR has a Frequency Sweep Option
-iqSDR has an Oscilloscope FFT option.
-iqSDR has an Oscilloscope option.
+iqSDR fixed Frequency Sweep Option problems
+iqSDR fixed Oscilloscope FFT option problems
+iqSDR fixed Oscilloscope option problems
 ```
-https://github.com/righthalfplane/SdrGlut/releases/tag/v1.33
+https://github.com/righthalfplane/SdrGlut/releases/tag/v1.34
 
 If you are new to SdrGlut, please view the introduction video -
 - [An Introduction to SdrGlut (A software defined radio)](https://youtu.be/JEXK-r6PvmA)
