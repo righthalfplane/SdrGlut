@@ -22,6 +22,7 @@ SdrGlut is a simple software defined radio player. Using glut for drawing and gl
 
 ## Demo videos
 - [An Introduction to SdrGlut (A software defined radio)](https://youtu.be/JEXK-r6PvmA)
+- [iqSDR and The Panoramic Spectrum Display.](https://youtu.be/0n1VJ4Cm95A)
 - [A Software Defined Radio Python Starter Kit.](https://youtu.be/NH-8Sx8qM68)
 - [Panoramic Spectrum To Find TV Stations - SigDigger vs iqSDR.](https://youtu.be/zCjS3ezRaok)
 - [Installing SdrGlut and iqSDR on Ubuntu24.10.](https://youtu.be/7ydgAz1LFfw)
