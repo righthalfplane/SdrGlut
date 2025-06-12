@@ -1,6 +1,6 @@
 # SdrGlut
 
-SdrGlut V1.34 - SdrGlut - a little Clean Up. iqSDR has many bug fixes
+SdrGlut V1.34 - SdrGlut - a little Clean Up. iqSDR has many bug fixes.
 
 What is new ?
 
